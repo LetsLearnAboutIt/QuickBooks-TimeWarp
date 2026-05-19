@@ -2001,6 +2001,16 @@ namespace QB_TimeWarp.Services
                 {
                     // Enforce QB 2021 field length limits
                     var value = EnforceFieldLength(prop.Name, prop.Value.ToString());
+                    
+                    // ── FIX #7: Strip timezone offsets from date/time fields ──────────
+                    // QBXML does NOT support timezone offsets (e.g., -06:00).
+                    // All date fields must be in format: yyyy-MM-dd OR yyyy-MM-ddTHH:mm:ss
+                    if (IsDateTimeField(prop.Name) && ContainsTimezoneOffset(value))
+                    {
+                        value = StripTimezoneOffset(value);
+                        Log.Debug("  FIX #7: Stripped timezone offset from {Field}: {Value}", prop.Name, value);
+                    }
+                    
                     sb.AppendLine($"    <{prop.Name}>{EscapeXml(value)}</{prop.Name}>");
                 }
             }
@@ -2096,6 +2106,47 @@ namespace QB_TimeWarp.Services
         }
 
         /// <summary>
+        /// FIX #7: Determines if a field name represents a date/time field.
+        /// </summary>
+        private static bool IsDateTimeField(string fieldName)
+        {
+            return fieldName.Contains("Date", StringComparison.OrdinalIgnoreCase) ||
+                   fieldName.Contains("Time", StringComparison.OrdinalIgnoreCase) ||
+                   fieldName == "TxnDate" ||
+                   fieldName == "DueDate" ||
+                   fieldName == "ShipDate" ||
+                   fieldName == "ServiceDate";
+        }
+
+        /// <summary>
+        /// FIX #7: Checks if a date string contains a timezone offset (e.g., -06:00, +05:30).
+        /// </summary>
+        private static bool ContainsTimezoneOffset(string value)
+        {
+            // Match patterns like: -06:00, +05:30, Z
+            return System.Text.RegularExpressions.Regex.IsMatch(value, @"[+-]\d{2}:\d{2}$") ||
+                   value.EndsWith("Z", StringComparison.OrdinalIgnoreCase);
+        }
+
+        /// <summary>
+        /// FIX #7: Strips timezone offset from a datetime string.
+        /// Converts: 2026-05-10T23:29:48-06:00 → 2026-05-10T23:29:48
+        /// Also handles: 2026-05-10T23:29:48Z → 2026-05-10T23:29:48
+        /// </summary>
+        private static string StripTimezoneOffset(string value)
+        {
+            // Remove trailing Z
+            if (value.EndsWith("Z", StringComparison.OrdinalIgnoreCase))
+            {
+                return value.Substring(0, value.Length - 1);
+            }
+
+            // Remove timezone offset pattern (e.g., -06:00, +05:30)
+            var timezonePattern = @"[+-]\d{2}:\d{2}$";
+            return System.Text.RegularExpressions.Regex.Replace(value, timezonePattern, "");
+        }
+
+        /// <summary>
         /// Builds QBXML for line items in transaction entities.
         /// Line item fields are sorted according to their XSD-defined sequence order.
         /// </summary>
@@ -2138,14 +2189,26 @@ namespace QB_TimeWarp.Services
                             if (childProp.Value.Type != JTokenType.Null &&
                                 !string.IsNullOrEmpty(childProp.Value.ToString()))
                             {
-                                sb.AppendLine($"        <{childProp.Name}>{EscapeXml(childProp.Value.ToString())}</{childProp.Name}>");
+                                // FIX #7: Strip timezone offsets from nested date/time fields in line items
+                                var nestedValue = childProp.Value.ToString();
+                                if (IsDateTimeField(childProp.Name) && ContainsTimezoneOffset(nestedValue))
+                                {
+                                    nestedValue = StripTimezoneOffset(nestedValue);
+                                }
+                                sb.AppendLine($"        <{childProp.Name}>{EscapeXml(nestedValue)}</{childProp.Name}>");
                             }
                         }
                         sb.AppendLine($"      </{prop.Name}>");
                     }
                     else if (prop.Value.Type != JTokenType.Null && !string.IsNullOrEmpty(prop.Value.ToString()))
                     {
-                        sb.AppendLine($"      <{prop.Name}>{EscapeXml(prop.Value.ToString())}</{prop.Name}>");
+                        // FIX #7: Strip timezone offsets from line item date/time fields too
+                        var lineValue = prop.Value.ToString();
+                        if (IsDateTimeField(prop.Name) && ContainsTimezoneOffset(lineValue))
+                        {
+                            lineValue = StripTimezoneOffset(lineValue);
+                        }
+                        sb.AppendLine($"      <{prop.Name}>{EscapeXml(lineValue)}</{prop.Name}>");
                     }
                 }
 
