@@ -7,34 +7,82 @@ namespace QB_TimeWarp.Services
 {
     /// <summary>
     /// Transforms exported QB 2023 data to be compatible with QB 2021 using the FieldMappings.json config.
-    /// Applies field mappings, transformations, truncations, and default values.
+    /// Applies field mappings, transformations, truncations, default values, entity reactivation,
+    /// class tracking preservation, and accounting model matching.
     /// </summary>
     public class DataTransformer
     {
         private readonly FieldMappingsConfig _mappingsConfig;
         private readonly GlobalMappingSettings _globalSettings;
+        private readonly TransformationRulesConfig _transformationRules;
         private int _unmappedFieldCount;
         private readonly HashSet<string> _loggedUnmappedFields = new();
 
+        // Transformation report tracking
+        private readonly TransformationReport _transformationReport = new();
+        private readonly Dictionary<string, int> _reactivatedCountByType = new();
+        private readonly HashSet<string> _discoveredClasses = new();
+        private readonly Dictionary<string, int> _classUsageByTxnType = new();
+        private readonly Dictionary<string, int> _classUsageByClassName = new();
+
+        /// <summary>
+        /// Entity types that support active/inactive status.
+        /// </summary>
+        private static readonly HashSet<string> ActiveStatusEntityTypes = new(StringComparer.OrdinalIgnoreCase)
+        {
+            "Customers", "Vendors", "Items", "Accounts", "Employees"
+        };
+
+        /// <summary>
+        /// Transaction entity types that support class tracking at the header level.
+        /// </summary>
+        private static readonly HashSet<string> ClassTrackingHeaderTypes = new(StringComparer.OrdinalIgnoreCase)
+        {
+            "Invoices", "Bills", "SalesReceipts", "PurchaseOrders", "JournalEntries",
+            "CreditMemos", "Estimates", "Checks", "VendorCredits"
+        };
+
         public DataTransformer(string mappingsFilePath)
+            : this(mappingsFilePath, new TransformationRulesConfig())
+        {
+        }
+
+        public DataTransformer(string mappingsFilePath, TransformationRulesConfig transformationRules)
         {
             var json = File.ReadAllText(mappingsFilePath);
             _mappingsConfig = JsonConvert.DeserializeObject<FieldMappingsConfig>(json)
                 ?? throw new InvalidOperationException($"Could not load field mappings from: {mappingsFilePath}");
             _globalSettings = _mappingsConfig.GlobalSettings;
+            _transformationRules = transformationRules;
 
             Log.Information("Loaded field mappings with {Count} entity type configurations.",
                 _mappingsConfig.EntityMappings.Count);
+            Log.Information("Transformation rules: ReactivateInactive={Reactivate}, PreserveClasses={Classes}, MatchAccounting={Accounting}",
+                _transformationRules.ReactivateInactiveEntities,
+                _transformationRules.PreserveClassTracking,
+                _transformationRules.MatchAccountingModel);
         }
 
         public DataTransformer(FieldMappingsConfig config)
+            : this(config, new TransformationRulesConfig())
+        {
+        }
+
+        public DataTransformer(FieldMappingsConfig config, TransformationRulesConfig transformationRules)
         {
             _mappingsConfig = config;
             _globalSettings = config.GlobalSettings;
+            _transformationRules = transformationRules;
         }
 
         /// <summary>
+        /// Gets the transformation report generated during the last TransformAll call.
+        /// </summary>
+        public TransformationReport GetTransformationReport() => _transformationReport;
+
+        /// <summary>
         /// Transforms all exported data according to the field mapping configuration.
+        /// Applies reactivation, class tracking, and accounting model rules.
         /// </summary>
         public Dictionary<string, ExportedEntitySet> TransformAll(Dictionary<string, ExportedEntitySet> exportedData)
         {
@@ -42,8 +90,31 @@ namespace QB_TimeWarp.Services
             Log.Information("  STARTING DATA TRANSFORMATION");
             Log.Information("═══════════════════════════════════════════════════════");
 
+            if (_transformationRules.ReactivateInactiveEntities)
+                Log.Information("  ► Inactive→Active reactivation is ENABLED");
+            if (_transformationRules.PreserveClassTracking)
+                Log.Information("  ► Class tracking preservation is ENABLED");
+            if (_transformationRules.MatchAccountingModel)
+                Log.Information("  ► Accounting model matching is ENABLED");
+
             var transformed = new Dictionary<string, ExportedEntitySet>();
             _unmappedFieldCount = 0;
+            _reactivatedCountByType.Clear();
+            _discoveredClasses.Clear();
+            _classUsageByTxnType.Clear();
+            _classUsageByClassName.Clear();
+
+            // Extract company preferences if available (for accounting model)
+            if (_transformationRules.MatchAccountingModel)
+            {
+                ExtractAccountingModel(exportedData);
+            }
+
+            // Discover classes from source data
+            if (_transformationRules.PreserveClassTracking)
+            {
+                DiscoverClassesFromData(exportedData);
+            }
 
             foreach (var (entityType, entitySet) in exportedData)
             {
@@ -70,6 +141,21 @@ namespace QB_TimeWarp.Services
                 Log.Warning("Total unmapped fields encountered: {Count}", _unmappedFieldCount);
             }
 
+            // Build transformation report
+            BuildTransformationReport(exportedData);
+
+            // Log reactivation summary
+            if (_transformationRules.ReactivateInactiveEntities && _reactivatedCountByType.Any())
+            {
+                LogReactivationSummary();
+            }
+
+            // Log class tracking summary
+            if (_transformationRules.PreserveClassTracking && _discoveredClasses.Any())
+            {
+                LogClassTrackingSummary();
+            }
+
             Log.Information("═══════════════════════════════════════════════════════");
             Log.Information("  TRANSFORMATION COMPLETE");
             Log.Information("═══════════════════════════════════════════════════════");
@@ -92,12 +178,41 @@ namespace QB_TimeWarp.Services
             }
 
             var transformedEntities = new List<QBEntity>();
+            int reactivatedCount = 0;
 
             foreach (var entity in source.Entities)
             {
                 try
                 {
-                    var transformed = TransformEntity(entity, mapping);
+                    var transformed = TransformEntity(entity, mapping, entityType);
+
+                    // Apply inactive→active reactivation
+                    if (_transformationRules.ReactivateInactiveEntities
+                        && ActiveStatusEntityTypes.Contains(entityType)
+                        && !entity.IsActive)
+                    {
+                        transformed.IsActive = true;
+                        transformed.Fields["IsActive"] = JToken.FromObject("true");
+                        reactivatedCount++;
+
+                        Log.Debug("  Reactivated inactive {EntityType}: {Name}",
+                            entityType, entity.Name);
+
+                        _transformationReport.ReactivatedEntityDetails.Add(
+                            $"[{entityType}] {entity.FullName ?? entity.Name}");
+                    }
+                    else if (ActiveStatusEntityTypes.Contains(entityType))
+                    {
+                        // Ensure active entities stay active
+                        transformed.IsActive = entity.IsActive;
+                    }
+
+                    // Track class usage in transactions
+                    if (_transformationRules.PreserveClassTracking)
+                    {
+                        TrackClassUsage(entityType, transformed);
+                    }
+
                     transformedEntities.Add(transformed);
                 }
                 catch (Exception ex)
@@ -108,12 +223,21 @@ namespace QB_TimeWarp.Services
                 }
             }
 
+            if (reactivatedCount > 0)
+            {
+                _reactivatedCountByType[entityType] = reactivatedCount;
+                Log.Information("  ► Reactivated {Count} inactive {EntityType} records",
+                    reactivatedCount, entityType);
+            }
+
             return new ExportedEntitySet
             {
                 EntityType = entityType,
                 SourceVersion = "QB2023_Transformed",
                 ExportTimestamp = DateTime.UtcNow,
                 TotalCount = transformedEntities.Count,
+                ActiveCount = transformedEntities.Count(e => e.IsActive),
+                InactiveCount = transformedEntities.Count(e => !e.IsActive),
                 Entities = transformedEntities
             };
         }
@@ -121,7 +245,7 @@ namespace QB_TimeWarp.Services
         /// <summary>
         /// Transforms a single entity according to its field mappings.
         /// </summary>
-        private QBEntity TransformEntity(QBEntity source, EntityMappingConfig? mapping)
+        private QBEntity TransformEntity(QBEntity source, EntityMappingConfig? mapping, string entityType)
         {
             var transformed = new QBEntity
             {
@@ -130,6 +254,7 @@ namespace QB_TimeWarp.Services
                 TxnID = source.TxnID,
                 Name = source.Name,
                 FullName = source.FullName,
+                IsActive = source.IsActive,
                 ExportedAt = source.ExportedAt
             };
 
@@ -158,8 +283,165 @@ namespace QB_TimeWarp.Services
                     .ToList();
             }
 
+            // Ensure class assignments are preserved in transactions
+            if (_transformationRules.PreserveClassTracking && ClassTrackingHeaderTypes.Contains(entityType))
+            {
+                PreserveClassAssignment(source, transformed);
+            }
+
+            _transformationReport.TotalEntitiesTransformed++;
+
             return transformed;
         }
+
+        /// <summary>
+        /// Ensures class assignments from source are carried into the transformed entity.
+        /// </summary>
+        private void PreserveClassAssignment(QBEntity source, QBEntity transformed)
+        {
+            // Preserve header-level class
+            var sourceClass = source.Fields["ClassRef"]?["FullName"]?.ToString();
+            if (!string.IsNullOrEmpty(sourceClass))
+            {
+                if (transformed.Fields["ClassRef"] == null)
+                {
+                    transformed.Fields["ClassRef"] = new JObject { ["FullName"] = sourceClass };
+                }
+                _discoveredClasses.Add(sourceClass);
+            }
+
+            // Preserve line-item level classes
+            for (int i = 0; i < source.LineItems.Count && i < transformed.LineItems.Count; i++)
+            {
+                var sourceLineClass = source.LineItems[i]["ClassRef"]?["FullName"]?.ToString();
+                if (!string.IsNullOrEmpty(sourceLineClass))
+                {
+                    if (transformed.LineItems[i]["ClassRef"] == null)
+                    {
+                        transformed.LineItems[i]["ClassRef"] = new JObject { ["FullName"] = sourceLineClass };
+                    }
+                    _discoveredClasses.Add(sourceLineClass);
+                }
+
+                // Handle JournalEntry-specific class refs
+                var debitClass = source.LineItems[i]["JournalDebitLine"]?["ClassRef"]?["FullName"]?.ToString()
+                    ?? source.LineItems[i]["JournalDebitLine.ClassRef.FullName"]?.ToString();
+                if (!string.IsNullOrEmpty(debitClass))
+                    _discoveredClasses.Add(debitClass);
+
+                var creditClass = source.LineItems[i]["JournalCreditLine"]?["ClassRef"]?["FullName"]?.ToString()
+                    ?? source.LineItems[i]["JournalCreditLine.ClassRef.FullName"]?.ToString();
+                if (!string.IsNullOrEmpty(creditClass))
+                    _discoveredClasses.Add(creditClass);
+            }
+        }
+
+        /// <summary>
+        /// Tracks class usage statistics for the transformation report.
+        /// </summary>
+        private void TrackClassUsage(string entityType, QBEntity entity)
+        {
+            void RecordClassUsage(string? className, string txnType)
+            {
+                if (string.IsNullOrEmpty(className)) return;
+
+                if (!_classUsageByTxnType.ContainsKey(txnType))
+                    _classUsageByTxnType[txnType] = 0;
+                _classUsageByTxnType[txnType]++;
+
+                if (!_classUsageByClassName.ContainsKey(className))
+                    _classUsageByClassName[className] = 0;
+                _classUsageByClassName[className]++;
+            }
+
+            // Check header-level class
+            var headerClass = entity.Fields["ClassRef"]?["FullName"]?.ToString();
+            RecordClassUsage(headerClass, entityType);
+
+            // Check line-item classes
+            foreach (var lineItem in entity.LineItems)
+            {
+                var lineClass = lineItem["ClassRef"]?["FullName"]?.ToString();
+                RecordClassUsage(lineClass, $"{entityType}:LineItems");
+            }
+        }
+
+        /// <summary>
+        /// Discovers all classes referenced in the exported data.
+        /// </summary>
+        private void DiscoverClassesFromData(Dictionary<string, ExportedEntitySet> exportedData)
+        {
+            Log.Information("  Discovering classes from source data...");
+
+            // Get classes from the Classes entity set if exported
+            if (exportedData.ContainsKey("Classes"))
+            {
+                foreach (var cls in exportedData["Classes"].Entities)
+                {
+                    var className = cls.FullName ?? cls.Name;
+                    if (!string.IsNullOrEmpty(className))
+                        _discoveredClasses.Add(className);
+                }
+                Log.Information("    Found {Count} classes in Classes export", exportedData["Classes"].TotalCount);
+            }
+
+            // Also scan transactions for class references
+            foreach (var (entityType, entitySet) in exportedData)
+            {
+                if (!ClassTrackingHeaderTypes.Contains(entityType)) continue;
+
+                foreach (var entity in entitySet.Entities)
+                {
+                    var headerClass = entity.Fields["ClassRef"]?["FullName"]?.ToString();
+                    if (!string.IsNullOrEmpty(headerClass))
+                        _discoveredClasses.Add(headerClass);
+
+                    foreach (var lineItem in entity.LineItems)
+                    {
+                        var lineClass = lineItem["ClassRef"]?["FullName"]?.ToString();
+                        if (!string.IsNullOrEmpty(lineClass))
+                            _discoveredClasses.Add(lineClass);
+                    }
+                }
+            }
+
+            Log.Information("    Total unique classes discovered: {Count}", _discoveredClasses.Count);
+        }
+
+        /// <summary>
+        /// Extracts accounting model preferences from exported data.
+        /// </summary>
+        private void ExtractAccountingModel(Dictionary<string, ExportedEntitySet> exportedData)
+        {
+            if (!exportedData.ContainsKey("Preferences")) return;
+
+            var prefsSet = exportedData["Preferences"];
+            if (!prefsSet.Entities.Any()) return;
+
+            var prefs = prefsSet.Entities.First();
+            var accountingMethod = prefs.Fields["AccountingPrefs"]?["ReportBasis"]?.ToString()
+                ?? prefs.Fields["ReportBasis"]?.ToString()
+                ?? prefs.Fields["AccountingMethod"]?.ToString()
+                ?? "";
+
+            if (!string.IsNullOrEmpty(accountingMethod))
+            {
+                _transformationReport.SourceAccountingMethod = accountingMethod;
+                Log.Information("  Source accounting method: {Method}", accountingMethod);
+            }
+
+            var classTracking = prefs.Fields["AccountingPrefs"]?["IsUsingClassTracking"]?.ToString()
+                ?? prefs.Fields["IsUsingClassTracking"]?.ToString();
+            if (!string.IsNullOrEmpty(classTracking))
+            {
+                Log.Information("  Source class tracking enabled: {Enabled}", classTracking);
+            }
+        }
+
+        /// <summary>
+        /// Gets all classes discovered during transformation (for import).
+        /// </summary>
+        public HashSet<string> GetDiscoveredClasses() => _discoveredClasses;
 
         /// <summary>
         /// Applies field mapping rules to a JObject, producing a new JObject with mapped fields.
@@ -179,6 +461,7 @@ namespace QB_TimeWarp.Services
                 {
                     case "skip":
                         // Intentionally skip this field
+                        _transformationReport.TotalFieldsSkipped++;
                         continue;
 
                     case "map":
@@ -187,6 +470,7 @@ namespace QB_TimeWarp.Services
                         {
                             var processedValue = ProcessValue(sourceValue, mapping);
                             SetNestedValue(result, mapping.TargetField, processedValue);
+                            _transformationReport.TotalFieldsMapped++;
                         }
                         break;
 
@@ -199,6 +483,7 @@ namespace QB_TimeWarp.Services
                                 mapping.TransformFunction ?? "",
                                 mapping);
                             SetNestedValue(result, mapping.TargetField, transformedValue);
+                            _transformationReport.TotalFieldsMapped++;
                         }
                         break;
 
@@ -206,6 +491,7 @@ namespace QB_TimeWarp.Services
                         if (mapping.TargetField == null) continue;
                         var val = sourceValue ?? JToken.FromObject(mapping.DefaultValue ?? "");
                         SetNestedValue(result, mapping.TargetField, val);
+                        _transformationReport.TotalFieldsMapped++;
                         break;
                 }
             }
@@ -300,6 +586,7 @@ namespace QB_TimeWarp.Services
                 Log.Debug("Truncating field {Field} from {Original} to {Max} chars",
                     mapping.SourceField, strValue.Length, mapping.MaxLength.Value);
                 strValue = strValue.Substring(0, mapping.MaxLength.Value);
+                _transformationReport.TotalFieldsTruncated++;
                 return JToken.FromObject(strValue);
             }
 
@@ -338,6 +625,89 @@ namespace QB_TimeWarp.Services
             }
 
             return JToken.FromObject(value);
+        }
+
+        /// <summary>
+        /// Builds the detailed transformation report.
+        /// </summary>
+        private void BuildTransformationReport(Dictionary<string, ExportedEntitySet> exportedData)
+        {
+            _transformationReport.GeneratedAt = DateTime.UtcNow;
+            _transformationReport.ReactivatedEntitiesByType = new Dictionary<string, int>(_reactivatedCountByType);
+
+            // Class tracking summary
+            if (_transformationRules.PreserveClassTracking)
+            {
+                _transformationReport.ClassTracking = new ClassTrackingSummary
+                {
+                    TotalClassesInSource = _discoveredClasses.Count,
+                    SourceClasses = _discoveredClasses.OrderBy(c => c).ToList(),
+                    ClassUsageByTransactionType = new Dictionary<string, int>(_classUsageByTxnType),
+                    ClassUsageByClassName = new Dictionary<string, int>(_classUsageByClassName)
+                };
+            }
+
+            // Build summary
+            var parts = new List<string>();
+            parts.Add($"Transformed {_transformationReport.TotalEntitiesTransformed} entities");
+            parts.Add($"Mapped {_transformationReport.TotalFieldsMapped} fields");
+
+            if (_transformationReport.TotalReactivatedEntities > 0)
+                parts.Add($"Reactivated {_transformationReport.TotalReactivatedEntities} inactive entities");
+
+            if (_discoveredClasses.Count > 0)
+                parts.Add($"Preserved {_discoveredClasses.Count} classes");
+
+            if (!string.IsNullOrEmpty(_transformationReport.SourceAccountingMethod))
+                parts.Add($"Accounting method: {_transformationReport.SourceAccountingMethod}");
+
+            _transformationReport.Summary = string.Join(" | ", parts);
+        }
+
+        /// <summary>
+        /// Logs a detailed summary of reactivated entities.
+        /// </summary>
+        private void LogReactivationSummary()
+        {
+            Log.Information("────────────────────────────────────────────");
+            Log.Information("  REACTIVATED ENTITIES SUMMARY");
+            Log.Information("────────────────────────────────────────────");
+
+            int total = 0;
+            foreach (var (entityType, count) in _reactivatedCountByType.OrderBy(kv => kv.Key))
+            {
+                Log.Information("    {EntityType}: {Count} entities reactivated", entityType, count);
+                total += count;
+            }
+
+            Log.Information("    ────────────────────────────────");
+            Log.Information("    TOTAL: {Total} entities reactivated (inactive → active)", total);
+        }
+
+        /// <summary>
+        /// Logs a summary of class tracking information.
+        /// </summary>
+        private void LogClassTrackingSummary()
+        {
+            Log.Information("────────────────────────────────────────────");
+            Log.Information("  CLASS TRACKING SUMMARY");
+            Log.Information("────────────────────────────────────────────");
+            Log.Information("    Total unique classes: {Count}", _discoveredClasses.Count);
+
+            foreach (var cls in _discoveredClasses.OrderBy(c => c))
+            {
+                var usage = _classUsageByClassName.TryGetValue(cls, out var count) ? count : 0;
+                Log.Information("    Class '{Class}': used in {Count} transactions", cls, usage);
+            }
+
+            if (_classUsageByTxnType.Any())
+            {
+                Log.Information("    Class usage by transaction type:");
+                foreach (var (txnType, count) in _classUsageByTxnType.OrderBy(kv => kv.Key))
+                {
+                    Log.Information("      {TxnType}: {Count} assignments", txnType, count);
+                }
+            }
         }
 
         /// <summary>

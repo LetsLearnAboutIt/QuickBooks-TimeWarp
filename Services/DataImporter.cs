@@ -14,6 +14,7 @@ namespace QB_TimeWarp.Services
     {
         private readonly QBConnectionManager _connection;
         private readonly ImportConfig _importConfig;
+        private readonly TransformationRulesConfig _transformationRules;
         private readonly string _sdkVersion;
 
         /// <summary>
@@ -22,6 +23,12 @@ namespace QB_TimeWarp.Services
         /// </summary>
         private readonly Dictionary<string, IdMapping> _idMappings = new();
         private readonly Dictionary<string, string> _nameToListIdMap = new();
+
+        /// <summary>
+        /// Classes that exist in QB 2021 (populated during import).
+        /// </summary>
+        private readonly HashSet<string> _existingClasses = new(StringComparer.OrdinalIgnoreCase);
+        private readonly List<string> _createdClasses = new();
 
         /// <summary>
         /// Maps our entity type names to QBXML Add request type names.
@@ -98,10 +105,17 @@ namespace QB_TimeWarp.Services
         };
 
         public DataImporter(QBConnectionManager connection, ImportConfig importConfig, string sdkVersion)
+            : this(connection, importConfig, sdkVersion, new TransformationRulesConfig())
+        {
+        }
+
+        public DataImporter(QBConnectionManager connection, ImportConfig importConfig, string sdkVersion,
+            TransformationRulesConfig transformationRules)
         {
             _connection = connection;
             _importConfig = importConfig;
             _sdkVersion = sdkVersion;
+            _transformationRules = transformationRules;
         }
 
         /// <summary>
@@ -558,6 +572,304 @@ namespace QB_TimeWarp.Services
         /// Gets all ID mappings (useful for validation).
         /// </summary>
         public Dictionary<string, IdMapping> GetIdMappings() => _idMappings;
+
+        /// <summary>
+        /// Gets the list of classes that were created during import.
+        /// </summary>
+        public List<string> GetCreatedClasses() => _createdClasses;
+
+        /// <summary>
+        /// Gets the set of existing classes in QB 2021.
+        /// </summary>
+        public HashSet<string> GetExistingClasses() => _existingClasses;
+
+        // ═══════════════════════════════════════════════════════════════════
+        // CLASS MANAGEMENT
+        // ═══════════════════════════════════════════════════════════════════
+
+        /// <summary>
+        /// Ensures all required classes exist in QB 2021. Creates missing ones.
+        /// Call this before importing transactions that reference classes.
+        /// </summary>
+        public ClassTrackingSummary EnsureClassesExist(HashSet<string> requiredClasses)
+        {
+            var summary = new ClassTrackingSummary
+            {
+                TotalClassesInSource = requiredClasses.Count,
+                SourceClasses = requiredClasses.OrderBy(c => c).ToList()
+            };
+
+            if (!requiredClasses.Any())
+            {
+                Log.Information("  No classes to verify.");
+                return summary;
+            }
+
+            Log.Information("────────────────────────────────────────────");
+            Log.Information("  ENSURING CLASSES EXIST IN QB 2021");
+            Log.Information("────────────────────────────────────────────");
+
+            // Query existing classes from QB 2021
+            QueryExistingClasses();
+
+            foreach (var className in requiredClasses.OrderBy(c => c))
+            {
+                if (_existingClasses.Contains(className))
+                {
+                    summary.ClassesAlreadyExisting++;
+                    Log.Debug("    Class '{Class}' already exists in QB 2021", className);
+                }
+                else
+                {
+                    // Create the missing class
+                    bool created = CreateClassInQB2021(className);
+                    if (created)
+                    {
+                        summary.ClassesCreatedInTarget++;
+                        summary.CreatedClasses.Add(className);
+                        _createdClasses.Add(className);
+                        Log.Information("    ✓ Created class '{Class}' in QB 2021", className);
+                    }
+                    else
+                    {
+                        summary.MissingClasses.Add(className);
+                        Log.Warning("    ✗ Failed to create class '{Class}' in QB 2021", className);
+                    }
+                }
+            }
+
+            summary.TotalClassesInTarget = _existingClasses.Count;
+
+            Log.Information("  Class sync complete: {Existing} existing, {Created} created, {Missing} failed",
+                summary.ClassesAlreadyExisting, summary.ClassesCreatedInTarget, summary.MissingClasses.Count);
+
+            return summary;
+        }
+
+        /// <summary>
+        /// Queries QB 2021 for existing classes and populates _existingClasses.
+        /// </summary>
+        private void QueryExistingClasses()
+        {
+            try
+            {
+                var requestXml = $@"<ClassQueryRq>
+  <ActiveStatus>All</ActiveStatus>
+</ClassQueryRq>";
+
+                var fullRequest = QBConnectionManager.BuildQBXMLRequest(requestXml, _sdkVersion);
+                var response = _connection.ProcessRequestWithRetry(fullRequest);
+                var doc = XDocument.Parse(response);
+
+                foreach (var classRet in doc.Descendants("ClassRet"))
+                {
+                    var fullName = classRet.Element("FullName")?.Value;
+                    if (!string.IsNullOrEmpty(fullName))
+                    {
+                        _existingClasses.Add(fullName);
+                    }
+                }
+
+                Log.Information("    Found {Count} existing classes in QB 2021", _existingClasses.Count);
+            }
+            catch (Exception ex)
+            {
+                Log.Warning("    Could not query existing classes: {Message}", ex.Message);
+            }
+        }
+
+        /// <summary>
+        /// Creates a single class in QB 2021.
+        /// Handles hierarchical classes by creating parent classes first.
+        /// </summary>
+        private bool CreateClassInQB2021(string className)
+        {
+            try
+            {
+                // Handle hierarchical class names (e.g., "Department:Marketing")
+                var parts = className.Split(':');
+                if (parts.Length > 1)
+                {
+                    // Ensure parent classes exist first
+                    var parentPath = string.Join(":", parts.Take(parts.Length - 1));
+                    if (!_existingClasses.Contains(parentPath))
+                    {
+                        CreateClassInQB2021(parentPath);
+                    }
+                }
+
+                if (_importConfig.DryRun)
+                {
+                    Log.Debug("    [DRY RUN] Would create class: {Class}", className);
+                    _existingClasses.Add(className);
+                    return true;
+                }
+
+                var leafName = parts.Last();
+                var parentRef = parts.Length > 1
+                    ? $"<ParentRef><FullName>{EscapeXml(string.Join(":", parts.Take(parts.Length - 1)))}</FullName></ParentRef>"
+                    : "";
+
+                var requestXml = $@"<ClassAddRq>
+  <ClassAdd>
+    <Name>{EscapeXml(leafName)}</Name>
+    {parentRef}
+    <IsActive>true</IsActive>
+  </ClassAdd>
+</ClassAddRq>";
+
+                var fullRequest = QBConnectionManager.BuildQBXMLRequest(requestXml, _sdkVersion);
+                var response = _connection.ProcessRequestWithRetry(fullRequest);
+                var doc = XDocument.Parse(response);
+
+                var statusCode = doc.Descendants("ClassAddRs").FirstOrDefault()?.Attribute("statusCode")?.Value;
+                if (statusCode == "0" || statusCode == "3100") // 3100 = already exists
+                {
+                    _existingClasses.Add(className);
+                    return true;
+                }
+
+                var statusMessage = doc.Descendants("ClassAddRs").FirstOrDefault()?.Attribute("statusMessage")?.Value;
+                Log.Warning("    Failed to create class '{Class}': {Message}", className, statusMessage);
+                return false;
+            }
+            catch (Exception ex)
+            {
+                Log.Warning("    Error creating class '{Class}': {Message}", className, ex.Message);
+                return false;
+            }
+        }
+
+        // ═══════════════════════════════════════════════════════════════════
+        // COMPANY PREFERENCES / ACCOUNTING MODEL
+        // ═══════════════════════════════════════════════════════════════════
+
+        /// <summary>
+        /// Queries company preferences from a QuickBooks company file.
+        /// Uses QBXML PreferencesQueryRq to get accounting method, report basis, etc.
+        /// </summary>
+        public CompanyPreferences QueryCompanyPreferences()
+        {
+            var prefs = new CompanyPreferences();
+
+            try
+            {
+                Log.Information("  Querying company preferences...");
+
+                var requestXml = @"<PreferencesQueryRq></PreferencesQueryRq>";
+                var fullRequest = QBConnectionManager.BuildQBXMLRequest(requestXml, _sdkVersion);
+                var response = _connection.ProcessRequestWithRetry(fullRequest);
+                var doc = XDocument.Parse(response);
+
+                var prefsRet = doc.Descendants("PreferencesRet").FirstOrDefault();
+                if (prefsRet != null)
+                {
+                    // Extract accounting preferences
+                    var accountingPrefs = prefsRet.Element("AccountingPrefs");
+                    if (accountingPrefs != null)
+                    {
+                        prefs.ReportBasis = accountingPrefs.Element("ReportBasis")?.Value ?? "";
+                        prefs.AccountingMethod = prefs.ReportBasis; // In QB, ReportBasis indicates Cash vs Accrual
+
+                        var classTracking = accountingPrefs.Element("IsUsingClassTracking")?.Value;
+                        prefs.IsClassTrackingEnabled = classTracking?.Equals("true", StringComparison.OrdinalIgnoreCase) ?? false;
+                    }
+
+                    // Extract other preferences
+                    var currentAppPrefs = prefsRet.Element("CurrentAppAccessRights");
+                    prefs.IsMultiCurrencyEnabled = prefsRet.Descendants("IsMultiCurrencyOn")
+                        .FirstOrDefault()?.Value?.Equals("true", StringComparison.OrdinalIgnoreCase) ?? false;
+
+                    var fiscalMonth = prefsRet.Descendants("FiscalYearStartMonth")
+                        .FirstOrDefault()?.Value;
+                    if (int.TryParse(fiscalMonth, out var month))
+                        prefs.FiscalYearStartMonth = month;
+                }
+
+                Log.Information("    Accounting method: {Method}", prefs.AccountingMethod);
+                Log.Information("    Report basis: {Basis}", prefs.ReportBasis);
+                Log.Information("    Class tracking enabled: {Enabled}", prefs.IsClassTrackingEnabled);
+            }
+            catch (Exception ex)
+            {
+                Log.Warning("    Could not query company preferences: {Message}", ex.Message);
+            }
+
+            return prefs;
+        }
+
+        /// <summary>
+        /// Applies the accounting method (Cash vs Accrual) to QB 2021 via QBXML PreferencesMod.
+        /// Note: QuickBooks SDK has limited support for modifying preferences.
+        /// The ReportBasis can typically be set through company preferences.
+        /// </summary>
+        public bool ApplyAccountingPreferences(CompanyPreferences sourcePrefs)
+        {
+            if (string.IsNullOrEmpty(sourcePrefs.AccountingMethod))
+            {
+                Log.Warning("  No accounting method specified in source preferences.");
+                return false;
+            }
+
+            Log.Information("  Applying accounting preferences to QB 2021...");
+            Log.Information("    Setting accounting method to: {Method}", sourcePrefs.AccountingMethod);
+            Log.Information("    Setting report basis to: {Basis}", sourcePrefs.ReportBasis);
+
+            if (_importConfig.DryRun)
+            {
+                Log.Information("    [DRY RUN] Would set accounting method to {Method}", sourcePrefs.AccountingMethod);
+                return true;
+            }
+
+            try
+            {
+                // Build PreferencesModRq - note that QB SDK support for modifying preferences is limited
+                // The ReportBasis is typically modifiable
+                var reportBasis = sourcePrefs.ReportBasis;
+                if (string.IsNullOrEmpty(reportBasis))
+                    reportBasis = sourcePrefs.AccountingMethod;
+
+                var requestXml = $@"<PreferencesModRq>
+  <PreferencesMod>
+    <AccountingPrefs>
+      <ReportBasis>{EscapeXml(reportBasis)}</ReportBasis>
+    </AccountingPrefs>
+  </PreferencesMod>
+</PreferencesModRq>";
+
+                var fullRequest = QBConnectionManager.BuildQBXMLRequest(requestXml, _sdkVersion);
+                var response = _connection.ProcessRequestWithRetry(fullRequest);
+                var doc = XDocument.Parse(response);
+
+                var statusCode = doc.Descendants("PreferencesModRs")
+                    .FirstOrDefault()?.Attribute("statusCode")?.Value;
+
+                if (statusCode == "0")
+                {
+                    Log.Information("    ✓ Accounting preferences applied successfully");
+                    return true;
+                }
+
+                var statusMessage = doc.Descendants("PreferencesModRs")
+                    .FirstOrDefault()?.Attribute("statusMessage")?.Value;
+                Log.Warning("    ⚠ Preferences modification returned status {Code}: {Message}",
+                    statusCode, statusMessage);
+
+                // Even if the SDK doesn't support this operation, we log it for manual follow-up
+                Log.Information("    NOTE: If preferences cannot be set via SDK, manually set accounting method " +
+                    "to '{Method}' in QuickBooks 2021 > Edit > Preferences > Accounting > Company Preferences",
+                    sourcePrefs.AccountingMethod);
+
+                return false;
+            }
+            catch (Exception ex)
+            {
+                Log.Warning("    Error applying accounting preferences: {Message}", ex.Message);
+                Log.Information("    NOTE: Manually set accounting method to '{Method}' in QB 2021",
+                    sourcePrefs.AccountingMethod);
+                return false;
+            }
+        }
 
         /// <summary>
         /// Escapes special XML characters in a string.

@@ -138,8 +138,17 @@ namespace QB_TimeWarp
             ConsoleBanner.ShowStep(3, totalSteps, "Transform Data (QB 2023 → QB 2021 format)");
             Dictionary<string, ExportedEntitySet> transformedData;
 
-            var transformer = new DataTransformer(_config.Paths.FieldMappingsFile);
+            var transformer = new DataTransformer(_config.Paths.FieldMappingsFile, _config.TransformationRules);
             transformedData = transformer.TransformAll(exportedData);
+
+            var transformationReport = transformer.GetTransformationReport();
+            if (transformationReport.TotalReactivatedEntities > 0)
+                ConsoleBanner.ShowSuccess($"Reactivated {transformationReport.TotalReactivatedEntities} inactive entities");
+            if (transformationReport.ClassTracking != null && transformationReport.ClassTracking.TotalClassesInSource > 0)
+                ConsoleBanner.ShowSuccess($"Preserved {transformationReport.ClassTracking.TotalClassesInSource} class assignments");
+            if (!string.IsNullOrEmpty(transformationReport.SourceAccountingMethod))
+                ConsoleBanner.ShowSuccess($"Accounting method: {transformationReport.SourceAccountingMethod}");
+
             ConsoleBanner.ShowSuccess("Data transformation complete");
 
             // Save transformed data
@@ -193,9 +202,69 @@ namespace QB_TimeWarp
                 var importer = new DataImporter(
                     qb2021Conn,
                     _config.Import,
-                    _config.QuickBooks.QB2021.SDKVersion);
+                    _config.QuickBooks.QB2021.SDKVersion,
+                    _config.TransformationRules);
 
+                // Step 4a: Apply accounting preferences before import
+                if (_config.TransformationRules.MatchAccountingModel)
+                {
+                    ConsoleBanner.ShowStep(4, totalSteps, "Applying Accounting Preferences");
+                    try
+                    {
+                        // Query source preferences
+                        using var qb2023PrefsConn = new QBConnectionManager(
+                            _config.QuickBooks.QB2023, "QB2023-Prefs");
+                        qb2023PrefsConn.Connect();
+                        var sourcePrefsImporter = new DataImporter(
+                            qb2023PrefsConn, _config.Import,
+                            _config.QuickBooks.QB2023.SDKVersion,
+                            _config.TransformationRules);
+                        var sourcePrefs = sourcePrefsImporter.QueryCompanyPreferences();
+                        report = new MigrationReport { StartTime = overallStart };
+                        report.SourcePreferences = sourcePrefs;
+
+                        // Apply to target
+                        var applied = importer.ApplyAccountingPreferences(sourcePrefs);
+                        if (applied)
+                            ConsoleBanner.ShowSuccess($"Accounting method set to: {sourcePrefs.AccountingMethod}");
+                        else
+                            ConsoleBanner.ShowWarning("Accounting preferences may need manual verification");
+
+                        // Query target preferences to verify
+                        var targetPrefs = importer.QueryCompanyPreferences();
+                        report.TargetPreferences = targetPrefs;
+                    }
+                    catch (Exception ex)
+                    {
+                        Log.Warning(ex, "Could not apply accounting preferences: {Message}", ex.Message);
+                        ConsoleBanner.ShowWarning($"Accounting preferences: {ex.Message}");
+                    }
+                }
+
+                // Step 4b: Ensure classes exist before importing transactions
+                if (_config.TransformationRules.PreserveClassTracking)
+                {
+                    var discoveredClasses = transformer.GetDiscoveredClasses();
+                    if (discoveredClasses.Any())
+                    {
+                        ConsoleBanner.ShowStep(4, totalSteps, "Ensuring Classes Exist in QB 2021");
+                        var classSummary = importer.EnsureClassesExist(discoveredClasses);
+                        if (transformationReport.ClassTracking != null)
+                        {
+                            transformationReport.ClassTracking.ClassesCreatedInTarget = classSummary.ClassesCreatedInTarget;
+                            transformationReport.ClassTracking.ClassesAlreadyExisting = classSummary.ClassesAlreadyExisting;
+                            transformationReport.ClassTracking.TotalClassesInTarget = classSummary.TotalClassesInTarget;
+                            transformationReport.ClassTracking.CreatedClasses = classSummary.CreatedClasses;
+                            transformationReport.ClassTracking.MissingClasses = classSummary.MissingClasses;
+                        }
+                        if (classSummary.ClassesCreatedInTarget > 0)
+                            ConsoleBanner.ShowSuccess($"Created {classSummary.ClassesCreatedInTarget} classes in QB 2021");
+                    }
+                }
+
+                // Step 4c: Import all data
                 report = importer.ImportAll(transformedData);
+                report.TransformationReport = transformationReport;
 
                 if (report.TotalRecordsFailed > 0)
                     ConsoleBanner.ShowWarning($"Import completed with {report.TotalRecordsFailed} failures");
@@ -516,6 +585,13 @@ namespace QB_TimeWarp
                 ["Records Attempted"] = report.TotalRecordsAttempted.ToString(),
                 ["Records Succeeded"] = report.TotalRecordsSucceeded.ToString(),
                 ["Records Failed"] = report.TotalRecordsFailed.ToString(),
+                ["Reactivated Entities"] = report.TransformationReport?.TotalReactivatedEntities.ToString() ?? "0",
+                ["Accounting Model"] = report.SourcePreferences != null
+                    ? $"{report.SourcePreferences.AccountingMethod} (matched: {(report.TargetPreferences?.AccountingMethod == report.SourcePreferences?.AccountingMethod ? "YES" : "VERIFY")})"
+                    : "Not checked",
+                ["Class Tracking"] = report.TransformationReport?.ClassTracking != null
+                    ? $"{report.TransformationReport.ClassTracking.TotalClassesInSource} classes ({report.TransformationReport.ClassTracking.ClassesCreatedInTarget} created)"
+                    : "Not applicable",
                 ["Validation"] = report.ValidationReport?.IsValid == true ? "PASSED" : "See report",
                 ["Journal Integrity"] = report.ValidationReport?.JournalIntegrity?.IsBalanced == true
                     ? "BALANCED" : (report.ValidationReport?.JournalIntegrity != null ? "ISSUES FOUND" : "Not checked"),

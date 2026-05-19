@@ -18,6 +18,11 @@
         "Date format handling is consistent but timezone-aware fields in 2023 need stripping",
         "QB 2023 supports longer field lengths for some text fields (Name: 209 vs 41 chars in older)"
       ]
+    },
+    "transformationRules": {
+      "ReactivateInactiveEntities": "All inactive entities (Customers, Vendors, Items, Accounts, Employees) from QB 2023 are set to IsActive=true during transformation. Controlled by TransformationRules.ReactivateInactiveEntities in appsettings.json.",
+      "PreserveClassTracking": "Class assignments on transactions (Invoices, Bills, Journal Entries, Sales Receipts, Purchase Orders) are preserved. ClassRef.FullName is mapped at both header and line item levels. Missing classes are auto-created in QB 2021. Controlled by TransformationRules.PreserveClassTracking.",
+      "MatchAccountingModel": "The accounting method (Cash basis vs Accrual basis) and ReportBasis from QB 2023 are queried and applied to QB 2021 via QBXML PreferencesQuery/PreferencesMod. Controlled by TransformationRules.MatchAccountingModel."
     }
   },
   "globalSettings": {
@@ -427,6 +432,7 @@
         { "sourceField": "TxnID", "targetField": null, "action": "skip" },
         { "sourceField": "VendorRef.FullName", "targetField": "VendorRef.FullName", "action": "map" },
         { "sourceField": "APAccountRef.FullName", "targetField": "APAccountRef.FullName", "action": "map" },
+        { "sourceField": "ClassRef.FullName", "targetField": "ClassRef.FullName", "action": "map", "notes": "Class tracking - header level" },
         { "sourceField": "TxnDate", "targetField": "TxnDate", "action": "map" },
         { "sourceField": "DueDate", "targetField": "DueDate", "action": "map" },
         { "sourceField": "RefNumber", "targetField": "RefNumber", "action": "map", "maxLength": 11 },
@@ -434,6 +440,16 @@
         { "sourceField": "Memo", "targetField": "Memo", "action": "map", "maxLength": 4095 },
         { "sourceField": "IsPaid", "targetField": null, "action": "skip", "notes": "Computed" },
         { "sourceField": "ExternalGUID", "targetField": null, "action": "skip" }
+      ],
+      "lineItemMappings": [
+        { "sourceField": "AccountRef.FullName", "targetField": "AccountRef.FullName", "action": "map" },
+        { "sourceField": "ItemRef.FullName", "targetField": "ItemRef.FullName", "action": "map" },
+        { "sourceField": "Desc", "targetField": "Desc", "action": "map", "maxLength": 4095 },
+        { "sourceField": "Quantity", "targetField": "Quantity", "action": "map" },
+        { "sourceField": "Cost", "targetField": "Cost", "action": "map" },
+        { "sourceField": "Amount", "targetField": "Amount", "action": "map" },
+        { "sourceField": "ClassRef.FullName", "targetField": "ClassRef.FullName", "action": "map", "notes": "Class tracking - line item level" },
+        { "sourceField": "CustomerRef.FullName", "targetField": "CustomerRef.FullName", "action": "map" }
       ]
     },
     "Payment": {
@@ -482,7 +498,7 @@
       "fieldMappings": [
         { "sourceField": "TxnID", "targetField": null, "action": "skip" },
         { "sourceField": "CustomerRef.FullName", "targetField": "CustomerRef.FullName", "action": "map" },
-        { "sourceField": "ClassRef.FullName", "targetField": "ClassRef.FullName", "action": "map" },
+        { "sourceField": "ClassRef.FullName", "targetField": "ClassRef.FullName", "action": "map", "notes": "Class tracking - header level" },
         { "sourceField": "TxnDate", "targetField": "TxnDate", "action": "map" },
         { "sourceField": "RefNumber", "targetField": "RefNumber", "action": "map", "maxLength": 11 },
         { "sourceField": "PaymentMethodRef.FullName", "targetField": "PaymentMethodRef.FullName", "action": "map" },
@@ -490,6 +506,17 @@
         { "sourceField": "Memo", "targetField": "Memo", "action": "map", "maxLength": 4095 },
         { "sourceField": "IsToBePrinted", "targetField": "IsToBePrinted", "action": "map" },
         { "sourceField": "ExternalGUID", "targetField": null, "action": "skip" }
+      ],
+      "lineItemMappings": [
+        { "sourceField": "ItemRef.FullName", "targetField": "ItemRef.FullName", "action": "map" },
+        { "sourceField": "Desc", "targetField": "Desc", "action": "map", "maxLength": 4095 },
+        { "sourceField": "Quantity", "targetField": "Quantity", "action": "map" },
+        { "sourceField": "Rate", "targetField": "Rate", "action": "map" },
+        { "sourceField": "RatePercent", "targetField": "RatePercent", "action": "map" },
+        { "sourceField": "Amount", "targetField": "Amount", "action": "map" },
+        { "sourceField": "ClassRef.FullName", "targetField": "ClassRef.FullName", "action": "map", "notes": "Class tracking - line item level" },
+        { "sourceField": "SalesTaxCodeRef.FullName", "targetField": "SalesTaxCodeRef.FullName", "action": "map" },
+        { "sourceField": "ServiceDate", "targetField": "ServiceDate", "action": "map" }
       ]
     },
     "PurchaseOrder": {
@@ -498,7 +525,7 @@
       "fieldMappings": [
         { "sourceField": "TxnID", "targetField": null, "action": "skip" },
         { "sourceField": "VendorRef.FullName", "targetField": "VendorRef.FullName", "action": "map" },
-        { "sourceField": "ClassRef.FullName", "targetField": "ClassRef.FullName", "action": "map" },
+        { "sourceField": "ClassRef.FullName", "targetField": "ClassRef.FullName", "action": "map", "notes": "Class tracking - header level" },
         { "sourceField": "TxnDate", "targetField": "TxnDate", "action": "map" },
         { "sourceField": "RefNumber", "targetField": "RefNumber", "action": "map", "maxLength": 11 },
         { "sourceField": "ShipAddress", "targetField": "ShipAddress", "action": "map" },
@@ -509,6 +536,18 @@
         { "sourceField": "Memo", "targetField": "Memo", "action": "map", "maxLength": 4095 },
         { "sourceField": "IsManuallyClosed", "targetField": "IsManuallyClosed", "action": "map" },
         { "sourceField": "ExternalGUID", "targetField": null, "action": "skip" }
+      ],
+      "lineItemMappings": [
+        { "sourceField": "ItemRef.FullName", "targetField": "ItemRef.FullName", "action": "map" },
+        { "sourceField": "Desc", "targetField": "Desc", "action": "map", "maxLength": 4095 },
+        { "sourceField": "Quantity", "targetField": "Quantity", "action": "map" },
+        { "sourceField": "Rate", "targetField": "Rate", "action": "map" },
+        { "sourceField": "Amount", "targetField": "Amount", "action": "map" },
+        { "sourceField": "ClassRef.FullName", "targetField": "ClassRef.FullName", "action": "map", "notes": "Class tracking - line item level" },
+        { "sourceField": "CustomerRef.FullName", "targetField": "CustomerRef.FullName", "action": "map" },
+        { "sourceField": "ManufacturerPartNumber", "targetField": "ManufacturerPartNumber", "action": "map", "maxLength": 31 },
+        { "sourceField": "ExpectedDate", "targetField": "ExpectedDate", "action": "map" },
+        { "sourceField": "IsManuallyClosed", "targetField": "IsManuallyClosed", "action": "map" }
       ]
     },
     "CreditMemo": {

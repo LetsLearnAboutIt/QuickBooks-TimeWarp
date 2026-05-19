@@ -11,6 +11,30 @@ namespace QB_TimeWarp.Models
         public ImportConfig Import { get; set; } = new();
         public ValidationConfig Validation { get; set; } = new();
         public LoggingConfig Logging { get; set; } = new();
+        public TransformationRulesConfig TransformationRules { get; set; } = new();
+    }
+
+    /// <summary>
+    /// Configuration for transformation rules applied during QB 2023 → QB 2021 migration.
+    /// </summary>
+    public class TransformationRulesConfig
+    {
+        /// <summary>
+        /// When true, all inactive entities (Customers, Vendors, Items, Accounts, Employees)
+        /// from QB 2023 will be set to Active in QB 2021.
+        /// </summary>
+        public bool ReactivateInactiveEntities { get; set; } = true;
+
+        /// <summary>
+        /// When true, class tracking assignments are preserved from QB 2023 to QB 2021.
+        /// Missing classes will be created in QB 2021 automatically.
+        /// </summary>
+        public bool PreserveClassTracking { get; set; } = true;
+
+        /// <summary>
+        /// When true, the accounting method (Cash vs Accrual) from QB 2023 is applied to QB 2021.
+        /// </summary>
+        public bool MatchAccountingModel { get; set; } = true;
     }
 
     public class QuickBooksConfig

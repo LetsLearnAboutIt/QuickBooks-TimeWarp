@@ -23,12 +23,65 @@ namespace QB_TimeWarp.Models
         // Journal integrity check results
         public JournalIntegrityReport? JournalIntegrity { get; set; }
 
+        // Transformation rule validation results
+        public ReactivationValidationReport? ReactivationValidation { get; set; }
+        public ClassTrackingValidationReport? ClassTrackingValidation { get; set; }
+        public AccountingModelValidationReport? AccountingModelValidation { get; set; }
+
         // Overall stats
         public int TotalEntitiesCompared { get; set; }
         public int TotalFieldsCompared { get; set; }
         public int TotalDiscrepancies { get; set; }
         public int CriticalDiscrepancies { get; set; }
         public int WarningDiscrepancies { get; set; }
+    }
+
+    // ═══════════════════════════════════════════════════════════════════
+    // Transformation Rule Validation Reports
+    // ═══════════════════════════════════════════════════════════════════
+
+    /// <summary>
+    /// Validates that all reactivated entities are actually active in QB 2021.
+    /// </summary>
+    public class ReactivationValidationReport
+    {
+        public bool AllEntitiesActive { get; set; }
+        public int TotalReactivatedEntities { get; set; }
+        public int VerifiedActiveInTarget { get; set; }
+        public int StillInactiveInTarget { get; set; }
+        public Dictionary<string, int> ReactivatedByType { get; set; } = new();
+        public List<string> FailedReactivations { get; set; } = new();
+        public string Summary { get; set; } = string.Empty;
+    }
+
+    /// <summary>
+    /// Validates that class assignments were preserved correctly during migration.
+    /// </summary>
+    public class ClassTrackingValidationReport
+    {
+        public bool AllClassesPreserved { get; set; }
+        public bool ClassTrackingEnabledInSource { get; set; }
+        public bool ClassTrackingEnabledInTarget { get; set; }
+        public int TotalClassAssignmentsChecked { get; set; }
+        public int ClassAssignmentsPreserved { get; set; }
+        public int ClassAssignmentsMissing { get; set; }
+        public List<string> MissingClassAssignments { get; set; } = new();
+        public List<string> Warnings { get; set; } = new();
+        public string Summary { get; set; } = string.Empty;
+    }
+
+    /// <summary>
+    /// Validates that the accounting method matches between QB 2023 and QB 2021.
+    /// </summary>
+    public class AccountingModelValidationReport
+    {
+        public bool AccountingMethodMatches { get; set; }
+        public string SourceAccountingMethod { get; set; } = string.Empty;
+        public string TargetAccountingMethod { get; set; } = string.Empty;
+        public string SourceReportBasis { get; set; } = string.Empty;
+        public string TargetReportBasis { get; set; } = string.Empty;
+        public bool ReportBasisMatches { get; set; }
+        public string Summary { get; set; } = string.Empty;
     }
 
     /// <summary>

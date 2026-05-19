@@ -116,6 +116,9 @@ namespace QB_TimeWarp.Models
         public MigrationStatus OverallStatus { get; set; }
         public Dictionary<string, ImportBatchSummary> EntitySummaries { get; set; } = new();
         public ValidationReport? ValidationReport { get; set; }
+        public TransformationReport? TransformationReport { get; set; }
+        public CompanyPreferences? SourcePreferences { get; set; }
+        public CompanyPreferences? TargetPreferences { get; set; }
 
         public int TotalRecordsAttempted => EntitySummaries.Values.Sum(s => s.TotalAttempted);
         public int TotalRecordsSucceeded => EntitySummaries.Values.Sum(s => s.Succeeded);
@@ -133,5 +136,121 @@ namespace QB_TimeWarp.Models
         public string SourceName { get; set; } = string.Empty;
         public string TargetListID { get; set; } = string.Empty;
         public string TargetTxnID { get; set; } = string.Empty;
+    }
+
+    // ═══════════════════════════════════════════════════════════════════
+    // Company Preferences & Accounting Model
+    // ═══════════════════════════════════════════════════════════════════
+
+    /// <summary>
+    /// Captures company preferences from QuickBooks, including the accounting method.
+    /// Used to preserve Cash vs Accrual basis during migration.
+    /// </summary>
+    public class CompanyPreferences
+    {
+        /// <summary>
+        /// The accounting method: "Cash" or "Accrual".
+        /// </summary>
+        public string AccountingMethod { get; set; } = string.Empty;
+
+        /// <summary>
+        /// The report basis setting: "Cash" or "Accrual".
+        /// </summary>
+        public string ReportBasis { get; set; } = string.Empty;
+
+        /// <summary>
+        /// Whether class tracking is enabled in the company file.
+        /// </summary>
+        public bool IsClassTrackingEnabled { get; set; }
+
+        /// <summary>
+        /// Whether multi-currency is enabled.
+        /// </summary>
+        public bool IsMultiCurrencyEnabled { get; set; }
+
+        /// <summary>
+        /// The fiscal year start month (1-12).
+        /// </summary>
+        public int FiscalYearStartMonth { get; set; } = 1;
+
+        /// <summary>
+        /// Raw preferences data for additional inspection.
+        /// </summary>
+        public JObject? RawPreferences { get; set; }
+
+        public DateTime ExtractedAt { get; set; } = DateTime.UtcNow;
+    }
+
+    // ═══════════════════════════════════════════════════════════════════
+    // Class Tracking
+    // ═══════════════════════════════════════════════════════════════════
+
+    /// <summary>
+    /// Represents a QuickBooks Class used for tracking transactions by department, location, etc.
+    /// </summary>
+    public class QBClass
+    {
+        public string ListID { get; set; } = string.Empty;
+        public string Name { get; set; } = string.Empty;
+        public string FullName { get; set; } = string.Empty;
+        public bool IsActive { get; set; } = true;
+        public string? ParentFullName { get; set; }
+    }
+
+    /// <summary>
+    /// Summary of class tracking usage across the migration.
+    /// </summary>
+    public class ClassTrackingSummary
+    {
+        public int TotalClassesInSource { get; set; }
+        public int TotalClassesInTarget { get; set; }
+        public int ClassesCreatedInTarget { get; set; }
+        public int ClassesAlreadyExisting { get; set; }
+        public List<string> SourceClasses { get; set; } = new();
+        public List<string> CreatedClasses { get; set; } = new();
+        public List<string> MissingClasses { get; set; } = new();
+
+        /// <summary>
+        /// Class usage counts by transaction type (e.g., "Invoices" => 45).
+        /// </summary>
+        public Dictionary<string, int> ClassUsageByTransactionType { get; set; } = new();
+
+        /// <summary>
+        /// Class usage counts by class name (e.g., "Marketing" => 120).
+        /// </summary>
+        public Dictionary<string, int> ClassUsageByClassName { get; set; } = new();
+    }
+
+    // ═══════════════════════════════════════════════════════════════════
+    // Transformation Report
+    // ═══════════════════════════════════════════════════════════════════
+
+    /// <summary>
+    /// Detailed report of transformations applied during migration.
+    /// </summary>
+    public class TransformationReport
+    {
+        public DateTime GeneratedAt { get; set; } = DateTime.UtcNow;
+
+        // Reactivated entities tracking
+        public Dictionary<string, int> ReactivatedEntitiesByType { get; set; } = new();
+        public int TotalReactivatedEntities => ReactivatedEntitiesByType.Values.Sum();
+        public List<string> ReactivatedEntityDetails { get; set; } = new();
+
+        // Class tracking summary
+        public ClassTrackingSummary? ClassTracking { get; set; }
+
+        // Accounting model
+        public string SourceAccountingMethod { get; set; } = string.Empty;
+        public string TargetAccountingMethod { get; set; } = string.Empty;
+        public bool AccountingMethodMatched { get; set; }
+
+        // General transformation stats
+        public int TotalEntitiesTransformed { get; set; }
+        public int TotalFieldsMapped { get; set; }
+        public int TotalFieldsSkipped { get; set; }
+        public int TotalFieldsTruncated { get; set; }
+
+        public string Summary { get; set; } = string.Empty;
     }
 }
