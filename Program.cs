@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using QB_TimeWarp.Helpers;
@@ -213,6 +214,9 @@ namespace QB_TimeWarp
             const int totalSteps = 6;
             var overallStart = DateTime.UtcNow;
 
+            // Kill any lingering QB processes before starting
+            KillQuickBooksProcesses("Ensuring clean state at migration start");
+
             // ─── Step 1: Load or Extract QB 2021 Schema ────────────────────────
             ConsoleBanner.ShowStep(1, totalSteps, "Load QB 2021 Schema");
             QBSchemaExport? schema = null;
@@ -256,6 +260,9 @@ namespace QB_TimeWarp
                     ConsoleBanner.ShowWarning("Using built-in schema definitions.");
                 }
             }
+
+            // Kill any lingering QB processes before switching versions
+            KillQuickBooksProcesses("Ensuring clean state before QB 2023 export");
 
             // ─── Step 2: Export Data from QB 2023 ──────────────────────
             ConsoleBanner.ShowStep(2, totalSteps, "Export Data from QB 2023");
@@ -332,25 +339,16 @@ namespace QB_TimeWarp
                 }
             }
 
-            // ─── Step 3.9: Prompt User to Switch QuickBooks Versions ─────
-            // CRITICAL: Transformation happens AFTER QB 2023 export is done.
-            // User must now close QB 2023 and open QB 2021 before import.
+            // ─── Step 3.9: Automatically Switch QuickBooks Versions ─────
+            // Kill QB 2023 processes before starting QB 2021 import
             Log.Information("");
             Log.Information("╔══════════════════════════════════════════════════════════════╗");
-            Log.Information("║  ACTION REQUIRED: Switch QuickBooks Version                  ║");
-            Log.Information("║                                                              ║");
-            Log.Information("║  1. Close QuickBooks 2023 completely                        ║");
-            Log.Information("║  2. Open QuickBooks 2021                                    ║");
-            Log.Information("║  3. Open the target company file in QB 2021                 ║");
-            Log.Information("║  4. Press Enter to continue with import...                  ║");
+            Log.Information("║  Switching QuickBooks versions automatically...              ║");
+            Log.Information("║  Closing QB 2023 → Will open QB 2021 for import             ║");
             Log.Information("╚══════════════════════════════════════════════════════════════╝");
 
-            Console.ForegroundColor = ConsoleColor.Yellow;
-            Console.Write("\n  >> Close QB 2023, open QB 2021, then press Enter to continue... ");
-            Console.ResetColor();
-            Console.ReadLine();
-
-            Log.Information("  User confirmed QB 2021 is ready. Proceeding with import...");
+            KillQuickBooksProcesses("Switching from QB 2023 export to QB 2021 import");
+            Log.Information("  QuickBooks processes cleared. Proceeding with import...");
 
             // ─── Step 4: Import Data into QB 2021 ──────────────────────
             ConsoleBanner.ShowStep(4, totalSteps, "Import Data into QB 2021");
@@ -843,6 +841,61 @@ namespace QB_TimeWarp
             }
 
             Console.WriteLine();
+        }
+
+        /// <summary>
+        /// Kills all running QuickBooks processes to ensure clean state between steps.
+        /// QB 2023 (64-bit) runs as "qbw.exe", QB 2021 (32-bit) runs as "QBW32.exe".
+        /// Only one QB instance can run at a time for SDK operations.
+        /// </summary>
+        private static void KillQuickBooksProcesses(string reason)
+        {
+            var qbProcessNames = new[] { "qbw", "QBW32", "QBW32PremierAccountant", "QBWPremierAccountant" };
+            var killed = new List<string>();
+
+            foreach (var name in qbProcessNames)
+            {
+                try
+                {
+                    var processes = Process.GetProcessesByName(name);
+                    foreach (var proc in processes)
+                    {
+                        try
+                        {
+                            Log.Information("Killing QuickBooks process: {Name} (PID {PID}) — Reason: {Reason}",
+                                proc.ProcessName, proc.Id, reason);
+                            proc.Kill();
+                            proc.WaitForExit(15000); // Wait up to 15 seconds
+                            killed.Add($"{proc.ProcessName} (PID {proc.Id})");
+                        }
+                        catch (Exception ex)
+                        {
+                            Log.Warning("Could not kill process {Name} (PID {PID}): {Error}",
+                                proc.ProcessName, proc.Id, ex.Message);
+                        }
+                        finally
+                        {
+                            proc.Dispose();
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Log.Debug("Error checking for process {Name}: {Error}", name, ex.Message);
+                }
+            }
+
+            if (killed.Any())
+            {
+                Log.Information("Killed {Count} QuickBooks process(es): {Processes}",
+                    killed.Count, string.Join(", ", killed));
+                // Give Windows time to fully release file locks
+                Thread.Sleep(3000);
+            }
+            else
+            {
+                Log.Information("No QuickBooks processes found to kill.");
+            }
         }
 
         private enum RunMode
