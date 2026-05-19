@@ -76,6 +76,38 @@
 
 ---
 
+## Collaborative Development Approach
+
+> **This project is developed collaboratively between the AI agent and a human user who is actively involved.**
+
+### How We Work Together
+
+| Principle | Details |
+|-----------|---------|
+| **User is actively watching** | The user can see the VM screen via RDP screen sharing and monitors QuickBooks windows during execution |
+| **Check in regularly** | During long operations (export, import), pause and share progress with the user before proceeding |
+| **User handles popups** | QuickBooks generates popups (permissions, passwords, warnings) that may need human intervention — the user can see and respond to these |
+| **Don't barrel through** | At each pipeline stage (Export → Transform → Import → Validate), stop and coordinate with the user |
+| **User provides context** | The user knows the QuickBooks data and can identify if results look wrong — leverage their expertise |
+| **Shared debugging** | When errors occur, share the error with the user — they may recognize the issue faster from the QB UI |
+
+### When to STOP and Check with User
+
+1. **Before starting any pipeline stage** — confirm we're ready
+2. **After export completes** — verify entity counts look reasonable
+3. **Before import** — this writes to QB 2021, confirm transformation looks correct
+4. **When any unexpected popup appears** — user can see and handle it
+5. **When errors occur** — share the error, user may have context
+6. **After validation** — review results together
+
+### Key Operational Notes
+
+- **Keep QuickBooks windows VISIBLE** — popups can block SDK operations silently if windows are minimized
+- **Passwords are in `PASSWORDS.txt`** — enter when QuickBooks prompts for company file passwords
+- **See `POPUP_HANDLING.md`** — comprehensive guide to common QuickBooks popups and how to handle them
+
+---
+
 ## Key Files & Their Purposes
 
 | File | Purpose |

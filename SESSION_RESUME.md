@@ -4,6 +4,28 @@
 
 ---
 
+## ⚠️ CRITICAL OPERATIONAL DETAILS — READ FIRST ⚠️
+
+### QuickBooks Company File Passwords
+
+| Company File | Password |
+|-------------|----------|
+| **Air-Masters-QB-2023.qbw** | `3825You171` |
+| **Josh Safty 2021.qbw** | `3825You171` |
+| **Blank Template** | `Fl0640098!@!` |
+
+> **Enter these passwords when QuickBooks prompts on opening company files.**
+
+### ⚡ Operational Rules — ALWAYS FOLLOW
+
+1. **Keep QB windows VISIBLE during execution** — Do NOT minimize QuickBooks. Popups will appear that need monitoring and handling.
+2. **This is COLLABORATIVE** — The user is actively watching the VM screen and programming alongside the AI. Check in with the user regularly — they can see things automation misses.
+3. **Don't barrel through** — Pause at key stages and coordinate with the user before proceeding.
+4. **Monitor for popups** — QuickBooks generates permission dialogs, multi-user warnings, and other popups that can block SDK operations silently. See `POPUP_HANDLING.md` for details.
+5. **Passwords file** — All credentials are also stored in `PASSWORDS.txt` in the project root for quick reference.
+
+---
+
 ## 1. Windows VM Connection
 
 | Detail | Value |

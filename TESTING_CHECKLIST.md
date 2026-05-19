@@ -4,6 +4,18 @@
 
 ---
 
+## ⚠️ Pre-Test: Critical Setup
+
+- [ ] **Ensure QuickBooks windows remain VISIBLE throughout testing** — do NOT minimize them
+- [ ] **Enter passwords when prompted** by QuickBooks:
+  - Air-Masters-QB-2023.qbw → `3825You171`
+  - Josh Safty 2021.qbw → `3825You171`
+  - Blank Template → `Fl0640098!@!`
+- [ ] **User is actively watching** — coordinate before each major stage
+- [ ] Review `POPUP_HANDLING.md` for common popups you may encounter
+
+---
+
 ## Prerequisites
 
 - [ ] Windows VM is accessible via RDP (`aiagent.hostedremotedesktop.com:4420`)
@@ -11,6 +23,7 @@
 - [ ] QuickBooks 2021 is installed and running
 - [ ] QB 2023 company file (`Air-Masters-QB-2023.qbw`) is open in QB 2023
 - [ ] QB 2021 company file (`Josh Safty 2021.qbw`) is open in QB 2021
+- [ ] **Both QuickBooks windows are VISIBLE on screen** (not minimized)
 - [ ] Application is built and deployed to `C:\QB-TimeWarp`
 - [ ] `appsettings.json` has correct paths (verify QB2023 InstallPath includes `QBWPremierAccountant.exe`)
 
@@ -36,6 +49,9 @@
 - [ ] Verify entity counts are reasonable (cross-check with QB 2023 UI if possible)
 - [ ] Check for any error messages in `.\Logs\` directory
 - [ ] **Expected**: No errors; all entity types exported successfully
+
+### 🛑 CHECKPOINT: STOP and check with user
+> **Before proceeding to Stage 2**: Share export summary with user. Confirm entity counts look reasonable. Ask if any popups appeared that need attention.
 
 ---
 
@@ -65,6 +81,9 @@
 - [ ] Verify no data was silently dropped
 - [ ] **Expected**: Truncations are logged; no data loss without logging
 
+### 🛑 CHECKPOINT: STOP and check with user
+> **Before proceeding to Stage 3 (Import)**: This is the most critical step — data will be written to QB 2021. Share transformation report with user. Confirm all transformations look correct. Get explicit go-ahead before importing.
+
 ---
 
 ## Stage 3: Import Testing
@@ -90,6 +109,9 @@
 - [ ] If `SkipOnError: true`, check for skipped records in the log
 - [ ] Review any skipped records — are they expected failures?
 - [ ] **Expected**: Minimal skipped records; any skips are logged with reason
+
+### 🛑 CHECKPOINT: STOP and check with user
+> **After import completes**: Share import results with user. Ask them to spot-check QB 2021 for imported data. Confirm everything looks good before running validation.
 
 ---
 
@@ -188,3 +210,21 @@
 | Entities skipped during import | Dependency not yet imported | Verify import order in config |
 | Journal imbalance | Rounding during transform | Check currency precision settings |
 | Date format error | Timezone not stripped | Verify `stripTimezoneFromDates: true` in FieldMappings.json |
+
+---
+
+## Troubleshooting: QuickBooks Popups During Testing
+
+> **QuickBooks frequently generates popups that can block SDK operations.** Keep windows visible and watch for these.
+
+| Popup | What to Do |
+|-------|-----------|
+| **"An application wants to access QuickBooks"** (SDK permission) | Click **"Yes, always allow access"** — this authorizes the QBXML SDK connection |
+| **Company file password prompt** | Enter the correct password (see Pre-Test section above) |
+| **"Another user is logged in"** / Multi-user warning | Switch to **single-user mode**: File → Switch to Single-user Mode |
+| **"QuickBooks needs to update"** | Click **"Skip"** or **"Remind me later"** — do NOT update during testing |
+| **"Registration" or "License" dialog** | Dismiss or close — do NOT proceed with registration during testing |
+| **"Do you want to back up?"** on close | Click **"No"** unless you specifically want a backup |
+| **Unrecognized popup** | **STOP** — screenshot it and check with user before clicking anything |
+
+> **See `POPUP_HANDLING.md` for a comprehensive popup reference guide.**
