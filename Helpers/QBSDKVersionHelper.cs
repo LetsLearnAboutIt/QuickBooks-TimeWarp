@@ -63,6 +63,14 @@ namespace QB_TimeWarp.Helpers
             "SubscriptionPaymentStatus",
             "DeliveryInfo",
             "TaxLineRef",
+
+            // FIX #5: Additional QB 2023-only fields found during testing
+            "DetailAccountType",       // Only AccountType is valid in SDK 15.0
+            "TaxLineID",               // Tax form mapping field from QB 2023
+            "QuantityOnSalesOrder",     // Enhanced inventory (read-only in 2023)
+            "QuantityOnPurchaseOrder",  // Enhanced inventory (read-only in 2023)
+            "Sublevel",                // Sub-item depth tracking (read-only)
+            "SpecialItemType",         // Special order fields
         };
 
         /// <summary>

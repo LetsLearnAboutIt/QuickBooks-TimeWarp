@@ -50,8 +50,11 @@
       "ExternalGUID", "TaxRegistrationNumber", "CurrencyRef", "PreferredDeliveryMethod",
       "EmployeeType", "EmployeePayrollInfo", "BillingRateRef",
       "UnitOfMeasureSetRef", "ForceUOMChange", "ExchangeRate", "LinkToTxnID",
-      "SubscriptionPaymentStatus", "DeliveryInfo", "TaxLineRef"
+      "SubscriptionPaymentStatus", "DeliveryInfo", "TaxLineRef",
+      "DetailAccountType", "TaxLineID", "QuantityOnSalesOrder", "QuantityOnPurchaseOrder",
+      "Sublevel", "SpecialItemType"
     ],
+    "_note_detailAccountType": "DetailAccountType is NOT in SDK 15.0 — only AccountType is valid for QB 2021. Use AccountType for all account imports.",
     "sdk16OnlyEntityTypes": [
       "TransferInventory"
     ],

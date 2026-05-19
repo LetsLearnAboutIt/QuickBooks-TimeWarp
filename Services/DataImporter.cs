@@ -320,19 +320,35 @@ namespace QB_TimeWarp.Services
                 Log.Warning("*** DRY RUN MODE — No data will actually be imported ***");
             }
 
-            // ── Pre-Analysis Phase ──────────────────────────────────
+            // ── FIX #3: Stage 0 — Verify Account Types in QB 2021 ───
             Log.Information("");
             Log.Information("  ┌─────────────────────────────────────────┐");
-            Log.Information("  │  Phase 0: Pre-Import Dependency Analysis │");
+            Log.Information("  │  Stage 0: Verify Account Types (FIX #3) │");
             Log.Information("  └─────────────────────────────────────────┘");
 
+            VerifyAccountTypesExist();
+
+            // ── Pre-Analysis Phase ──────────────────────────────────
+            Log.Information("");
+            Log.Information("  ┌──────────────────────────────────────────────┐");
+            Log.Information("  │  Phase 0b: Pre-Import Dependency Analysis     │");
+            Log.Information("  └──────────────────────────────────────────────┘");
+
             var dependencies = AnalyzeDependencies(transformedData);
+
+            // ── FIX #4: Create missing reference types BEFORE Stage 1 ──
+            Log.Information("");
+            Log.Information("  ┌──────────────────────────────────────────────────────┐");
+            Log.Information("  │  Phase 0c: Create Missing Reference Types (FIX #4)    │");
+            Log.Information("  └──────────────────────────────────────────────────────┘");
+
+            CreateMissingReferenceTypes(dependencies, summary);
 
             // ── Auto-create missing foundation items ─────────────────
             if (_importConfig.AutoCreateMissingDependencies && dependencies.MissingItems.Any())
             {
                 Log.Information("");
-                Log.Information("  Auto-creating missing dependencies...");
+                Log.Information("  Auto-creating remaining missing dependencies...");
                 AutoCreateMissingItems(dependencies, summary);
             }
 
@@ -642,6 +658,285 @@ namespace QB_TimeWarp.Services
                 "EntityRef" => "Customers", // Usually a customer
                 _ => null
             };
+        }
+
+        // ═══════════════════════════════════════════════════════════════════
+        // FIX #3: Stage 0 — Account Type Verification
+        // ═══════════════════════════════════════════════════════════════════
+
+        /// <summary>
+        /// FIX #3: Verifies that QB 2021 has all required account types before import.
+        /// Queries the target company file and logs which account types are available.
+        /// Fails gracefully if critical types are missing (logs warning, doesn't halt).
+        /// </summary>
+        private void VerifyAccountTypesExist()
+        {
+            // All account types that QB 2021 should support
+            var requiredAccountTypes = new[]
+            {
+                "Bank", "AccountsReceivable", "AccountsPayable",
+                "OtherCurrentAsset", "FixedAsset", "OtherAsset",
+                "OtherCurrentLiability", "LongTermLiability", "Equity",
+                "Income", "CostOfGoodsSold", "Expense", "OtherIncome", "OtherExpense"
+            };
+
+            var criticalTypes = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
+            {
+                "Bank", "AccountsReceivable", "AccountsPayable", "Income", "Expense", "Equity"
+            };
+
+            try
+            {
+                Log.Information("  Querying QB 2021 for existing account types...");
+
+                var requestXml = @"<AccountQueryRq><ActiveStatus>All</ActiveStatus></AccountQueryRq>";
+                var fullRequest = QBConnectionManager.BuildQBXMLRequest(requestXml, _effectiveSDKVersion);
+                var response = _connection.ProcessRequestWithRetry(fullRequest);
+                var doc = System.Xml.Linq.XDocument.Parse(response);
+
+                var existingTypes = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+                foreach (var accountRet in doc.Descendants("AccountRet"))
+                {
+                    var accountType = accountRet.Element("AccountType")?.Value;
+                    if (!string.IsNullOrEmpty(accountType))
+                    {
+                        existingTypes.Add(accountType);
+
+                        // Also store the ListID mapping for existing accounts
+                        var fullName = accountRet.Element("FullName")?.Value;
+                        var listId = accountRet.Element("ListID")?.Value;
+                        if (!string.IsNullOrEmpty(fullName) && !string.IsNullOrEmpty(listId))
+                        {
+                            _nameToListIdMap[$"Accounts:{fullName}"] = listId;
+                        }
+                    }
+                }
+
+                Log.Information("  FIX #3: Account types found in QB 2021: [{Types}]",
+                    string.Join(", ", existingTypes.OrderBy(t => t)));
+
+                // Check for missing types
+                var missingTypes = requiredAccountTypes
+                    .Where(t => !existingTypes.Contains(t))
+                    .ToList();
+
+                var missingCritical = missingTypes
+                    .Where(t => criticalTypes.Contains(t))
+                    .ToList();
+
+                if (missingTypes.Any())
+                {
+                    Log.Warning("  FIX #3: Missing account types in QB 2021: [{Types}]",
+                        string.Join(", ", missingTypes));
+                }
+                else
+                {
+                    Log.Information("  FIX #3: ✓ All {Count} required account types are available in QB 2021",
+                        requiredAccountTypes.Length);
+                }
+
+                if (missingCritical.Any())
+                {
+                    Log.Error("  FIX #3: ⚠ CRITICAL account types missing: [{Types}]. " +
+                        "Some imports may fail. Create these account types manually in QB 2021.",
+                        string.Join(", ", missingCritical));
+                }
+
+                Log.Information("  FIX #3: Account type verification complete. " +
+                    "{Found}/{Required} types available.",
+                    existingTypes.Count, requiredAccountTypes.Length);
+            }
+            catch (Exception ex)
+            {
+                Log.Warning("  FIX #3: Could not verify account types (non-fatal): {Message}. " +
+                    "Import will proceed and handle errors per-entity.", ex.Message);
+            }
+        }
+
+        // ═══════════════════════════════════════════════════════════════════
+        // FIX #4: Create Missing Reference Types
+        // ═══════════════════════════════════════════════════════════════════
+
+        /// <summary>
+        /// FIX #4: Creates missing reference types (sales tax codes, payment terms,
+        /// customer types, etc.) BEFORE the main import stages.
+        /// This prevents StatusCode 3140/3200 errors when entities reference
+        /// items that don't exist yet.
+        /// </summary>
+        private void CreateMissingReferenceTypes(DependencyAnalysisResult dependencies, StagedImportSummary summary)
+        {
+            var autoCreateSummary = new StageSummary
+            {
+                StageNumber = 0,
+                StageName = "Create Missing Reference Types (FIX #4)",
+                StartTime = DateTime.UtcNow
+            };
+
+            int totalCreated = 0;
+
+            // ── Create missing sales tax codes ────────────────────────
+            if (dependencies.ReferencedSalesTaxCodes.Any())
+            {
+                var existingSTC = QueryExistingItems("SalesTaxCodes");
+                var missingSTC = dependencies.ReferencedSalesTaxCodes
+                    .Where(n => !existingSTC.Contains(n))
+                    .ToList();
+
+                if (missingSTC.Any())
+                {
+                    Log.Information("  FIX #4: Creating {Count} missing SalesTaxCodes: [{Names}]",
+                        missingSTC.Count, string.Join(", ", missingSTC));
+
+                    foreach (var name in missingSTC)
+                    {
+                        if (AutoCreateSingleItem("SalesTaxCodes", name))
+                        {
+                            totalCreated++;
+                            autoCreateSummary.AutoCreatedItemNames.Add($"SalesTaxCode:{name}");
+                            Log.Information("    ✓ Created SalesTaxCode: '{Name}'", name);
+                        }
+                    }
+                }
+            }
+
+            // ── Create missing payment terms ──────────────────────────
+            if (dependencies.ReferencedTerms.Any())
+            {
+                var existingTerms = QueryExistingItems("Terms");
+                var missingTerms = dependencies.ReferencedTerms
+                    .Where(n => !existingTerms.Contains(n))
+                    .ToList();
+
+                if (missingTerms.Any())
+                {
+                    Log.Information("  FIX #4: Creating {Count} missing Terms: [{Names}]",
+                        missingTerms.Count, string.Join(", ", missingTerms));
+
+                    foreach (var name in missingTerms)
+                    {
+                        if (AutoCreateSingleItem("Terms", name))
+                        {
+                            totalCreated++;
+                            autoCreateSummary.AutoCreatedItemNames.Add($"Terms:{name}");
+                            Log.Information("    ✓ Created Terms: '{Name}' (default Net 30)", name);
+                        }
+                    }
+                }
+            }
+
+            // ── Create missing customer types ─────────────────────────
+            if (dependencies.ReferencedCustomerTypes.Any())
+            {
+                var existingCT = QueryExistingItems("CustomerTypes");
+                var missingCT = dependencies.ReferencedCustomerTypes
+                    .Where(n => !existingCT.Contains(n))
+                    .ToList();
+
+                if (missingCT.Any())
+                {
+                    Log.Information("  FIX #4: Creating {Count} missing CustomerTypes: [{Names}]",
+                        missingCT.Count, string.Join(", ", missingCT));
+
+                    foreach (var name in missingCT)
+                    {
+                        if (AutoCreateSingleItem("CustomerTypes", name))
+                        {
+                            totalCreated++;
+                            autoCreateSummary.AutoCreatedItemNames.Add($"CustomerType:{name}");
+                            Log.Information("    ✓ Created CustomerType: '{Name}'", name);
+                        }
+                    }
+                }
+            }
+
+            // ── Create missing vendor types ───────────────────────────
+            if (dependencies.ReferencedVendorTypes.Any())
+            {
+                var existingVT = QueryExistingItems("VendorTypes");
+                var missingVT = dependencies.ReferencedVendorTypes
+                    .Where(n => !existingVT.Contains(n))
+                    .ToList();
+
+                if (missingVT.Any())
+                {
+                    Log.Information("  FIX #4: Creating {Count} missing VendorTypes: [{Names}]",
+                        missingVT.Count, string.Join(", ", missingVT));
+
+                    foreach (var name in missingVT)
+                    {
+                        if (AutoCreateSingleItem("VendorTypes", name))
+                        {
+                            totalCreated++;
+                            autoCreateSummary.AutoCreatedItemNames.Add($"VendorType:{name}");
+                            Log.Information("    ✓ Created VendorType: '{Name}'", name);
+                        }
+                    }
+                }
+            }
+
+            // ── Create missing payment methods ────────────────────────
+            if (dependencies.ReferencedPaymentMethods.Any())
+            {
+                var existingPM = QueryExistingItems("PaymentMethods");
+                var missingPM = dependencies.ReferencedPaymentMethods
+                    .Where(n => !existingPM.Contains(n))
+                    .ToList();
+
+                if (missingPM.Any())
+                {
+                    Log.Information("  FIX #4: Creating {Count} missing PaymentMethods: [{Names}]",
+                        missingPM.Count, string.Join(", ", missingPM));
+
+                    foreach (var name in missingPM)
+                    {
+                        if (AutoCreateSingleItem("PaymentMethods", name))
+                        {
+                            totalCreated++;
+                            autoCreateSummary.AutoCreatedItemNames.Add($"PaymentMethod:{name}");
+                            Log.Information("    ✓ Created PaymentMethod: '{Name}'", name);
+                        }
+                    }
+                }
+            }
+
+            // ── Create missing ship methods ───────────────────────────
+            if (dependencies.ReferencedShipMethods.Any())
+            {
+                var existingSM = QueryExistingItems("ShipMethods");
+                var missingSM = dependencies.ReferencedShipMethods
+                    .Where(n => !existingSM.Contains(n))
+                    .ToList();
+
+                if (missingSM.Any())
+                {
+                    Log.Information("  FIX #4: Creating {Count} missing ShipMethods: [{Names}]",
+                        missingSM.Count, string.Join(", ", missingSM));
+
+                    foreach (var name in missingSM)
+                    {
+                        if (AutoCreateSingleItem("ShipMethods", name))
+                        {
+                            totalCreated++;
+                            autoCreateSummary.AutoCreatedItemNames.Add($"ShipMethod:{name}");
+                            Log.Information("    ✓ Created ShipMethod: '{Name}'", name);
+                        }
+                    }
+                }
+            }
+
+            autoCreateSummary.AutoCreatedItems = totalCreated;
+            autoCreateSummary.EndTime = DateTime.UtcNow;
+            autoCreateSummary.Passed = true;
+
+            if (totalCreated > 0)
+            {
+                summary.Stages.Add(autoCreateSummary);
+                Log.Information("  FIX #4: Created {Count} missing reference types before import", totalCreated);
+            }
+            else
+            {
+                Log.Information("  FIX #4: No missing reference types to create — all dependencies satisfied");
+            }
         }
 
         /// <summary>
@@ -1119,8 +1414,20 @@ namespace QB_TimeWarp.Services
             }
             catch (Exception ex)
             {
-                result.Success = false;
-                result.ErrorMessage = ex.Message;
+                // BONUS FIX: Don't overwrite success status if the entity was already
+                // successfully imported. This prevents retry logic from marking a
+                // successful import as failed when a non-critical exception occurs
+                // after the QB response was already processed.
+                if (!result.Success)
+                {
+                    result.Success = false;
+                    result.ErrorMessage = ex.Message;
+                }
+                else
+                {
+                    Log.Warning("  Exception after successful import of '{Name}' (preserving success): {Message}",
+                        entity.Name, ex.Message);
+                }
             }
 
             return result;
@@ -1396,6 +1703,28 @@ namespace QB_TimeWarp.Services
         {
             var sb = new StringBuilder();
 
+            // ── FIX #1: Hierarchical Name Handling ─────────────────────────
+            // For entity types that support hierarchy (Accounts, Customers, Vendors, Items, Classes),
+            // parse the FullName to extract the leaf Name and ParentRef.
+            // QB requires <Name> to be the leaf only, with <ParentRef> for the parent.
+            bool isHierarchical = HierarchicalEntityTypes.Contains(entityType);
+            string? hierarchicalParent = null;
+            bool nameFieldEmitted = false;
+
+            if (isHierarchical)
+            {
+                // Determine the full name: prefer FullName field, fall back to Name
+                var fullName = fields["FullName"]?.ToString() ?? fields["Name"]?.ToString();
+                if (!string.IsNullOrEmpty(fullName) && fullName.Contains(':'))
+                {
+                    var (leafName, parentFullName) = ExtractLeafAndParent(fullName);
+                    hierarchicalParent = parentFullName;
+
+                    Log.Debug("  FIX #1: Hierarchical name for {EntityType}: full='{Full}', leaf='{Leaf}', parent='{Parent}'",
+                        entityType, fullName, leafName, parentFullName);
+                }
+            }
+
             // Get the XSD-defined field ordering for this entity type
             var fieldOrderMap = QBXMLFieldOrdering.GetFieldOrderMap(entityType);
 
@@ -1415,6 +1744,9 @@ namespace QB_TimeWarp.Services
                         .Where(p => !p.Name.StartsWith("_") && !ExcludedFields.Contains(p.Name))
                         .Select(p => p.Name)));
             }
+
+            // ── FIX #2: Track whether we need to force IsActive ──────────
+            bool isActiveEmitted = false;
 
             foreach (var prop in sortedProperties)
             {
@@ -1437,8 +1769,47 @@ namespace QB_TimeWarp.Services
                     continue;
                 }
 
+                // ── FIX #5: Additional field compatibility check ──────────
+                // Skip DetailAccountType (not in SDK 15.0) and other 2023-only fields
+                if (IsQB2023OnlyField(prop.Name))
+                {
+                    _incompatibleFieldSkips++;
+                    Log.Debug("  Skipping QB 2023-only field '{Field}' in QBXML generation (FIX #5)", prop.Name);
+                    continue;
+                }
+
                 if (prop.Name.StartsWith("_"))
                     continue; // Skip internal metadata fields
+
+                // ── FIX #1: Handle Name field for hierarchical entities ───
+                if (prop.Name == "Name" && isHierarchical)
+                {
+                    var nameValue = prop.Value.ToString();
+                    if (!string.IsNullOrEmpty(nameValue))
+                    {
+                        // Extract leaf name (strip parent path if present)
+                        var (leafName, _) = ExtractLeafAndParent(nameValue);
+                        var safeLeafName = EnforceFieldLength("Name", leafName);
+                        sb.AppendLine($"    <Name>{EscapeXml(safeLeafName)}</Name>");
+                        nameFieldEmitted = true;
+                    }
+                    continue; // Don't process Name as normal field
+                }
+
+                // ── FIX #2: Force IsActive = true for all entities ────────
+                // Accountant requirement: all entities must be active during import.
+                // Inactive entities cause reference resolution failures.
+                if (prop.Name == "IsActive")
+                {
+                    sb.AppendLine($"    <IsActive>true</IsActive>");
+                    isActiveEmitted = true;
+                    if (prop.Value.ToString().ToLowerInvariant() != "true")
+                    {
+                        Log.Debug("  FIX #2: IsActive overridden to 'true' for {EntityType} (was '{Original}')",
+                            entityType, prop.Value.ToString());
+                    }
+                    continue; // Don't process IsActive as normal field
+                }
 
                 if (prop.Value is JObject nested)
                 {
@@ -1491,7 +1862,80 @@ namespace QB_TimeWarp.Services
                 }
             }
 
+            // ── FIX #1: Emit ParentRef after Name if hierarchical ─────────
+            if (isHierarchical && !string.IsNullOrEmpty(hierarchicalParent))
+            {
+                // If Name wasn't emitted yet (e.g., data only had FullName), emit it now
+                if (!nameFieldEmitted)
+                {
+                    var fullName = fields["FullName"]?.ToString() ?? fields["Name"]?.ToString() ?? "";
+                    var (leafName, _) = ExtractLeafAndParent(fullName);
+                    var safeLeafName = EnforceFieldLength("Name", leafName);
+                    // Prepend Name at the beginning of sb
+                    sb.Insert(0, $"    <Name>{EscapeXml(safeLeafName)}</Name>\n");
+                }
+
+                sb.AppendLine($"    <ParentRef>");
+                sb.AppendLine($"      <FullName>{EscapeXml(hierarchicalParent)}</FullName>");
+                sb.AppendLine($"    </ParentRef>");
+                Log.Information("  FIX #1: Added ParentRef '{Parent}' for hierarchical entity in {EntityType}",
+                    hierarchicalParent, entityType);
+            }
+
+            // ── FIX #2: Force IsActive if not already emitted ─────────────
+            // Ensure all entities that support IsActive get it set to true
+            if (!isActiveEmitted && IsActiveEntityType(entityType))
+            {
+                sb.AppendLine($"    <IsActive>true</IsActive>");
+                Log.Debug("  FIX #2: Forced IsActive=true for {EntityType} (field was missing)", entityType);
+            }
+
             return sb.ToString();
+        }
+
+        /// <summary>
+        /// Entity types that support the IsActive field.
+        /// FIX #2: All of these must have IsActive=true during import.
+        /// </summary>
+        private static bool IsActiveEntityType(string entityType)
+        {
+            return entityType switch
+            {
+                "Customers" or "CustomerAdd" => true,
+                "Vendors" or "VendorAdd" => true,
+                "Employees" or "EmployeeAdd" => true,
+                "Accounts" or "AccountAdd" => true,
+                "Items" or "ItemService" or "ItemInventory" or "ItemNonInventory" or
+                "ItemOtherCharge" or "ItemDiscount" or "ItemGroup" or "ItemSalesTax" => true,
+                "Classes" or "ClassAdd" => true,
+                "SalesTaxCodes" or "SalesTaxCodeAdd" => true,
+                "Terms" or "StandardTermsAdd" => true,
+                "PaymentMethods" or "PaymentMethodAdd" => true,
+                _ => false
+            };
+        }
+
+        /// <summary>
+        /// FIX #5: Fields that are QB 2023-specific and not supported in SDK 15.0 (QB 2021).
+        /// These are beyond the SDK16OnlyFields list — additional fields found during testing.
+        /// </summary>
+        private static bool IsQB2023OnlyField(string fieldName)
+        {
+            return fieldName switch
+            {
+                // DetailAccountType not supported in SDK 15.0 — only AccountType is valid
+                "DetailAccountType" => true,
+                // Tax form mapping fields from QB 2023
+                "TaxLineID" => true,
+                // Enhanced inventory fields
+                "QuantityOnSalesOrder" => true,
+                "QuantityOnPurchaseOrder" => true,
+                // Sub-item depth tracking (read-only field)
+                "Sublevel" => true,
+                // Special order fields
+                "SpecialItemType" => true,
+                _ => false
+            };
         }
 
         /// <summary>
@@ -1914,6 +2358,50 @@ namespace QB_TimeWarp.Services
                     sourcePrefs.AccountingMethod);
                 return false;
             }
+        }
+
+        // ═══════════════════════════════════════════════════════════════════
+        // HIERARCHICAL NAME HELPERS (FIX #1)
+        // ═══════════════════════════════════════════════════════════════════
+
+        /// <summary>
+        /// Entity types that support hierarchical names with ParentRef in QBXML Add requests.
+        /// These entities use colon-separated FullNames (e.g., "Parent:Child:GrandChild").
+        /// When adding, we must split into leaf Name + ParentRef.
+        /// </summary>
+        private static readonly HashSet<string> HierarchicalEntityTypes = new(StringComparer.OrdinalIgnoreCase)
+        {
+            "Accounts", "Customers", "Vendors", "Items", "Classes",
+            "ItemService", "ItemInventory", "ItemNonInventory", "ItemOtherCharge",
+            "ItemDiscount", "ItemGroup", "ItemSalesTax"
+        };
+
+        /// <summary>
+        /// Extracts the leaf name and parent full name from a hierarchical QB name.
+        /// QuickBooks uses colon ':' as the hierarchy separator.
+        /// Example: "Expenses:Office:Supplies" → ("Supplies", "Expenses:Office")
+        /// </summary>
+        /// <param name="fullName">The colon-separated full name</param>
+        /// <returns>Tuple of (leafName, parentFullName). parentFullName is null if no parent.</returns>
+        private static (string leafName, string? parentFullName) ExtractLeafAndParent(string fullName)
+        {
+            if (string.IsNullOrEmpty(fullName))
+                return (fullName ?? string.Empty, null);
+
+            var parts = fullName.Split(':');
+            if (parts.Length <= 1)
+                return (fullName.Trim(), null);
+
+            var leafName = parts[parts.Length - 1].Trim();
+            var parentFullName = string.Join(":", parts.Take(parts.Length - 1)).Trim();
+
+            if (string.IsNullOrEmpty(parentFullName))
+                return (leafName, null);
+
+            Log.Debug("  Hierarchical name parsed: '{FullName}' → leaf='{Leaf}', parent='{Parent}'",
+                fullName, leafName, parentFullName);
+
+            return (leafName, parentFullName);
         }
 
         /// <summary>

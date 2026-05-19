@@ -306,6 +306,26 @@ namespace QB_TimeWarp
                 }
             }
 
+            // ─── Step 3.9: Prompt User to Switch QuickBooks Versions ─────
+            // CRITICAL: Transformation happens AFTER QB 2023 export is done.
+            // User must now close QB 2023 and open QB 2021 before import.
+            Log.Information("");
+            Log.Information("╔══════════════════════════════════════════════════════════════╗");
+            Log.Information("║  ACTION REQUIRED: Switch QuickBooks Version                  ║");
+            Log.Information("║                                                              ║");
+            Log.Information("║  1. Close QuickBooks 2023 completely                        ║");
+            Log.Information("║  2. Open QuickBooks 2021                                    ║");
+            Log.Information("║  3. Open the target company file in QB 2021                 ║");
+            Log.Information("║  4. Press Enter to continue with import...                  ║");
+            Log.Information("╚══════════════════════════════════════════════════════════════╝");
+
+            Console.ForegroundColor = ConsoleColor.Yellow;
+            Console.Write("\n  >> Close QB 2023, open QB 2021, then press Enter to continue... ");
+            Console.ResetColor();
+            Console.ReadLine();
+
+            Log.Information("  User confirmed QB 2021 is ready. Proceeding with import...");
+
             // ─── Step 4: Import Data into QB 2021 ──────────────────────
             ConsoleBanner.ShowStep(4, totalSteps, "Import Data into QB 2021");
             MigrationReport report;

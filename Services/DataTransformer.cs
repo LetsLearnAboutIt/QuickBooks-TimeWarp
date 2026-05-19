@@ -25,6 +25,8 @@ namespace QB_TimeWarp.Services
         private int _emptyNameFieldsFixed;
         private int _payrollFieldsSimplified;
         private int _ccBalanceSignsFixed;
+        private int _hierarchicalNamesParsed;
+        private int _isActiveOverrides;
 
         // Transformation report tracking
         private readonly TransformationReport _transformationReport = new();
@@ -307,6 +309,16 @@ namespace QB_TimeWarp.Services
                 }
             }
 
+            // ── FIX #1: Parse hierarchical names for easier import ──────────
+            // Split "Parent:Child:Leaf" into separate fields so the importer
+            // can construct proper <Name> + <ParentRef> QBXML
+            ParseHierarchicalName(transformed, entityType);
+
+            // ── FIX #2: Force IsActive = true during transformation ───────
+            // Accountant requirement: all entities must be active for import.
+            // This ensures even originally inactive entities get imported.
+            ForceIsActive(transformed, entityType);
+
             // ── QB 2021 SDK 15.0 Compatibility Fixes ────────────────────
             // Remove SDK 16.0-only fields that would cause 0x80040400 errors
             RemoveSDK16OnlyFields(transformed.Fields, entityType);
@@ -543,6 +555,72 @@ namespace QB_TimeWarp.Services
                 transformed.Fields["AccountNumber"] = sourceAcctNum;
                 Log.Debug("  Restored AccountNumber '{AcctNum}' for account '{Name}'",
                     sourceAcctNum, source.Name);
+            }
+        }
+
+        /// <summary>
+        /// FIX #1: Parses hierarchical names (colon-separated) into leaf + parent components.
+        /// Stores the parsed components in the entity's Fields JSON for easier import.
+        /// Entity types that support hierarchy: Accounts, Customers, Vendors, Items, Classes.
+        /// Example: "Expenses:Office:Supplies" → Name="Supplies", _parentFullName="Expenses:Office"
+        /// </summary>
+        private void ParseHierarchicalName(QBEntity entity, string entityType)
+        {
+            var hierarchicalTypes = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
+            {
+                "Accounts", "Customers", "Vendors", "Items", "Classes"
+            };
+
+            if (!hierarchicalTypes.Contains(entityType)) return;
+
+            var fullName = entity.FullName ?? entity.Fields["FullName"]?.ToString()
+                ?? entity.Name ?? entity.Fields["Name"]?.ToString();
+
+            if (string.IsNullOrEmpty(fullName) || !fullName.Contains(':')) return;
+
+            var parts = fullName.Split(':');
+            var leafName = parts[parts.Length - 1].Trim();
+            var parentFullName = string.Join(":", parts.Take(parts.Length - 1)).Trim();
+
+            if (!string.IsNullOrEmpty(parentFullName))
+            {
+                // Store the parsed hierarchy in the transformed JSON
+                // The importer will use these to construct proper QBXML
+                entity.Fields["_leafName"] = leafName;
+                entity.Fields["_parentFullName"] = parentFullName;
+                entity.Fields["_isHierarchical"] = true;
+
+                // The Name field should contain the leaf name for QB Add requests
+                // (FullName is read-only / excluded from Add)
+                entity.Name = leafName;
+                entity.Fields["Name"] = leafName;
+
+                _hierarchicalNamesParsed++;
+                Log.Debug("  FIX #1: Parsed hierarchical name for {EntityType}: " +
+                    "'{FullName}' → leaf='{Leaf}', parent='{Parent}'",
+                    entityType, fullName, leafName, parentFullName);
+            }
+        }
+
+        /// <summary>
+        /// FIX #2: Forces IsActive = true for ALL entities during transformation.
+        /// Accountant requirement: inactive entities must be imported as active because
+        /// QB 2021 won't allow references to inactive items during import.
+        /// Applies to: Customers, Vendors, Employees, Items, Accounts.
+        /// </summary>
+        private void ForceIsActive(QBEntity entity, string entityType)
+        {
+            if (!ActiveStatusEntityTypes.Contains(entityType)) return;
+
+            var wasActive = entity.IsActive;
+            entity.IsActive = true;
+            entity.Fields["IsActive"] = JToken.FromObject("true");
+
+            if (!wasActive)
+            {
+                _isActiveOverrides++;
+                Log.Debug("  FIX #2: Forced IsActive=true for {EntityType} '{Name}' (was inactive)",
+                    entityType, entity.Name);
             }
         }
 
@@ -1161,7 +1239,8 @@ namespace QB_TimeWarp.Services
         private void LogQB2021CompatibilitySummary()
         {
             var totalAdjustments = _sdk16FieldsRemoved + _fieldsLengthAdjusted +
-                _emptyNameFieldsFixed + _payrollFieldsSimplified + _ccBalanceSignsFixed;
+                _emptyNameFieldsFixed + _payrollFieldsSimplified + _ccBalanceSignsFixed +
+                _hierarchicalNamesParsed + _isActiveOverrides;
 
             if (totalAdjustments == 0) return;
 
@@ -1169,8 +1248,12 @@ namespace QB_TimeWarp.Services
             Log.Information("  QB 2021 (SDK 15.0) COMPATIBILITY SUMMARY");
             Log.Information("────────────────────────────────────────────");
 
+            if (_hierarchicalNamesParsed > 0)
+                Log.Information("    FIX #1: Hierarchical names parsed: {Count} (leaf + ParentRef)", _hierarchicalNamesParsed);
+            if (_isActiveOverrides > 0)
+                Log.Information("    FIX #2: IsActive forced to true:   {Count} (accountant requirement)", _isActiveOverrides);
             if (_sdk16FieldsRemoved > 0)
-                Log.Information("    SDK 16.0-only fields removed:     {Count} (would cause 0x80040400)", _sdk16FieldsRemoved);
+                Log.Information("    SDK 16.0-only fields removed:      {Count} (would cause 0x80040400)", _sdk16FieldsRemoved);
             if (_fieldsLengthAdjusted > 0)
                 Log.Information("    Fields truncated for 2021 limits:  {Count}", _fieldsLengthAdjusted);
             if (_emptyNameFieldsFixed > 0)
