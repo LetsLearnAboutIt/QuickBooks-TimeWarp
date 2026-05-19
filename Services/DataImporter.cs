@@ -619,6 +619,7 @@ namespace QB_TimeWarp.Services
         /// <summary>
         /// Builds the QBXML Add request XML for a single entity.
         /// Uses the effective SDK version for QB 2021 compatibility.
+        /// Fields are sorted according to QBXML XSD schema sequence requirements.
         /// </summary>
         private string BuildAddRequestXml(string entityType, QBEntity entity)
         {
@@ -636,7 +637,8 @@ namespace QB_TimeWarp.Services
 
             var (addReqType, addElemType, _) = AddMap[entityType];
 
-            var fieldsXml = BuildFieldsXml(entity.Fields);
+            // Use entity type for field ordering — QBXML requires strict XSD element sequence
+            var fieldsXml = BuildFieldsXml(entity.Fields, entityType);
             var lineItemsXml = BuildLineItemsXml(entityType, entity.LineItems);
 
             var innerXml = new StringBuilder();
@@ -655,6 +657,7 @@ namespace QB_TimeWarp.Services
 
         /// <summary>
         /// Builds the QBXML Add request for an Item, using the correct subtype.
+        /// Fields are sorted according to the item-specific XSD sequence.
         /// </summary>
         private string BuildItemAddRequest(QBEntity entity)
         {
@@ -677,7 +680,8 @@ namespace QB_TimeWarp.Services
             var fieldsClone = entity.Fields.DeepClone() as JObject ?? new JObject();
             fieldsClone.Remove("Type");
 
-            var fieldsXml = BuildFieldsXml(fieldsClone);
+            // Use item subtype for field ordering (e.g., "ItemService", "ItemInventory")
+            var fieldsXml = BuildFieldsXml(fieldsClone, itemType);
 
             var innerXml = new StringBuilder();
             innerXml.AppendLine($"<{addReq}>");
@@ -693,12 +697,41 @@ namespace QB_TimeWarp.Services
         /// Converts a JObject of fields to QBXML element format.
         /// Handles nested objects (Address, Ref types, etc.).
         /// Filters out excluded fields (static + dynamically learned) and validates field lengths.
+        /// 
+        /// CRITICAL: Fields are sorted according to QBXML XSD schema sequence order.
+        /// The QBXML parser uses xs:sequence, meaning elements MUST appear in the exact
+        /// order defined by the schema. Out-of-order elements cause 0x80040400 errors:
+        ///   "QuickBooks found an error when parsing the provided XML text stream."
         /// </summary>
-        private string BuildFieldsXml(JObject fields)
+        /// <param name="fields">The JObject containing entity field data.</param>
+        /// <param name="entityType">Entity type name used to look up the correct field ordering.
+        /// Accepts collection names (e.g., "Customers"), Add element names (e.g., "CustomerAdd"),
+        /// or item subtypes (e.g., "ItemService").</param>
+        private string BuildFieldsXml(JObject fields, string entityType)
         {
             var sb = new StringBuilder();
 
-            foreach (var prop in fields.Properties())
+            // Get the XSD-defined field ordering for this entity type
+            var fieldOrderMap = QBXMLFieldOrdering.GetFieldOrderMap(entityType);
+
+            // Sort properties by their XSD sequence index.
+            // Fields not in the map get index 9999 (appended at the end).
+            // Alphabetical tiebreaker for fields with the same index (or unmapped).
+            var sortedProperties = fields.Properties()
+                .OrderBy(p => QBXMLFieldOrdering.GetFieldIndex(fieldOrderMap, p.Name))
+                .ThenBy(p => p.Name, StringComparer.OrdinalIgnoreCase)
+                .ToList();
+
+            if (fieldOrderMap.Count > 0)
+            {
+                Log.Debug("  QBXML field ordering applied for '{EntityType}': [{FieldOrder}]",
+                    entityType,
+                    string.Join(", ", sortedProperties
+                        .Where(p => !p.Name.StartsWith("_") && !ExcludedFields.Contains(p.Name))
+                        .Select(p => p.Name)));
+            }
+
+            foreach (var prop in sortedProperties)
             {
                 // Skip static excluded fields
                 if (ExcludedFields.Contains(prop.Name))
@@ -736,9 +769,18 @@ namespace QB_TimeWarp.Services
                     }
                     else
                     {
-                        // Regular nested object (like Address)
+                        // Regular nested object (like Address) — sort internal fields too
+                        var childOrderMap = QBXMLFieldOrdering.IsAddressElement(prop.Name)
+                            ? QBXMLFieldOrdering.GetAddressFieldOrder()
+                            : new Dictionary<string, int>();
+
+                        var sortedChildren = nested.Properties()
+                            .OrderBy(c => QBXMLFieldOrdering.GetFieldIndex(childOrderMap, c.Name))
+                            .ThenBy(c => c.Name, StringComparer.OrdinalIgnoreCase)
+                            .ToList();
+
                         sb.AppendLine($"    <{prop.Name}>");
-                        foreach (var childProp in nested.Properties())
+                        foreach (var childProp in sortedChildren)
                         {
                             // Skip excluded child fields
                             if (ExcludedFields.Contains(childProp.Name) ||
@@ -783,6 +825,7 @@ namespace QB_TimeWarp.Services
 
         /// <summary>
         /// Builds QBXML for line items in transaction entities.
+        /// Line item fields are sorted according to their XSD-defined sequence order.
         /// </summary>
         private string BuildLineItemsXml(string entityType, List<JObject> lineItems)
         {
@@ -799,9 +842,18 @@ namespace QB_TimeWarp.Services
                 if (!addLineType.EndsWith("Add") && !addLineType.Contains("LineAdd"))
                     addLineType = lineAddType;
 
+                // Get XSD field ordering for this line item type
+                var lineFieldOrder = QBXMLFieldOrdering.GetLineItemFieldOrder(addLineType);
+
+                // Sort line item properties by XSD sequence order
+                var sortedLineProps = lineItem.Properties()
+                    .OrderBy(p => QBXMLFieldOrdering.GetFieldIndex(lineFieldOrder, p.Name))
+                    .ThenBy(p => p.Name, StringComparer.OrdinalIgnoreCase)
+                    .ToList();
+
                 sb.AppendLine($"    <{addLineType}>");
 
-                foreach (var prop in lineItem.Properties())
+                foreach (var prop in sortedLineProps)
                 {
                     if (prop.Name.StartsWith("_")) continue; // Skip metadata
                     if (ExcludedFields.Contains(prop.Name)) continue;
