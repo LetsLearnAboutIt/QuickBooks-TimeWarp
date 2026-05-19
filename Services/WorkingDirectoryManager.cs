@@ -91,17 +91,17 @@ namespace QB_TimeWarp.Services
         {
             Log.Information("Resolving original file paths...");
 
-            // Resolve source file (Joshua's Gold Coast)
+            // Resolve source file (Joshs_Gold_Coast — testing)
             OriginalSourceFilePath = ResolveCompanyFile(
                 _sourceConfig.DesktopFolder,
                 _sourceConfig.CompanyFileName,
-                "Source (Joshua's Gold Coast)");
+                "Source (Joshs_Gold_Coast)");
 
-            // Resolve target file (Blank Template)
+            // Resolve target file (QB21_Blank_Template)
             OriginalTargetFilePath = ResolveCompanyFile(
                 _targetConfig.DesktopFolder,
                 _targetConfig.CompanyFileName,
-                "Target (Blank Template)");
+                "Target (QB21_Blank_Template)");
 
             Log.Information("Original Source: {Path} ({Size})",
                 OriginalSourceFilePath, FormatFileSize(new FileInfo(OriginalSourceFilePath).Length));

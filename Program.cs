@@ -692,8 +692,8 @@ namespace QB_TimeWarp
   Folder Structure:
     C:\QB-TimeWarp\
     ├── Working\
-    │   ├── Source\    ← QB 2023 working copy (from Joshua's Gold Coast)
-    │   └── Target\    ← QB 2021 working copy (from Blank Template)
+    │   ├── Source\    ← QB 2023 working copy (from Joshs_Gold_Coast)
+    │   └── Target\    ← QB 2021 working copy (from QB21_Blank_Template)
     ├── ExportedData\
     ├── Schemas\
     ├── Logs\

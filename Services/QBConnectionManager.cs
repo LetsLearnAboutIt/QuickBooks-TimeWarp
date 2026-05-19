@@ -32,6 +32,10 @@ namespace QB_TimeWarp.Services
         /// </summary>
         private static readonly string[] ProtectedDesktopFolders = new[]
         {
+            @"\Desktop\Joshs_Gold_Coast",
+            @"\Desktop\QB21_Blank_Template",
+            @"\Desktop\Air_Masters",
+            // Legacy paths (with spaces) — still blocked for safety
             @"\Desktop\Joshua's Gold Coast",
             @"\Desktop\Blank Template",
             @"\Desktop\Air Masters",

@@ -10,14 +10,16 @@ QB-TimeWarp automatically creates working copies before any operations:
 
 ```
 Desktop (ORIGINALS — READ-ONLY, NEVER MODIFIED):
-├── Joshua's Gold Coast\    ← QB 2023 source (30MB test file)
-├── Blank Template\         ← QB 2021 target
-└── Air Masters\            ← QB 2023 production (360MB — DO NOT USE)
+├── Joshs_Gold_Coast\          ← QB 2023 source (30MB test file)
+├── QB21_Blank_Template\       ← QB 2021 target
+└── Air_Masters\               ← QB 2023 production (360MB — DO NOT USE)
 
 C:\QB-TimeWarp\Working\ (WORKING COPIES — all operations happen here):
-├── Source\                 ← Copy of Joshua's Gold Coast .qbw
-└── Target\                 ← Copy of Blank Template .qbw
+├── Source\                    ← Copy of Joshs_Gold_Coast .qbw
+└── Target\                    ← Copy of QB21_Blank_Template .qbw
 ```
+
+> **NOTE**: All folder names use underscores (no spaces) for Windows path compatibility.
 
 **Commands:**
 - `--refresh` — Force re-copy from originals to Working folders
@@ -35,7 +37,7 @@ See `SAFETY_FEATURES.md` for full details on multi-layer protection.
 |-------------|----------|
 | **Air-Masters-QB-2023.qbw** | `3825You171` |
 | **Josh Safty 2021.qbw** | `3825You171` |
-| **Blank Template** | `Fl0640098!@!` |
+| **Blank_Template.qbw** (in QB21_Blank_Template folder) | `Fl0640098!@!` |
 
 > **Enter these passwords when QuickBooks prompts on opening company files.**
 
@@ -102,10 +104,12 @@ git remote set-url origin https://<PAT_TOKEN>@github.com/LetsLearnAboutIt/QuickB
 
 ### Company File Paths
 
-| File | Path | Size |
-|------|------|------|
-| **QB 2023 Company File** | `C:\Users\AIAgent\Desktop\AirMasters\Air-Masters-QB-2023.qbw` | ~360 MB |
-| **QB 2021 Company File** | `C:\Users\Public\Documents\Intuit\QuickBooks\Company Files\Josh Safty 2021.qbw` | ~13 MB |
+| File | Path | Size | Notes |
+|------|------|------|-------|
+| **QB 2023 Source (TESTING)** | `C:\Users\AIAgent\Desktop\Joshs_Gold_Coast\Joshs_Gold_Coast_II_2023.qbw` | ~30 MB | Use this for testing |
+| **QB 2023 Production** | `C:\Users\AIAgent\Desktop\Air_Masters\Air_Masters_QB_2023.qbw` | ~360 MB | DO NOT USE for testing |
+| **QB 2021 Target** | `C:\Users\AIAgent\Desktop\QB21_Blank_Template\Blank_Template.qbw` | — | Target for migration |
+| **QB 2021 Company File** | `C:\Users\Public\Documents\Intuit\QuickBooks\Company Files\Josh Safty 2021.qbw` | ~13 MB | |
 
 ---
 

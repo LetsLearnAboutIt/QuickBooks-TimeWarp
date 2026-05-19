@@ -10,7 +10,7 @@
 - [ ] **Enter passwords when prompted** by QuickBooks:
   - Air-Masters-QB-2023.qbw → `3825You171`
   - Josh Safty 2021.qbw → `3825You171`
-  - Blank Template → `Fl0640098!@!`
+  - Blank_Template.qbw (QB21_Blank_Template folder) → `Fl0640098!@!`
 - [ ] **User is actively watching** — coordinate before each major stage
 - [ ] Review `POPUP_HANDLING.md` for common popups you may encounter
 
@@ -19,8 +19,8 @@
 ## Stage 0: Working Copy Verification (SAFETY CHECK)
 
 ### 0.1 Verify Original Files Exist on Desktop
-- [ ] Confirm `C:\Users\AIAgent\Desktop\Joshua's Gold Coast\` exists with a `.qbw` file
-- [ ] Confirm `C:\Users\AIAgent\Desktop\Blank Template\` exists with a `.qbw` file
+- [ ] Confirm `C:\Users\AIAgent\Desktop\Joshs_Gold_Coast\` exists with `Joshs_Gold_Coast_II_2023.qbw` (TESTING file)
+- [ ] Confirm `C:\Users\AIAgent\Desktop\QB21_Blank_Template\` exists with `Blank_Template.qbw`
 - [ ] Note the file sizes of both originals
 
 ### 0.2 Working Copy Creation

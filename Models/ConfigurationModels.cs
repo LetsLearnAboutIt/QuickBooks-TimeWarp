@@ -25,7 +25,7 @@ namespace QB_TimeWarp.Models
     {
         /// <summary>
         /// Path to the Desktop folder containing the source QB 2023 company file.
-        /// Example: "C:\Users\AIAgent\Desktop\Joshua's Gold Coast"
+        /// Example: "C:\Users\AIAgent\Desktop\Joshs_Gold_Coast"
         /// </summary>
         public string DesktopFolder { get; set; } = string.Empty;
 
@@ -44,7 +44,7 @@ namespace QB_TimeWarp.Models
     {
         /// <summary>
         /// Path to the Desktop folder containing the target QB 2021 company file.
-        /// Example: "C:\Users\AIAgent\Desktop\Blank Template"
+        /// Example: "C:\Users\AIAgent\Desktop\QB21_Blank_Template"
         /// </summary>
         public string DesktopFolder { get; set; } = string.Empty;
 

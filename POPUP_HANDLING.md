@@ -45,7 +45,7 @@ Enter the correct password:
 |-------------|----------|
 | Air-Masters-QB-2023.qbw | `3825You171` |
 | Josh Safty 2021.qbw | `3825You171` |
-| Blank Template | `Fl0640098!@!` |
+| Blank_Template.qbw (QB21_Blank_Template) | `Fl0640098!@!` |
 
 ### When it appears
 - When opening a company file

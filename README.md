@@ -37,9 +37,9 @@ QB-TimeWarp **NEVER touches original QuickBooks files**. Instead, it automatical
 
 ```
 Desktop (ORIGINALS — READ-ONLY, never modified):
-├── Joshua's Gold Coast\    ← QB 2023 source (30MB test file)
-├── Blank Template\         ← QB 2021 target
-└── Air Masters\            ← QB 2023 production (360MB)
+├── Joshs_Gold_Coast\          ← QB 2023 source (30MB test file)
+├── QB21_Blank_Template\       ← QB 2021 target
+└── Air_Masters\               ← QB 2023 production (360MB)
 
 C:\QB-TimeWarp\ (Application workspace):
 ├── Working\

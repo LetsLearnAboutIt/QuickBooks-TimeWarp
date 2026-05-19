@@ -166,7 +166,7 @@
 
 **What**: Added automatic working copy creation system that copies original QB company files from Desktop to dedicated Working directories before any operations begin. Multiple safety layers prevent any modification to original files.
 
-**Why**: Original QuickBooks company files (Joshua's Gold Coast, Blank Template, Air Masters) must NEVER be directly modified. The working copy system ensures all operations use disposable copies while originals remain pristine on the Desktop.
+**Why**: Original QuickBooks company files (Joshs_Gold_Coast, QB21_Blank_Template, Air_Masters) must NEVER be directly modified. The working copy system ensures all operations use disposable copies while originals remain pristine on the Desktop.
 
 **Files Modified**:
 - `Services/WorkingDirectoryManager.cs` — NEW: Manages working directory creation, file copying, verification, and cleanup
@@ -271,3 +271,41 @@
 - `CHANGE_LOG.md` — This entry
 
 **Status**: Staged import architecture ✅ | Root cause analysis ✅ | Fixes identified ✅ | Implementation PENDING
+
+
+
+---
+
+### Change 13: File/Folder Rename — Remove Spaces from All Paths
+
+**Date**: 2026-05-19
+**What**: Joseph renamed all Desktop company file folders and files to use underscores instead of spaces. Updated all documentation, code, and configuration to match.
+
+**Old → New Names**:
+| Old Name | New Name |
+|----------|----------|
+| `Joshua's Gold Coast` | `Joshs_Gold_Coast` |
+| `Blank Template` | `QB21_Blank_Template` |
+| `Air Masters` | `Air_Masters` |
+| `Air-Masters-QB-2023.qbw` | `Air_Masters_QB_2023.qbw` |
+
+**Why**: Spaces in Windows file paths cause issues with command-line tools, batch scripts, Git operations, SSH transfers, and COM/SDK path resolution. Underscores eliminate the need for quoted paths everywhere.
+
+**Files Updated**:
+- `appsettings.json` — Updated `SourceFiles.DesktopFolder` and `TargetFiles.DesktopFolder`
+- `Services/QBConnectionManager.cs` — Added new underscore paths to `ProtectedDesktopFolders` (kept legacy space paths for safety)
+- `Services/WorkingDirectoryManager.cs` — Updated comments and log labels
+- `Models/ConfigurationModels.cs` — Updated XML doc examples
+- `Program.cs` — Updated folder structure comment
+- `SESSION_RESUME.md` — Updated all path references and company file tables
+- `SAFETY_FEATURES.md` — Updated folder structure, protected patterns, config example
+- `TESTING_CHECKLIST.md` — Updated verification paths
+- `README.md` — Updated folder structure diagram
+- `README_FOR_NEW_SESSIONS.md` — Updated VM file paths table
+- `PROJECT_INSTRUCTIONS.MD` — Updated VM key paths
+- `CHANGE_LOG.md` — This entry
+- `POPUP_HANDLING.md` — Updated Blank Template reference
+- `DEBUGGING_NOTES.MD` — No path changes needed (uses generic references)
+- `PATH_REFERENCE.md` — **NEW**: Quick reference for all file paths with old→new mapping
+
+**CRITICAL**: `QBConnectionManager.cs` now blocks BOTH old (space) paths AND new (underscore) paths from direct access, ensuring safety even if old paths somehow persist.

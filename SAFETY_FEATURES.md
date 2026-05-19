@@ -8,22 +8,24 @@ QB-TimeWarp implements **multiple layers of protection** to ensure that original
 
 ```
 Desktop (READ-ONLY originals — NEVER touched):
-├── Joshua's Gold Coast\       ← QB 2023 source (30MB, testing file)
-│   └── *.qbw
-├── Blank Template\            ← QB 2021 target
-│   └── *.qbw
-└── Air Masters\               ← QB 2023 production (360MB — DO NOT USE)
-    └── Air-Masters-QB-2023.qbw
+├── Joshs_Gold_Coast\              ← QB 2023 source (30MB, testing file)
+│   └── Joshs_Gold_Coast_II_2023.qbw
+├── QB21_Blank_Template\           ← QB 2021 target
+│   └── Blank_Template.qbw
+└── Air_Masters\                   ← QB 2023 production (360MB — DO NOT USE)
+    └── Air_Masters_QB_2023.qbw
 
 C:\QB-TimeWarp\ (Application workspace):
 ├── Working\
-│   ├── Source\                ← COPY of Joshua's Gold Coast .qbw
-│   └── Target\                ← COPY of Blank Template .qbw
+│   ├── Source\                    ← COPY of Joshs_Gold_Coast .qbw
+│   └── Target\                    ← COPY of Blank_Template .qbw
 ├── ExportedData\
 ├── Schemas\
 ├── Logs\
 └── Validation\
 ```
+
+> **NOTE**: All folder/file names use underscores instead of spaces for Windows path compatibility.
 
 ## Safety Layers
 
@@ -43,11 +45,14 @@ C:\QB-TimeWarp\ (Application workspace):
 - **When**: Every time a QB connection is created AND every time `.Connect()` is called
 - **What**: Checks the company file path against a list of protected Desktop folder patterns
 - **Action**: Throws `OriginalFileProtectionException` if a protected path is detected
-- **Protected patterns**:
-  - `\Desktop\Joshua's Gold Coast`
-  - `\Desktop\Blank Template`
-  - `\Desktop\Air Masters`
-  - `\Desktop\AirMasters`
+- **Protected patterns** (current underscore paths AND legacy space paths):
+  - `\Desktop\Joshs_Gold_Coast`
+  - `\Desktop\QB21_Blank_Template`
+  - `\Desktop\Air_Masters`
+  - `\Desktop\Joshua's Gold Coast` (legacy)
+  - `\Desktop\Blank Template` (legacy)
+  - `\Desktop\Air Masters` (legacy)
+  - `\Desktop\AirMasters` (legacy)
 
 ### Layer 4: Desktop Path Rejection (Program.cs Fallback)
 - **When**: If `AutoCreateWorkingCopies` is disabled
@@ -66,11 +71,11 @@ In `appsettings.json`:
 ```json
 {
   "SourceFiles": {
-    "DesktopFolder": "C:\\Users\\AIAgent\\Desktop\\Joshua's Gold Coast",
+    "DesktopFolder": "C:\\Users\\AIAgent\\Desktop\\Joshs_Gold_Coast",
     "CompanyFileName": "*.qbw"
   },
   "TargetFiles": {
-    "DesktopFolder": "C:\\Users\\AIAgent\\Desktop\\Blank Template",
+    "DesktopFolder": "C:\\Users\\AIAgent\\Desktop\\QB21_Blank_Template",
     "CompanyFileName": "*.qbw"
   },
   "WorkingDirectories": {
