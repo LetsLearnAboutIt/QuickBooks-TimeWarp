@@ -231,3 +231,43 @@
 - QBXML status `3250`: Unsupported element in request
 - QBXML status `3260`: Element not valid for this version
 - QBXML status `3270`: Unsupported QBXML version
+
+
+
+---
+
+### Change 12: Root Cause Analysis & Documentation Overhaul
+
+**Date**: 2026-05-19 (late session)
+
+**What**: Completed comprehensive root cause analysis of import failures. Updated all documentation files to preserve full project understanding across sessions. Created CRITICAL_FIXES_NEEDED.MD.
+
+**Why**: Trial run showed 0 genuine successes (359 phantom successes from detection bug). Five distinct root causes identified that must be fixed before import can succeed. All knowledge committed to files so session refresh loses nothing.
+
+**Root Causes Identified**:
+1. **Hierarchical names** — Full path sent as Name instead of leaf + ParentRef
+2. **IsActive field** — Inactive entities rejected or break reference lookups
+3. **Account types prerequisite** — Must exist before accounts
+4. **Missing reference types** — Sales tax, terms, etc. must exist before referencing entities
+5. **Field compatibility** — SDK 16.0 fields rejected by SDK 15.0
+6. **(Bug) Success detection** — 359 phantom successes from incorrect response parsing
+
+**Correct Order of Operations Defined**:
+- Stage 0: Account types + missing reference types
+- Stage 1: Accounts (with hierarchy)
+- Stage 2: Entities (customers, vendors)
+- Stage 3: Items
+- Stage 4: Transactions
+
+**Critical Transformation Timing Documented**:
+- Export from QB 2023 → Close QB 2023 → Open QB 2021 → Transform → Import
+
+**Files Created**:
+- `CRITICAL_FIXES_NEEDED.MD` — All 5 fixes with priority, dependencies, implementation details
+
+**Files Updated**:
+- `PROJECT_INSTRUCTIONS.MD` — Added VM specs (Ryzen 9 9950X, 32GB, 2Gbps), emphasized Notepad Protocol, added SSH helper usage, added transformation timing, added order of operations
+- `DEBUGGING_NOTES.MD` — Restructured with all 5 root causes clearly documented, correct stage ordering, fix history
+- `CHANGE_LOG.md` — This entry
+
+**Status**: Staged import architecture ✅ | Root cause analysis ✅ | Fixes identified ✅ | Implementation PENDING

@@ -1,135 +1,140 @@
 # Debugging Notes — QB-TimeWarp
 
-## Fix History
+## ⚠️ CURRENT STATUS (May 19, 2026 — Late Session)
 
-### Fix #2: Staged Import with Dependency Analysis (StatusCode 3140 Root Cause)
-
-**Date:** 2026-05-19  
-**Status:** ✅ Applied  
-**Severity:** HIGH — Resolves import failures from missing referenced items.
-
-#### Problem
-
-When importing entities (especially Customers), QB 2021 returns **StatusCode 3140** errors:
-> "The referenced item (SalesTaxCode, Terms, etc.) does not exist."
-
-**Root Cause:** The flat `ImportAll()` method imports entities in a fixed order defined by `ImportOrder`, but does NOT verify that items referenced by entities actually exist in QB 2021 before importing. For example:
-- A Customer references `SalesTaxCodeRef: "Tax"` — but the sales tax code "Tax" hasn't been imported yet (or doesn't exist at all in the exported data).
-- A Vendor references `TermsRef: "Net 30"` — but Terms haven't been created in QB 2021 yet.
-
-This is a **dependency ordering** problem: entities reference foundation items that must exist first.
-
-#### Fix Applied — Staged Import Architecture
-
-1. **Created `Helpers/DependencyAnalyzer.cs`** — Pre-import dependency scanner:
-   - Scans ALL exported JSON entities and their fields/line items
-   - Identifies every reference field (`SalesTaxCodeRef`, `TermsRef`, `ClassRef`, `AccountRef`, etc.)
-   - Extracts referenced FullNames and groups them by type
-   - Cross-references against exported data to identify **missing items** — referenced but not present
-   - Returns a `DependencyAnalysisResult` with complete dependency graph
-
-2. **Defined 4 Import Stages** (in `DataImporter.cs`):
-   ```
-   Stage 1 (Foundation): Accounts, SalesTaxCodes, Terms, PaymentMethods,
-                          CustomerTypes, VendorTypes, JobTypes, Classes,
-                          ShipMethods, PriceLevels
-   
-   Stage 2 (Entities):   Customers, Vendors, Employees
-   
-   Stage 3 (Items):      All Item subtypes (Service, Inventory, NonInventory, Groups)
-   
-   Stage 4 (Transactions): Invoices, Bills, Payments, SalesReceipts, JournalEntries,
-                            CreditMemos, Estimates, Deposits, Checks, VendorCredits,
-                            InventoryAdjustments, Transfers
-   ```
-
-3. **Added `ImportDataInStages()` method** — New primary import entry point:
-   - Phase 0: Run `DependencyAnalyzer` to scan all data and build dependency graph
-   - Auto-creates missing foundation items (SalesTaxCodes, Terms, PaymentMethods, etc.)
-   - Executes stages sequentially with validation between each
-   - Resolves references (adds ListIDs) from earlier stages before importing later stages
-   - Halts if critical stage fails completely (configurable)
-
-4. **Added Reference Resolution**:
-   - As items are imported, their new QB 2021 ListIDs are stored in `_nameToListIdMap`
-   - Before importing Stage 2+ entities, `ResolveReferences()` walks all Ref fields
-   - Looks up the FullName → ListID mapping and inserts the ListID into the ref object
-   - This allows QB 2021 to resolve references by ListID (more reliable than FullName)
-
-5. **Added Auto-Creation of Missing Dependencies**:
-   - If dependency analysis finds items referenced but not in exported data:
-     - SalesTaxCodes → creates with `IsTaxable=true`
-     - Terms → creates as `StandardTerms` with 30-day default
-     - PaymentMethods → creates with name
-     - CustomerTypes, VendorTypes, JobTypes, ShipMethods → creates with name
-     - Classes → creates with hierarchy support (parent:child)
-   - All auto-created items tracked in `StageSummary.AutoCreatedItemNames`
-
-6. **Added Stage Validation**:
-   - After each stage, checks if it passed (had some successes)
-   - Critical stages (1-3) halt the import if ALL records fail
-   - Non-critical stages (4 - Transactions) continue with warnings
-   - Configurable via `ValidateBetweenStages` and `HaltOnFoundationFailure`
-
-#### New Configuration Options (`appsettings.json`)
-
-```json
-{
-  "Import": {
-    "UseStagedImport": true,
-    "AutoCreateMissingDependencies": true,
-    "ValidateBetweenStages": true,
-    "HaltOnFoundationFailure": true,
-    "Stages": {
-      "Stage1_Foundation": true,
-      "Stage2_Entities": true,
-      "Stage3_Items": true,
-      "Stage4_Transactions": true
-    }
-  }
-}
-```
-
-Set `UseStagedImport: false` to fall back to the legacy flat `ImportAll()` approach.
-
-#### Files Modified
-
-| File | Change |
-|------|--------|
-| `Helpers/DependencyAnalyzer.cs` | **NEW** — Pre-import dependency scanner |
-| `Services/DataImporter.cs` | Added `ImportDataInStages()`, `AnalyzeDependencies()`, reference resolution, auto-creation, stage execution |
-| `Models/MigrationModels.cs` | Added `ImportStage`, `StageSummary`, `StagedImportSummary` models |
-| `Models/ConfigurationModels.cs` | Added `StagedImportStagesConfig`, new `ImportConfig` properties |
-| `appsettings.json` | Added staged import configuration |
-| `DEBUGGING_NOTES.MD` | This entry |
-
-#### How to Verify
-
-Check logs for the staged import flow:
-```
-╔═══════════════════════════════════════════════════════╗
-║  STAGED IMPORT — Dependency-Aware Multi-Stage Import  ║
-╚═══════════════════════════════════════════════════════╝
-  Phase 0: Pre-Import Dependency Analysis
-  ...
-  Stage 1/4: Foundation
-  [1/10] Importing Accounts (45 records)...
-  ...
-  Stage 2/4: Entities
-  [1/3] Importing Customers (120 records)...
-```
-
-If 3140 errors STILL occur:
-1. Check the dependency analysis log — is the referenced item listed?
-2. Check if auto-creation succeeded for that item type
-3. Verify the item exists in QB 2021 (may need manual creation)
-4. Check if the reference FullName matches exactly (case-sensitive in some QB operations)
-
-#### Key Insight
-
-QB 2021 StatusCode 3140 ("The specified item does not exist") is almost always a **dependency ordering** problem. The item being referenced MUST exist in the target company file before any entity that references it can be imported. The staged import ensures this by design.
+**Root cause analysis COMPLETE. 5 root causes + 1 bug identified. Fixes NOT yet implemented.**
 
 ---
+
+## Root Cause Summary — All 5 Issues
+
+### Root Cause #1: Hierarchical Names (Leaf + ParentRef)
+
+**Problem**: QB uses hierarchical names like `"Automobile:Fuel"` for sub-accounts/sub-items. The import code sends the FULL hierarchical name as the `Name` field, but QB expects:
+- `Name` = leaf name only (e.g., `"Fuel"`)
+- `ParentRef` = reference to the parent (e.g., `"Automobile"`)
+
+**Impact**: All sub-accounts, sub-customers, sub-items fail with "invalid name" or create wrong records.
+
+**Fix needed**: Parse any name containing `:` — extract leaf as `Name`, look up parent and set `ParentRef`.
+
+---
+
+### Root Cause #2: IsActive Field (All Must Be Active on Import)
+
+**Problem**: Exported data from QB 2023 includes `IsActive=false` for inactive entities. QB 2021 may reject imports of inactive entities, or the import creates them as inactive which breaks subsequent reference lookups.
+
+**Impact**: Entities marked inactive fail to import, or later stages can't reference them.
+
+**Fix needed**: During transformation, set `IsActive=true` on ALL entities regardless of their 2023 status. The accountant will deactivate as needed post-migration.
+
+> **Note**: The config `ReactivateInactiveEntities=true` exists but may not be applied correctly in the staged import path. Verify it's enforced.
+
+---
+
+### Root Cause #3: Account Types Must Exist BEFORE Accounts
+
+**Problem**: When importing accounts, each account has an `AccountType` (e.g., Bank, Expense, Income, COGS). QB 2021 requires the account type to be valid. While QB has built-in account types, some custom types or sub-types from QB 2023 may not exist in QB 2021.
+
+**Impact**: Account imports fail if the account type doesn't map to a valid QB 2021 type.
+
+**Fix needed**: Stage 0 must verify all account types in the exported data map to valid QB 2021 account types. Create any missing ones or map them to equivalent types.
+
+---
+
+### Root Cause #4: Missing Reference Types (Sales Tax, Terms, Customer Types, etc.)
+
+**Problem**: Entities reference foundation items (SalesTaxCodes, Terms, PaymentMethods, CustomerTypes, VendorTypes) that may not exist in QB 2021. The staged import's auto-creation partially addresses this, but:
+- Auto-creation may fail silently
+- Some reference types need specific properties (tax rates, term days)
+- The creation must happen BEFORE any entity that references them
+
+**Impact**: StatusCode 3140 ("referenced item does not exist") on entity imports.
+
+**Fix needed**: Stage 0 must explicitly:
+1. Query QB 2021 for existing reference types
+2. Compare against all referenced types in exported data
+3. Create missing ones with appropriate defaults
+4. Verify creation succeeded before proceeding
+
+---
+
+### Root Cause #5: Field Compatibility (QB 2023 SDK 16.0 → QB 2021 SDK 15.0)
+
+**Problem**: QB 2023 uses SDK 16.0 with fields that don't exist in SDK 15.0. Sending these fields causes `0x80040400` errors.
+
+**Impact**: Records with SDK 16.0-only fields are rejected entirely.
+
+**Fix needed**: The transformer must strip all SDK 16.0-only fields before import. The `QBSDKVersionHelper.cs` has lists of incompatible fields, but:
+- The list may be incomplete
+- New fields discovered during import must be dynamically excluded
+- Log which fields were stripped so we can verify nothing critical was lost
+
+---
+
+### Bug #6: Success Detection — 359 Phantom Successes
+
+**Problem**: The import reported 359 successes, but examination showed these were false positives. The success detection logic may be counting records that were "processed" but not actually imported, or counting the request submission rather than the QB response.
+
+**Impact**: Misleading progress reports. Can't trust success counts.
+
+**Fix needed**: Verify success detection checks the actual QB response `statusCode="0"`, not just the absence of an exception.
+
+---
+
+## Correct Order of Operations
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│ TRANSFORMATION TIMING:                                       │
+│   1. Export from QB 2023                                     │
+│   2. CLOSE QB 2023                                           │
+│   3. OPEN QB 2021                                            │
+│   4. Transform (2023 format → 2021 format)                   │
+│   5. Import into QB 2021                                     │
+└─────────────────────────────────────────────────────────────┘
+
+Stage 0 — Pre-Import Prerequisites
+  ├── Verify/create account types (map 2023 types → 2021 types)
+  ├── Create missing SalesTaxCodes
+  ├── Create missing Terms (payment terms)
+  ├── Create missing PaymentMethods
+  ├── Create missing CustomerTypes, VendorTypes, JobTypes
+  ├── Create missing ShipMethods
+  ├── Create missing Classes (with hierarchy)
+  └── VALIDATE all prerequisites exist before continuing
+
+Stage 1 — Foundation: Accounts
+  ├── Parse hierarchical names (leaf + ParentRef)
+  ├── Set IsActive=true on all
+  ├── Strip SDK 16.0-only fields
+  ├── Import parent accounts FIRST, then sub-accounts
+  └── Store ListID mappings for reference resolution
+
+Stage 2 — Entities: Customers, Vendors, Employees
+  ├── Parse hierarchical names (leaf + ParentRef)
+  ├── Set IsActive=true on all
+  ├── Strip SDK 16.0-only fields
+  ├── Resolve references (Terms, SalesTaxCode, etc.) by ListID
+  └── Store ListID mappings
+
+Stage 3 — Items: All subtypes
+  ├── Parse hierarchical names (leaf + ParentRef for sub-items)
+  ├── Set IsActive=true on all
+  ├── Strip SDK 16.0-only fields
+  ├── Resolve account references by ListID
+  └── Store ListID mappings
+
+Stage 4 — Transactions: Invoices, Bills, etc.
+  ├── Strip SDK 16.0-only fields
+  ├── Resolve ALL references (Customer, Vendor, Item, Account) by ListID
+  ├── Validate date formats
+  └── Import in chronological order where possible
+```
+
+---
+
+## Fix History (Chronological)
 
 ### Fix #1: QBXML Element Ordering (0x80040400 Root Cause)
 
@@ -146,50 +151,52 @@ All records imported into QB 2021 were rejected with HRESULT `0x80040400`:
 
 #### Fix Applied
 
-1. **Created `Helpers/QBXMLFieldOrdering.cs`** — A comprehensive field ordering helper that defines XSD-correct element sequence for every entity type:
-   - **List entities:** Customer, Vendor, Account, Employee, Class, Terms, PaymentMethod, SalesTaxCode, ShipMethod, CustomerType, VendorType, JobType, PriceLevel
-   - **Item subtypes:** ItemService, ItemInventory, ItemNonInventory, ItemOtherCharge, ItemDiscount, ItemSalesTax, ItemGroup
-   - **Transactions:** Invoice, Bill, Check, Deposit, JournalEntry, ReceivePayment, SalesReceipt, CreditMemo, Estimate, PurchaseOrder, VendorCredit, InventoryAdjustment, Transfer
-   - **Sub-element ordering:** Address blocks (Addr1→Country), InvoiceLineAdd, ExpenseLineAdd, ItemLineAdd, JournalDebitLine/CreditLine, DepositLineAdd
+1. **Created `Helpers/QBXMLFieldOrdering.cs`** — Comprehensive field ordering helper defining XSD-correct element sequence for every entity type (list entities, item subtypes, transactions, sub-elements).
 
-2. **Updated `DataImporter.cs`** — Three methods modified:
-   - `BuildFieldsXml(JObject fields, string entityType)` — Now accepts entity type, sorts all top-level fields by XSD index before generating XML. Address sub-elements also sorted.
-   - `BuildAddRequestXml` — Passes entity type to `BuildFieldsXml`.
-   - `BuildItemAddRequest` — Passes item subtype to `BuildFieldsXml`.
-   - `BuildLineItemsXml` — Line item properties now sorted by their line-type-specific XSD ordering.
+2. **Updated `DataImporter.cs`** — `BuildFieldsXml`, `BuildAddRequestXml`, `BuildItemAddRequest`, `BuildLineItemsXml` all sort fields by XSD ordinal index before generating XML.
 
-3. **Ordering logic:**
-   - Fields in the XSD map are sorted by their ordinal index (lower = earlier in XML)
-   - Fields NOT in the map get index 9999 (appended at end, alphabetically)
-   - This is safe: unknown fields at the end may still be rejected by QB, but known fields will be in correct order
-   - Debug logging shows the field order applied for each entity
-
-#### Sources for Element Order
-
-- **Intuit QBXML XSD schema** (`qbxmlops20.xml`) from [qbwc/qbxml GitHub](https://github.com/qbwc/qbxml/blob/master/schema/qbxmlops20.xml)
-- **consolibyte/quickbooks-php** schema definitions (`_reorderPathsPaths` methods)
-- **Intuit Developer documentation** and Stack Overflow empirical reports
+3. **Ordering logic:** Fields in XSD map sorted by ordinal index. Unknown fields get index 9999 (appended at end).
 
 #### Files Modified
+- `Helpers/QBXMLFieldOrdering.cs` (NEW)
+- `Services/DataImporter.cs`
 
-| File | Change |
-|------|--------|
-| `Helpers/QBXMLFieldOrdering.cs` | **NEW** — Field ordering maps for all entity types |
-| `Services/DataImporter.cs` | Updated `BuildFieldsXml`, `BuildAddRequestXml`, `BuildItemAddRequest`, `BuildLineItemsXml` |
-| `DEBUGGING_NOTES.MD` | **NEW** — This file |
+---
 
-#### How to Verify
+### Fix #2: Staged Import with Dependency Analysis (StatusCode 3140 Root Cause)
 
-After deploying, check the logs for:
-```
-QBXML field ordering applied for 'Customers': [Name, IsActive, CompanyName, FirstName, LastName, BillAddress, ...]
-```
+**Date:** 2026-05-19  
+**Status:** ✅ Applied  
+**Severity:** HIGH — Resolves import failures from missing referenced items.
 
-If 0x80040400 errors persist for a specific entity type:
-1. Check if its fields are in the ordering map
-2. Compare generated XML against the QBXML XSD schema
-3. Add missing fields to the appropriate dictionary in `QBXMLFieldOrdering.cs`
+#### Problem
 
-#### Key Insight
+When importing entities, QB 2021 returns **StatusCode 3140**:
+> "The referenced item (SalesTaxCode, Terms, etc.) does not exist."
 
-The QBXML SDK's error message ("error when parsing the provided XML text stream") is **intentionally vague** — it does not tell you which element is out of order or what order was expected. The only way to fix this is to match the XSD sequence exactly. The QBXML validator tool (included with the SDK) is reportedly more lenient than QB Desktop itself, so passing validation does NOT guarantee QB will accept the request.
+**Root Cause:** Flat import didn't verify referenced items exist before importing referencing entities.
+
+#### Fix Applied
+
+1. **Created `Helpers/DependencyAnalyzer.cs`** — Pre-import dependency scanner
+2. **Defined 4 Import Stages** in `DataImporter.cs`:
+   - Stage 1 (Foundation): Accounts, SalesTaxCodes, Terms, PaymentMethods, etc.
+   - Stage 2 (Entities): Customers, Vendors, Employees
+   - Stage 3 (Items): All item subtypes
+   - Stage 4 (Transactions): All transaction types
+3. **Added auto-creation of missing dependencies**
+4. **Added reference resolution** (FullName → ListID mapping)
+5. **Added stage validation** with halt-on-failure for critical stages
+
+#### Files Modified
+- `Helpers/DependencyAnalyzer.cs` (NEW)
+- `Services/DataImporter.cs`
+- `Models/MigrationModels.cs`
+- `Models/ConfigurationModels.cs`
+- `appsettings.json`
+
+---
+
+## Remaining Fixes Needed
+
+See **CRITICAL_FIXES_NEEDED.MD** for the complete implementation plan with priorities and dependencies.
