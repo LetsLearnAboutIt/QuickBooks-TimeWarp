@@ -61,11 +61,17 @@ namespace QB_TimeWarp
                     return RunCleanup();
                 }
 
-                // ─── CRITICAL: Initialize Working Copies BEFORE any QB operations ───
+                // ─── CRITICAL: Clean up previous run artifacts BEFORE creating new working copies ───
                 if (_config.WorkingDirectories.AutoCreateWorkingCopies &&
                     !string.IsNullOrEmpty(_config.SourceFiles.DesktopFolder) &&
                     !string.IsNullOrEmpty(_config.TargetFiles.DesktopFolder))
                 {
+                    // Clean up any orphaned files from previous runs
+                    WorkingDirectoryManager.CleanupAllWorkingArtifacts(
+                        _config.WorkingDirectories.SourcePath,
+                        _config.WorkingDirectories.TargetPath,
+                        _config.Paths.ExportDirectory);
+                    
                     InitializeWorkingCopies(forceRefresh);
                 }
                 else
@@ -207,28 +213,48 @@ namespace QB_TimeWarp
             const int totalSteps = 6;
             var overallStart = DateTime.UtcNow;
 
-            // ─── Step 1: Extract QB 2021 Schema ────────────────────────
-            ConsoleBanner.ShowStep(1, totalSteps, "Extract QB 2021 Schema");
+            // ─── Step 1: Load or Extract QB 2021 Schema ────────────────────────
+            ConsoleBanner.ShowStep(1, totalSteps, "Load QB 2021 Schema");
             QBSchemaExport? schema = null;
-            try
+            
+            // Check if schema file already exists (schema extraction is ONE-TIME only)
+            var schemaFileName = $"QB_Schema_{_config.QuickBooks.QB2021.SDKVersion.Replace(".", "_")}.json";
+            var schemaFilePath = Path.Combine(_config.Paths.SchemaDirectory, schemaFileName);
+            
+            if (File.Exists(schemaFilePath))
             {
-                using var qb2021SchemaConn = new QBConnectionManager(
-                    _config.QuickBooks.QB2021, "QB2021-Schema");
-                qb2021SchemaConn.Connect();
-
-                var schemaExtractor = new SchemaExtractor(
-                    qb2021SchemaConn,
-                    _config.QuickBooks.QB2021.SDKVersion,
-                    _config.Paths.SchemaDirectory);
-
-                schema = schemaExtractor.ExtractAllSchemas();
-                ConsoleBanner.ShowSuccess($"Schema extracted: {schema.EntitySchemas.Count} entity types");
+                Log.Information("Found existing schema file: {Path}", schemaFilePath);
+                Log.Information("Loading cached schema (extraction not needed - QB 2021 schema never changes)");
+                
+                var schemaJson = File.ReadAllText(schemaFilePath);
+                schema = JsonConvert.DeserializeObject<QBSchemaExport>(schemaJson);
+                
+                ConsoleBanner.ShowSuccess($"Loaded cached schema: {schema!.EntitySchemas.Count} entity types");
             }
-            catch (Exception ex)
+            else
             {
-                Log.Warning(ex, "Schema extraction failed (non-fatal): {Message}", ex.Message);
-                ConsoleBanner.ShowWarning($"Schema extraction skipped: {ex.Message}");
-                ConsoleBanner.ShowWarning("Using built-in schema definitions.");
+                Log.Information("Schema file not found. Extracting schema from QB 2021 (ONE-TIME operation)...");
+                
+                try
+                {
+                    using var qb2021SchemaConn = new QBConnectionManager(
+                        _config.QuickBooks.QB2021, "QB2021-Schema");
+                    qb2021SchemaConn.Connect();
+
+                    var schemaExtractor = new SchemaExtractor(
+                        qb2021SchemaConn,
+                        _config.QuickBooks.QB2021.SDKVersion,
+                        _config.Paths.SchemaDirectory);
+
+                    schema = schemaExtractor.ExtractAllSchemas();
+                    ConsoleBanner.ShowSuccess($"Schema extracted: {schema.EntitySchemas.Count} entity types");
+                }
+                catch (Exception ex)
+                {
+                    Log.Warning(ex, "Schema extraction failed (non-fatal): {Message}", ex.Message);
+                    ConsoleBanner.ShowWarning($"Schema extraction skipped: {ex.Message}");
+                    ConsoleBanner.ShowWarning("Using built-in schema definitions.");
+                }
             }
 
             // ─── Step 2: Export Data from QB 2023 ──────────────────────

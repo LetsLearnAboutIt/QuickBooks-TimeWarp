@@ -29,6 +29,17 @@ namespace QB_TimeWarp.Services
         private readonly Dictionary<string, string> _nameToListIdMap = new();
 
         /// <summary>
+        /// Transaction entity types — these use TxnID instead of Name/FullName.
+        /// They should NOT be skipped for having empty names.
+        /// </summary>
+        private static readonly HashSet<string> TransactionEntityTypes = new(StringComparer.OrdinalIgnoreCase)
+        {
+            "Invoices", "Bills", "Payments", "SalesReceipts", "PurchaseOrders",
+            "JournalEntries", "CreditMemos", "Estimates", "Deposits",
+            "Checks", "VendorCredits", "InventoryAdjustments", "Transfers"
+        };
+
+        /// <summary>
         /// Classes that exist in QB 2021 (populated during import).
         /// </summary>
         private readonly HashSet<string> _existingClasses = new(StringComparer.OrdinalIgnoreCase);
@@ -1309,14 +1320,34 @@ namespace QB_TimeWarp.Services
         /// </summary>
         private ImportResult ImportSingleEntity(string entityType, QBEntity entity)
         {
+            // For transactions, use TxnID or RefNumber as identifier; for list items, use Name/FullName
+            bool isTransaction = TransactionEntityTypes.Contains(entityType);
+            string sourceId;
+            if (isTransaction)
+            {
+                // Transactions use TxnID, RefNumber, or TxnNumber — not Name/FullName
+                sourceId = entity.TxnID;
+                if (string.IsNullOrWhiteSpace(sourceId))
+                    sourceId = entity.Fields["RefNumber"]?.ToString()
+                            ?? entity.Fields["TxnNumber"]?.ToString()
+                            ?? $"TxnIndex-{Guid.NewGuid():N}";
+            }
+            else
+            {
+                sourceId = !string.IsNullOrWhiteSpace(entity.FullName) ? entity.FullName
+                         : !string.IsNullOrWhiteSpace(entity.Name) ? entity.Name
+                         : entity.ListID;
+            }
+
             var result = new ImportResult
             {
                 EntityType = entityType,
-                SourceIdentifier = entity.FullName ?? entity.Name
+                SourceIdentifier = sourceId
             };
 
-            // Pre-validation: skip entities with empty names (they'll fail anyway)
-            if (string.IsNullOrWhiteSpace(entity.Name) && string.IsNullOrWhiteSpace(entity.FullName))
+            // Pre-validation: skip LIST entities with empty names (they'll fail anyway)
+            // Transactions don't need Name/FullName — they use TxnID
+            if (!isTransaction && string.IsNullOrWhiteSpace(entity.Name) && string.IsNullOrWhiteSpace(entity.FullName))
             {
                 result.Success = false;
                 result.ErrorMessage = "Entity has empty Name and FullName — cannot import.";
@@ -1539,8 +1570,9 @@ namespace QB_TimeWarp.Services
 
                 foreach (var entity in sample)
                 {
-                    // Check for empty names
-                    if (string.IsNullOrWhiteSpace(entity.Name) && string.IsNullOrWhiteSpace(entity.FullName))
+                    // Check for empty names — only for list entities, not transactions
+                    bool isTxn = TransactionEntityTypes.Contains(entityType);
+                    if (!isTxn && string.IsNullOrWhiteSpace(entity.Name) && string.IsNullOrWhiteSpace(entity.FullName))
                     {
                         entityIssues.Add($"[{entityType}] Entity has empty Name (ListID={entity.ListID})");
                     }

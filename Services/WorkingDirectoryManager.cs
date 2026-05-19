@@ -382,6 +382,95 @@ namespace QB_TimeWarp.Services
         }
 
         /// <summary>
+        /// Cleans up all working artifacts including working directories and exported data.
+        /// Use this before starting a new migration run to ensure a clean slate.
+        /// </summary>
+        public static void CleanupAllWorkingArtifacts(string workingSourcePath, string workingTargetPath, string exportDataPath)
+        {
+            Log.Information("╔══════════════════════════════════════════════════════════════╗");
+            Log.Information("║  CLEANING UP WORKING ARTIFACTS (PREPARING CLEAN SLATE)     ║");
+            Log.Information("╚══════════════════════════════════════════════════════════════╝");
+
+            // Clean Working\Source\ - remove .qbw and associated files
+            if (Directory.Exists(workingSourcePath))
+            {
+                var sourceFiles = Directory.GetFiles(workingSourcePath, "*.*");
+                foreach (var file in sourceFiles)
+                {
+                    try
+                    {
+                        // Clear read-only attribute before deleting (QB files are often read-only)
+                        var attrs = File.GetAttributes(file);
+                        if ((attrs & FileAttributes.ReadOnly) != 0)
+                            File.SetAttributes(file, attrs & ~FileAttributes.ReadOnly);
+                        File.Delete(file);
+                        Log.Information("  Deleted: {File}", Path.GetFileName(file));
+                    }
+                    catch (Exception ex)
+                    {
+                        Log.Warning("  Could not delete {File}: {Error}", Path.GetFileName(file), ex.Message);
+                    }
+                }
+                Log.Information("  ✓ Cleaned: {Path}", workingSourcePath);
+            }
+
+            // Clean Working\Target\ - remove .qbw and associated files
+            if (Directory.Exists(workingTargetPath))
+            {
+                var targetFiles = Directory.GetFiles(workingTargetPath, "*.*");
+                foreach (var file in targetFiles)
+                {
+                    try
+                    {
+                        var attrs = File.GetAttributes(file);
+                        if ((attrs & FileAttributes.ReadOnly) != 0)
+                            File.SetAttributes(file, attrs & ~FileAttributes.ReadOnly);
+                        File.Delete(file);
+                        Log.Information("  Deleted: {File}", Path.GetFileName(file));
+                    }
+                    catch (Exception ex)
+                    {
+                        Log.Warning("  Could not delete {File}: {Error}", Path.GetFileName(file), ex.Message);
+                    }
+                }
+                Log.Information("  ✓ Cleaned: {Path}", workingTargetPath);
+            }
+
+            // Clean ExportedData\ - remove all JSON and subdirectories
+            if (Directory.Exists(exportDataPath))
+            {
+                var exportFiles = Directory.GetFiles(exportDataPath, "*.*", SearchOption.AllDirectories);
+                foreach (var file in exportFiles)
+                {
+                    try
+                    {
+                        var attrs = File.GetAttributes(file);
+                        if ((attrs & FileAttributes.ReadOnly) != 0)
+                            File.SetAttributes(file, attrs & ~FileAttributes.ReadOnly);
+                        File.Delete(file);
+                    }
+                    catch (Exception ex)
+                    {
+                        Log.Warning("  Could not delete {File}: {Error}", Path.GetFileName(file), ex.Message);
+                    }
+                }
+                
+                var exportDirs = Directory.GetDirectories(exportDataPath);
+                foreach (var dir in exportDirs)
+                {
+                    try { Directory.Delete(dir, recursive: true); }
+                    catch (Exception ex) { Log.Warning("  Could not delete dir {Dir}: {Error}", dir, ex.Message); }
+                }
+                
+                Log.Information("  ✓ Cleaned: {Path} ({Count} files removed)", exportDataPath, exportFiles.Length);
+            }
+
+            Log.Information("╔══════════════════════════════════════════════════════════════╗");
+            Log.Information("║  ✓ CLEANUP COMPLETE — READY FOR FRESH MIGRATION RUN        ║");
+            Log.Information("╚══════════════════════════════════════════════════════════════╝");
+        }
+
+        /// <summary>
         /// Returns a summary of the current working copy state.
         /// </summary>
         public Dictionary<string, string> GetWorkingSummary()
