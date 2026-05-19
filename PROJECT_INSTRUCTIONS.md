@@ -2,9 +2,10 @@
 
 ---
 
-## 🔥 READ FIRST: `/home/ubuntu/QB-TimeWarp/memory.md`
+## 🔥 READ FIRST: `/home/ubuntu/memory.md`
 
-> **Before doing ANYTHING else**, read `memory.md` in this directory.
+> **Before doing ANYTHING else**, read `/home/ubuntu/memory.md`.
+> That is the ONE AND ONLY memory file (not in this project dir).
 > It contains all passwords, connection details, paths, current status,
 > and the complete quick-start checklist for immediate session resumption.
 
@@ -17,21 +18,29 @@ Before starting work, check for and read these files if they exist:
 ### Always Read
 | File | Purpose |
 |------|---------|
-| `memory.md` | 🧠 Complete session memory — passwords, paths, status, next steps |
+| `/home/ubuntu/memory.md` | 🧠 THE memory file — passwords, paths, status, next steps |
 | `PROJECT_CONTEXT.md` | What the project does, design decisions, requirements |
 | `CHANGE_LOG.md` | Full chronological history of every change made |
 
-### Supplemental Files (in /home/ubuntu/, NOT the project dir!)
+### Supplemental Files (ALL in /home/ubuntu/, NOT the project dir!)
 ```bash
 # Run this EVERY session to read supplemental files:
+cat /home/ubuntu/memory.md
 cat /home/ubuntu/PROJECT_INSTRUCTIONS_ADDITION.md 2>/dev/null
 cat /home/ubuntu/DEBUGGING_NOTES.md 2>/dev/null
+cat /home/ubuntu/CHANGE_LOG_ADDITION.md 2>/dev/null
+cat /home/ubuntu/DEBUGGING_SUMMARY_FOR_JOSEPH.md 2>/dev/null
+cat /home/ubuntu/debugging_review_report.md 2>/dev/null
 ```
 
 | File | Location | Purpose |
 |------|----------|---------|
+| **`memory.md`** | `/home/ubuntu/` | THE canonical memory file — all credentials, paths, status |
 | **`PROJECT_INSTRUCTIONS_ADDITION.md`** | `/home/ubuntu/` | Root cause analysis of import regression — 2 bugs, QBXML requirements, fix priorities |
 | **`DEBUGGING_NOTES.md`** | `/home/ubuntu/` | Deep debugging: success detection bug, QBXML parsing errors, code architecture notes |
+| **`CHANGE_LOG_ADDITION.md`** | `/home/ubuntu/` | Regression timeline: what broke in Turn 45, 359 phantom successes discovery |
+| **`DEBUGGING_SUMMARY_FOR_JOSEPH.md`** | `/home/ubuntu/` | Concise debugging summary formatted for Joseph |
+| **`debugging_review_report.md`** | `/home/ubuntu/` | Debugging review report |
 
 ### Legacy Files in Project Dir (still valid context)
 | File | Purpose |
