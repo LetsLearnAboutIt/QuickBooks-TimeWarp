@@ -60,12 +60,9 @@ chmod +x /tmp/vm.sh
 
 **RDP Connection (only when SSH won't work — GUI, launching runs):**
 ```bash
-pkill -f xfreerdp 2>/dev/null; sleep 1
-xfreerdp /v:aiagent.hostedremotedesktop.com:4420 /u:'VM-4420-11\AIAgent' /p:'01Hello02!@!' /dynamic-resolution /cert:ignore /auto-reconnect +clipboard &>/tmp/rdp2.log &
-echo "RDP PID: $!"
-sleep 10
-echo "Done"
+nohup xfreerdp /v:aiagent.hostedremotedesktop.com:4420 /u:'VM-4420-11\AIAgent' /p:'01Hello02!@!' /dynamic-resolution /cert:ignore /auto-reconnect +clipboard &>/tmp/rdp2.log & echo "RDP PID: $!" ; sleep 10 ; echo "Done"
 ```
+> **NOTE:** `nohup` is required for proper taskbar visibility. Without it, the Windows taskbar may not appear correctly in the RDP session.
 
 **RDP Reconnection Notes:**
 - RDP sessions can drop between context windows — always reconnect at session start
