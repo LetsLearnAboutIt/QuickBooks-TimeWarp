@@ -186,6 +186,8 @@ namespace QB_TimeWarp.Services
 
         /// <summary>
         /// Sends a QBXML request with retry logic.
+        /// Does NOT retry for SDK version compatibility errors (0x80040400) —
+        /// those won't be fixed by retrying and should fail fast.
         /// </summary>
         public string ProcessRequestWithRetry(string qbxmlRequest)
         {
@@ -196,6 +198,16 @@ namespace QB_TimeWarp.Services
                 {
                     attempt++;
                     return ProcessRequest(qbxmlRequest);
+                }
+                catch (System.Runtime.InteropServices.COMException comEx)
+                    when (Helpers.QBSDKVersionHelper.IsUnsupportedElementCOMError(comEx.HResult))
+                {
+                    // Don't retry version compatibility errors — they won't fix themselves
+                    Log.Warning("[{Instance}] SDK version compatibility error (0x80040400): {Message}. NOT retrying.",
+                        _instanceName, comEx.Message);
+                    throw new QBRequestException(
+                        $"SDK version incompatibility ({_instanceName}): {comEx.Message}. " +
+                        "This field/element is not supported in this QuickBooks version.", comEx);
                 }
                 catch (Exception ex) when (attempt < _config.MaxRetries)
                 {

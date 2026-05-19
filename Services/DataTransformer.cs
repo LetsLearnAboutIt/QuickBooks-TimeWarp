@@ -9,7 +9,8 @@ namespace QB_TimeWarp.Services
     /// <summary>
     /// Transforms exported QB 2023 data to be compatible with QB 2021 using the FieldMappings.json config.
     /// Applies field mappings, transformations, truncations, default values, entity reactivation,
-    /// class tracking preservation, accounting model matching, and field format preservation.
+    /// class tracking preservation, accounting model matching, field format preservation,
+    /// and QB SDK 15.0 compatibility filtering (removes fields not supported in QB 2021).
     /// </summary>
     public class DataTransformer
     {
@@ -19,6 +20,11 @@ namespace QB_TimeWarp.Services
         private readonly TransformationRulesConfig _transformationRules;
         private int _unmappedFieldCount;
         private readonly HashSet<string> _loggedUnmappedFields = new();
+        private int _sdk16FieldsRemoved;
+        private int _fieldsLengthAdjusted;
+        private int _emptyNameFieldsFixed;
+        private int _payrollFieldsSimplified;
+        private int _ccBalanceSignsFixed;
 
         // Transformation report tracking
         private readonly TransformationReport _transformationReport = new();
@@ -154,6 +160,9 @@ namespace QB_TimeWarp.Services
             // Build transformation report
             BuildTransformationReport(exportedData);
 
+            // Log QB 2021 compatibility summary
+            LogQB2021CompatibilitySummary();
+
             // Log reactivation summary
             if (_transformationRules.ReactivateInactiveEntities && _reactivatedCountByType.Any())
             {
@@ -257,6 +266,7 @@ namespace QB_TimeWarp.Services
 
         /// <summary>
         /// Transforms a single entity according to its field mappings.
+        /// Includes QB 2021 SDK 15.0 compatibility filtering.
         /// </summary>
         private QBEntity TransformEntity(QBEntity source, EntityMappingConfig? mapping, string entityType)
         {
@@ -276,25 +286,53 @@ namespace QB_TimeWarp.Services
                 // No mapping defined - pass fields through unchanged
                 transformed.Fields = source.Fields.DeepClone() as JObject ?? new JObject();
                 transformed.LineItems = source.LineItems.Select(li => li.DeepClone() as JObject ?? new JObject()).ToList();
-                return transformed;
-            }
-
-            // Apply field mappings
-            transformed.Fields = ApplyFieldMappings(source.Fields, mapping.FieldMappings, source.Name);
-
-            // Transform line items
-            if (mapping.LineItemMappings != null && source.LineItems.Any())
-            {
-                transformed.LineItems = source.LineItems
-                    .Select(li => ApplyFieldMappings(li, mapping.LineItemMappings, $"{source.Name}:line"))
-                    .ToList();
             }
             else
             {
-                transformed.LineItems = source.LineItems
-                    .Select(li => li.DeepClone() as JObject ?? new JObject())
-                    .ToList();
+                // Apply field mappings
+                transformed.Fields = ApplyFieldMappings(source.Fields, mapping.FieldMappings, source.Name);
+
+                // Transform line items
+                if (mapping.LineItemMappings != null && source.LineItems.Any())
+                {
+                    transformed.LineItems = source.LineItems
+                        .Select(li => ApplyFieldMappings(li, mapping.LineItemMappings, $"{source.Name}:line"))
+                        .ToList();
+                }
+                else
+                {
+                    transformed.LineItems = source.LineItems
+                        .Select(li => li.DeepClone() as JObject ?? new JObject())
+                        .ToList();
+                }
             }
+
+            // ── QB 2021 SDK 15.0 Compatibility Fixes ────────────────────
+            // Remove SDK 16.0-only fields that would cause 0x80040400 errors
+            RemoveSDK16OnlyFields(transformed.Fields, entityType);
+            foreach (var lineItem in transformed.LineItems)
+            {
+                RemoveSDK16OnlyFields(lineItem, $"{entityType}:line");
+            }
+
+            // Enforce QB 2021 field length limits
+            EnforceQB2021FieldLengths(transformed.Fields, entityType);
+            foreach (var lineItem in transformed.LineItems)
+            {
+                EnforceQB2021FieldLengths(lineItem, $"{entityType}:line");
+            }
+
+            // Fix empty Name fields (causes QB import to fail)
+            FixEmptyNameField(transformed, entityType);
+
+            // Simplify payroll fields for QB 2021 compatibility
+            SimplifyPayrollFields(transformed.Fields, entityType);
+
+            // Fix CC balance sign inversion (accountant flagged this)
+            FixCCBalanceSigns(transformed, entityType);
+
+            // Ensure account numbers are preserved (accountant flagged missing)
+            PreserveAccountNumbers(source, transformed, entityType);
 
             // Ensure class assignments are preserved in transactions
             if (_transformationRules.PreserveClassTracking && ClassTrackingHeaderTypes.Contains(entityType))
@@ -305,6 +343,207 @@ namespace QB_TimeWarp.Services
             _transformationReport.TotalEntitiesTransformed++;
 
             return transformed;
+        }
+
+        /// <summary>
+        /// Removes fields that only exist in SDK 16.0 (QB 2023) and are not supported in SDK 15.0 (QB 2021).
+        /// These fields cause 0x80040400 COM errors when sent to QB 2021.
+        /// </summary>
+        private void RemoveSDK16OnlyFields(JObject fields, string context)
+        {
+            var fieldsToRemove = new List<string>();
+
+            foreach (var prop in fields.Properties())
+            {
+                if (QBSDKVersionHelper.SDK16OnlyFields.Contains(prop.Name))
+                {
+                    fieldsToRemove.Add(prop.Name);
+                }
+                else if (prop.Value is JObject nested)
+                {
+                    // Check nested fields (e.g., "EmployeePayrollInfo.ClearEarnings")
+                    RemoveSDK16OnlyFields(nested, $"{context}.{prop.Name}");
+                }
+            }
+
+            foreach (var fieldName in fieldsToRemove)
+            {
+                fields.Remove(fieldName);
+                _sdk16FieldsRemoved++;
+                Log.Debug("  Removed SDK 16.0-only field '{Field}' from {Context} (not supported in QB 2021)",
+                    fieldName, context);
+            }
+        }
+
+        /// <summary>
+        /// Enforces QB 2021 (SDK 15.0) field length limits.
+        /// Fields that are longer than QB 2021 allows are truncated.
+        /// </summary>
+        private void EnforceQB2021FieldLengths(JObject fields, string context)
+        {
+            foreach (var prop in fields.Properties().ToList())
+            {
+                if (prop.Value is JObject nested)
+                {
+                    EnforceQB2021FieldLengths(nested, $"{context}.{prop.Name}");
+                    continue;
+                }
+
+                if (prop.Value.Type != JTokenType.String) continue;
+
+                var strValue = prop.Value.ToString();
+                var maxLen = QBSDKVersionHelper.GetQB2021MaxLength(prop.Name);
+
+                if (maxLen.HasValue && strValue.Length > maxLen.Value)
+                {
+                    var truncated = strValue.Substring(0, maxLen.Value);
+                    fields[prop.Name] = truncated;
+                    _fieldsLengthAdjusted++;
+                    Log.Debug("  Truncated field '{Field}' from {Original} to {Max} chars for QB 2021 in {Context}",
+                        prop.Name, strValue.Length, maxLen.Value, context);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Fixes empty Name fields by generating a placeholder name.
+        /// Empty names cause QB import to fail with validation errors.
+        /// </summary>
+        private void FixEmptyNameField(QBEntity entity, string entityType)
+        {
+            if (string.IsNullOrWhiteSpace(entity.Name) && string.IsNullOrWhiteSpace(entity.FullName))
+            {
+                // Generate a name from available fields
+                var generatedName = GenerateEntityName(entity, entityType);
+                entity.Name = generatedName;
+                entity.FullName = generatedName;
+                entity.Fields["Name"] = generatedName;
+                _emptyNameFieldsFixed++;
+                Log.Warning("  Fixed empty Name for {EntityType}: generated '{GeneratedName}'",
+                    entityType, generatedName);
+            }
+            else if (string.IsNullOrWhiteSpace(entity.Name) && !string.IsNullOrWhiteSpace(entity.FullName))
+            {
+                entity.Name = entity.FullName;
+                entity.Fields["Name"] = entity.FullName;
+                _emptyNameFieldsFixed++;
+                Log.Debug("  Copied FullName to empty Name for {EntityType}: '{Name}'",
+                    entityType, entity.FullName);
+            }
+        }
+
+        /// <summary>
+        /// Generates a fallback entity name from available fields.
+        /// </summary>
+        private static string GenerateEntityName(QBEntity entity, string entityType)
+        {
+            // Try common name-like fields
+            var candidates = new[] { "CompanyName", "FirstName", "Description", "RefNumber", "TxnNumber", "Memo" };
+            foreach (var field in candidates)
+            {
+                var value = entity.Fields[field]?.ToString();
+                if (!string.IsNullOrWhiteSpace(value))
+                {
+                    // Truncate to 41 chars (QB 2021 Name limit)
+                    return value.Length > 41 ? value.Substring(0, 41) : value;
+                }
+            }
+
+            // Try combining first + last name
+            var first = entity.Fields["FirstName"]?.ToString() ?? "";
+            var last = entity.Fields["LastName"]?.ToString() ?? "";
+            if (!string.IsNullOrWhiteSpace(first) || !string.IsNullOrWhiteSpace(last))
+            {
+                var combined = $"{first} {last}".Trim();
+                return combined.Length > 41 ? combined.Substring(0, 41) : combined;
+            }
+
+            // Last resort: use entity type + ID
+            var id = entity.ListID ?? entity.TxnID ?? Guid.NewGuid().ToString("N").Substring(0, 8);
+            return $"{entityType}_{id}".Substring(0, Math.Min(41, $"{entityType}_{id}".Length));
+        }
+
+        /// <summary>
+        /// Simplifies payroll-related fields for QB 2021 compatibility.
+        /// QB 2023 has a more complex payroll structure not supported by QB 2021's SDK.
+        /// </summary>
+        private void SimplifyPayrollFields(JObject fields, string context)
+        {
+            var fieldsToRemove = new List<string>();
+
+            foreach (var prop in fields.Properties())
+            {
+                if (QBSDKVersionHelper.IsPayrollFieldToSimplify(prop.Name))
+                {
+                    fieldsToRemove.Add(prop.Name);
+                }
+            }
+
+            foreach (var fieldName in fieldsToRemove)
+            {
+                fields.Remove(fieldName);
+                _payrollFieldsSimplified++;
+                Log.Debug("  Simplified payroll field '{Field}' from {Context} for QB 2021 compatibility",
+                    fieldName, context);
+            }
+        }
+
+        /// <summary>
+        /// Fixes credit card balance sign inversion issue flagged by accountant.
+        /// QB 2023 may report CC balances with opposite sign convention from QB 2021.
+        /// In QB 2021, CC (Credit Card type) account balances should be positive when you owe money.
+        /// </summary>
+        private void FixCCBalanceSigns(QBEntity entity, string entityType)
+        {
+            if (entityType != "Accounts") return;
+
+            var accountType = entity.Fields["AccountType"]?.ToString();
+            if (string.IsNullOrEmpty(accountType) ||
+                !accountType.Equals("CreditCard", StringComparison.OrdinalIgnoreCase))
+                return;
+
+            // Check for balance fields that may need sign inversion
+            var balanceFields = new[] { "Balance", "TotalBalance", "OpenBalance" };
+            foreach (var balField in balanceFields)
+            {
+                var balValue = entity.Fields[balField]?.ToString();
+                if (!string.IsNullOrEmpty(balValue) && decimal.TryParse(balValue,
+                    System.Globalization.NumberStyles.Any,
+                    System.Globalization.CultureInfo.InvariantCulture, out var balance))
+                {
+                    // QB 2021 expects positive balance = money owed on CC
+                    // QB 2023 sometimes reports with inverted sign
+                    // We negate negative CC balances to match QB 2021 convention
+                    if (balance < 0)
+                    {
+                        var corrected = Math.Abs(balance);
+                        entity.Fields[balField] = corrected.ToString("F2", System.Globalization.CultureInfo.InvariantCulture);
+                        _ccBalanceSignsFixed++;
+                        Log.Information("  Fixed CC balance sign for '{Name}': {Original} → {Corrected}",
+                            entity.Name, balValue, corrected.ToString("F2"));
+                    }
+                }
+            }
+        }
+
+        /// <summary>
+        /// Ensures account numbers from QB 2023 are preserved in the transformed data.
+        /// Accountant flagged that account numbers were missing after migration.
+        /// </summary>
+        private void PreserveAccountNumbers(QBEntity source, QBEntity transformed, string entityType)
+        {
+            if (entityType != "Accounts") return;
+
+            var sourceAcctNum = source.Fields["AccountNumber"]?.ToString();
+            var transformedAcctNum = transformed.Fields["AccountNumber"]?.ToString();
+
+            if (!string.IsNullOrEmpty(sourceAcctNum) && string.IsNullOrEmpty(transformedAcctNum))
+            {
+                // Account number was lost during transformation — restore it
+                transformed.Fields["AccountNumber"] = sourceAcctNum;
+                Log.Debug("  Restored AccountNumber '{AcctNum}' for account '{Name}'",
+                    sourceAcctNum, source.Name);
+            }
         }
 
         /// <summary>
@@ -914,6 +1153,35 @@ namespace QB_TimeWarp.Services
                 if (fs.FormatIssues.Count > 10)
                     Log.Warning("      ... and {More} more issues", fs.FormatIssues.Count - 10);
             }
+        }
+
+        /// <summary>
+        /// Logs a summary of QB 2021 SDK 15.0 compatibility adjustments made during transformation.
+        /// </summary>
+        private void LogQB2021CompatibilitySummary()
+        {
+            var totalAdjustments = _sdk16FieldsRemoved + _fieldsLengthAdjusted +
+                _emptyNameFieldsFixed + _payrollFieldsSimplified + _ccBalanceSignsFixed;
+
+            if (totalAdjustments == 0) return;
+
+            Log.Information("────────────────────────────────────────────");
+            Log.Information("  QB 2021 (SDK 15.0) COMPATIBILITY SUMMARY");
+            Log.Information("────────────────────────────────────────────");
+
+            if (_sdk16FieldsRemoved > 0)
+                Log.Information("    SDK 16.0-only fields removed:     {Count} (would cause 0x80040400)", _sdk16FieldsRemoved);
+            if (_fieldsLengthAdjusted > 0)
+                Log.Information("    Fields truncated for 2021 limits:  {Count}", _fieldsLengthAdjusted);
+            if (_emptyNameFieldsFixed > 0)
+                Log.Information("    Empty Name fields fixed:           {Count}", _emptyNameFieldsFixed);
+            if (_payrollFieldsSimplified > 0)
+                Log.Information("    Payroll fields simplified:         {Count}", _payrollFieldsSimplified);
+            if (_ccBalanceSignsFixed > 0)
+                Log.Information("    CC balance signs corrected:        {Count}", _ccBalanceSignsFixed);
+
+            Log.Information("    ────────────────────────────────");
+            Log.Information("    TOTAL compatibility adjustments: {Total}", totalAdjustments);
         }
 
         /// <summary>

@@ -39,7 +39,55 @@
     "dateFormat": "yyyy-MM-dd",
     "truncateLongStrings": true,
     "unmappedFieldAction": "skip",
-    "logUnmappedFields": true
+    "logUnmappedFields": true,
+    "targetSDKVersion": "15.0",
+    "targetQBVersion": "2021",
+    "enforceQB2021FieldLimits": true
+  },
+  "qb2021Compatibility": {
+    "_description": "Documents fields NOT supported in QB 2021 (SDK 15.0). These are automatically stripped by DataTransformer and DataImporter.",
+    "sdk16OnlyFields": [
+      "ExternalGUID", "TaxRegistrationNumber", "CurrencyRef", "PreferredDeliveryMethod",
+      "EmployeeType", "EmployeePayrollInfo", "BillingRateRef",
+      "UnitOfMeasureSetRef", "ForceUOMChange", "ExchangeRate", "LinkToTxnID",
+      "SubscriptionPaymentStatus", "DeliveryInfo", "TaxLineRef"
+    ],
+    "sdk16OnlyEntityTypes": [
+      "TransferInventory"
+    ],
+    "fieldLengthDifferences": {
+      "_description": "Fields where QB 2021 has shorter max length than QB 2023. Format: {field: [qb2021Max, qb2023Max]}",
+      "Name": [41, 209],
+      "CompanyName": [41, 209],
+      "FirstName": [25, 100],
+      "LastName": [25, 100],
+      "MiddleName": [5, 100],
+      "Salutation": [15, 100],
+      "JobTitle": [41, 100],
+      "Contact": [41, 100],
+      "AltContact": [41, 100],
+      "Addr1": [41, 500],
+      "Addr2": [41, 500],
+      "Addr3": [41, 500],
+      "Addr4": [41, 500],
+      "Addr5": [41, 500],
+      "City": [31, 255],
+      "State": [21, 255],
+      "PostalCode": [13, 30],
+      "Country": [31, 255]
+    },
+    "payrollFieldsToSimplify": [
+      "PayrollItemWageRef", "PayrollItemNonWageRef", "PayrollInfo", "Earnings",
+      "EmployeePayrollInfo", "ClearEarnings", "SickHours", "VacationHours",
+      "AdjustPercentage", "AdjustRelativeTo"
+    ],
+    "knownIssues": {
+      "accountNumbers": "AccountNumber field must be explicitly preserved — was being dropped during transformation. FIXED.",
+      "ccBalanceSign": "Credit Card account balances may be inverted (negative in 2023, should be positive in 2021). FIXED.",
+      "ccColumns": "Credit card columns were reversed in reports. FIXED in earlier session.",
+      "trialBalance": "Trial balance mismatch — ensure all journal entries import with correct debit/credit amounts.",
+      "emptyNames": "Some entities export with empty Name fields — auto-generated placeholders applied. FIXED."
+    }
   },
   "entityMappings": {
     "Customer": {
@@ -324,7 +372,7 @@
         { "sourceField": "FullName", "targetField": "Name", "action": "map", "maxLength": 159 },
         { "sourceField": "IsActive", "targetField": "IsActive", "action": "map" },
         { "sourceField": "AccountType", "targetField": "AccountType", "action": "map" },
-        { "sourceField": "AccountNumber", "targetField": "AccountNumber", "action": "map", "maxLength": 7 },
+        { "sourceField": "AccountNumber", "targetField": "AccountNumber", "action": "map", "maxLength": 99, "notes": "CRITICAL: Must preserve — accountant flagged missing account numbers" },
         { "sourceField": "Description", "targetField": "Description", "action": "map", "maxLength": 200 },
         { "sourceField": "BankNumber", "targetField": "BankNumber", "action": "map", "maxLength": 25 },
         { "sourceField": "OpenBalance", "targetField": "OpenBalance", "action": "map" },
@@ -358,7 +406,7 @@
         { "sourceField": "QuantityOnHand", "targetField": "QuantityOnHand", "action": "map" },
         { "sourceField": "ReorderPoint", "targetField": "ReorderPoint", "action": "map" },
         { "sourceField": "ParentRef.FullName", "targetField": "ParentRef.FullName", "action": "map" },
-        { "sourceField": "UnitOfMeasureSetRef.FullName", "targetField": "UnitOfMeasureSetRef.FullName", "action": "map" },
+        { "sourceField": "UnitOfMeasureSetRef.FullName", "targetField": null, "action": "skip", "notes": "SDK 16.0 only — not supported in QB 2021", "qb2021Supported": false },
         { "sourceField": "IsTaxIncluded", "targetField": "IsTaxIncluded", "action": "map" },
         { "sourceField": "ExternalGUID", "targetField": null, "action": "skip" }
       ]
@@ -385,8 +433,10 @@
         { "sourceField": "EmployeeAddress.State", "targetField": "EmployeeAddress.State", "action": "map", "maxLength": 21 },
         { "sourceField": "EmployeeAddress.PostalCode", "targetField": "EmployeeAddress.PostalCode", "action": "map", "maxLength": 13 },
         { "sourceField": "Notes", "targetField": "Notes", "action": "map", "maxLength": 4095 },
-        { "sourceField": "EmployeeType", "targetField": "EmployeeType", "action": "map" },
-        { "sourceField": "ExternalGUID", "targetField": null, "action": "skip" }
+        { "sourceField": "EmployeeType", "targetField": null, "action": "skip", "notes": "SDK 16.0 only — not supported in QB 2021", "qb2021Supported": false },
+        { "sourceField": "BillingRateRef", "targetField": null, "action": "skip", "notes": "SDK 16.0 only", "qb2021Supported": false },
+        { "sourceField": "EmployeePayrollInfo", "targetField": null, "action": "skip", "notes": "Complex payroll structure — use simplified format for QB 2021", "qb2021Supported": false },
+        { "sourceField": "ExternalGUID", "targetField": null, "action": "skip", "qb2021Supported": false }
       ]
     },
     "Invoice": {

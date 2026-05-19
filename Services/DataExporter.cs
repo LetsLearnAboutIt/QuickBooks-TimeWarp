@@ -1,13 +1,15 @@
 using System.Xml.Linq;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using QB_TimeWarp.Helpers;
 using QB_TimeWarp.Models;
 using Serilog;
 
 namespace QB_TimeWarp.Services
 {
     /// <summary>
-    /// Exports all entity data from QuickBooks 2023 via QBXML SDK.
+    /// Exports all entity data from QuickBooks via QBXML SDK.
+    /// Automatically adapts QBXML version based on detected QB SDK version.
     /// Data is serialized to JSON files organized by entity type.
     /// </summary>
     public class DataExporter
@@ -16,6 +18,8 @@ namespace QB_TimeWarp.Services
         private readonly ExportConfig _exportConfig;
         private readonly string _outputDirectory;
         private readonly string _sdkVersion;
+        private string _effectiveSDKVersion; // May be adjusted after version detection
+        private string? _detectedMaxSDKVersion;
 
         /// <summary>
         /// Maps our entity type names to QBXML query/response type names.
@@ -92,7 +96,46 @@ namespace QB_TimeWarp.Services
             _exportConfig = exportConfig;
             _outputDirectory = outputDirectory;
             _sdkVersion = sdkVersion;
+            _effectiveSDKVersion = sdkVersion;
         }
+
+        /// <summary>
+        /// Detects the QB SDK version by sending a HostQuery request.
+        /// Adjusts the effective SDK version to match what QB supports.
+        /// Call this after connecting but before exporting.
+        /// </summary>
+        public string DetectAndAdjustSDKVersion()
+        {
+            try
+            {
+                Log.Information("Detecting QB SDK version...");
+                var hostQueryXml = QBSDKVersionHelper.BuildHostQueryRequest();
+                var response = _connection.ProcessRequest(hostQueryXml);
+
+                var (maxVersion, supportedVersions) = QBSDKVersionHelper.ParseHostQueryResponse(response);
+                _detectedMaxSDKVersion = maxVersion;
+
+                // Use the minimum of configured and detected max version
+                _effectiveSDKVersion = QBSDKVersionHelper.DetermineEffectiveSDKVersion(_sdkVersion, maxVersion);
+
+                Log.Information("SDK version detection: configured={Configured}, detected_max={Detected}, using={Effective}",
+                    _sdkVersion, maxVersion, _effectiveSDKVersion);
+
+                return _effectiveSDKVersion;
+            }
+            catch (Exception ex)
+            {
+                Log.Warning("SDK version detection failed: {Message}. Using configured version: {Version}",
+                    ex.Message, _sdkVersion);
+                _effectiveSDKVersion = _sdkVersion;
+                return _effectiveSDKVersion;
+            }
+        }
+
+        /// <summary>
+        /// Gets the effective SDK version being used (after detection/adjustment).
+        /// </summary>
+        public string EffectiveSDKVersion => _effectiveSDKVersion;
 
         /// <summary>
         /// Entity types that support the ActiveStatus/IsActive filter in QBXML queries.
@@ -212,11 +255,11 @@ namespace QB_TimeWarp.Services
             var isTransaction = TransactionTypes.Contains(entityType);
             var supportsActiveStatus = ActiveStatusEntityTypes.Contains(entityType);
 
-            // Build the query - include inactive records for list entities that support ActiveStatus
+            // Build the query - use effective SDK version (auto-adjusted for QB compatibility)
             var includeInactive = supportsActiveStatus && _exportConfig.IncludeInactiveRecords;
             var qbxmlRequest = QBConnectionManager.BuildQueryRequest(
                 queryType,
-                _sdkVersion,
+                _effectiveSDKVersion,  // Use effective version (may be adjusted from configured)
                 includeInactive: includeInactive,
                 fromDate: isTransaction ? _exportConfig.DateRangeStart : null,
                 toDate: isTransaction ? _exportConfig.DateRangeEnd : null
@@ -366,6 +409,8 @@ namespace QB_TimeWarp.Services
                 ExportTimestamp = DateTime.UtcNow,
                 SourceVersion = "QuickBooks 2023",
                 SDKVersion = _sdkVersion,
+                EffectiveSDKVersion = _effectiveSDKVersion,
+                DetectedMaxSDKVersion = _detectedMaxSDKVersion ?? "not detected",
                 IncludeInactiveRecords = _exportConfig.IncludeInactiveRecords,
                 TotalRecords = allExports.Values.Sum(e => e.TotalCount),
                 TotalActiveRecords = allExports.Values.Sum(e => e.ActiveCount),

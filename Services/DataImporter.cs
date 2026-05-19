@@ -1,6 +1,7 @@
 using System.Text;
 using System.Xml.Linq;
 using Newtonsoft.Json.Linq;
+using QB_TimeWarp.Helpers;
 using QB_TimeWarp.Models;
 using Serilog;
 
@@ -8,7 +9,8 @@ namespace QB_TimeWarp.Services
 {
     /// <summary>
     /// Imports transformed data into QuickBooks 2021 via QBXML SDK.
-    /// Handles dependency ordering, ID remapping, and error recovery.
+    /// Handles dependency ordering, ID remapping, error recovery,
+    /// SDK version compatibility, and smart error handling for 0x80040400.
     /// </summary>
     public class DataImporter
     {
@@ -16,6 +18,7 @@ namespace QB_TimeWarp.Services
         private readonly ImportConfig _importConfig;
         private readonly TransformationRulesConfig _transformationRules;
         private readonly string _sdkVersion;
+        private string _effectiveSDKVersion;
 
         /// <summary>
         /// Stores mappings from source IDs/Names to newly assigned target IDs.
@@ -96,13 +99,31 @@ namespace QB_TimeWarp.Services
 
         /// <summary>
         /// Fields that should be excluded from Add requests (read-only or system-generated).
+        /// Combined with SDK 16.0-only fields that QB 2021 does not support.
         /// </summary>
         private static readonly HashSet<string> ExcludedFields = new(StringComparer.OrdinalIgnoreCase)
         {
+            // Read-only / system-generated fields
             "ListID", "TxnID", "TimeCreated", "TimeModified", "EditSequence",
             "TxnNumber", "Balance", "TotalBalance", "Subtotal", "BalanceRemaining",
-            "IsPaid", "ExternalGUID", "FullName", "OpenBalance"
+            "IsPaid", "ExternalGUID", "FullName", "OpenBalance",
+            // SDK 16.0-only fields (cause 0x80040400 in QB 2021)
+            "TaxRegistrationNumber", "PreferredDeliveryMethod", "SubscriptionPaymentStatus",
+            "DeliveryInfo", "TaxLineRef", "ForceUOMChange", "LinkToTxnID",
+            // Payroll fields not supported in simplified QB 2021 format
+            "EmployeePayrollInfo", "ClearEarnings", "BillingRateRef",
         };
+
+        /// <summary>
+        /// Tracks fields that caused 0x80040400 errors at runtime so we can skip them on retry.
+        /// </summary>
+        private readonly HashSet<string> _dynamicExcludedFields = new(StringComparer.OrdinalIgnoreCase);
+
+        /// <summary>
+        /// Tracks the number of compatibility-related skips.
+        /// </summary>
+        private int _incompatibleFieldSkips;
+        private int _emptyNameSkips;
 
         public DataImporter(QBConnectionManager connection, ImportConfig importConfig, string sdkVersion)
             : this(connection, importConfig, sdkVersion, new TransformationRulesConfig())
@@ -115,7 +136,21 @@ namespace QB_TimeWarp.Services
             _connection = connection;
             _importConfig = importConfig;
             _sdkVersion = sdkVersion;
+            _effectiveSDKVersion = QBSDKVersionHelper.IsQB2021Compatible(sdkVersion)
+                ? sdkVersion : QBSDKVersionHelper.QB2021_MAX_SDK_VERSION;
             _transformationRules = transformationRules;
+
+            Log.Information("DataImporter initialized: configured SDK={Configured}, effective SDK={Effective}",
+                sdkVersion, _effectiveSDKVersion);
+        }
+
+        /// <summary>
+        /// Sets the effective SDK version (called after version detection).
+        /// </summary>
+        public void SetEffectiveSDKVersion(string version)
+        {
+            _effectiveSDKVersion = version;
+            Log.Information("DataImporter SDK version updated to: {Version}", version);
         }
 
         /// <summary>
@@ -177,6 +212,15 @@ namespace QB_TimeWarp.Services
                 report.TotalRecordsSucceeded, report.TotalRecordsAttempted);
             if (report.TotalRecordsFailed > 0)
                 Log.Warning("  {Failed} records failed to import", report.TotalRecordsFailed);
+            if (_incompatibleFieldSkips > 0)
+                Log.Information("  {Count} incompatible fields skipped (SDK 15.0 compatibility)", _incompatibleFieldSkips);
+            if (_emptyNameSkips > 0)
+                Log.Warning("  {Count} entities skipped due to empty names", _emptyNameSkips);
+            if (_dynamicExcludedFields.Any())
+            {
+                Log.Information("  Fields dynamically excluded after 0x80040400 errors: {Fields}",
+                    string.Join(", ", _dynamicExcludedFields));
+            }
             Log.Information("═══════════════════════════════════════════════════════");
 
             return report;
@@ -279,6 +323,9 @@ namespace QB_TimeWarp.Services
 
         /// <summary>
         /// Imports a single entity into QuickBooks 2021.
+        /// Includes smart error handling: if a 0x80040400/3250 error is returned (unsupported field),
+        /// the offending field is identified and added to the dynamic exclusion list.
+        /// The import is retried ONCE without the problematic field (not 3 times).
         /// </summary>
         private ImportResult ImportSingleEntity(string entityType, QBEntity entity)
         {
@@ -287,6 +334,15 @@ namespace QB_TimeWarp.Services
                 EntityType = entityType,
                 SourceIdentifier = entity.FullName ?? entity.Name
             };
+
+            // Pre-validation: skip entities with empty names (they'll fail anyway)
+            if (string.IsNullOrWhiteSpace(entity.Name) && string.IsNullOrWhiteSpace(entity.FullName))
+            {
+                result.Success = false;
+                result.ErrorMessage = "Entity has empty Name and FullName — cannot import.";
+                _emptyNameSkips++;
+                return result;
+            }
 
             try
             {
@@ -300,8 +356,34 @@ namespace QB_TimeWarp.Services
 
                 result.QBXMLRequest = requestXml;
 
-                // Send to QuickBooks
-                var response = _connection.ProcessRequestWithRetry(requestXml);
+                // Send to QuickBooks — use ProcessRequest directly (not WithRetry)
+                // for the first attempt so we can handle version errors ourselves
+                string response;
+                try
+                {
+                    response = _connection.ProcessRequest(requestXml);
+                }
+                catch (QBRequestException ex) when (IsVersionCompatibilityError(ex))
+                {
+                    // This is likely a 0x80040400 — try to identify the problematic field
+                    Log.Warning("  SDK compatibility error for '{Name}': {Message}. Attempting field-reduced retry...",
+                        entity.Name, ex.Message);
+
+                    // Add likely problematic fields to exclusion list
+                    IdentifyAndExcludeProblematicFields(entity, entityType);
+
+                    // Retry with reduced fields (single retry, not 3)
+                    var retryXml = BuildAddRequestXml(entityType, entity);
+                    if (string.IsNullOrEmpty(retryXml))
+                    {
+                        result.Success = false;
+                        result.ErrorMessage = $"Retry failed: could not build reduced QBXML. Original error: {ex.Message}";
+                        return result;
+                    }
+
+                    response = _connection.ProcessRequest(retryXml);
+                }
+
                 result.QBXMLResponse = response;
 
                 // Parse response for success/failure
@@ -327,6 +409,16 @@ namespace QB_TimeWarp.Services
                             result.NewTxnID = retElement.Element("TxnID")?.Value;
                         }
                     }
+                    else if (QBSDKVersionHelper.IsUnsupportedFieldError(statusCode))
+                    {
+                        // This is a version-compatibility error — log and learn
+                        result.Success = false;
+                        result.ErrorCode = statusCode;
+                        result.ErrorMessage = $"{statusMessage} [{QBSDKVersionHelper.ExplainErrorCode(statusCode)}]";
+
+                        LearnFromErrorResponse(statusMessage, entityType);
+                        _incompatibleFieldSkips++;
+                    }
                     else
                     {
                         result.Success = false;
@@ -350,7 +442,183 @@ namespace QB_TimeWarp.Services
         }
 
         /// <summary>
+        /// Checks if an exception is related to SDK version compatibility (0x80040400).
+        /// </summary>
+        private static bool IsVersionCompatibilityError(Exception ex)
+        {
+            if (ex is System.Runtime.InteropServices.COMException comEx)
+            {
+                return QBSDKVersionHelper.IsUnsupportedElementCOMError(comEx.HResult);
+            }
+
+            // Check the message for common indicators
+            var msg = ex.Message.ToUpperInvariant();
+            return msg.Contains("80040400") || msg.Contains("UNSUPPORTED") ||
+                   msg.Contains("NOT VALID") || msg.Contains("ELEMENT NOT");
+        }
+
+        /// <summary>
+        /// Attempts to identify which fields might be causing compatibility errors
+        /// and adds them to the dynamic exclusion list.
+        /// </summary>
+        private void IdentifyAndExcludeProblematicFields(QBEntity entity, string entityType)
+        {
+            // Check for SDK 16-only fields that might have slipped through
+            foreach (var prop in entity.Fields.Properties())
+            {
+                if (QBSDKVersionHelper.SDK16OnlyFields.Contains(prop.Name) &&
+                    !_dynamicExcludedFields.Contains(prop.Name))
+                {
+                    _dynamicExcludedFields.Add(prop.Name);
+                    Log.Warning("  Dynamically excluding field '{Field}' from {EntityType} imports",
+                        prop.Name, entityType);
+                }
+
+                // Also check for payroll fields
+                if (QBSDKVersionHelper.IsPayrollFieldToSimplify(prop.Name) &&
+                    !_dynamicExcludedFields.Contains(prop.Name))
+                {
+                    _dynamicExcludedFields.Add(prop.Name);
+                    Log.Warning("  Dynamically excluding payroll field '{Field}' from {EntityType} imports",
+                        prop.Name, entityType);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Learns from QB error responses to improve future imports.
+        /// Parses the error message to identify field names that QB doesn't support.
+        /// </summary>
+        private void LearnFromErrorResponse(string? statusMessage, string entityType)
+        {
+            if (string.IsNullOrEmpty(statusMessage)) return;
+
+            // QB error messages often mention the offending element name
+            // e.g., "The element 'ExchangeRate' is not valid for this request"
+            var msg = statusMessage;
+
+            // Try to extract field name from common error patterns
+            var patterns = new[]
+            {
+                "element '", "field '", "tag '",
+                "Element '", "Field '", "Tag '"
+            };
+
+            foreach (var pattern in patterns)
+            {
+                var idx = msg.IndexOf(pattern, StringComparison.OrdinalIgnoreCase);
+                if (idx >= 0)
+                {
+                    var start = idx + pattern.Length;
+                    var end = msg.IndexOf("'", start);
+                    if (end > start)
+                    {
+                        var fieldName = msg.Substring(start, end - start);
+                        if (!_dynamicExcludedFields.Contains(fieldName))
+                        {
+                            _dynamicExcludedFields.Add(fieldName);
+                            Log.Warning("  Learned: field '{Field}' is not supported in QB 2021 for {EntityType}. " +
+                                "Will exclude from future imports.", fieldName, entityType);
+                        }
+                    }
+                }
+            }
+        }
+
+        /// <summary>
+        /// Validates a sample of records before full import to detect compatibility issues early.
+        /// Returns a list of validation issues found.
+        /// </summary>
+        public List<string> ValidateSampleBeforeImport(Dictionary<string, ExportedEntitySet> transformedData, int sampleSize = 3)
+        {
+            var issues = new List<string>();
+
+            Log.Information("════════════════════════════════════════════════════");
+            Log.Information("  PRE-IMPORT VALIDATION (sample of {SampleSize} per type)", sampleSize);
+            Log.Information("════════════════════════════════════════════════════");
+
+            foreach (var (entityType, entitySet) in transformedData)
+            {
+                if (entityType == "Preferences" || entityType == "CompanyInfo") continue;
+                if (entitySet.TotalCount == 0) continue;
+
+                var sample = entitySet.Entities.Take(sampleSize).ToList();
+                var entityIssues = new List<string>();
+
+                foreach (var entity in sample)
+                {
+                    // Check for empty names
+                    if (string.IsNullOrWhiteSpace(entity.Name) && string.IsNullOrWhiteSpace(entity.FullName))
+                    {
+                        entityIssues.Add($"[{entityType}] Entity has empty Name (ListID={entity.ListID})");
+                    }
+
+                    // Check for SDK 16-only fields
+                    foreach (var prop in entity.Fields.Properties())
+                    {
+                        if (QBSDKVersionHelper.SDK16OnlyFields.Contains(prop.Name))
+                        {
+                            entityIssues.Add($"[{entityType}] Contains SDK 16-only field: {prop.Name}");
+                        }
+                    }
+
+                    // Check field lengths against QB 2021 limits
+                    foreach (var prop in entity.Fields.Properties())
+                    {
+                        if (prop.Value.Type != JTokenType.String) continue;
+                        var maxLen = QBSDKVersionHelper.GetQB2021MaxLength(prop.Name);
+                        if (maxLen.HasValue && prop.Value.ToString().Length > maxLen.Value)
+                        {
+                            entityIssues.Add($"[{entityType}] Field {prop.Name} exceeds QB 2021 limit " +
+                                $"({prop.Value.ToString().Length} > {maxLen.Value})");
+                        }
+                    }
+
+                    // Try building the QBXML request to validate
+                    try
+                    {
+                        var xml = BuildAddRequestXml(entityType, entity);
+                        if (string.IsNullOrEmpty(xml))
+                        {
+                            entityIssues.Add($"[{entityType}] Could not build QBXML for '{entity.Name}'");
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        entityIssues.Add($"[{entityType}] QBXML build error for '{entity.Name}': {ex.Message}");
+                    }
+                }
+
+                if (entityIssues.Any())
+                {
+                    Log.Warning("  {EntityType}: {Count} issues in sample", entityType, entityIssues.Count);
+                    foreach (var issue in entityIssues)
+                    {
+                        Log.Warning("    {Issue}", issue);
+                        issues.Add(issue);
+                    }
+                }
+                else
+                {
+                    Log.Information("  {EntityType}: ✓ sample validated OK", entityType);
+                }
+            }
+
+            if (issues.Any())
+            {
+                Log.Warning("  VALIDATION: {Count} issues found. Review before proceeding with full import.", issues.Count);
+            }
+            else
+            {
+                Log.Information("  VALIDATION: ✓ All samples passed. Ready for full import.");
+            }
+
+            return issues;
+        }
+
+        /// <summary>
         /// Builds the QBXML Add request XML for a single entity.
+        /// Uses the effective SDK version for QB 2021 compatibility.
         /// </summary>
         private string BuildAddRequestXml(string entityType, QBEntity entity)
         {
@@ -382,7 +650,7 @@ namespace QB_TimeWarp.Services
             innerXml.AppendLine($"  </{addElemType}>");
             innerXml.AppendLine($"</{addReqType}>");
 
-            return QBConnectionManager.BuildQBXMLRequest(innerXml.ToString(), _sdkVersion);
+            return QBConnectionManager.BuildQBXMLRequest(innerXml.ToString(), _effectiveSDKVersion);
         }
 
         /// <summary>
@@ -418,12 +686,13 @@ namespace QB_TimeWarp.Services
             innerXml.AppendLine($"  </{addElem}>");
             innerXml.AppendLine($"</{addReq}>");
 
-            return QBConnectionManager.BuildQBXMLRequest(innerXml.ToString(), _sdkVersion);
+            return QBConnectionManager.BuildQBXMLRequest(innerXml.ToString(), _effectiveSDKVersion);
         }
 
         /// <summary>
         /// Converts a JObject of fields to QBXML element format.
         /// Handles nested objects (Address, Ref types, etc.).
+        /// Filters out excluded fields (static + dynamically learned) and validates field lengths.
         /// </summary>
         private string BuildFieldsXml(JObject fields)
         {
@@ -431,8 +700,24 @@ namespace QB_TimeWarp.Services
 
             foreach (var prop in fields.Properties())
             {
+                // Skip static excluded fields
                 if (ExcludedFields.Contains(prop.Name))
                     continue;
+
+                // Skip dynamically excluded fields (learned from 0x80040400 errors)
+                if (_dynamicExcludedFields.Contains(prop.Name))
+                {
+                    _incompatibleFieldSkips++;
+                    continue;
+                }
+
+                // Skip SDK 16-only fields that may have slipped through transformation
+                if (QBSDKVersionHelper.SDK16OnlyFields.Contains(prop.Name))
+                {
+                    _incompatibleFieldSkips++;
+                    Log.Debug("  Skipping SDK 16-only field '{Field}' in QBXML generation", prop.Name);
+                    continue;
+                }
 
                 if (prop.Name.StartsWith("_"))
                     continue; // Skip internal metadata fields
@@ -455,10 +740,17 @@ namespace QB_TimeWarp.Services
                         sb.AppendLine($"    <{prop.Name}>");
                         foreach (var childProp in nested.Properties())
                         {
+                            // Skip excluded child fields
+                            if (ExcludedFields.Contains(childProp.Name) ||
+                                _dynamicExcludedFields.Contains(childProp.Name))
+                                continue;
+
                             if (childProp.Value.Type != JTokenType.Null &&
                                 !string.IsNullOrEmpty(childProp.Value.ToString()))
                             {
-                                sb.AppendLine($"      <{childProp.Name}>{EscapeXml(childProp.Value.ToString())}</{childProp.Name}>");
+                                // Enforce QB 2021 field length limits
+                                var childValue = EnforceFieldLength(childProp.Name, childProp.Value.ToString());
+                                sb.AppendLine($"      <{childProp.Name}>{EscapeXml(childValue)}</{childProp.Name}>");
                             }
                         }
                         sb.AppendLine($"    </{prop.Name}>");
@@ -466,11 +758,27 @@ namespace QB_TimeWarp.Services
                 }
                 else if (prop.Value.Type != JTokenType.Null && !string.IsNullOrEmpty(prop.Value.ToString()))
                 {
-                    sb.AppendLine($"    <{prop.Name}>{EscapeXml(prop.Value.ToString())}</{prop.Name}>");
+                    // Enforce QB 2021 field length limits
+                    var value = EnforceFieldLength(prop.Name, prop.Value.ToString());
+                    sb.AppendLine($"    <{prop.Name}>{EscapeXml(value)}</{prop.Name}>");
                 }
             }
 
             return sb.ToString();
+        }
+
+        /// <summary>
+        /// Enforces QB 2021 field length limits on a value.
+        /// Returns the truncated value if it exceeds the limit.
+        /// </summary>
+        private static string EnforceFieldLength(string fieldName, string value)
+        {
+            var maxLen = QBSDKVersionHelper.GetQB2021MaxLength(fieldName);
+            if (maxLen.HasValue && value.Length > maxLen.Value)
+            {
+                return value.Substring(0, maxLen.Value);
+            }
+            return value;
         }
 
         /// <summary>
@@ -657,7 +965,7 @@ namespace QB_TimeWarp.Services
   <ActiveStatus>All</ActiveStatus>
 </ClassQueryRq>";
 
-                var fullRequest = QBConnectionManager.BuildQBXMLRequest(requestXml, _sdkVersion);
+                var fullRequest = QBConnectionManager.BuildQBXMLRequest(requestXml, _effectiveSDKVersion);
                 var response = _connection.ProcessRequestWithRetry(fullRequest);
                 var doc = XDocument.Parse(response);
 
@@ -718,7 +1026,7 @@ namespace QB_TimeWarp.Services
   </ClassAdd>
 </ClassAddRq>";
 
-                var fullRequest = QBConnectionManager.BuildQBXMLRequest(requestXml, _sdkVersion);
+                var fullRequest = QBConnectionManager.BuildQBXMLRequest(requestXml, _effectiveSDKVersion);
                 var response = _connection.ProcessRequestWithRetry(fullRequest);
                 var doc = XDocument.Parse(response);
 
@@ -757,7 +1065,7 @@ namespace QB_TimeWarp.Services
                 Log.Information("  Querying company preferences...");
 
                 var requestXml = @"<PreferencesQueryRq></PreferencesQueryRq>";
-                var fullRequest = QBConnectionManager.BuildQBXMLRequest(requestXml, _sdkVersion);
+                var fullRequest = QBConnectionManager.BuildQBXMLRequest(requestXml, _effectiveSDKVersion);
                 var response = _connection.ProcessRequestWithRetry(fullRequest);
                 var doc = XDocument.Parse(response);
 
@@ -837,7 +1145,7 @@ namespace QB_TimeWarp.Services
   </PreferencesMod>
 </PreferencesModRq>";
 
-                var fullRequest = QBConnectionManager.BuildQBXMLRequest(requestXml, _sdkVersion);
+                var fullRequest = QBConnectionManager.BuildQBXMLRequest(requestXml, _effectiveSDKVersion);
                 var response = _connection.ProcessRequestWithRetry(fullRequest);
                 var doc = XDocument.Parse(response);
 

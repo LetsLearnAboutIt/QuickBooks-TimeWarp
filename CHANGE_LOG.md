@@ -187,3 +187,47 @@
 **New Exit Code**: 99 = Safety violation (attempted operation on original file)
 
 ---
+
+
+---
+
+### Change 11: QBXML SDK 15.0 Compatibility — Fix 0x80040400 Errors
+
+**Date**: 2026-05-19
+
+**What**: Fixed QBXML parsing/generation to be fully compatible with QuickBooks 2021 (SDK 15.0). The trial run showed COM error 0x80040400 because QBXML was being generated using SDK 16.0 features that QB 2021 doesn't support.
+
+**Why**: QB 2021 uses SDK 15.0 while QB 2023 uses SDK 16.0. Fields, entity types, and field lengths differ between versions. Sending SDK 16.0 QBXML to QB 2021 causes 0x80040400 errors (element not supported).
+
+**Critical Fixes**:
+- **AccountNumber preservation**: Accountant flagged missing account numbers — was being lost during transformation. Now explicitly preserved.
+- **CC balance sign inversion**: Credit card balances with wrong sign are auto-corrected (positive = money owed).
+- **CC columns**: Already fixed in prior session, verified in transformation.
+- **Empty Name fields**: Entities with blank names now get auto-generated placeholder names.
+- **Payroll items**: Complex QB 2023 payroll structures simplified for QB 2021 format.
+
+**Files Modified**:
+- `Helpers/QBSDKVersionHelper.cs` (NEW) — SDK version detection, field compatibility lists, error code explanations
+- `Services/DataExporter.cs` — Auto-detects SDK version via HostQuery, adjusts QBXML version dynamically
+- `Services/DataTransformer.cs` — Added 6 new compatibility methods: RemoveSDK16OnlyFields, EnforceQB2021FieldLengths, FixEmptyNameField, SimplifyPayrollFields, FixCCBalanceSigns, PreserveAccountNumbers
+- `Services/DataImporter.cs` — Smart error handling (no retry for 0x80040400), dynamic field exclusion learning, pre-import validation mode, field length enforcement in QBXML generation
+- `Services/QBConnectionManager.cs` — ProcessRequestWithRetry no longer retries version compatibility errors
+- `Configuration/FieldMappings.json` — Added qb2021Compatibility section, fixed AccountNumber maxLength, marked SDK 16-only fields
+- `PROJECT_INSTRUCTIONS.MD` (NEW) — Primary session briefing document
+
+**New Features**:
+- **SDK Version Detection**: Sends HostQuery to detect QB's supported SDK versions, auto-adjusts
+- **Dynamic Field Exclusion**: When a field causes 0x80040400, it's automatically excluded from all subsequent imports
+- **Pre-Import Validation**: `ValidateSampleBeforeImport()` tests sample records before full import
+- **Compatibility Summary**: Transformation log now shows how many fields were adjusted for QB 2021
+
+**Configuration**:
+- `FieldMappings.json > qb2021Compatibility` documents all known incompatible fields
+- `FieldMappings.json > globalSettings.targetSDKVersion` = "15.0"
+- `FieldMappings.json > globalSettings.enforceQB2021FieldLimits` = true
+
+**Error Codes Handled**:
+- `0x80040400` / COM HRESULT -2147220480: Unsupported QBXML element
+- QBXML status `3250`: Unsupported element in request
+- QBXML status `3260`: Element not valid for this version
+- QBXML status `3270`: Unsupported QBXML version
