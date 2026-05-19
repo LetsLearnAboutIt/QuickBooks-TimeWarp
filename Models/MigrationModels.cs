@@ -258,6 +258,62 @@ namespace QB_TimeWarp.Models
     }
 
     // ═══════════════════════════════════════════════════════════════════
+    // Staged Import Models
+    // ═══════════════════════════════════════════════════════════════════
+
+    /// <summary>
+    /// Defines an import stage with its entity types and ordering.
+    /// </summary>
+    public class ImportStage
+    {
+        public int StageNumber { get; set; }
+        public string StageName { get; set; } = string.Empty;
+        public string Description { get; set; } = string.Empty;
+        public List<string> EntityTypes { get; set; } = new();
+        public bool IsCritical { get; set; }
+    }
+
+    /// <summary>
+    /// Result summary for a single import stage.
+    /// </summary>
+    public class StageSummary
+    {
+        public int StageNumber { get; set; }
+        public string StageName { get; set; } = string.Empty;
+        public DateTime StartTime { get; set; }
+        public DateTime EndTime { get; set; }
+        public TimeSpan Duration => EndTime - StartTime;
+        public int TotalAttempted { get; set; }
+        public int TotalSucceeded { get; set; }
+        public int TotalFailed { get; set; }
+        public int TotalSkipped { get; set; }
+        public int AutoCreatedItems { get; set; }
+        public bool Passed { get; set; }
+        public string? FailureReason { get; set; }
+        public Dictionary<string, ImportBatchSummary> EntitySummaries { get; set; } = new();
+        public List<string> AutoCreatedItemNames { get; set; } = new();
+    }
+
+    /// <summary>
+    /// Summary of the entire staged import process.
+    /// </summary>
+    public class StagedImportSummary
+    {
+        public DateTime StartTime { get; set; }
+        public DateTime EndTime { get; set; }
+        public TimeSpan TotalDuration => EndTime - StartTime;
+        public List<StageSummary> Stages { get; set; } = new();
+        public int TotalRecordsAttempted => Stages.Sum(s => s.TotalAttempted);
+        public int TotalRecordsSucceeded => Stages.Sum(s => s.TotalSucceeded);
+        public int TotalRecordsFailed => Stages.Sum(s => s.TotalFailed);
+        public int TotalAutoCreated => Stages.Sum(s => s.AutoCreatedItems);
+        public bool AllStagesPassed => Stages.All(s => s.Passed);
+        public int StagesCompleted => Stages.Count(s => s.Passed);
+        public int TotalStages => Stages.Count;
+        public string? HaltedAtStage { get; set; }
+    }
+
+    // ═══════════════════════════════════════════════════════════════════
     // Format Preservation Statistics
     // ═══════════════════════════════════════════════════════════════════
 

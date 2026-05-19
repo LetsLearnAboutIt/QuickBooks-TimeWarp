@@ -2,6 +2,135 @@
 
 ## Fix History
 
+### Fix #2: Staged Import with Dependency Analysis (StatusCode 3140 Root Cause)
+
+**Date:** 2026-05-19  
+**Status:** ✅ Applied  
+**Severity:** HIGH — Resolves import failures from missing referenced items.
+
+#### Problem
+
+When importing entities (especially Customers), QB 2021 returns **StatusCode 3140** errors:
+> "The referenced item (SalesTaxCode, Terms, etc.) does not exist."
+
+**Root Cause:** The flat `ImportAll()` method imports entities in a fixed order defined by `ImportOrder`, but does NOT verify that items referenced by entities actually exist in QB 2021 before importing. For example:
+- A Customer references `SalesTaxCodeRef: "Tax"` — but the sales tax code "Tax" hasn't been imported yet (or doesn't exist at all in the exported data).
+- A Vendor references `TermsRef: "Net 30"` — but Terms haven't been created in QB 2021 yet.
+
+This is a **dependency ordering** problem: entities reference foundation items that must exist first.
+
+#### Fix Applied — Staged Import Architecture
+
+1. **Created `Helpers/DependencyAnalyzer.cs`** — Pre-import dependency scanner:
+   - Scans ALL exported JSON entities and their fields/line items
+   - Identifies every reference field (`SalesTaxCodeRef`, `TermsRef`, `ClassRef`, `AccountRef`, etc.)
+   - Extracts referenced FullNames and groups them by type
+   - Cross-references against exported data to identify **missing items** — referenced but not present
+   - Returns a `DependencyAnalysisResult` with complete dependency graph
+
+2. **Defined 4 Import Stages** (in `DataImporter.cs`):
+   ```
+   Stage 1 (Foundation): Accounts, SalesTaxCodes, Terms, PaymentMethods,
+                          CustomerTypes, VendorTypes, JobTypes, Classes,
+                          ShipMethods, PriceLevels
+   
+   Stage 2 (Entities):   Customers, Vendors, Employees
+   
+   Stage 3 (Items):      All Item subtypes (Service, Inventory, NonInventory, Groups)
+   
+   Stage 4 (Transactions): Invoices, Bills, Payments, SalesReceipts, JournalEntries,
+                            CreditMemos, Estimates, Deposits, Checks, VendorCredits,
+                            InventoryAdjustments, Transfers
+   ```
+
+3. **Added `ImportDataInStages()` method** — New primary import entry point:
+   - Phase 0: Run `DependencyAnalyzer` to scan all data and build dependency graph
+   - Auto-creates missing foundation items (SalesTaxCodes, Terms, PaymentMethods, etc.)
+   - Executes stages sequentially with validation between each
+   - Resolves references (adds ListIDs) from earlier stages before importing later stages
+   - Halts if critical stage fails completely (configurable)
+
+4. **Added Reference Resolution**:
+   - As items are imported, their new QB 2021 ListIDs are stored in `_nameToListIdMap`
+   - Before importing Stage 2+ entities, `ResolveReferences()` walks all Ref fields
+   - Looks up the FullName → ListID mapping and inserts the ListID into the ref object
+   - This allows QB 2021 to resolve references by ListID (more reliable than FullName)
+
+5. **Added Auto-Creation of Missing Dependencies**:
+   - If dependency analysis finds items referenced but not in exported data:
+     - SalesTaxCodes → creates with `IsTaxable=true`
+     - Terms → creates as `StandardTerms` with 30-day default
+     - PaymentMethods → creates with name
+     - CustomerTypes, VendorTypes, JobTypes, ShipMethods → creates with name
+     - Classes → creates with hierarchy support (parent:child)
+   - All auto-created items tracked in `StageSummary.AutoCreatedItemNames`
+
+6. **Added Stage Validation**:
+   - After each stage, checks if it passed (had some successes)
+   - Critical stages (1-3) halt the import if ALL records fail
+   - Non-critical stages (4 - Transactions) continue with warnings
+   - Configurable via `ValidateBetweenStages` and `HaltOnFoundationFailure`
+
+#### New Configuration Options (`appsettings.json`)
+
+```json
+{
+  "Import": {
+    "UseStagedImport": true,
+    "AutoCreateMissingDependencies": true,
+    "ValidateBetweenStages": true,
+    "HaltOnFoundationFailure": true,
+    "Stages": {
+      "Stage1_Foundation": true,
+      "Stage2_Entities": true,
+      "Stage3_Items": true,
+      "Stage4_Transactions": true
+    }
+  }
+}
+```
+
+Set `UseStagedImport: false` to fall back to the legacy flat `ImportAll()` approach.
+
+#### Files Modified
+
+| File | Change |
+|------|--------|
+| `Helpers/DependencyAnalyzer.cs` | **NEW** — Pre-import dependency scanner |
+| `Services/DataImporter.cs` | Added `ImportDataInStages()`, `AnalyzeDependencies()`, reference resolution, auto-creation, stage execution |
+| `Models/MigrationModels.cs` | Added `ImportStage`, `StageSummary`, `StagedImportSummary` models |
+| `Models/ConfigurationModels.cs` | Added `StagedImportStagesConfig`, new `ImportConfig` properties |
+| `appsettings.json` | Added staged import configuration |
+| `DEBUGGING_NOTES.MD` | This entry |
+
+#### How to Verify
+
+Check logs for the staged import flow:
+```
+╔═══════════════════════════════════════════════════════╗
+║  STAGED IMPORT — Dependency-Aware Multi-Stage Import  ║
+╚═══════════════════════════════════════════════════════╝
+  Phase 0: Pre-Import Dependency Analysis
+  ...
+  Stage 1/4: Foundation
+  [1/10] Importing Accounts (45 records)...
+  ...
+  Stage 2/4: Entities
+  [1/3] Importing Customers (120 records)...
+```
+
+If 3140 errors STILL occur:
+1. Check the dependency analysis log — is the referenced item listed?
+2. Check if auto-creation succeeded for that item type
+3. Verify the item exists in QB 2021 (may need manual creation)
+4. Check if the reference FullName matches exactly (case-sensitive in some QB operations)
+
+#### Key Insight
+
+QB 2021 StatusCode 3140 ("The specified item does not exist") is almost always a **dependency ordering** problem. The item being referenced MUST exist in the target company file before any entity that references it can be imported. The staged import ensures this by design.
+
+---
+
 ### Fix #1: QBXML Element Ordering (0x80040400 Root Cause)
 
 **Date:** 2026-05-19  

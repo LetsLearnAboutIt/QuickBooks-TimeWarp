@@ -149,6 +149,45 @@ namespace QB_TimeWarp.Models
         public bool SkipOnError { get; set; } = true;
         public bool DryRun { get; set; } = false;
         public List<string> ImportOrder { get; set; } = new();
+
+        /// <summary>
+        /// When true, uses the staged import approach with dependency analysis.
+        /// When false, uses the legacy flat ImportOrder approach.
+        /// </summary>
+        public bool UseStagedImport { get; set; } = true;
+
+        /// <summary>
+        /// When true, auto-creates missing foundation items (sales tax codes, terms, etc.)
+        /// that are referenced by entities but don't exist in the export data.
+        /// </summary>
+        public bool AutoCreateMissingDependencies { get; set; } = true;
+
+        /// <summary>
+        /// When true, validates each stage completed successfully before proceeding to the next.
+        /// If a critical dependency is missing after a stage, import halts.
+        /// </summary>
+        public bool ValidateBetweenStages { get; set; } = true;
+
+        /// <summary>
+        /// When true, stops all imports if Stage 1 (foundation) has failures.
+        /// </summary>
+        public bool HaltOnFoundationFailure { get; set; } = true;
+
+        /// <summary>
+        /// Allows enabling/disabling individual stages. All enabled by default.
+        /// </summary>
+        public StagedImportStagesConfig Stages { get; set; } = new();
+    }
+
+    /// <summary>
+    /// Controls which import stages are enabled/disabled.
+    /// </summary>
+    public class StagedImportStagesConfig
+    {
+        public bool Stage1_Foundation { get; set; } = true;
+        public bool Stage2_Entities { get; set; } = true;
+        public bool Stage3_Items { get; set; } = true;
+        public bool Stage4_Transactions { get; set; } = true;
     }
 
     public class ValidationConfig

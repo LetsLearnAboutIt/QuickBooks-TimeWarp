@@ -4,6 +4,7 @@ using Newtonsoft.Json.Linq;
 using QB_TimeWarp.Helpers;
 using QB_TimeWarp.Models;
 using Serilog;
+using static QB_TimeWarp.Helpers.DependencyAnalyzer;
 
 namespace QB_TimeWarp.Services
 {
@@ -225,6 +226,690 @@ namespace QB_TimeWarp.Services
 
             return report;
         }
+
+        // ═══════════════════════════════════════════════════════════════════
+        // STAGED IMPORT — Dependency-aware multi-stage import
+        // ═══════════════════════════════════════════════════════════════════
+
+        /// <summary>
+        /// The 4 import stages, in dependency order.
+        /// Stage 1 must complete before Stage 2, etc.
+        /// </summary>
+        private static readonly List<ImportStage> ImportStages = new()
+        {
+            new ImportStage
+            {
+                StageNumber = 1,
+                StageName = "Foundation",
+                Description = "Chart of Accounts, Sales Tax, Payment Terms, Classes, and other lookup items",
+                IsCritical = true,
+                EntityTypes = new List<string>
+                {
+                    "Accounts", "SalesTaxCodes", "Terms", "PaymentMethods",
+                    "CustomerTypes", "VendorTypes", "JobTypes", "Classes",
+                    "ShipMethods", "PriceLevels"
+                }
+            },
+            new ImportStage
+            {
+                StageNumber = 2,
+                StageName = "Entities",
+                Description = "Customers, Vendors, Employees, and Other Names",
+                IsCritical = true,
+                EntityTypes = new List<string>
+                {
+                    "Customers", "Vendors", "Employees"
+                }
+            },
+            new ImportStage
+            {
+                StageNumber = 3,
+                StageName = "Items",
+                Description = "Service Items, Inventory Items, Non-Inventory Items, Item Groups",
+                IsCritical = true,
+                EntityTypes = new List<string>
+                {
+                    "Items"
+                }
+            },
+            new ImportStage
+            {
+                StageNumber = 4,
+                StageName = "Transactions",
+                Description = "Invoices, Bills, Checks, Deposits, Journal Entries, Credit Memos, Sales Receipts",
+                IsCritical = false,
+                EntityTypes = new List<string>
+                {
+                    "Invoices", "Bills", "Payments", "SalesReceipts", "PurchaseOrders",
+                    "JournalEntries", "CreditMemos", "Estimates", "Deposits",
+                    "Checks", "VendorCredits", "InventoryAdjustments", "Transfers"
+                }
+            }
+        };
+
+        /// <summary>
+        /// Performs a dependency analysis on the transformed data.
+        /// Returns information about all referenced items and what's missing.
+        /// </summary>
+        public DependencyAnalysisResult AnalyzeDependencies(Dictionary<string, ExportedEntitySet> transformedData)
+        {
+            var analyzer = new DependencyAnalyzer();
+            return analyzer.Analyze(transformedData);
+        }
+
+        /// <summary>
+        /// Imports data using a staged approach with dependency analysis.
+        /// This is the preferred import method — ensures foundation items exist
+        /// before entities, entities before items, items before transactions.
+        /// 
+        /// Replaces the flat ImportAll() for production use.
+        /// </summary>
+        public StagedImportSummary ImportDataInStages(Dictionary<string, ExportedEntitySet> transformedData)
+        {
+            var summary = new StagedImportSummary
+            {
+                StartTime = DateTime.UtcNow
+            };
+
+            Log.Information("╔═══════════════════════════════════════════════════════╗");
+            Log.Information("║  STAGED IMPORT — Dependency-Aware Multi-Stage Import  ║");
+            Log.Information("╚═══════════════════════════════════════════════════════╝");
+
+            if (_importConfig.DryRun)
+            {
+                Log.Warning("*** DRY RUN MODE — No data will actually be imported ***");
+            }
+
+            // ── Pre-Analysis Phase ──────────────────────────────────
+            Log.Information("");
+            Log.Information("  ┌─────────────────────────────────────────┐");
+            Log.Information("  │  Phase 0: Pre-Import Dependency Analysis │");
+            Log.Information("  └─────────────────────────────────────────┘");
+
+            var dependencies = AnalyzeDependencies(transformedData);
+
+            // ── Auto-create missing foundation items ─────────────────
+            if (_importConfig.AutoCreateMissingDependencies && dependencies.MissingItems.Any())
+            {
+                Log.Information("");
+                Log.Information("  Auto-creating missing dependencies...");
+                AutoCreateMissingItems(dependencies, summary);
+            }
+
+            // ── Execute Stages ───────────────────────────────────────
+            var stages = GetEnabledStages();
+
+            foreach (var stage in stages)
+            {
+                Log.Information("");
+                Log.Information("  ┌─────────────────────────────────────────┐");
+                Log.Information("  │  Stage {StageNum}/4: {StageName,-33} │",
+                    stage.StageNumber, stage.StageName);
+                Log.Information("  │  {Desc,-41} │", stage.Description.Length > 41
+                    ? stage.Description[..38] + "..."
+                    : stage.Description);
+                Log.Information("  └─────────────────────────────────────────┘");
+
+                var stageSummary = ExecuteStage(stage, transformedData, dependencies);
+                summary.Stages.Add(stageSummary);
+
+                // Report stage results
+                Log.Information("  Stage {Num} Result: {Succeeded}/{Attempted} succeeded, {Failed} failed ({Duration:F1}s)",
+                    stage.StageNumber,
+                    stageSummary.TotalSucceeded,
+                    stageSummary.TotalAttempted,
+                    stageSummary.TotalFailed,
+                    stageSummary.Duration.TotalSeconds);
+
+                if (stageSummary.AutoCreatedItems > 0)
+                {
+                    Log.Information("    Auto-created {Count} missing items", stageSummary.AutoCreatedItems);
+                }
+
+                // ── Validation Between Stages ────────────────────────
+                if (_importConfig.ValidateBetweenStages && !stageSummary.Passed)
+                {
+                    if (stage.IsCritical && _importConfig.HaltOnFoundationFailure)
+                    {
+                        Log.Error("  ✗ STAGE {Num} ({Name}) FAILED — Halting import. Reason: {Reason}",
+                            stage.StageNumber, stage.StageName, stageSummary.FailureReason);
+                        summary.HaltedAtStage = $"Stage {stage.StageNumber}: {stage.StageName}";
+                        break;
+                    }
+                    else
+                    {
+                        Log.Warning("  ⚠ Stage {Num} ({Name}) had issues but is not critical. Continuing...",
+                            stage.StageNumber, stage.StageName);
+                    }
+                }
+            }
+
+            summary.EndTime = DateTime.UtcNow;
+
+            // ── Final Summary ────────────────────────────────────────
+            Log.Information("");
+            Log.Information("╔═══════════════════════════════════════════════════════╗");
+            Log.Information("║  STAGED IMPORT COMPLETE                               ║");
+            Log.Information("╚═══════════════════════════════════════════════════════╝");
+            Log.Information("  Stages completed: {Completed}/{Total}",
+                summary.StagesCompleted, summary.TotalStages);
+            Log.Information("  Total records: {Succeeded}/{Attempted} succeeded",
+                summary.TotalRecordsSucceeded, summary.TotalRecordsAttempted);
+            if (summary.TotalRecordsFailed > 0)
+                Log.Warning("  Failed records: {Failed}", summary.TotalRecordsFailed);
+            if (summary.TotalAutoCreated > 0)
+                Log.Information("  Auto-created items: {Count}", summary.TotalAutoCreated);
+            if (!string.IsNullOrEmpty(summary.HaltedAtStage))
+                Log.Error("  Import halted at: {Stage}", summary.HaltedAtStage);
+            Log.Information("  Total duration: {Duration:F1}s", summary.TotalDuration.TotalSeconds);
+
+            if (_incompatibleFieldSkips > 0)
+                Log.Information("  Incompatible fields skipped: {Count}", _incompatibleFieldSkips);
+            if (_dynamicExcludedFields.Any())
+                Log.Information("  Fields dynamically excluded: {Fields}",
+                    string.Join(", ", _dynamicExcludedFields));
+
+            return summary;
+        }
+
+        /// <summary>
+        /// Converts a StagedImportSummary to a MigrationReport for backward compatibility.
+        /// </summary>
+        public MigrationReport ConvertToMigrationReport(StagedImportSummary staged)
+        {
+            var report = new MigrationReport
+            {
+                StartTime = staged.StartTime,
+                EndTime = staged.EndTime,
+                SourceCompanyFile = "QB 2023",
+                TargetCompanyFile = "QB 2021"
+            };
+
+            foreach (var stage in staged.Stages)
+            {
+                foreach (var (entityType, batchSummary) in stage.EntitySummaries)
+                {
+                    report.EntitySummaries[entityType] = batchSummary;
+                }
+            }
+
+            report.OverallStatus = staged.AllStagesPassed
+                ? MigrationStatus.Completed
+                : staged.TotalRecordsSucceeded > 0
+                    ? MigrationStatus.CompletedWithErrors
+                    : MigrationStatus.Failed;
+
+            return report;
+        }
+
+        /// <summary>
+        /// Gets the list of enabled import stages based on configuration.
+        /// </summary>
+        private List<ImportStage> GetEnabledStages()
+        {
+            var enabled = new List<ImportStage>();
+            var stageConfig = _importConfig.Stages;
+
+            foreach (var stage in ImportStages)
+            {
+                bool isEnabled = stage.StageNumber switch
+                {
+                    1 => stageConfig.Stage1_Foundation,
+                    2 => stageConfig.Stage2_Entities,
+                    3 => stageConfig.Stage3_Items,
+                    4 => stageConfig.Stage4_Transactions,
+                    _ => true
+                };
+
+                if (isEnabled)
+                    enabled.Add(stage);
+                else
+                    Log.Information("  Stage {Num} ({Name}) is DISABLED in configuration.",
+                        stage.StageNumber, stage.StageName);
+            }
+
+            return enabled;
+        }
+
+        /// <summary>
+        /// Executes a single import stage: imports all entity types in the stage.
+        /// </summary>
+        private StageSummary ExecuteStage(
+            ImportStage stage,
+            Dictionary<string, ExportedEntitySet> transformedData,
+            DependencyAnalysisResult dependencies)
+        {
+            var stageSummary = new StageSummary
+            {
+                StageNumber = stage.StageNumber,
+                StageName = stage.StageName,
+                StartTime = DateTime.UtcNow
+            };
+
+            int entityIndex = 0;
+            int totalEntitiesInStage = stage.EntityTypes.Count;
+
+            foreach (var entityType in stage.EntityTypes)
+            {
+                entityIndex++;
+
+                if (!transformedData.ContainsKey(entityType))
+                {
+                    Log.Debug("  [{Index}/{Total}] No data for {EntityType}, skipping.",
+                        entityIndex, totalEntitiesInStage, entityType);
+                    continue;
+                }
+
+                var entitySet = transformedData[entityType];
+                if (entitySet.TotalCount == 0)
+                {
+                    Log.Debug("  [{Index}/{Total}] {EntityType} has 0 records, skipping.",
+                        entityIndex, totalEntitiesInStage, entityType);
+                    continue;
+                }
+
+                Log.Information("  [{Index}/{Total}] Importing {EntityType} ({Count} records)...",
+                    entityIndex, totalEntitiesInStage, entityType, entitySet.TotalCount);
+
+                // Resolve references before importing this entity type
+                ResolveReferences(entityType, entitySet, dependencies);
+
+                var batchSummary = ImportEntitySet(entityType, entitySet);
+                stageSummary.EntitySummaries[entityType] = batchSummary;
+                stageSummary.TotalAttempted += batchSummary.TotalAttempted;
+                stageSummary.TotalSucceeded += batchSummary.Succeeded;
+                stageSummary.TotalFailed += batchSummary.Failed;
+                stageSummary.TotalSkipped += batchSummary.Skipped;
+
+                Log.Information("    → {Succeeded} succeeded, {Failed} failed, {Skipped} skipped ({Duration:F1}s)",
+                    batchSummary.Succeeded, batchSummary.Failed, batchSummary.Skipped,
+                    batchSummary.Duration.TotalSeconds);
+            }
+
+            stageSummary.EndTime = DateTime.UtcNow;
+
+            // Determine if stage passed
+            if (stageSummary.TotalAttempted == 0)
+            {
+                stageSummary.Passed = true; // No data = pass
+            }
+            else if (stageSummary.TotalFailed == 0)
+            {
+                stageSummary.Passed = true;
+            }
+            else if (stage.IsCritical && stageSummary.TotalSucceeded == 0)
+            {
+                stageSummary.Passed = false;
+                stageSummary.FailureReason = $"All {stageSummary.TotalFailed} records failed in critical stage.";
+            }
+            else
+            {
+                // Some failures but some successes — pass with warnings
+                stageSummary.Passed = true;
+                if (stageSummary.TotalFailed > 0)
+                {
+                    Log.Warning("  Stage {Num}: {Failed}/{Attempted} records failed but stage continues.",
+                        stage.StageNumber, stageSummary.TotalFailed, stageSummary.TotalAttempted);
+                }
+            }
+
+            return stageSummary;
+        }
+
+        /// <summary>
+        /// Resolves entity references for a given entity type by looking up
+        /// ListIDs in the name-to-ListID map (populated as items are imported).
+        /// This ensures that later-stage entities reference the correct QB 2021 ListIDs.
+        /// </summary>
+        private void ResolveReferences(string entityType, ExportedEntitySet entitySet, DependencyAnalysisResult dependencies)
+        {
+            int resolved = 0;
+
+            foreach (var entity in entitySet.Entities)
+            {
+                resolved += ResolveFieldReferences(entity.Fields);
+
+                foreach (var lineItem in entity.LineItems)
+                {
+                    resolved += ResolveFieldReferences(lineItem);
+                }
+            }
+
+            if (resolved > 0)
+            {
+                Log.Debug("    Resolved {Count} references for {EntityType}", resolved, entityType);
+            }
+        }
+
+        /// <summary>
+        /// Walks a JObject looking for Ref fields and resolves them to QB 2021 ListIDs
+        /// where we have a mapping from a previous stage's import.
+        /// </summary>
+        private int ResolveFieldReferences(JObject fields)
+        {
+            int resolved = 0;
+
+            foreach (var prop in fields.Properties().ToList())
+            {
+                if (!prop.Name.EndsWith("Ref")) continue;
+                if (prop.Value is not JObject refObj) continue;
+
+                var fullName = refObj["FullName"]?.ToString();
+                if (string.IsNullOrEmpty(fullName)) continue;
+
+                // Determine the entity type this ref points to
+                string? refEntityType = GetEntityTypeForRefField(prop.Name);
+                if (refEntityType == null) continue;
+
+                // Look up in our ID mappings
+                var mapKey = $"{refEntityType}:{fullName}";
+                if (_nameToListIdMap.TryGetValue(mapKey, out var listId))
+                {
+                    // We have a ListID — add it to the ref object for QB 2021
+                    refObj["ListID"] = listId;
+                    resolved++;
+                    Log.Debug("      Resolved {RefField} '{Name}' → ListID {ListID}",
+                        prop.Name, fullName, listId);
+                }
+            }
+
+            return resolved;
+        }
+
+        /// <summary>
+        /// Maps a reference field name to the entity type it points to.
+        /// </summary>
+        private static string? GetEntityTypeForRefField(string refFieldName)
+        {
+            return refFieldName switch
+            {
+                "AccountRef" or "ARAccountRef" or "APAccountRef" or
+                "IncomeAccountRef" or "COGSAccountRef" or "AssetAccountRef" or
+                "ExpenseAccountRef" or "DepositToAccountRef" or "BankAccountRef" => "Accounts",
+                "SalesTaxCodeRef" => "SalesTaxCodes",
+                "ItemSalesTaxRef" => "Items",  // Sales tax items are under Items
+                "TermsRef" => "Terms",
+                "PaymentMethodRef" or "PreferredPaymentMethodRef" => "PaymentMethods",
+                "ClassRef" => "Classes",
+                "CustomerRef" => "Customers",
+                "VendorRef" => "Vendors",
+                "CustomerTypeRef" => "CustomerTypes",
+                "VendorTypeRef" => "VendorTypes",
+                "JobTypeRef" => "JobTypes",
+                "ShipMethodRef" => "ShipMethods",
+                "PriceLevelRef" => "PriceLevels",
+                "ItemRef" => "Items",
+                "EntityRef" => "Customers", // Usually a customer
+                _ => null
+            };
+        }
+
+        /// <summary>
+        /// Auto-creates missing foundation items that are referenced but don't exist in exported data.
+        /// Creates them directly in QB 2021 before the main import begins.
+        /// </summary>
+        private void AutoCreateMissingItems(DependencyAnalysisResult dependencies, StagedImportSummary summary)
+        {
+            // We aggregate auto-creation into a virtual "Stage 0" summary for tracking
+            var autoCreateSummary = new StageSummary
+            {
+                StageNumber = 0,
+                StageName = "Auto-Create Missing Dependencies",
+                StartTime = DateTime.UtcNow
+            };
+
+            foreach (var (entityType, missingNames) in dependencies.MissingItems)
+            {
+                // Only auto-create foundation items (Stage 1 types)
+                if (!IsFoundationType(entityType)) continue;
+
+                Log.Information("    Auto-creating {Count} missing {Type} items...",
+                    missingNames.Count, entityType);
+
+                foreach (var name in missingNames)
+                {
+                    bool created = AutoCreateSingleItem(entityType, name);
+                    if (created)
+                    {
+                        autoCreateSummary.AutoCreatedItems++;
+                        autoCreateSummary.AutoCreatedItemNames.Add($"{entityType}:{name}");
+                        Log.Information("      ✓ Auto-created {Type}: '{Name}'", entityType, name);
+                    }
+                    else
+                    {
+                        Log.Warning("      ✗ Failed to auto-create {Type}: '{Name}'", entityType, name);
+                    }
+                }
+            }
+
+            autoCreateSummary.EndTime = DateTime.UtcNow;
+            autoCreateSummary.Passed = true;
+
+            if (autoCreateSummary.AutoCreatedItems > 0)
+            {
+                summary.Stages.Add(autoCreateSummary);
+                Log.Information("    Auto-creation complete: {Count} items created",
+                    autoCreateSummary.AutoCreatedItems);
+            }
+        }
+
+        /// <summary>
+        /// Checks if an entity type is a foundation type (Stage 1).
+        /// </summary>
+        private static bool IsFoundationType(string entityType)
+        {
+            return ImportStages[0].EntityTypes.Contains(entityType, StringComparer.OrdinalIgnoreCase);
+        }
+
+        /// <summary>
+        /// Creates a single missing item in QB 2021.
+        /// Builds a minimal Add request for the item type.
+        /// </summary>
+        private bool AutoCreateSingleItem(string entityType, string name)
+        {
+            if (_importConfig.DryRun)
+            {
+                Log.Debug("      [DRY RUN] Would auto-create {Type}: '{Name}'", entityType, name);
+                return true;
+            }
+
+            try
+            {
+                string requestXml = entityType switch
+                {
+                    "SalesTaxCodes" => BuildSalesTaxCodeAddRequest(name),
+                    "Terms" => BuildTermsAddRequest(name),
+                    "PaymentMethods" => BuildPaymentMethodAddRequest(name),
+                    "CustomerTypes" => BuildSimpleListAddRequest("CustomerTypeAddRq", "CustomerTypeAdd", name),
+                    "VendorTypes" => BuildSimpleListAddRequest("VendorTypeAddRq", "VendorTypeAdd", name),
+                    "JobTypes" => BuildSimpleListAddRequest("JobTypeAddRq", "JobTypeAdd", name),
+                    "ShipMethods" => BuildSimpleListAddRequest("ShipMethodAddRq", "ShipMethodAdd", name),
+                    "Classes" => BuildClassAddRequestXml(name),
+                    _ => string.Empty
+                };
+
+                if (string.IsNullOrEmpty(requestXml))
+                {
+                    Log.Warning("      No auto-create template for {Type}", entityType);
+                    return false;
+                }
+
+                var fullRequest = QBConnectionManager.BuildQBXMLRequest(requestXml, _effectiveSDKVersion);
+                var response = _connection.ProcessRequestWithRetry(fullRequest);
+                var doc = XDocument.Parse(response);
+
+                // Check for success or "already exists" (3100)
+                var rsElement = doc.Descendants()
+                    .FirstOrDefault(e => e.Name.LocalName.EndsWith("Rs"));
+                var statusCode = rsElement?.Attribute("statusCode")?.Value;
+
+                if (statusCode == "0" || statusCode == "3100")
+                {
+                    // Store mapping if we got a ListID
+                    var retElement = rsElement?.Elements().FirstOrDefault();
+                    var listId = retElement?.Element("ListID")?.Value;
+                    if (!string.IsNullOrEmpty(listId))
+                    {
+                        _nameToListIdMap[$"{entityType}:{name}"] = listId;
+                    }
+                    return true;
+                }
+
+                var statusMessage = rsElement?.Attribute("statusMessage")?.Value;
+                Log.Warning("      Auto-create failed for {Type} '{Name}': [{Code}] {Message}",
+                    entityType, name, statusCode, statusMessage);
+                return false;
+            }
+            catch (Exception ex)
+            {
+                Log.Warning("      Error auto-creating {Type} '{Name}': {Message}",
+                    entityType, name, ex.Message);
+                return false;
+            }
+        }
+
+        // ── Auto-create request builders ─────────────────────────────
+
+        private string BuildSalesTaxCodeAddRequest(string name)
+        {
+            // SalesTaxCodeAdd requires Name and optionally IsTaxable
+            // Default to taxable since it's being referenced as a tax code
+            return $@"<SalesTaxCodeAddRq>
+  <SalesTaxCodeAdd>
+    <Name>{EscapeXml(name)}</Name>
+    <IsTaxable>true</IsTaxable>
+  </SalesTaxCodeAdd>
+</SalesTaxCodeAddRq>";
+        }
+
+        private string BuildTermsAddRequest(string name)
+        {
+            // StandardTermsAdd — default to Net 30
+            return $@"<StandardTermsAddRq>
+  <StandardTermsAdd>
+    <Name>{EscapeXml(name)}</Name>
+    <IsActive>true</IsActive>
+    <StdDueDays>30</StdDueDays>
+  </StandardTermsAdd>
+</StandardTermsAddRq>";
+        }
+
+        private string BuildPaymentMethodAddRequest(string name)
+        {
+            return $@"<PaymentMethodAddRq>
+  <PaymentMethodAdd>
+    <Name>{EscapeXml(name)}</Name>
+    <IsActive>true</IsActive>
+  </PaymentMethodAdd>
+</PaymentMethodAddRq>";
+        }
+
+        private string BuildSimpleListAddRequest(string reqType, string addType, string name)
+        {
+            return $@"<{reqType}>
+  <{addType}>
+    <Name>{EscapeXml(name)}</Name>
+    <IsActive>true</IsActive>
+  </{addType}>
+</{reqType}>";
+        }
+
+        private string BuildClassAddRequestXml(string className)
+        {
+            var parts = className.Split(':');
+            var leafName = parts.Last();
+            var parentRef = parts.Length > 1
+                ? $"\n    <ParentRef><FullName>{EscapeXml(string.Join(":", parts.Take(parts.Length - 1)))}</FullName></ParentRef>"
+                : "";
+
+            return $@"<ClassAddRq>
+  <ClassAdd>
+    <Name>{EscapeXml(leafName)}</Name>{parentRef}
+    <IsActive>true</IsActive>
+  </ClassAdd>
+</ClassAddRq>";
+        }
+
+        /// <summary>
+        /// Queries QB 2021 to check what items already exist for a given entity type.
+        /// Returns a set of existing FullNames/Names.
+        /// </summary>
+        public HashSet<string> QueryExistingItems(string entityType)
+        {
+            var existing = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+
+            string queryReq = entityType switch
+            {
+                "Accounts" => "AccountQueryRq",
+                "SalesTaxCodes" => "SalesTaxCodeQueryRq",
+                "Terms" => "StandardTermsQueryRq",
+                "PaymentMethods" => "PaymentMethodQueryRq",
+                "Classes" => "ClassQueryRq",
+                "CustomerTypes" => "CustomerTypeQueryRq",
+                "VendorTypes" => "VendorTypeQueryRq",
+                "JobTypes" => "JobTypeQueryRq",
+                "ShipMethods" => "ShipMethodQueryRq",
+                "PriceLevels" => "PriceLevelQueryRq",
+                "Customers" => "CustomerQueryRq",
+                "Vendors" => "VendorQueryRq",
+                _ => string.Empty
+            };
+
+            if (string.IsNullOrEmpty(queryReq)) return existing;
+
+            string retType = entityType switch
+            {
+                "Accounts" => "AccountRet",
+                "SalesTaxCodes" => "SalesTaxCodeRet",
+                "Terms" => "StandardTermsRet",
+                "PaymentMethods" => "PaymentMethodRet",
+                "Classes" => "ClassRet",
+                "CustomerTypes" => "CustomerTypeRet",
+                "VendorTypes" => "VendorTypeRet",
+                "JobTypes" => "JobTypeRet",
+                "ShipMethods" => "ShipMethodRet",
+                "PriceLevels" => "PriceLevelRet",
+                "Customers" => "CustomerRet",
+                "Vendors" => "VendorRet",
+                _ => string.Empty
+            };
+
+            try
+            {
+                var requestXml = $"<{queryReq}><ActiveStatus>All</ActiveStatus></{queryReq}>";
+                var fullRequest = QBConnectionManager.BuildQBXMLRequest(requestXml, _effectiveSDKVersion);
+                var response = _connection.ProcessRequestWithRetry(fullRequest);
+                var doc = XDocument.Parse(response);
+
+                foreach (var ret in doc.Descendants(retType))
+                {
+                    var fullName = ret.Element("FullName")?.Value ?? ret.Element("Name")?.Value;
+                    if (!string.IsNullOrEmpty(fullName))
+                    {
+                        existing.Add(fullName);
+
+                        // Also store ListID mapping
+                        var listId = ret.Element("ListID")?.Value;
+                        if (!string.IsNullOrEmpty(listId))
+                        {
+                            _nameToListIdMap[$"{entityType}:{fullName}"] = listId;
+                        }
+                    }
+                }
+
+                Log.Debug("    Queried {Type}: {Count} existing items found", entityType, existing.Count);
+            }
+            catch (Exception ex)
+            {
+                Log.Warning("    Could not query existing {Type}: {Message}", entityType, ex.Message);
+            }
+
+            return existing;
+        }
+
+        // ═══════════════════════════════════════════════════════════════════
+        // ORIGINAL ENTITY IMPORT (used by both legacy and staged paths)
+        // ═══════════════════════════════════════════════════════════════════
 
         /// <summary>
         /// Imports all entities of a single type.
