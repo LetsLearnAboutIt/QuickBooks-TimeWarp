@@ -142,3 +142,23 @@
 **Transaction Entities**: Invoices, Bills, Payments, SalesReceipts, PurchaseOrders, JournalEntries, CreditMemos, Estimates, Deposits, Checks, VendorCredits, InventoryAdjustments, Transfers
 
 **System Entities**: Preferences, CompanyInfo
+
+
+
+---
+
+## Future Enhancements
+
+### GUI Application with Drag-and-Drop Interface
+- **Phase**: Future development (post-CLI stabilization)
+- **Concept**: Build a desktop GUI application where the customer can simply drag-and-drop their `.QBW` file directly onto the app window
+- **Benefits**:
+  - Eliminates need for customers to edit `appsettings.json` or use command-line arguments
+  - Intuitive workflow: drag source `.QBW` → drag target `.QBW` → click "Migrate"
+  - Visual progress indicators, real-time log viewer, and validation summary dashboard
+- **Technical Notes**:
+  - Consider WPF or WinForms for Windows-native drag-and-drop support
+  - Reuse existing service layer (`DataExporter`, `DataTransformer`, `DataImporter`, `DataValidator`)
+  - GUI wraps the same pipeline — no migration logic changes needed
+  - Working copy system operates transparently behind the GUI
+- **Priority**: After CLI pipeline is fully tested and deployed
