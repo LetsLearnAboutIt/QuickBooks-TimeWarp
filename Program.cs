@@ -379,8 +379,17 @@ namespace QB_TimeWarp
                     }
                 }
 
-                // Step 4c: Import all data
-                report = importer.ImportAll(transformedData);
+                // Step 4c: Import all data (staged or flat)
+                if (_config.Import.UseStagedImport)
+                {
+                    ConsoleBanner.ShowStep(4, totalSteps, "Import Data (STAGED MODE)");
+                    var stagedResult = importer.ImportDataInStages(transformedData);
+                    report = importer.ConvertToMigrationReport(stagedResult);
+                }
+                else
+                {
+                    report = importer.ImportAll(transformedData);
+                }
                 report.TransformationReport = transformationReport;
 
                 if (report.TotalRecordsFailed > 0)
