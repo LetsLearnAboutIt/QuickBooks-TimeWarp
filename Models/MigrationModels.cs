@@ -13,6 +13,7 @@ namespace QB_TimeWarp.Models
         public string TxnID { get; set; } = string.Empty;
         public string Name { get; set; } = string.Empty;
         public string FullName { get; set; } = string.Empty;
+        public bool IsActive { get; set; } = true;
         public JObject Fields { get; set; } = new JObject();
         public List<JObject> LineItems { get; set; } = new List<JObject>();
         public DateTime ExportedAt { get; set; } = DateTime.UtcNow;
@@ -27,6 +28,8 @@ namespace QB_TimeWarp.Models
         public string SourceVersion { get; set; } = "QB2023";
         public DateTime ExportTimestamp { get; set; } = DateTime.UtcNow;
         public int TotalCount { get; set; }
+        public int ActiveCount { get; set; }
+        public int InactiveCount { get; set; }
         public List<QBEntity> Entities { get; set; } = new List<QBEntity>();
     }
 

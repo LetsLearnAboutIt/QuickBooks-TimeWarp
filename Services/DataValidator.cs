@@ -63,6 +63,13 @@ namespace QB_TimeWarp.Services
                 report.FinancialReconciliation = ReconcileFinancials(sourceData, importedData);
             }
 
+            // 4. Journal integrity check (pre-import and post-import)
+            if (_validationConfig.EnableJournalValidation)
+            {
+                Log.Information("Running journal integrity check...");
+                report.JournalIntegrity = ValidateJournalIntegrity(sourceData, importedData);
+            }
+
             // Calculate totals
             report.TotalDiscrepancies = report.FieldDiscrepancies.Count;
             report.CriticalDiscrepancies = report.FieldDiscrepancies
@@ -72,7 +79,8 @@ namespace QB_TimeWarp.Services
 
             report.IsValid = report.CriticalDiscrepancies == 0
                 && report.EntityCountComparisons.All(c => c.Matches)
-                && (report.FinancialReconciliation?.IsReconciled ?? true);
+                && (report.FinancialReconciliation?.IsReconciled ?? true)
+                && (report.JournalIntegrity?.IsBalanced ?? true);
 
             report.Summary = BuildSummary(report);
 
@@ -83,9 +91,325 @@ namespace QB_TimeWarp.Services
             Log.Information("  VALIDATION {Status}: {Critical} critical, {Warning} warnings",
                 report.IsValid ? "PASSED" : "FAILED",
                 report.CriticalDiscrepancies, report.WarningDiscrepancies);
+            if (report.JournalIntegrity != null)
+            {
+                Log.Information("  Journal Integrity: {Status} ({Checked} entries checked, {Mismatches} mismatches)",
+                    report.JournalIntegrity.IsBalanced ? "BALANCED" : "IMBALANCED",
+                    report.JournalIntegrity.TotalJournalEntriesChecked,
+                    report.JournalIntegrity.UnbalancedJournalEntries);
+            }
             Log.Information("═══════════════════════════════════════════════════════");
 
             return report;
+        }
+
+        // ═══════════════════════════════════════════════════════════════════
+        // JOURNAL INTEGRITY VALIDATION
+        // ═══════════════════════════════════════════════════════════════════
+
+        /// <summary>
+        /// Performs comprehensive journal integrity validation on both source and imported data.
+        /// Validates: journal entries (debits=credits), invoice line items, bill amounts,
+        /// payment applications, and general ledger transaction balance.
+        /// </summary>
+        public JournalIntegrityReport ValidateJournalIntegrity(
+            Dictionary<string, ExportedEntitySet> sourceData,
+            Dictionary<string, ExportedEntitySet>? importedData = null)
+        {
+            Log.Information("────────────────────────────────────────────");
+            Log.Information("  JOURNAL INTEGRITY CHECK");
+            Log.Information("────────────────────────────────────────────");
+
+            var report = new JournalIntegrityReport { CheckedAt = DateTime.UtcNow };
+
+            // Check source data first (pre-import validation)
+            Log.Information("  Checking source data journal integrity...");
+            ValidateJournalEntriesBalance(sourceData, report, "Source");
+            ValidateInvoiceLineItems(sourceData, report, "Source");
+            ValidateBillAmounts(sourceData, report, "Source");
+            ValidatePaymentApplications(sourceData, report, "Source");
+
+            // Check imported data if available (post-import validation)
+            if (importedData != null && importedData.Any())
+            {
+                Log.Information("  Checking imported data journal integrity...");
+                ValidateJournalEntriesBalance(importedData, report, "Target");
+                ValidateInvoiceLineItems(importedData, report, "Target");
+                ValidateBillAmounts(importedData, report, "Target");
+                ValidatePaymentApplications(importedData, report, "Target");
+            }
+
+            // Determine overall balance status
+            report.IsBalanced = report.UnbalancedJournalEntries == 0
+                && report.InvoicesWithLineItemMismatch == 0
+                && report.BillsWithAmountMismatch == 0
+                && report.UnbalancedPayments == 0;
+
+            // Build summary
+            var parts = new List<string>();
+            parts.Add($"Journal entries: {report.BalancedJournalEntries}/{report.TotalJournalEntriesChecked} balanced");
+            if (report.TotalInvoicesChecked > 0)
+                parts.Add($"Invoices: {report.TotalInvoicesChecked - report.InvoicesWithLineItemMismatch}/{report.TotalInvoicesChecked} valid");
+            if (report.TotalBillsChecked > 0)
+                parts.Add($"Bills: {report.TotalBillsChecked - report.BillsWithAmountMismatch}/{report.TotalBillsChecked} valid");
+            if (report.TotalPaymentsChecked > 0)
+                parts.Add($"Payments: {report.TotalPaymentsChecked - report.UnbalancedPayments}/{report.TotalPaymentsChecked} balanced");
+            report.Summary = string.Join(" | ", parts);
+
+            if (report.IsBalanced)
+            {
+                Log.Information("  ✓ Journal integrity check PASSED: {Summary}", report.Summary);
+            }
+            else
+            {
+                Log.Warning("  ✗ Journal integrity check FAILED: {Summary}", report.Summary);
+                foreach (var mismatch in report.JournalMismatches.Where(m => m.Severity == JournalMismatchSeverity.Critical).Take(10))
+                {
+                    Log.Warning("    CRITICAL: {Type} Ref#{Ref} - Debits: {Debits:C}, Credits: {Credits:C}, Variance: {Variance:C}",
+                        mismatch.TransactionType, mismatch.ReferenceNumber,
+                        mismatch.ActualDebitTotal, mismatch.ActualCreditTotal, mismatch.Variance);
+                }
+            }
+
+            return report;
+        }
+
+        /// <summary>
+        /// Pre-import journal validation: validates source data integrity before importing to QB 2021.
+        /// Call this before running the import to catch issues early.
+        /// </summary>
+        public JournalIntegrityReport ValidatePreImport(Dictionary<string, ExportedEntitySet> sourceData)
+        {
+            Log.Information("════════════════════════════════════════════════════════");
+            Log.Information("  PRE-IMPORT JOURNAL VALIDATION");
+            Log.Information("════════════════════════════════════════════════════════");
+
+            return ValidateJournalIntegrity(sourceData, null);
+        }
+
+        /// <summary>
+        /// Validates that all journal entries have balanced debits and credits.
+        /// For every JE, total debit line amounts must equal total credit line amounts.
+        /// </summary>
+        private void ValidateJournalEntriesBalance(
+            Dictionary<string, ExportedEntitySet> data,
+            JournalIntegrityReport report, string dataSource)
+        {
+            if (!data.ContainsKey("JournalEntries")) return;
+
+            var journalEntries = data["JournalEntries"].Entities;
+            Log.Information("    Validating {Count} journal entries ({Source})...", journalEntries.Count, dataSource);
+
+            foreach (var je in journalEntries)
+            {
+                report.TotalJournalEntriesChecked++;
+
+                decimal totalDebits = 0;
+                decimal totalCredits = 0;
+
+                foreach (var lineItem in je.LineItems)
+                {
+                    var lineType = lineItem["_lineType"]?.ToString() ?? string.Empty;
+                    var amount = GetDecimalField(lineItem, "Amount");
+
+                    if (lineType.Contains("Debit", StringComparison.OrdinalIgnoreCase))
+                    {
+                        totalDebits += amount;
+                    }
+                    else if (lineType.Contains("Credit", StringComparison.OrdinalIgnoreCase))
+                    {
+                        totalCredits += amount;
+                    }
+                }
+
+                var variance = Math.Abs(totalDebits - totalCredits);
+                if (variance <= _validationConfig.ToleranceAmount)
+                {
+                    report.BalancedJournalEntries++;
+                }
+                else
+                {
+                    report.UnbalancedJournalEntries++;
+                    var severity = variance > 1.00M ? JournalMismatchSeverity.Critical : JournalMismatchSeverity.Warning;
+
+                    report.JournalMismatches.Add(new JournalMismatchDetail
+                    {
+                        TransactionType = "JournalEntry",
+                        ReferenceNumber = je.Fields["RefNumber"]?.ToString() ?? "N/A",
+                        TxnID = je.TxnID,
+                        TxnDate = je.Fields["TxnDate"]?.ToString() ?? "N/A",
+                        ExpectedDebitTotal = totalCredits, // Expected to match credits
+                        ActualDebitTotal = totalDebits,
+                        ExpectedCreditTotal = totalDebits, // Expected to match debits
+                        ActualCreditTotal = totalCredits,
+                        Severity = severity,
+                        Description = $"[{dataSource}] Journal entry debits ({totalDebits:C}) do not equal credits ({totalCredits:C}). Variance: {variance:C}"
+                    });
+
+                    Log.Warning("      Unbalanced JE Ref#{Ref}: Debits={Debits:F2}, Credits={Credits:F2}, Variance={Variance:F2}",
+                        je.Fields["RefNumber"]?.ToString() ?? "N/A", totalDebits, totalCredits, variance);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Validates that invoice line items sum to the invoice subtotal/total.
+        /// </summary>
+        private void ValidateInvoiceLineItems(
+            Dictionary<string, ExportedEntitySet> data,
+            JournalIntegrityReport report, string dataSource)
+        {
+            if (!data.ContainsKey("Invoices")) return;
+
+            var invoices = data["Invoices"].Entities;
+
+            foreach (var invoice in invoices)
+            {
+                report.TotalInvoicesChecked++;
+
+                // Get the stated subtotal from the invoice header
+                var statedSubtotal = GetDecimalField(invoice.Fields, "Subtotal");
+                if (statedSubtotal == 0)
+                    statedSubtotal = GetDecimalField(invoice.Fields, "TotalAmount");
+
+                // Sum line item amounts
+                decimal lineItemTotal = 0;
+                foreach (var line in invoice.LineItems)
+                {
+                    lineItemTotal += GetDecimalField(line, "Amount");
+                }
+
+                // If no line items or no stated total, skip comparison
+                if (lineItemTotal == 0 && statedSubtotal == 0) continue;
+                if (!invoice.LineItems.Any()) continue;
+
+                var variance = Math.Abs(statedSubtotal - lineItemTotal);
+                if (variance > _validationConfig.ToleranceAmount)
+                {
+                    report.InvoicesWithLineItemMismatch++;
+                    var severity = variance > 1.00M ? JournalMismatchSeverity.Critical : JournalMismatchSeverity.Warning;
+
+                    report.InvoiceMismatches.Add(new JournalMismatchDetail
+                    {
+                        TransactionType = "Invoice",
+                        ReferenceNumber = invoice.Fields["RefNumber"]?.ToString() ?? "N/A",
+                        TxnID = invoice.TxnID,
+                        TxnDate = invoice.Fields["TxnDate"]?.ToString() ?? "N/A",
+                        ExpectedDebitTotal = statedSubtotal,
+                        ActualDebitTotal = lineItemTotal,
+                        ExpectedCreditTotal = statedSubtotal,
+                        ActualCreditTotal = lineItemTotal,
+                        Severity = severity,
+                        Description = $"[{dataSource}] Invoice line items total ({lineItemTotal:C}) does not match stated subtotal ({statedSubtotal:C}). Variance: {variance:C}"
+                    });
+                }
+            }
+        }
+
+        /// <summary>
+        /// Validates that bill amounts match their line item totals.
+        /// </summary>
+        private void ValidateBillAmounts(
+            Dictionary<string, ExportedEntitySet> data,
+            JournalIntegrityReport report, string dataSource)
+        {
+            if (!data.ContainsKey("Bills")) return;
+
+            var bills = data["Bills"].Entities;
+
+            foreach (var bill in bills)
+            {
+                report.TotalBillsChecked++;
+
+                var statedAmount = GetDecimalField(bill.Fields, "AmountDue");
+                if (statedAmount == 0)
+                    statedAmount = GetDecimalField(bill.Fields, "TotalAmount");
+
+                // Sum line item amounts (expense lines + item lines)
+                decimal lineItemTotal = 0;
+                foreach (var line in bill.LineItems)
+                {
+                    lineItemTotal += GetDecimalField(line, "Amount");
+                }
+
+                if (lineItemTotal == 0 && statedAmount == 0) continue;
+                if (!bill.LineItems.Any()) continue;
+
+                var variance = Math.Abs(statedAmount - lineItemTotal);
+                if (variance > _validationConfig.ToleranceAmount)
+                {
+                    report.BillsWithAmountMismatch++;
+                    var severity = variance > 1.00M ? JournalMismatchSeverity.Critical : JournalMismatchSeverity.Warning;
+
+                    report.BillMismatches.Add(new JournalMismatchDetail
+                    {
+                        TransactionType = "Bill",
+                        ReferenceNumber = bill.Fields["RefNumber"]?.ToString() ?? "N/A",
+                        TxnID = bill.TxnID,
+                        TxnDate = bill.Fields["TxnDate"]?.ToString() ?? "N/A",
+                        ExpectedDebitTotal = statedAmount,
+                        ActualDebitTotal = lineItemTotal,
+                        ExpectedCreditTotal = statedAmount,
+                        ActualCreditTotal = lineItemTotal,
+                        Severity = severity,
+                        Description = $"[{dataSource}] Bill line items total ({lineItemTotal:C}) does not match stated amount ({statedAmount:C}). Variance: {variance:C}"
+                    });
+                }
+            }
+        }
+
+        /// <summary>
+        /// Validates that payment applications are balanced (payment amount matches applied amounts).
+        /// </summary>
+        private void ValidatePaymentApplications(
+            Dictionary<string, ExportedEntitySet> data,
+            JournalIntegrityReport report, string dataSource)
+        {
+            if (!data.ContainsKey("Payments")) return;
+
+            var payments = data["Payments"].Entities;
+
+            foreach (var payment in payments)
+            {
+                report.TotalPaymentsChecked++;
+
+                var totalAmount = GetDecimalField(payment.Fields, "TotalAmount");
+                var unusedAmount = GetDecimalField(payment.Fields, "UnusedPayment");
+
+                // Sum applied amounts from line items
+                decimal appliedTotal = 0;
+                foreach (var line in payment.LineItems)
+                {
+                    appliedTotal += GetDecimalField(line, "Amount");
+                    appliedTotal += GetDecimalField(line, "PaymentAmount");
+                }
+
+                // If no applied lines, the full amount should be accounted for
+                if (!payment.LineItems.Any()) continue;
+
+                var expectedApplied = totalAmount - unusedAmount;
+                var variance = Math.Abs(expectedApplied - appliedTotal);
+
+                if (variance > _validationConfig.ToleranceAmount)
+                {
+                    report.UnbalancedPayments++;
+                    var severity = variance > 1.00M ? JournalMismatchSeverity.Critical : JournalMismatchSeverity.Warning;
+
+                    report.PaymentMismatches.Add(new JournalMismatchDetail
+                    {
+                        TransactionType = "Payment",
+                        ReferenceNumber = payment.Fields["RefNumber"]?.ToString() ?? "N/A",
+                        TxnID = payment.TxnID,
+                        TxnDate = payment.Fields["TxnDate"]?.ToString() ?? "N/A",
+                        ExpectedDebitTotal = expectedApplied,
+                        ActualDebitTotal = appliedTotal,
+                        ExpectedCreditTotal = totalAmount,
+                        ActualCreditTotal = appliedTotal + unusedAmount,
+                        Severity = severity,
+                        Description = $"[{dataSource}] Payment applied total ({appliedTotal:C}) does not match expected ({expectedApplied:C}). Total: {totalAmount:C}, Unused: {unusedAmount:C}"
+                    });
+                }
+            }
         }
 
         /// <summary>
@@ -530,6 +854,8 @@ namespace QB_TimeWarp.Services
                 $"({report.CriticalDiscrepancies} critical, {report.WarningDiscrepancies} warnings)");
             if (report.FinancialReconciliation != null)
                 parts.Add($"Financial reconciliation: {(report.FinancialReconciliation.IsReconciled ? "PASSED" : "FAILED")}");
+            if (report.JournalIntegrity != null)
+                parts.Add($"Journal integrity: {(report.JournalIntegrity.IsBalanced ? "BALANCED" : "IMBALANCED")} ({report.JournalIntegrity.Summary})");
             parts.Add($"Overall: {(report.IsValid ? "VALID" : "DISCREPANCIES FOUND")}");
             return string.Join(" | ", parts);
         }

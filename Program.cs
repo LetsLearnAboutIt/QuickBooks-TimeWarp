@@ -145,6 +145,41 @@ namespace QB_TimeWarp
             // Save transformed data
             SaveTransformedData(transformedData);
 
+            // ─── Step 3.5: Pre-Import Journal Validation ───────────────
+            if (_config.Validation.EnableJournalValidation)
+            {
+                ConsoleBanner.ShowStep(3, totalSteps, "Pre-Import Journal Validation");
+                try
+                {
+                    using var preValidConn1 = new QBConnectionManager(_config.QuickBooks.QB2023, "QB2023-PreValid");
+                    using var preValidConn2 = new QBConnectionManager(_config.QuickBooks.QB2021, "QB2021-PreValid");
+                    preValidConn1.Connect();
+                    preValidConn2.Connect();
+
+                    var preValidator = new DataValidator(
+                        preValidConn1, preValidConn2,
+                        _config.Validation,
+                        _config.Paths.ValidationReportDirectory);
+
+                    var preImportJournalReport = preValidator.ValidatePreImport(transformedData);
+
+                    if (preImportJournalReport.IsBalanced)
+                    {
+                        ConsoleBanner.ShowSuccess("Pre-import journal validation PASSED - all entries balanced");
+                    }
+                    else
+                    {
+                        ConsoleBanner.ShowWarning($"Pre-import journal validation found {preImportJournalReport.UnbalancedJournalEntries} unbalanced journal entries");
+                        ConsoleBanner.ShowWarning("Review the journal integrity report before proceeding with import.");
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Log.Warning(ex, "Pre-import journal validation failed (non-fatal): {Message}", ex.Message);
+                    ConsoleBanner.ShowWarning($"Pre-import journal validation skipped: {ex.Message}");
+                }
+            }
+
             // ─── Step 4: Import Data into QB 2021 ──────────────────────
             ConsoleBanner.ShowStep(4, totalSteps, "Import Data into QB 2021");
             MigrationReport report;
@@ -474,7 +509,7 @@ namespace QB_TimeWarp
             var duration = DateTime.UtcNow - startTime;
 
             Console.WriteLine();
-            ConsoleBanner.ShowSummary("MIGRATION SUMMARY", new Dictionary<string, string>
+            var summaryDict = new Dictionary<string, string>
             {
                 ["Status"] = report.OverallStatus.ToString(),
                 ["Total Duration"] = $"{duration.TotalMinutes:F1} minutes",
@@ -482,9 +517,12 @@ namespace QB_TimeWarp
                 ["Records Succeeded"] = report.TotalRecordsSucceeded.ToString(),
                 ["Records Failed"] = report.TotalRecordsFailed.ToString(),
                 ["Validation"] = report.ValidationReport?.IsValid == true ? "PASSED" : "See report",
+                ["Journal Integrity"] = report.ValidationReport?.JournalIntegrity?.IsBalanced == true
+                    ? "BALANCED" : (report.ValidationReport?.JournalIntegrity != null ? "ISSUES FOUND" : "Not checked"),
                 ["Log File"] = Path.Combine(_config.Paths.LogDirectory, "*.log"),
                 ["Report File"] = _config.Paths.ValidationReportDirectory
-            });
+            };
+            ConsoleBanner.ShowSummary("MIGRATION SUMMARY", summaryDict);
 
             // Show per-entity breakdown
             if (report.EntitySummaries.Any())

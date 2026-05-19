@@ -95,7 +95,19 @@ namespace QB_TimeWarp.Services
         }
 
         /// <summary>
+        /// Entity types that support the ActiveStatus/IsActive filter in QBXML queries.
+        /// These are "list" entities (not transactions) that can be marked inactive.
+        /// </summary>
+        private static readonly HashSet<string> ActiveStatusEntityTypes = new()
+        {
+            "Accounts", "Customers", "Vendors", "Employees", "Items",
+            "PaymentMethods", "Terms", "Classes", "SalesTaxCodes", "ShipMethods",
+            "CustomerTypes", "VendorTypes", "JobTypes", "PriceLevels"
+        };
+
+        /// <summary>
         /// Exports all configured entity types from QuickBooks 2023.
+        /// Includes both active and inactive records for list entities.
         /// </summary>
         public Dictionary<string, ExportedEntitySet> ExportAll()
         {
@@ -103,6 +115,7 @@ namespace QB_TimeWarp.Services
 
             Log.Information("═══════════════════════════════════════════════════════");
             Log.Information("  STARTING DATA EXPORT FROM QUICKBOOKS 2023");
+            Log.Information("  Include inactive records: {IncludeInactive}", _exportConfig.IncludeInactiveRecords);
             Log.Information("═══════════════════════════════════════════════════════");
 
             Directory.CreateDirectory(_outputDirectory);
@@ -120,8 +133,8 @@ namespace QB_TimeWarp.Services
                     // Save individual entity file
                     SaveExportedData(entityType, exportedSet);
 
-                    Log.Information("  ✓ Exported {Count} {EntityType} records",
-                        exportedSet.TotalCount, entityType);
+                    Log.Information("  ✓ Exported {Count} {EntityType} records (Active: {Active}, Inactive: {Inactive})",
+                        exportedSet.TotalCount, entityType, exportedSet.ActiveCount, exportedSet.InactiveCount);
                 }
                 catch (Exception ex)
                 {
@@ -139,6 +152,9 @@ namespace QB_TimeWarp.Services
             // Save master export manifest
             SaveExportManifest(allExports);
 
+            // Log inactive entity summary
+            LogInactiveEntitySummary(allExports);
+
             Log.Information("═══════════════════════════════════════════════════════");
             Log.Information("  EXPORT COMPLETE: {Total} total records across {Types} entity types",
                 allExports.Values.Sum(e => e.TotalCount), allExports.Count);
@@ -148,7 +164,41 @@ namespace QB_TimeWarp.Services
         }
 
         /// <summary>
+        /// Logs a summary of inactive entity counts across all exported entity types.
+        /// </summary>
+        private void LogInactiveEntitySummary(Dictionary<string, ExportedEntitySet> allExports)
+        {
+            var inactiveEntities = allExports
+                .Where(kvp => kvp.Value.InactiveCount > 0)
+                .OrderByDescending(kvp => kvp.Value.InactiveCount)
+                .ToList();
+
+            if (inactiveEntities.Any())
+            {
+                Log.Information("────────────────────────────────────────────");
+                Log.Information("  INACTIVE ENTITY SUMMARY");
+                Log.Information("────────────────────────────────────────────");
+
+                foreach (var (entityType, data) in inactiveEntities)
+                {
+                    Log.Information("    {EntityType}: {InactiveCount} inactive out of {TotalCount} total",
+                        entityType, data.InactiveCount, data.TotalCount);
+                }
+
+                var totalInactive = inactiveEntities.Sum(kvp => kvp.Value.InactiveCount);
+                Log.Information("    ─────────────────────────────────────");
+                Log.Information("    Total inactive records: {Total}", totalInactive);
+            }
+            else
+            {
+                Log.Information("  No inactive records found across all entity types.");
+            }
+        }
+
+        /// <summary>
         /// Exports all records for a single entity type.
+        /// For list entities (Customers, Vendors, Items, etc.), includes both active and inactive
+        /// records when IncludeInactiveRecords is true by using ActiveStatus=All in the QBXML query.
         /// </summary>
         public ExportedEntitySet ExportEntityType(string entityType)
         {
@@ -160,15 +210,22 @@ namespace QB_TimeWarp.Services
 
             var (queryType, responseType) = QueryMap[entityType];
             var isTransaction = TransactionTypes.Contains(entityType);
+            var supportsActiveStatus = ActiveStatusEntityTypes.Contains(entityType);
 
-            // Build the query
+            // Build the query - include inactive records for list entities that support ActiveStatus
+            var includeInactive = supportsActiveStatus && _exportConfig.IncludeInactiveRecords;
             var qbxmlRequest = QBConnectionManager.BuildQueryRequest(
                 queryType,
                 _sdkVersion,
-                includeInactive: _exportConfig.IncludeInactiveRecords,
+                includeInactive: includeInactive,
                 fromDate: isTransaction ? _exportConfig.DateRangeStart : null,
                 toDate: isTransaction ? _exportConfig.DateRangeEnd : null
             );
+
+            if (includeInactive)
+            {
+                Log.Debug("  Including inactive records for {EntityType} (ActiveStatus=All)", entityType);
+            }
 
             // Execute query
             var response = _connection.ProcessRequestWithRetry(qbxmlRequest);
@@ -191,12 +248,18 @@ namespace QB_TimeWarp.Services
                 }
             }
 
+            // Calculate active/inactive counts
+            var activeCount = entities.Count(e => e.IsActive);
+            var inactiveCount = entities.Count(e => !e.IsActive);
+
             return new ExportedEntitySet
             {
                 EntityType = entityType,
                 SourceVersion = "QB2023",
                 ExportTimestamp = DateTime.UtcNow,
                 TotalCount = entities.Count,
+                ActiveCount = activeCount,
+                InactiveCount = inactiveCount,
                 Entities = entities
             };
         }
@@ -217,6 +280,11 @@ namespace QB_TimeWarp.Services
             entity.TxnID = xmlElement.Element("TxnID")?.Value ?? string.Empty;
             entity.Name = xmlElement.Element("Name")?.Value ?? string.Empty;
             entity.FullName = xmlElement.Element("FullName")?.Value ?? entity.Name;
+
+            // Extract IsActive status (defaults to true if not present, e.g. for transactions)
+            var isActiveValue = xmlElement.Element("IsActive")?.Value;
+            entity.IsActive = string.IsNullOrEmpty(isActiveValue) || 
+                string.Equals(isActiveValue, "true", StringComparison.OrdinalIgnoreCase);
 
             // Convert all fields to a flat JObject
             entity.Fields = ConvertXmlToJObject(xmlElement, responseType);
@@ -298,10 +366,19 @@ namespace QB_TimeWarp.Services
                 ExportTimestamp = DateTime.UtcNow,
                 SourceVersion = "QuickBooks 2023",
                 SDKVersion = _sdkVersion,
+                IncludeInactiveRecords = _exportConfig.IncludeInactiveRecords,
                 TotalRecords = allExports.Values.Sum(e => e.TotalCount),
+                TotalActiveRecords = allExports.Values.Sum(e => e.ActiveCount),
+                TotalInactiveRecords = allExports.Values.Sum(e => e.InactiveCount),
                 EntitySummary = allExports.ToDictionary(
                     kvp => kvp.Key,
-                    kvp => new { Count = kvp.Value.TotalCount, kvp.Value.ExportTimestamp }
+                    kvp => new
+                    {
+                        Count = kvp.Value.TotalCount,
+                        Active = kvp.Value.ActiveCount,
+                        Inactive = kvp.Value.InactiveCount,
+                        kvp.Value.ExportTimestamp
+                    }
                 )
             };
 

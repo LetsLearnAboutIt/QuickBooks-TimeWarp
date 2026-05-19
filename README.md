@@ -2,18 +2,23 @@
 
 A production-ready C# console application that migrates all data from a QuickBooks Desktop 2023 company file to a QuickBooks Desktop 2021 company file using the QBXML SDK.
 
+**Repository**: https://github.com/LetsLearnAboutIt/QuickBooks-TimeWarp
+
 ---
 
 ## Features
 
 - **Full Data Export** — Exports all entities from QB 2023: Customers, Vendors, Accounts, Items, Employees, and all transaction types (Invoices, Bills, Payments, Journal Entries, Sales Receipts, Purchase Orders, Credit Memos, Estimates, Deposits, Checks, Vendor Credits, Inventory Adjustments, Transfers)
+- **Inactive Entity Support** — Exports both active AND inactive records (Customers, Vendors, Items, Accounts, Employees) using `ActiveStatus=All` in QBXML queries, with separate active/inactive counts in export summaries
 - **Schema Extraction** — Documents QB 2021's supported fields, data types, and constraints as JSON
 - **Configurable Field Mapping** — Human-editable `FieldMappings.json` maps QB 2023 fields to QB 2021 equivalents with support for renaming, transformations, defaults, and skipping deprecated fields
 - **Dependency-Ordered Import** — Imports lists before transactions, respecting referential integrity (Accounts → Customers/Vendors → Items → Invoices/Bills → Payments)
-- **Comprehensive Validation** — Field-by-field comparison, entity count verification, and financial totals reconciliation (account balances, AR/AP, transaction sums)
+- **Journal Integrity Validation** — Comprehensive journal entry validation ensures total debits equal total credits for every journal entry, validates invoice line item sums, bill amounts, and payment application balances
+- **Comprehensive Validation** — Field-by-field comparison, entity count verification, financial totals reconciliation (account balances, AR/AP, transaction sums), and journal integrity checks
+- **Pre-Import Validation** — Catches journal imbalances and financial integrity issues before importing to QB 2021
 - **Error Recovery** — Skips problematic records and continues; logs detailed error reasons for every failure
 - **Rich Console Output** — Step-by-step progress indicators, ASCII art banner, per-entity status breakdown
-- **Structured Logging** — Serilog-based logging to both console and timestamped log files
+- **Structured Logging** — Serilog-based logging to both console and timestamped log files with inactive entity summaries and journal validation results
 
 ---
 
@@ -158,6 +163,7 @@ Edit the following settings:
 | `Import.SkipOnError` | Skip failed records and continue (default: true) |
 | `Import.DryRun` | Validate without actually importing (default: false) |
 | `Validation.ToleranceAmount` | Acceptable rounding difference for financial comparisons (default: 0.01) |
+| `Validation.EnableJournalValidation` | Enable journal debit/credit balance validation (default: true) |
 
 ### 4. Customize `FieldMappings.json`
 
@@ -264,6 +270,125 @@ After a migration run, you'll find:
 
 ---
 
+## Inactive Entity Handling
+
+QB-TimeWarp exports both **active and inactive** records for all list entity types. This ensures no data is lost during migration, even for entities that were deactivated in QB 2023.
+
+### How It Works
+
+1. **Export**: When `IncludeInactiveRecords` is `true` (default), QBXML queries include `<ActiveStatus>All</ActiveStatus>` for the following entity types:
+   - Customers (including inactive)
+   - Vendors (including inactive)
+   - Items (including inactive)
+   - Accounts (including inactive)
+   - Employees (including inactive)
+   - Payment Methods, Terms, Classes, Sales Tax Codes, Ship Methods, Customer Types, Vendor Types, Job Types, Price Levels
+
+2. **Tracking**: Each exported entity has an `IsActive` field in the model. The export manifest and logs report separate active/inactive counts per entity type.
+
+3. **Import**: Inactive entities are imported into QB 2021. After import, you can mark them inactive again via QB 2021 if desired.
+
+4. **Validation**: Entity count verification includes both active and inactive entities.
+
+### Export Summary Example
+
+```
+  INACTIVE ENTITY SUMMARY
+  ────────────────────────────────────────────
+    Customers: 5 inactive out of 150 total
+    Items: 12 inactive out of 200 total
+    Vendors: 3 inactive out of 50 total
+    ─────────────────────────────────────
+    Total inactive records: 20
+```
+
+---
+
+## Journal Integrity Validation
+
+The accountant-critical journal validation ensures financial data integrity during migration. This feature performs comprehensive checks on all transaction types that affect the general ledger.
+
+### What Gets Validated
+
+| Check | Description |
+|-------|-------------|
+| **Journal Entry Balance** | For every journal entry, verifies total debits = total credits |
+| **Invoice Line Items** | Verifies invoice line item amounts sum to the stated subtotal/total |
+| **Bill Amounts** | Verifies bill line items (expense + item lines) sum to the bill amount |
+| **Payment Applications** | Verifies payment applied amounts match the total minus unused amount |
+
+### Pre-Import vs Post-Import Validation
+
+- **Pre-Import**: Runs after data transformation but BEFORE importing to QB 2021. Catches data issues early so you can fix source data or mappings.
+- **Post-Import**: Runs as part of the full validation suite after import. Verifies the imported data maintains journal integrity in QB 2021.
+
+### Journal Mismatch Report
+
+When mismatches are found, the report includes detailed information:
+
+```json
+{
+  "TransactionType": "JournalEntry",
+  "ReferenceNumber": "JE-1042",
+  "TxnDate": "2024-06-15",
+  "ExpectedDebitTotal": 5000.00,
+  "ActualDebitTotal": 5000.00,
+  "ExpectedCreditTotal": 5000.00,
+  "ActualCreditTotal": 4999.50,
+  "Variance": 0.50,
+  "Severity": "Warning",
+  "Description": "[Source] Journal entry debits ($5,000.00) do not equal credits ($4,999.50). Variance: $0.50"
+}
+```
+
+### Severity Levels
+
+| Severity | Criteria | Action Required |
+|----------|----------|----------------|
+| **Info** | Variance within tolerance (≤ $0.01) | None — rounding difference |
+| **Warning** | Small variance ($0.01 – $1.00) | Review — may be data entry issue |
+| **Critical** | Large variance (> $1.00) | Must investigate before proceeding |
+
+### Configuration
+
+```json
+{
+  "Validation": {
+    "EnableJournalValidation": true,
+    "ToleranceAmount": 0.01
+  }
+}
+```
+
+---
+
+## Repository Setup
+
+### Cloning the Repository
+
+```bash
+git clone https://github.com/LetsLearnAboutIt/QuickBooks-TimeWarp.git
+cd QuickBooks-TimeWarp
+```
+
+### Building
+
+```bash
+dotnet restore
+dotnet build -c Release
+```
+
+### Development Setup
+
+1. Clone the repo (see above)
+2. Open `QB-TimeWarp.sln` in Visual Studio 2022
+3. Restore NuGet packages
+4. Configure `appsettings.json` with your QB company file paths
+5. Build targeting x86 (required for COM interop)
+6. Ensure QuickBooks Desktop is running with the company file open
+
+---
+
 ## Troubleshooting
 
 ### "QBXMLRP2.RequestProcessor not found"
@@ -291,6 +416,14 @@ After a migration run, you'll find:
 - Balances depend on ALL transactions being imported successfully
 - Check for skipped transactions in the migration report
 - Opening balances may differ if the QB 2021 file isn't truly blank
+
+### Journal entry validation failures
+- **Unbalanced journal entries**: Check the source data in QB 2023 — the journal entry may have been incorrectly entered. Review the `JournalMismatches` array in the validation report for specific entries.
+- **Invoice line item mismatches**: Can occur when tax or discount lines are calculated separately. Check if the invoice has tax lines not captured in the standard line items.
+- **Bill amount mismatches**: Verify that all expense and item lines are being exported. Some bill types may have additional line types not yet mapped.
+- **Payment application imbalances**: May occur when partial payments or credits are applied. Check the `UnusedPayment` field in the payment record.
+- **Tolerance tuning**: If you see many small rounding variances, increase `Validation.ToleranceAmount` from 0.01 to 0.05 in `appsettings.json`.
+- **Pre-import failures**: If the pre-import validation finds issues, fix the source data or field mappings before re-running. The validation report identifies the exact transaction references.
 
 ---
 

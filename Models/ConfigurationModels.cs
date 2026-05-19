@@ -60,6 +60,7 @@ namespace QB_TimeWarp.Models
         public bool EnableFieldByFieldComparison { get; set; } = true;
         public bool EnableFinancialReconciliation { get; set; } = true;
         public bool EnableEntityCountVerification { get; set; } = true;
+        public bool EnableJournalValidation { get; set; } = true;
         public decimal ToleranceAmount { get; set; } = 0.01M;
         public string ReportFormat { get; set; } = "JSON";
     }
