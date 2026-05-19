@@ -136,6 +136,7 @@ namespace QB_TimeWarp.Services
         /// </summary>
         private int _incompatibleFieldSkips;
         private int _emptyNameSkips;
+        private int _alreadyExistsCount;
 
         public DataImporter(QBConnectionManager connection, ImportConfig importConfig, string sdkVersion)
             : this(connection, importConfig, sdkVersion, new TransformationRulesConfig())
@@ -228,6 +229,8 @@ namespace QB_TimeWarp.Services
                 Log.Information("  {Count} incompatible fields skipped (SDK 15.0 compatibility)", _incompatibleFieldSkips);
             if (_emptyNameSkips > 0)
                 Log.Warning("  {Count} entities skipped due to empty names", _emptyNameSkips);
+            if (_alreadyExistsCount > 0)
+                Log.Information("  {Count} entities already existed in target (treated as success)", _alreadyExistsCount);
             if (_dynamicExcludedFields.Any())
             {
                 Log.Information("  Fields dynamically excluded after 0x80040400 errors: {Fields}",
@@ -1430,6 +1433,21 @@ namespace QB_TimeWarp.Services
                         LearnFromErrorResponse(statusMessage, entityType);
                         _incompatibleFieldSkips++;
                     }
+                    else if (IsAlreadyExistsError(statusCode, statusMessage))
+                    {
+                        // Entity already exists in target — treat as soft success
+                        // Look up the existing entity's ListID for reference resolution
+                        result.Success = true;
+                        result.ErrorCode = statusCode;
+                        result.ErrorMessage = $"[ALREADY EXISTS] {statusMessage}";
+                        _alreadyExistsCount++;
+
+                        Log.Information("  ✓ '{Name}' already exists in target — treating as success (Error {Code})",
+                            sourceId, statusCode);
+
+                        // Try to look up the existing entity's ListID
+                        TryLookupExistingEntity(entityType, entity, result);
+                    }
                     else
                     {
                         result.Success = false;
@@ -1478,6 +1496,95 @@ namespace QB_TimeWarp.Services
             var msg = ex.Message.ToUpperInvariant();
             return msg.Contains("80040400") || msg.Contains("UNSUPPORTED") ||
                    msg.Contains("NOT VALID") || msg.Contains("ELEMENT NOT");
+        }
+
+        /// <summary>
+        /// Checks if a QBXML error indicates the entity already exists in the target file.
+        /// Error 3100: "The name 'X' of the list element is already in use."
+        /// Error 3180: "There was an error when saving a X list, element 'Y'. QuickBooks error message: The account number is already in use."
+        /// </summary>
+        private static bool IsAlreadyExistsError(string? statusCode, string? statusMessage)
+        {
+            if (string.IsNullOrEmpty(statusCode) || string.IsNullOrEmpty(statusMessage))
+                return false;
+
+            var msg = statusMessage.ToUpperInvariant();
+
+            // Error 3100: name already in use
+            if (statusCode == "3100" && msg.Contains("ALREADY IN USE"))
+                return true;
+
+            // Error 3180: account number already in use, or other save errors indicating duplicates
+            if (statusCode == "3180" && (msg.Contains("ALREADY IN USE") || msg.Contains("ALREADY EXISTS")))
+                return true;
+
+            // Error 3110: name already in use (alternate code)
+            if (statusCode == "3110" && msg.Contains("ALREADY IN USE"))
+                return true;
+
+            return false;
+        }
+
+        /// <summary>
+        /// When an entity already exists in the target, look up its ListID so we can
+        /// store the ID mapping for reference resolution in later stages.
+        /// </summary>
+        private void TryLookupExistingEntity(string entityType, QBEntity entity, ImportResult result)
+        {
+            try
+            {
+                // Determine the query type from the entity type
+                var queryMap = new Dictionary<string, (string QueryType, string RetType)>
+                {
+                    ["Accounts"] = ("AccountQuery", "AccountRet"),
+                    ["Customers"] = ("CustomerQuery", "CustomerRet"),
+                    ["Vendors"] = ("VendorQuery", "VendorRet"),
+                    ["Employees"] = ("EmployeeQuery", "EmployeeRet"),
+                    ["Items"] = ("ItemQuery", "ItemRet"),
+                    ["Classes"] = ("ClassQuery", "ClassRet"),
+                    ["SalesTaxCodes"] = ("SalesTaxCodeQuery", "SalesTaxCodeRet"),
+                    ["Terms"] = ("TermsQuery", "StandardTermsRet"),
+                    ["PaymentMethods"] = ("PaymentMethodQuery", "PaymentMethodRet"),
+                    ["CustomerTypes"] = ("CustomerTypeQuery", "CustomerTypeRet"),
+                    ["VendorTypes"] = ("VendorTypeQuery", "VendorTypeRet"),
+                    ["JobTypes"] = ("JobTypeQuery", "JobTypeRet"),
+                    ["ShipMethods"] = ("ShipMethodQuery", "ShipMethodRet"),
+                    ["PriceLevels"] = ("PriceLevelQuery", "PriceLevelRet"),
+                    ["CustomerMsgs"] = ("CustomerMsgQuery", "CustomerMsgRet"),
+                };
+
+                if (!queryMap.ContainsKey(entityType))
+                {
+                    Log.Debug("  No query mapping for {EntityType} — cannot look up existing entity", entityType);
+                    return;
+                }
+
+                var (queryType, retType) = queryMap[entityType];
+                var nameToFind = entity.FullName ?? entity.Name;
+                if (string.IsNullOrEmpty(nameToFind)) return;
+
+                // Build a query to find the entity by name
+                var queryXml = $"<{queryType}Rq><FullName>{EscapeXml(nameToFind)}</FullName></{queryType}Rq>";
+                var fullRequest = QBConnectionManager.BuildQBXMLRequest(queryXml, _effectiveSDKVersion);
+
+                var response = _connection.ProcessRequest(fullRequest);
+                var entities = QBConnectionManager.ParseResponseEntities(response, retType);
+
+                if (entities.Any())
+                {
+                    var existingListID = entities.First().Element("ListID")?.Value;
+                    if (!string.IsNullOrEmpty(existingListID))
+                    {
+                        result.NewListID = existingListID;
+                        Log.Debug("  Found existing ListID for '{Name}': {ListID}", nameToFind, existingListID);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Log.Debug("  Could not look up existing entity '{Name}': {Error}",
+                    entity.Name, ex.Message);
+            }
         }
 
         /// <summary>
