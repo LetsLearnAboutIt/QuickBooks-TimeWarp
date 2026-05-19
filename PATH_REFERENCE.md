@@ -87,12 +87,13 @@ Working copies are created automatically on first run. Use `--refresh` to re-cop
 
 ## Old Names → New Names (Rename History)
 
-| Old Name (with spaces) | New Name (underscores) |
+Renamed on 2026-05-19 — all spaces replaced with underscores for path compatibility.
+
+| Old Path (with spaces) | New Path (underscores) |
 |------------------------|----------------------|
-| `Joshua's Gold Coast` | `Joshs_Gold_Coast` |
-| `Blank Template` | `QB21_Blank_Template` |
-| `Air Masters` | `Air_Masters` |
-| `Air-Masters-QB-2023.qbw` | `Air_Masters_QB_2023.qbw` |
+| `Desktop\Joshs Gold Coast\joshs gold coast ii 23.qbw` | `C:\Users\AIAgent\Desktop\Joshs_Gold_Coast\Joshs_Gold_Coast_II_2023.qbw` |
+| `Desktop\Air Masters\Air Masters QB 2023.qbw` | `C:\Users\AIAgent\Desktop\Air_Masters\Air_Masters_QB_2023.qbw` |
+| `Desktop\QB21 Blank Template\Blank Template.qbw` | `C:\Users\AIAgent\Desktop\QB21_Blank_Template\Blank_Template.qbw` |
 
 ---
 
