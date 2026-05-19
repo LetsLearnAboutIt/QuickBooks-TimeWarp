@@ -1401,9 +1401,13 @@ namespace QB_TimeWarp.Services
                 result.QBXMLResponse = response;
 
                 // Parse response for success/failure
+                // Look for the specific Add response element (e.g., AccountAddRs, CustomerAddRs)
+                // NOT QBXMLMsgsRs which is the wrapper element
                 var doc = XDocument.Parse(response);
                 var rsElements = doc.Descendants()
-                    .Where(e => e.Name.LocalName.EndsWith("Rs"))
+                    .Where(e => e.Name.LocalName.EndsWith("Rs") && 
+                                e.Name.LocalName != "QBXMLMsgsRs" &&
+                                e.Attribute("statusCode") != null)
                     .FirstOrDefault();
 
                 if (rsElements != null)
