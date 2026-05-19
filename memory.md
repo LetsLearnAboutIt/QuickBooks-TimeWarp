@@ -71,7 +71,7 @@
 
 ### RDP Connection Command
 ```bash
-xfreerdp /v:aiagent.hostedremotedesktop.com:4420 /u:'VM-4420-11\AIAgent' /p:'01Hello02!@!' /w:1920 /h:1080 &
+xfreerdp /v:aiagent.hostedremotedesktop.com:4420 /u:'VM-4420-11\AIAgent' /p:'01Hello02!@!' /dynamic-resolution /cert:ignore /auto-reconnect +clipboard &>/tmp/rdp2.log & echo "RDP PID: $!" ; sleep 10 ; echo "Done"
 ```
 
 ### VPN (if needed)
@@ -156,7 +156,7 @@ git remote -v
 # Test if RDP port is reachable:
 nc -zv aiagent.hostedremotedesktop.com 4420
 # Or connect:
-xfreerdp /v:aiagent.hostedremotedesktop.com:4420 /u:'VM-4420-11\AIAgent' /p:'01Hello02!@!' /w:1920 /h:1080 &
+xfreerdp /v:aiagent.hostedremotedesktop.com:4420 /u:'VM-4420-11\AIAgent' /p:'01Hello02!@!' /dynamic-resolution /cert:ignore /auto-reconnect +clipboard &>/tmp/rdp2.log & echo "RDP PID: $!" ; sleep 10 ; echo "Done"
 ```
 
 ### Deploy to Windows VM
@@ -188,18 +188,30 @@ Read these in order for full context:
 11. **`README_FOR_NEW_SESSIONS.md`** — Quick-start guide
 12. **`PASSWORDS.txt`** — All credentials (gitignored, never committed)
 
-### Supplemental Files That May Be Created Later
-> These files don't exist yet but may be created in future sessions:
-- **`project_instructions_additional.md`** — Overflow instructions (not yet created)
-- **`debugging_notes*.md`** — Debug session notes (not yet created)
-- **`CHANGE_LOG_ADDITION*.md`** — Overflow changelog entries (not yet created)
+### Supplemental Files (in /home/ubuntu/, NOT in project dir)
 
-When resuming, always check:
+These files live in `/home/ubuntu/` (the home directory root), **not** inside the QB-TimeWarp project folder:
+
+| File | Location | Purpose |
+|------|----------|---------|
+| **`PROJECT_INSTRUCTIONS_ADDITION.md`** | `/home/ubuntu/` | Root cause analysis: 2 bugs found, import regression details, QBXML requirements |
+| **`DEBUGGING_NOTES.md`** | `/home/ubuntu/` | Deep debugging analysis: success detection bug, QBXML parsing errors, code flow |
+| **`memory.md`** (old version) | `/home/ubuntu/` | Earlier session memory (superseded by this file in the project) |
+
+> ⚠️ `.docx` and `.pdf` versions also exist alongside each `.md` file.
+
+When resuming, always check for these:
 ```bash
-ls /home/ubuntu/QB-TimeWarp/project_instructions_additional.md 2>/dev/null
-ls /home/ubuntu/QB-TimeWarp/debugging_notes*.md 2>/dev/null
-ls /home/ubuntu/QB-TimeWarp/CHANGE_LOG_ADDITION*.md 2>/dev/null
+ls /home/ubuntu/PROJECT_INSTRUCTIONS_ADDITION.md 2>/dev/null
+ls /home/ubuntu/DEBUGGING_NOTES.md 2>/dev/null
+ls /home/ubuntu/memory.md 2>/dev/null
 ```
+
+### Legacy File in Project Dir
+| File | Location | Notes |
+|------|----------|-------|
+| **`PROJECT_INSTRUCTIONS.MD`** (uppercase) | `/home/ubuntu/QB-TimeWarp/` | Original briefing from earlier session — still valid context |
+| **`DEBUGGING_NOTES.MD`** (uppercase) | `/home/ubuntu/QB-TimeWarp/` | Copy of debugging notes in project dir |
 
 ---
 

@@ -21,19 +21,23 @@ Before starting work, check for and read these files if they exist:
 | `PROJECT_CONTEXT.md` | What the project does, design decisions, requirements |
 | `CHANGE_LOG.md` | Full chronological history of every change made |
 
-### Read If They Exist (check every session!)
+### Supplemental Files (in /home/ubuntu/, NOT the project dir!)
 ```bash
-# Run this to find supplemental files:
-ls /home/ubuntu/QB-TimeWarp/project_instructions_additional.md 2>/dev/null
-ls /home/ubuntu/QB-TimeWarp/debugging_notes*.md 2>/dev/null
-ls /home/ubuntu/QB-TimeWarp/CHANGE_LOG_ADDITION*.md 2>/dev/null
+# Run this EVERY session to read supplemental files:
+cat /home/ubuntu/PROJECT_INSTRUCTIONS_ADDITION.md 2>/dev/null
+cat /home/ubuntu/DEBUGGING_NOTES.md 2>/dev/null
 ```
 
-| File Pattern | Purpose |
-|-------------|---------|
-| `project_instructions_additional.md` | Overflow instructions that didn't fit here |
-| `debugging_notes*.md` | Notes from debugging sessions with root cause analysis |
-| `CHANGE_LOG_ADDITION*.md` | Overflow changelog entries |
+| File | Location | Purpose |
+|------|----------|---------|
+| **`PROJECT_INSTRUCTIONS_ADDITION.md`** | `/home/ubuntu/` | Root cause analysis of import regression — 2 bugs, QBXML requirements, fix priorities |
+| **`DEBUGGING_NOTES.md`** | `/home/ubuntu/` | Deep debugging: success detection bug, QBXML parsing errors, code architecture notes |
+
+### Legacy Files in Project Dir (still valid context)
+| File | Purpose |
+|------|---------|
+| **`PROJECT_INSTRUCTIONS.MD`** (uppercase) | Original agent briefing from earlier session |
+| **`DEBUGGING_NOTES.MD`** (uppercase) | Debugging notes copy in project dir |
 
 ### Reference As Needed
 | File | Purpose |
