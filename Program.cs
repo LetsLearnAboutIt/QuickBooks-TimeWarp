@@ -222,7 +222,7 @@ namespace QB_TimeWarp
             QBSchemaExport? schema = null;
             
             // Check if schema file already exists (schema extraction is ONE-TIME only)
-            var schemaFileName = $"QB_Schema_{_config.QuickBooks.QB2021.SDKVersion.Replace(".", "_")}.json";
+            var schemaFileName = $"QB_Schema_QB_2021.json";
             var schemaFilePath = Path.Combine(_config.Paths.SchemaDirectory, schemaFileName);
             
             if (File.Exists(schemaFilePath))
@@ -443,6 +443,9 @@ namespace QB_TimeWarp
             }
 
             // ─── Step 5: Validate Imported Data ────────────────────────
+            // Kill QB processes from import before starting validation
+            KillQuickBooksProcesses("Preparing for validation step");
+
             ConsoleBanner.ShowStep(5, totalSteps, "Validate Imported Data");
             ValidationReport? validationReport = null;
 
@@ -465,17 +468,13 @@ namespace QB_TimeWarp
                     reimportedData = reExporter.ExportAll();
                 }
 
-                // Run validation
-                using var qb2023ValidConn = new QBConnectionManager(
-                    _config.QuickBooks.QB2023, "QB2023-Validate");
-                using var qb2021ValidConn2 = new QBConnectionManager(
-                    _config.QuickBooks.QB2021, "QB2021-Validate2");
+                // Kill QB 2021 before connecting to QB 2023 for validation
+                KillQuickBooksProcesses("Switching to QB 2023 for validation comparison");
 
-                qb2023ValidConn.Connect();
-                qb2021ValidConn2.Connect();
-
+                // Validate using the already-exported QB 2023 data (no need to reconnect)
+                // Just compare exportedData (from Step 2) with reimportedData (from QB 2021)
                 var validator = new DataValidator(
-                    qb2023ValidConn, qb2021ValidConn2,
+                    null!, null!,  // No live connections needed — using pre-exported data
                     _config.Validation,
                     _config.Paths.ValidationReportDirectory);
 
