@@ -305,39 +305,58 @@ namespace QB_TimeWarp
             SaveTransformedData(transformedData);
 
             // ─── Step 3.5: Pre-Import Journal Validation ───────────────
-            if (_config.Validation.EnableJournalValidation)
-            {
-                ConsoleBanner.ShowStep(3, totalSteps, "Pre-Import Journal Validation");
-                try
-                {
-                    using var preValidConn1 = new QBConnectionManager(_config.QuickBooks.QB2023, "QB2023-PreValid");
-                    using var preValidConn2 = new QBConnectionManager(_config.QuickBooks.QB2021, "QB2021-PreValid");
-                    preValidConn1.Connect();
-                    preValidConn2.Connect();
-
-                    var preValidator = new DataValidator(
-                        preValidConn1, preValidConn2,
-                        _config.Validation,
-                        _config.Paths.ValidationReportDirectory);
-
-                    var preImportJournalReport = preValidator.ValidatePreImport(transformedData);
-
-                    if (preImportJournalReport.IsBalanced)
-                    {
-                        ConsoleBanner.ShowSuccess("Pre-import journal validation PASSED - all entries balanced");
-                    }
-                    else
-                    {
-                        ConsoleBanner.ShowWarning($"Pre-import journal validation found {preImportJournalReport.UnbalancedJournalEntries} unbalanced journal entries");
-                        ConsoleBanner.ShowWarning("Review the journal integrity report before proceeding with import.");
-                    }
-                }
-                catch (Exception ex)
-                {
-                    Log.Warning(ex, "Pre-import journal validation failed (non-fatal): {Message}", ex.Message);
-                    ConsoleBanner.ShowWarning($"Pre-import journal validation skipped: {ex.Message}");
-                }
-            }
+            // *** COMMENTED OUT (Commit 1f18a89 + follow-up) ***
+            // REASON: This step requires opening QB 2021 during the EXPORT phase (Step 2),
+            // which violates our strict workflow: QB 2023 → Export → Close → Transform → QB 2021 → Import.
+            // 
+            // WORKFLOW REQUIREMENT: Only ONE QuickBooks instance can be open at a time for SDK operations.
+            // The correct sequence is:
+            //   1. Load cached schema (no QB needed - C:\QB-TimeWarp\Schemas\QB_Schema_QB_2021.json)
+            //   2. Open QB 2023 → Export → CLOSE QB 2023 completely
+            //   3. Transform data (SDK 16.0 → 15.0)
+            //   4. Open QB 2021 → Import → CLOSE QB 2021
+            // 
+            // This pre-import validation tried to open BOTH QB 2023 and QB 2021 simultaneously during
+            // the export phase, causing COM errors and workflow violations.
+            // 
+            // Post-import validation (Step 5) still runs and validates the final results.
+            // Pre-import validation can be run separately if needed via --validate-only mode.
+            //
+            // if (_config.Validation.EnableJournalValidation)
+            // {
+            //     ConsoleBanner.ShowStep(3, totalSteps, "Pre-Import Journal Validation");
+            //     try
+            //     {
+            //         using var preValidConn1 = new QBConnectionManager(_config.QuickBooks.QB2023, "QB2023-PreValid");
+            //         using var preValidConn2 = new QBConnectionManager(_config.QuickBooks.QB2021, "QB2021-PreValid");
+            //         preValidConn1.Connect();
+            //         preValidConn2.Connect();
+            //
+            //         var preValidator = new DataValidator(
+            //             preValidConn1, preValidConn2,
+            //             _config.Validation,
+            //             _config.Paths.ValidationReportDirectory);
+            //
+            //         var preImportJournalReport = preValidator.ValidatePreImport(transformedData);
+            //
+            //         if (preImportJournalReport.IsBalanced)
+            //         {
+            //             ConsoleBanner.ShowSuccess("Pre-import journal validation PASSED - all entries balanced");
+            //         }
+            //         else
+            //         {
+            //             ConsoleBanner.ShowWarning($"Pre-import journal validation found {preImportJournalReport.UnbalancedJournalEntries} unbalanced journal entries");
+            //             ConsoleBanner.ShowWarning("Review the journal integrity report before proceeding with import.");
+            //         }
+            //     }
+            //     catch (Exception ex)
+            //     {
+            //         Log.Warning(ex, "Pre-import journal validation failed (non-fatal): {Message}", ex.Message);
+            //         ConsoleBanner.ShowWarning($"Pre-import journal validation skipped: {ex.Message}");
+            //     }
+            // }
+            
+            Log.Information("Pre-import validation skipped — QB 2021 not opened during export phase (strict workflow enforcement).");
 
             // ─── Step 3.9: Automatically Switch QuickBooks Versions ─────
             // Kill QB 2023 processes before starting QB 2021 import
