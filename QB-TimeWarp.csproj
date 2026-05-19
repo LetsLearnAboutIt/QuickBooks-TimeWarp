@@ -1,0 +1,51 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net6.0-windows</TargetFramework>
+    <RootNamespace>QB_TimeWarp</RootNamespace>
+    <AssemblyName>QB-TimeWarp</AssemblyName>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <PlatformTarget>x86</PlatformTarget>
+    <RuntimeIdentifier>win-x86</RuntimeIdentifier>
+    <Description>QuickBooks Data Migration Tool - QB 2023 to QB 2021</Description>
+    <Authors>QB-TimeWarp</Authors>
+    <Version>1.0.0</Version>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- QuickBooks SDK COM Interop - References the QBFC/QBXML SDK installed on the machine -->
+    <!-- After installing QuickBooks SDK, add COM references via Visual Studio:
+         Right-click References > Add Reference > COM > "QBFC16Lib" or "Interop.QBFC16" -->
+    <!-- Alternatively, install the NuGet wrapper package: -->
+    <PackageReference Include="Microsoft.Extensions.Configuration" Version="6.0.1" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="6.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Binder" Version="6.0.0" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+    <PackageReference Include="Serilog" Version="3.1.1" />
+    <PackageReference Include="Serilog.Sinks.Console" Version="5.0.1" />
+    <PackageReference Include="Serilog.Sinks.File" Version="5.0.0" />
+    <PackageReference Include="Spectre.Console" Version="0.48.0" />
+  </ItemGroup>
+
+  <!-- 
+    QuickBooks SDK COM Reference:
+    After installing the QuickBooks Desktop SDK from Intuit Developer site,
+    the COM type library will be available. Add it as follows:
+    
+    Option A (Visual Studio): Add COM Reference > QBFC16Lib (for QB 2023) / QBFC15Lib (for QB 2021)
+    Option B (Manual): Use tlbimp.exe to generate interop assemblies:
+      tlbimp "C:\Program Files (x86)\Intuit\IDN\QBSDK16.0\tools\QBFC16\QBFC16Lib.dll" /out:Interop.QBFC16.dll
+      tlbimp "C:\Program Files (x86)\Intuit\IDN\QBSDK15.0\tools\QBFC15\QBFC15Lib.dll" /out:Interop.QBFC15.dll
+    
+    Then add:
+    <Reference Include="Interop.QBFC16">
+      <HintPath>lib\Interop.QBFC16.dll</HintPath>
+    </Reference>
+    <Reference Include="Interop.QBFC15">
+      <HintPath>lib\Interop.QBFC15.dll</HintPath>
+    </Reference>
+  -->
+
+</Project>

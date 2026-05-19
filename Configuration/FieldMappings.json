@@ -1,0 +1,582 @@
+{
+  "_documentation": {
+    "description": "Field mapping configuration for QuickBooks 2023 to 2021 migration",
+    "version": "1.0.0",
+    "instructions": [
+      "Each entity type has a 'fieldMappings' array defining how QB 2023 fields map to QB 2021 fields.",
+      "Set 'action' to: 'map' (direct or renamed mapping), 'transform' (apply transformation), 'default' (use default value), 'skip' (ignore field).",
+      "The 'transformFunction' field references built-in transformation functions (see Helpers/TransformFunctions.cs).",
+      "Add or modify mappings as needed for your specific data."
+    ],
+    "commonDifferences": {
+      "QB2023_vs_QB2021": [
+        "QB 2023 added enhanced inventory tracking fields not present in 2021",
+        "QB 2023 has expanded address fields (Address6 line) collapsed back to 5 lines in 2021",
+        "Custom field naming conventions may differ",
+        "Some newer payment method types in 2023 need mapping to generic equivalents",
+        "QB 2023 added new job status values not recognized by 2021",
+        "Date format handling is consistent but timezone-aware fields in 2023 need stripping",
+        "QB 2023 supports longer field lengths for some text fields (Name: 209 vs 41 chars in older)"
+      ]
+    }
+  },
+  "globalSettings": {
+    "dateFormat": "yyyy-MM-dd",
+    "truncateLongStrings": true,
+    "unmappedFieldAction": "skip",
+    "logUnmappedFields": true
+  },
+  "entityMappings": {
+    "Customer": {
+      "qb2023Entity": "CustomerRet",
+      "qb2021Entity": "CustomerAdd",
+      "fieldMappings": [
+        {
+          "sourceField": "ListID",
+          "targetField": null,
+          "action": "skip",
+          "notes": "ListID is system-generated; QB 2021 will assign new ListIDs"
+        },
+        {
+          "sourceField": "Name",
+          "targetField": "Name",
+          "action": "map",
+          "maxLength": 41,
+          "notes": "QB 2021 Name max length is 41 characters"
+        },
+        {
+          "sourceField": "FullName",
+          "targetField": "Name",
+          "action": "map",
+          "maxLength": 209,
+          "notes": "Use FullName for hierarchical customer names"
+        },
+        {
+          "sourceField": "IsActive",
+          "targetField": "IsActive",
+          "action": "map"
+        },
+        {
+          "sourceField": "CompanyName",
+          "targetField": "CompanyName",
+          "action": "map",
+          "maxLength": 41
+        },
+        {
+          "sourceField": "Salutation",
+          "targetField": "Salutation",
+          "action": "map",
+          "maxLength": 15
+        },
+        {
+          "sourceField": "FirstName",
+          "targetField": "FirstName",
+          "action": "map",
+          "maxLength": 25
+        },
+        {
+          "sourceField": "MiddleName",
+          "targetField": "MiddleName",
+          "action": "map",
+          "maxLength": 5
+        },
+        {
+          "sourceField": "LastName",
+          "targetField": "LastName",
+          "action": "map",
+          "maxLength": 25
+        },
+        {
+          "sourceField": "BillAddress.Addr1",
+          "targetField": "BillAddress.Addr1",
+          "action": "map",
+          "maxLength": 41
+        },
+        {
+          "sourceField": "BillAddress.Addr2",
+          "targetField": "BillAddress.Addr2",
+          "action": "map",
+          "maxLength": 41
+        },
+        {
+          "sourceField": "BillAddress.Addr3",
+          "targetField": "BillAddress.Addr3",
+          "action": "map",
+          "maxLength": 41
+        },
+        {
+          "sourceField": "BillAddress.Addr4",
+          "targetField": "BillAddress.Addr4",
+          "action": "map",
+          "maxLength": 41
+        },
+        {
+          "sourceField": "BillAddress.Addr5",
+          "targetField": "BillAddress.Addr5",
+          "action": "map",
+          "maxLength": 41
+        },
+        {
+          "sourceField": "BillAddress.City",
+          "targetField": "BillAddress.City",
+          "action": "map",
+          "maxLength": 31
+        },
+        {
+          "sourceField": "BillAddress.State",
+          "targetField": "BillAddress.State",
+          "action": "map",
+          "maxLength": 21
+        },
+        {
+          "sourceField": "BillAddress.PostalCode",
+          "targetField": "BillAddress.PostalCode",
+          "action": "map",
+          "maxLength": 13
+        },
+        {
+          "sourceField": "BillAddress.Country",
+          "targetField": "BillAddress.Country",
+          "action": "map",
+          "maxLength": 31
+        },
+        {
+          "sourceField": "ShipAddress.Addr1",
+          "targetField": "ShipAddress.Addr1",
+          "action": "map",
+          "maxLength": 41
+        },
+        {
+          "sourceField": "ShipAddress.City",
+          "targetField": "ShipAddress.City",
+          "action": "map",
+          "maxLength": 31
+        },
+        {
+          "sourceField": "ShipAddress.State",
+          "targetField": "ShipAddress.State",
+          "action": "map",
+          "maxLength": 21
+        },
+        {
+          "sourceField": "ShipAddress.PostalCode",
+          "targetField": "ShipAddress.PostalCode",
+          "action": "map",
+          "maxLength": 13
+        },
+        {
+          "sourceField": "Phone",
+          "targetField": "Phone",
+          "action": "map",
+          "maxLength": 21
+        },
+        {
+          "sourceField": "AltPhone",
+          "targetField": "AltPhone",
+          "action": "map",
+          "maxLength": 21
+        },
+        {
+          "sourceField": "Fax",
+          "targetField": "Fax",
+          "action": "map",
+          "maxLength": 21
+        },
+        {
+          "sourceField": "Email",
+          "targetField": "Email",
+          "action": "map",
+          "maxLength": 1023
+        },
+        {
+          "sourceField": "Contact",
+          "targetField": "Contact",
+          "action": "map",
+          "maxLength": 41
+        },
+        {
+          "sourceField": "AccountNumber",
+          "targetField": "AccountNumber",
+          "action": "map",
+          "maxLength": 99
+        },
+        {
+          "sourceField": "CreditLimit",
+          "targetField": "CreditLimit",
+          "action": "map"
+        },
+        {
+          "sourceField": "TermsRef.FullName",
+          "targetField": "TermsRef.FullName",
+          "action": "map"
+        },
+        {
+          "sourceField": "SalesRepRef.FullName",
+          "targetField": "SalesRepRef.FullName",
+          "action": "map"
+        },
+        {
+          "sourceField": "Balance",
+          "targetField": null,
+          "action": "skip",
+          "notes": "Balance is computed from transactions, not directly importable"
+        },
+        {
+          "sourceField": "TotalBalance",
+          "targetField": null,
+          "action": "skip",
+          "notes": "Computed field"
+        },
+        {
+          "sourceField": "SalesTaxCodeRef.FullName",
+          "targetField": "SalesTaxCodeRef.FullName",
+          "action": "map"
+        },
+        {
+          "sourceField": "ItemSalesTaxRef.FullName",
+          "targetField": "ItemSalesTaxRef.FullName",
+          "action": "map"
+        },
+        {
+          "sourceField": "PreferredPaymentMethodRef.FullName",
+          "targetField": "PreferredPaymentMethodRef.FullName",
+          "action": "map"
+        },
+        {
+          "sourceField": "JobStatus",
+          "targetField": "JobStatus",
+          "action": "transform",
+          "transformFunction": "MapJobStatus",
+          "notes": "QB 2023 may have new job statuses not in 2021"
+        },
+        {
+          "sourceField": "Notes",
+          "targetField": "Notes",
+          "action": "map",
+          "maxLength": 4095
+        },
+        {
+          "sourceField": "PriceLevelRef.FullName",
+          "targetField": "PriceLevelRef.FullName",
+          "action": "map"
+        },
+        {
+          "sourceField": "ExternalGUID",
+          "targetField": null,
+          "action": "skip",
+          "notes": "System GUID, new one assigned on import"
+        },
+        {
+          "sourceField": "CurrencyRef.FullName",
+          "targetField": "CurrencyRef.FullName",
+          "action": "map",
+          "notes": "Only if multi-currency is enabled in QB 2021"
+        }
+      ]
+    },
+    "Vendor": {
+      "qb2023Entity": "VendorRet",
+      "qb2021Entity": "VendorAdd",
+      "fieldMappings": [
+        { "sourceField": "ListID", "targetField": null, "action": "skip" },
+        { "sourceField": "Name", "targetField": "Name", "action": "map", "maxLength": 41 },
+        { "sourceField": "IsActive", "targetField": "IsActive", "action": "map" },
+        { "sourceField": "CompanyName", "targetField": "CompanyName", "action": "map", "maxLength": 41 },
+        { "sourceField": "FirstName", "targetField": "FirstName", "action": "map", "maxLength": 25 },
+        { "sourceField": "LastName", "targetField": "LastName", "action": "map", "maxLength": 25 },
+        { "sourceField": "VendorAddress.Addr1", "targetField": "VendorAddress.Addr1", "action": "map", "maxLength": 41 },
+        { "sourceField": "VendorAddress.City", "targetField": "VendorAddress.City", "action": "map", "maxLength": 31 },
+        { "sourceField": "VendorAddress.State", "targetField": "VendorAddress.State", "action": "map", "maxLength": 21 },
+        { "sourceField": "VendorAddress.PostalCode", "targetField": "VendorAddress.PostalCode", "action": "map", "maxLength": 13 },
+        { "sourceField": "Phone", "targetField": "Phone", "action": "map", "maxLength": 21 },
+        { "sourceField": "Email", "targetField": "Email", "action": "map", "maxLength": 1023 },
+        { "sourceField": "AccountNumber", "targetField": "AccountNumber", "action": "map", "maxLength": 99 },
+        { "sourceField": "TermsRef.FullName", "targetField": "TermsRef.FullName", "action": "map" },
+        { "sourceField": "CreditLimit", "targetField": "CreditLimit", "action": "map" },
+        { "sourceField": "TaxIdent", "targetField": "TaxIdent", "action": "map", "maxLength": 20 },
+        { "sourceField": "IsVendorEligibleFor1099", "targetField": "IsVendorEligibleFor1099", "action": "map" },
+        { "sourceField": "Balance", "targetField": null, "action": "skip", "notes": "Computed field" },
+        { "sourceField": "Notes", "targetField": "Notes", "action": "map", "maxLength": 4095 },
+        { "sourceField": "ExternalGUID", "targetField": null, "action": "skip" }
+      ]
+    },
+    "Account": {
+      "qb2023Entity": "AccountRet",
+      "qb2021Entity": "AccountAdd",
+      "fieldMappings": [
+        { "sourceField": "ListID", "targetField": null, "action": "skip" },
+        { "sourceField": "Name", "targetField": "Name", "action": "map", "maxLength": 31 },
+        { "sourceField": "FullName", "targetField": "Name", "action": "map", "maxLength": 159 },
+        { "sourceField": "IsActive", "targetField": "IsActive", "action": "map" },
+        { "sourceField": "AccountType", "targetField": "AccountType", "action": "map" },
+        { "sourceField": "AccountNumber", "targetField": "AccountNumber", "action": "map", "maxLength": 7 },
+        { "sourceField": "Description", "targetField": "Description", "action": "map", "maxLength": 200 },
+        { "sourceField": "BankNumber", "targetField": "BankNumber", "action": "map", "maxLength": 25 },
+        { "sourceField": "OpenBalance", "targetField": "OpenBalance", "action": "map" },
+        { "sourceField": "OpenBalanceDate", "targetField": "OpenBalanceDate", "action": "map" },
+        { "sourceField": "ParentRef.FullName", "targetField": "ParentRef.FullName", "action": "map" },
+        { "sourceField": "SalesTaxCodeRef.FullName", "targetField": "SalesTaxCodeRef.FullName", "action": "map" },
+        { "sourceField": "TaxLineID", "targetField": "TaxLineID", "action": "map" },
+        { "sourceField": "Balance", "targetField": null, "action": "skip", "notes": "Computed from transactions" },
+        { "sourceField": "TotalBalance", "targetField": null, "action": "skip", "notes": "Computed field" },
+        { "sourceField": "CurrencyRef.FullName", "targetField": "CurrencyRef.FullName", "action": "map" }
+      ]
+    },
+    "Item": {
+      "qb2023Entity": "ItemRet",
+      "qb2021Entity": "ItemAdd",
+      "fieldMappings": [
+        { "sourceField": "ListID", "targetField": null, "action": "skip" },
+        { "sourceField": "Name", "targetField": "Name", "action": "map", "maxLength": 31 },
+        { "sourceField": "FullName", "targetField": "Name", "action": "map", "maxLength": 159 },
+        { "sourceField": "IsActive", "targetField": "IsActive", "action": "map" },
+        { "sourceField": "Type", "targetField": "Type", "action": "map", "notes": "ItemService, ItemInventory, ItemNonInventory, etc." },
+        { "sourceField": "Description", "targetField": "Description", "action": "map", "maxLength": 4095 },
+        { "sourceField": "Price", "targetField": "Price", "action": "map" },
+        { "sourceField": "PricePercent", "targetField": "PricePercent", "action": "map" },
+        { "sourceField": "Cost", "targetField": "Cost", "action": "map" },
+        { "sourceField": "IncomeAccountRef.FullName", "targetField": "IncomeAccountRef.FullName", "action": "map" },
+        { "sourceField": "COGSAccountRef.FullName", "targetField": "COGSAccountRef.FullName", "action": "map" },
+        { "sourceField": "AssetAccountRef.FullName", "targetField": "AssetAccountRef.FullName", "action": "map" },
+        { "sourceField": "ExpenseAccountRef.FullName", "targetField": "ExpenseAccountRef.FullName", "action": "map" },
+        { "sourceField": "SalesTaxCodeRef.FullName", "targetField": "SalesTaxCodeRef.FullName", "action": "map" },
+        { "sourceField": "QuantityOnHand", "targetField": "QuantityOnHand", "action": "map" },
+        { "sourceField": "ReorderPoint", "targetField": "ReorderPoint", "action": "map" },
+        { "sourceField": "ParentRef.FullName", "targetField": "ParentRef.FullName", "action": "map" },
+        { "sourceField": "UnitOfMeasureSetRef.FullName", "targetField": "UnitOfMeasureSetRef.FullName", "action": "map" },
+        { "sourceField": "IsTaxIncluded", "targetField": "IsTaxIncluded", "action": "map" },
+        { "sourceField": "ExternalGUID", "targetField": null, "action": "skip" }
+      ]
+    },
+    "Employee": {
+      "qb2023Entity": "EmployeeRet",
+      "qb2021Entity": "EmployeeAdd",
+      "fieldMappings": [
+        { "sourceField": "ListID", "targetField": null, "action": "skip" },
+        { "sourceField": "Name", "targetField": "Name", "action": "map", "maxLength": 41 },
+        { "sourceField": "IsActive", "targetField": "IsActive", "action": "map" },
+        { "sourceField": "FirstName", "targetField": "FirstName", "action": "map", "maxLength": 25 },
+        { "sourceField": "MiddleName", "targetField": "MiddleName", "action": "map", "maxLength": 5 },
+        { "sourceField": "LastName", "targetField": "LastName", "action": "map", "maxLength": 25 },
+        { "sourceField": "SSN", "targetField": "SSN", "action": "map", "maxLength": 11 },
+        { "sourceField": "Phone", "targetField": "Phone", "action": "map", "maxLength": 21 },
+        { "sourceField": "Email", "targetField": "Email", "action": "map", "maxLength": 1023 },
+        { "sourceField": "HiredDate", "targetField": "HiredDate", "action": "map" },
+        { "sourceField": "ReleasedDate", "targetField": "ReleasedDate", "action": "map" },
+        { "sourceField": "BirthDate", "targetField": "BirthDate", "action": "map" },
+        { "sourceField": "Gender", "targetField": "Gender", "action": "map" },
+        { "sourceField": "EmployeeAddress.Addr1", "targetField": "EmployeeAddress.Addr1", "action": "map", "maxLength": 41 },
+        { "sourceField": "EmployeeAddress.City", "targetField": "EmployeeAddress.City", "action": "map", "maxLength": 31 },
+        { "sourceField": "EmployeeAddress.State", "targetField": "EmployeeAddress.State", "action": "map", "maxLength": 21 },
+        { "sourceField": "EmployeeAddress.PostalCode", "targetField": "EmployeeAddress.PostalCode", "action": "map", "maxLength": 13 },
+        { "sourceField": "Notes", "targetField": "Notes", "action": "map", "maxLength": 4095 },
+        { "sourceField": "EmployeeType", "targetField": "EmployeeType", "action": "map" },
+        { "sourceField": "ExternalGUID", "targetField": null, "action": "skip" }
+      ]
+    },
+    "Invoice": {
+      "qb2023Entity": "InvoiceRet",
+      "qb2021Entity": "InvoiceAdd",
+      "fieldMappings": [
+        { "sourceField": "TxnID", "targetField": null, "action": "skip", "notes": "System-generated transaction ID" },
+        { "sourceField": "TxnNumber", "targetField": null, "action": "skip" },
+        { "sourceField": "CustomerRef.FullName", "targetField": "CustomerRef.FullName", "action": "map" },
+        { "sourceField": "ClassRef.FullName", "targetField": "ClassRef.FullName", "action": "map" },
+        { "sourceField": "ARAccountRef.FullName", "targetField": "ARAccountRef.FullName", "action": "map" },
+        { "sourceField": "TemplateRef.FullName", "targetField": "TemplateRef.FullName", "action": "map" },
+        { "sourceField": "TxnDate", "targetField": "TxnDate", "action": "map" },
+        { "sourceField": "RefNumber", "targetField": "RefNumber", "action": "map", "maxLength": 11 },
+        { "sourceField": "BillAddress", "targetField": "BillAddress", "action": "map" },
+        { "sourceField": "ShipAddress", "targetField": "ShipAddress", "action": "map" },
+        { "sourceField": "IsPending", "targetField": "IsPending", "action": "map" },
+        { "sourceField": "PONumber", "targetField": "PONumber", "action": "map", "maxLength": 25 },
+        { "sourceField": "TermsRef.FullName", "targetField": "TermsRef.FullName", "action": "map" },
+        { "sourceField": "DueDate", "targetField": "DueDate", "action": "map" },
+        { "sourceField": "SalesRepRef.FullName", "targetField": "SalesRepRef.FullName", "action": "map" },
+        { "sourceField": "ShipMethodRef.FullName", "targetField": "ShipMethodRef.FullName", "action": "map" },
+        { "sourceField": "ShipDate", "targetField": "ShipDate", "action": "map" },
+        { "sourceField": "Memo", "targetField": "Memo", "action": "map", "maxLength": 4095 },
+        { "sourceField": "IsToBePrinted", "targetField": "IsToBePrinted", "action": "map" },
+        { "sourceField": "IsToBeEmailed", "targetField": "IsToBeEmailed", "action": "map" },
+        { "sourceField": "CustomerSalesTaxCodeRef.FullName", "targetField": "CustomerSalesTaxCodeRef.FullName", "action": "map" },
+        { "sourceField": "Other", "targetField": "Other", "action": "map", "maxLength": 29 },
+        { "sourceField": "InvoiceLineRet", "targetField": "InvoiceLineAdd", "action": "map", "notes": "Line items mapped separately" },
+        { "sourceField": "Subtotal", "targetField": null, "action": "skip", "notes": "Computed" },
+        { "sourceField": "BalanceRemaining", "targetField": null, "action": "skip", "notes": "Computed" },
+        { "sourceField": "IsPaid", "targetField": null, "action": "skip", "notes": "Computed" },
+        { "sourceField": "ExternalGUID", "targetField": null, "action": "skip" }
+      ],
+      "lineItemMappings": [
+        { "sourceField": "ItemRef.FullName", "targetField": "ItemRef.FullName", "action": "map" },
+        { "sourceField": "Desc", "targetField": "Desc", "action": "map", "maxLength": 4095 },
+        { "sourceField": "Quantity", "targetField": "Quantity", "action": "map" },
+        { "sourceField": "Rate", "targetField": "Rate", "action": "map" },
+        { "sourceField": "RatePercent", "targetField": "RatePercent", "action": "map" },
+        { "sourceField": "Amount", "targetField": "Amount", "action": "map" },
+        { "sourceField": "ClassRef.FullName", "targetField": "ClassRef.FullName", "action": "map" },
+        { "sourceField": "SalesTaxCodeRef.FullName", "targetField": "SalesTaxCodeRef.FullName", "action": "map" },
+        { "sourceField": "ServiceDate", "targetField": "ServiceDate", "action": "map" },
+        { "sourceField": "Other1", "targetField": "Other1", "action": "map", "maxLength": 29 },
+        { "sourceField": "Other2", "targetField": "Other2", "action": "map", "maxLength": 29 }
+      ]
+    },
+    "Bill": {
+      "qb2023Entity": "BillRet",
+      "qb2021Entity": "BillAdd",
+      "fieldMappings": [
+        { "sourceField": "TxnID", "targetField": null, "action": "skip" },
+        { "sourceField": "VendorRef.FullName", "targetField": "VendorRef.FullName", "action": "map" },
+        { "sourceField": "APAccountRef.FullName", "targetField": "APAccountRef.FullName", "action": "map" },
+        { "sourceField": "TxnDate", "targetField": "TxnDate", "action": "map" },
+        { "sourceField": "DueDate", "targetField": "DueDate", "action": "map" },
+        { "sourceField": "RefNumber", "targetField": "RefNumber", "action": "map", "maxLength": 11 },
+        { "sourceField": "TermsRef.FullName", "targetField": "TermsRef.FullName", "action": "map" },
+        { "sourceField": "Memo", "targetField": "Memo", "action": "map", "maxLength": 4095 },
+        { "sourceField": "IsPaid", "targetField": null, "action": "skip", "notes": "Computed" },
+        { "sourceField": "ExternalGUID", "targetField": null, "action": "skip" }
+      ]
+    },
+    "Payment": {
+      "qb2023Entity": "ReceivePaymentRet",
+      "qb2021Entity": "ReceivePaymentAdd",
+      "fieldMappings": [
+        { "sourceField": "TxnID", "targetField": null, "action": "skip" },
+        { "sourceField": "CustomerRef.FullName", "targetField": "CustomerRef.FullName", "action": "map" },
+        { "sourceField": "ARAccountRef.FullName", "targetField": "ARAccountRef.FullName", "action": "map" },
+        { "sourceField": "TxnDate", "targetField": "TxnDate", "action": "map" },
+        { "sourceField": "RefNumber", "targetField": "RefNumber", "action": "map", "maxLength": 11 },
+        { "sourceField": "TotalAmount", "targetField": "TotalAmount", "action": "map" },
+        { "sourceField": "PaymentMethodRef.FullName", "targetField": "PaymentMethodRef.FullName", "action": "map" },
+        { "sourceField": "DepositToAccountRef.FullName", "targetField": "DepositToAccountRef.FullName", "action": "map" },
+        { "sourceField": "Memo", "targetField": "Memo", "action": "map", "maxLength": 4095 },
+        { "sourceField": "ExternalGUID", "targetField": null, "action": "skip" }
+      ]
+    },
+    "JournalEntry": {
+      "qb2023Entity": "JournalEntryRet",
+      "qb2021Entity": "JournalEntryAdd",
+      "fieldMappings": [
+        { "sourceField": "TxnID", "targetField": null, "action": "skip" },
+        { "sourceField": "TxnDate", "targetField": "TxnDate", "action": "map" },
+        { "sourceField": "RefNumber", "targetField": "RefNumber", "action": "map", "maxLength": 11 },
+        { "sourceField": "IsAdjustment", "targetField": "IsAdjustment", "action": "map" },
+        { "sourceField": "Memo", "targetField": null, "action": "skip", "notes": "Memo is at line level in JE" },
+        { "sourceField": "ExternalGUID", "targetField": null, "action": "skip" }
+      ],
+      "lineItemMappings": [
+        { "sourceField": "JournalDebitLine.AccountRef.FullName", "targetField": "JournalDebitLine.AccountRef.FullName", "action": "map" },
+        { "sourceField": "JournalDebitLine.Amount", "targetField": "JournalDebitLine.Amount", "action": "map" },
+        { "sourceField": "JournalDebitLine.Memo", "targetField": "JournalDebitLine.Memo", "action": "map", "maxLength": 4095 },
+        { "sourceField": "JournalDebitLine.EntityRef.FullName", "targetField": "JournalDebitLine.EntityRef.FullName", "action": "map" },
+        { "sourceField": "JournalDebitLine.ClassRef.FullName", "targetField": "JournalDebitLine.ClassRef.FullName", "action": "map" },
+        { "sourceField": "JournalCreditLine.AccountRef.FullName", "targetField": "JournalCreditLine.AccountRef.FullName", "action": "map" },
+        { "sourceField": "JournalCreditLine.Amount", "targetField": "JournalCreditLine.Amount", "action": "map" },
+        { "sourceField": "JournalCreditLine.Memo", "targetField": "JournalCreditLine.Memo", "action": "map", "maxLength": 4095 },
+        { "sourceField": "JournalCreditLine.EntityRef.FullName", "targetField": "JournalCreditLine.EntityRef.FullName", "action": "map" },
+        { "sourceField": "JournalCreditLine.ClassRef.FullName", "targetField": "JournalCreditLine.ClassRef.FullName", "action": "map" }
+      ]
+    },
+    "SalesReceipt": {
+      "qb2023Entity": "SalesReceiptRet",
+      "qb2021Entity": "SalesReceiptAdd",
+      "fieldMappings": [
+        { "sourceField": "TxnID", "targetField": null, "action": "skip" },
+        { "sourceField": "CustomerRef.FullName", "targetField": "CustomerRef.FullName", "action": "map" },
+        { "sourceField": "ClassRef.FullName", "targetField": "ClassRef.FullName", "action": "map" },
+        { "sourceField": "TxnDate", "targetField": "TxnDate", "action": "map" },
+        { "sourceField": "RefNumber", "targetField": "RefNumber", "action": "map", "maxLength": 11 },
+        { "sourceField": "PaymentMethodRef.FullName", "targetField": "PaymentMethodRef.FullName", "action": "map" },
+        { "sourceField": "DepositToAccountRef.FullName", "targetField": "DepositToAccountRef.FullName", "action": "map" },
+        { "sourceField": "Memo", "targetField": "Memo", "action": "map", "maxLength": 4095 },
+        { "sourceField": "IsToBePrinted", "targetField": "IsToBePrinted", "action": "map" },
+        { "sourceField": "ExternalGUID", "targetField": null, "action": "skip" }
+      ]
+    },
+    "PurchaseOrder": {
+      "qb2023Entity": "PurchaseOrderRet",
+      "qb2021Entity": "PurchaseOrderAdd",
+      "fieldMappings": [
+        { "sourceField": "TxnID", "targetField": null, "action": "skip" },
+        { "sourceField": "VendorRef.FullName", "targetField": "VendorRef.FullName", "action": "map" },
+        { "sourceField": "ClassRef.FullName", "targetField": "ClassRef.FullName", "action": "map" },
+        { "sourceField": "TxnDate", "targetField": "TxnDate", "action": "map" },
+        { "sourceField": "RefNumber", "targetField": "RefNumber", "action": "map", "maxLength": 11 },
+        { "sourceField": "ShipAddress", "targetField": "ShipAddress", "action": "map" },
+        { "sourceField": "VendorAddress", "targetField": "VendorAddress", "action": "map" },
+        { "sourceField": "TermsRef.FullName", "targetField": "TermsRef.FullName", "action": "map" },
+        { "sourceField": "DueDate", "targetField": "DueDate", "action": "map" },
+        { "sourceField": "ExpectedDate", "targetField": "ExpectedDate", "action": "map" },
+        { "sourceField": "Memo", "targetField": "Memo", "action": "map", "maxLength": 4095 },
+        { "sourceField": "IsManuallyClosed", "targetField": "IsManuallyClosed", "action": "map" },
+        { "sourceField": "ExternalGUID", "targetField": null, "action": "skip" }
+      ]
+    },
+    "CreditMemo": {
+      "qb2023Entity": "CreditMemoRet",
+      "qb2021Entity": "CreditMemoAdd",
+      "fieldMappings": [
+        { "sourceField": "TxnID", "targetField": null, "action": "skip" },
+        { "sourceField": "CustomerRef.FullName", "targetField": "CustomerRef.FullName", "action": "map" },
+        { "sourceField": "ClassRef.FullName", "targetField": "ClassRef.FullName", "action": "map" },
+        { "sourceField": "TxnDate", "targetField": "TxnDate", "action": "map" },
+        { "sourceField": "RefNumber", "targetField": "RefNumber", "action": "map", "maxLength": 11 },
+        { "sourceField": "Memo", "targetField": "Memo", "action": "map", "maxLength": 4095 },
+        { "sourceField": "ExternalGUID", "targetField": null, "action": "skip" }
+      ]
+    },
+    "Estimate": {
+      "qb2023Entity": "EstimateRet",
+      "qb2021Entity": "EstimateAdd",
+      "fieldMappings": [
+        { "sourceField": "TxnID", "targetField": null, "action": "skip" },
+        { "sourceField": "CustomerRef.FullName", "targetField": "CustomerRef.FullName", "action": "map" },
+        { "sourceField": "ClassRef.FullName", "targetField": "ClassRef.FullName", "action": "map" },
+        { "sourceField": "TxnDate", "targetField": "TxnDate", "action": "map" },
+        { "sourceField": "RefNumber", "targetField": "RefNumber", "action": "map", "maxLength": 11 },
+        { "sourceField": "Memo", "targetField": "Memo", "action": "map", "maxLength": 4095 },
+        { "sourceField": "IsActive", "targetField": "IsActive", "action": "map" },
+        { "sourceField": "ExternalGUID", "targetField": null, "action": "skip" }
+      ]
+    }
+  },
+  "transformFunctions": {
+    "MapJobStatus": {
+      "description": "Maps QB 2023 job status values to QB 2021 equivalents",
+      "mappings": {
+        "Awarded": "Awarded",
+        "Closed": "Closed",
+        "InProgress": "InProgress",
+        "None": "None",
+        "NotAwarded": "NotAwarded",
+        "Pending": "Pending",
+        "InNegotiation": "Pending",
+        "OnHold": "Pending"
+      },
+      "defaultValue": "None"
+    },
+    "TruncateString": {
+      "description": "Truncates string to maxLength if exceeded",
+      "parameters": { "maxLength": "Defined per field mapping" }
+    },
+    "MapPaymentMethod": {
+      "description": "Maps newer payment method types to QB 2021 equivalents",
+      "mappings": {
+        "Venmo": "Other",
+        "Zelle": "Other",
+        "CashApp": "Other",
+        "ApplePay": "Other",
+        "GooglePay": "Other",
+        "Cash": "Cash",
+        "Check": "Check",
+        "CreditCard": "CreditCard",
+        "DebitCard": "DebitCard",
+        "ECheck": "ECheck",
+        "AmEx": "AmEx",
+        "Discover": "Discover",
+        "MasterCard": "MasterCard",
+        "Visa": "Visa"
+      },
+      "defaultValue": "Other"
+    }
+  }
+}
