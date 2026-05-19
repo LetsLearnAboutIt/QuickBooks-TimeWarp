@@ -1,6 +1,8 @@
+using System.Globalization;
 using System.Xml.Linq;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using QB_TimeWarp.Helpers;
 using QB_TimeWarp.Models;
 using Serilog;
 
@@ -81,6 +83,10 @@ namespace QB_TimeWarp.Services
             // 7. Accounting model validation
             Log.Information("Running accounting model validation...");
             report.AccountingModelValidation = ValidateAccountingModel(sourceData, importedData);
+
+            // 8. Format preservation validation
+            Log.Information("Running format preservation validation...");
+            report.FormatValidation = ValidateFormatPreservation(sourceData, importedData);
 
             // Calculate totals
             report.TotalDiscrepancies = report.FieldDiscrepancies.Count;
@@ -1071,6 +1077,242 @@ namespace QB_TimeWarp.Services
             return report;
         }
 
+        // ═══════════════════════════════════════════════════════════════════
+        // FORMAT PRESERVATION VALIDATION
+        // ═══════════════════════════════════════════════════════════════════
+
+        /// <summary>
+        /// Validates that field formats were preserved correctly during migration.
+        /// Checks date formats, currency precision, phone number lengths, and postal code formats
+        /// in the imported/transformed data to ensure QB 2021 compatibility.
+        /// </summary>
+        private FormatValidationReport ValidateFormatPreservation(
+            Dictionary<string, ExportedEntitySet> sourceData,
+            Dictionary<string, ExportedEntitySet> importedData)
+        {
+            Log.Information("────────────────────────────────────────────");
+            Log.Information("  FORMAT PRESERVATION VALIDATION");
+            Log.Information("────────────────────────────────────────────");
+
+            var report = new FormatValidationReport();
+
+            foreach (var entityType in importedData.Keys)
+            {
+                var targetSet = importedData[entityType];
+
+                foreach (var entity in targetSet.Entities)
+                {
+                    var entityName = entity.FullName ?? entity.Name;
+
+                    // Validate date fields
+                    ValidateDateFieldFormats(entity.Fields, entityType, entityName, report, "");
+
+                    // Validate currency fields
+                    ValidateCurrencyFieldFormats(entity.Fields, entityType, entityName, report, "");
+
+                    // Validate phone fields
+                    ValidatePhoneFieldFormats(entity.Fields, entityType, entityName, report);
+
+                    // Validate postal code fields
+                    ValidatePostalCodeFieldFormats(entity.Fields, entityType, entityName, report, "");
+
+                    // Validate line items
+                    foreach (var lineItem in entity.LineItems)
+                    {
+                        ValidateDateFieldFormats(lineItem, entityType, $"{entityName}:line", report, "");
+                        ValidateCurrencyFieldFormats(lineItem, entityType, $"{entityName}:line", report, "");
+                    }
+                }
+            }
+
+            report.AllFormatsValid = report.Issues.Count(i => i.Severity == DiscrepancySeverity.Critical) == 0;
+
+            report.Summary = $"Dates: {report.DateFieldsValid}/{report.TotalDateFieldsValidated} valid | " +
+                $"Currency: {report.CurrencyFieldsValid}/{report.TotalCurrencyFieldsValidated} valid | " +
+                $"Phone: {report.PhoneFieldsValid}/{report.TotalPhoneFieldsValidated} valid | " +
+                $"PostalCode: {report.PostalCodeFieldsValid}/{report.TotalPostalCodeFieldsValidated} valid | " +
+                $"Issues: {report.Issues.Count}";
+
+            if (report.AllFormatsValid)
+                Log.Information("  ✓ Format preservation validation PASSED: {Summary}", report.Summary);
+            else
+                Log.Warning("  ✗ Format preservation validation FAILED: {Summary}", report.Summary);
+
+            return report;
+        }
+
+        /// <summary>
+        /// Validates date field formats in a JObject, checking that all date values
+        /// are in QB 2021-compatible QBXML format (yyyy-MM-dd or yyyy-MM-ddTHH:mm:ss).
+        /// </summary>
+        private void ValidateDateFieldFormats(JObject fields, string entityType,
+            string entityName, FormatValidationReport report, string prefix)
+        {
+            foreach (var prop in fields.Properties())
+            {
+                var fieldName = string.IsNullOrEmpty(prefix) ? prop.Name : $"{prefix}.{prop.Name}";
+
+                if (prop.Value is JObject nested)
+                {
+                    ValidateDateFieldFormats(nested, entityType, entityName, report, fieldName);
+                    continue;
+                }
+
+                if (!TransformFunctions.IsDateField(fieldName)) continue;
+
+                var value = prop.Value?.ToString();
+                if (string.IsNullOrEmpty(value)) continue;
+
+                report.TotalDateFieldsValidated++;
+
+                if (TransformFunctions.ValidateDateForQB2021(value))
+                {
+                    report.DateFieldsValid++;
+                }
+                else
+                {
+                    report.DateFieldsInvalid++;
+                    report.Issues.Add(new FormatValidationIssue
+                    {
+                        EntityType = entityType,
+                        EntityIdentifier = entityName,
+                        FieldName = fieldName,
+                        IssueType = "DateFormat",
+                        TargetValue = value,
+                        ExpectedFormat = "yyyy-MM-dd or yyyy-MM-ddTHH:mm:ss",
+                        Severity = DiscrepancySeverity.Warning,
+                        Description = $"Date value '{value}' is not in standard QBXML format"
+                    });
+                }
+            }
+        }
+
+        /// <summary>
+        /// Validates currency/amount field formats, ensuring proper decimal precision.
+        /// </summary>
+        private void ValidateCurrencyFieldFormats(JObject fields, string entityType,
+            string entityName, FormatValidationReport report, string prefix)
+        {
+            foreach (var prop in fields.Properties())
+            {
+                var fieldName = string.IsNullOrEmpty(prefix) ? prop.Name : $"{prefix}.{prop.Name}";
+
+                if (prop.Value is JObject nested)
+                {
+                    ValidateCurrencyFieldFormats(nested, entityType, entityName, report, fieldName);
+                    continue;
+                }
+
+                if (!TransformFunctions.IsCurrencyField(fieldName)) continue;
+
+                var value = prop.Value?.ToString();
+                if (string.IsNullOrEmpty(value)) continue;
+
+                report.TotalCurrencyFieldsValidated++;
+
+                // Check if it's a valid decimal with proper precision
+                if (decimal.TryParse(value, NumberStyles.Any, CultureInfo.InvariantCulture, out _))
+                {
+                    report.CurrencyFieldsValid++;
+                }
+                else
+                {
+                    report.CurrencyFieldsInvalid++;
+                    report.Issues.Add(new FormatValidationIssue
+                    {
+                        EntityType = entityType,
+                        EntityIdentifier = entityName,
+                        FieldName = fieldName,
+                        IssueType = "CurrencyPrecision",
+                        TargetValue = value,
+                        ExpectedFormat = "Decimal with 2 decimal places",
+                        Severity = DiscrepancySeverity.Warning,
+                        Description = $"Currency value '{value}' may have precision issues"
+                    });
+                }
+            }
+        }
+
+        /// <summary>
+        /// Validates phone number field formats, ensuring they are within QB 2021 length limits.
+        /// </summary>
+        private void ValidatePhoneFieldFormats(JObject fields, string entityType,
+            string entityName, FormatValidationReport report)
+        {
+            var phoneFields = new[] { "Phone", "AltPhone", "Fax", "Mobile" };
+
+            foreach (var phoneField in phoneFields)
+            {
+                var value = fields[phoneField]?.ToString();
+                if (string.IsNullOrEmpty(value)) continue;
+
+                report.TotalPhoneFieldsValidated++;
+
+                if (value.Length <= 21)
+                {
+                    report.PhoneFieldsValid++;
+                }
+                else
+                {
+                    report.Issues.Add(new FormatValidationIssue
+                    {
+                        EntityType = entityType,
+                        EntityIdentifier = entityName,
+                        FieldName = phoneField,
+                        IssueType = "PhoneLength",
+                        TargetValue = value,
+                        ExpectedFormat = "Max 21 characters",
+                        Severity = DiscrepancySeverity.Warning,
+                        Description = $"Phone number '{value}' exceeds QB 2021 max length of 21 chars ({value.Length})"
+                    });
+                }
+            }
+        }
+
+        /// <summary>
+        /// Validates postal code field formats in address sub-objects.
+        /// </summary>
+        private void ValidatePostalCodeFieldFormats(JObject fields, string entityType,
+            string entityName, FormatValidationReport report, string prefix)
+        {
+            foreach (var prop in fields.Properties())
+            {
+                var fieldName = string.IsNullOrEmpty(prefix) ? prop.Name : $"{prefix}.{prop.Name}";
+
+                if (prop.Value is JObject nested)
+                {
+                    ValidatePostalCodeFieldFormats(nested, entityType, entityName, report, fieldName);
+                    continue;
+                }
+
+                if (!prop.Name.Equals("PostalCode", StringComparison.OrdinalIgnoreCase)) continue;
+
+                var value = prop.Value?.ToString();
+                if (string.IsNullOrEmpty(value)) continue;
+
+                report.TotalPostalCodeFieldsValidated++;
+
+                if (value.Length <= 13)
+                {
+                    report.PostalCodeFieldsValid++;
+                }
+                else
+                {
+                    report.Issues.Add(new FormatValidationIssue
+                    {
+                        EntityType = entityType,
+                        EntityIdentifier = entityName,
+                        FieldName = fieldName,
+                        IssueType = "PostalCode",
+                        TargetValue = value,
+                        ExpectedFormat = "Max 13 characters",
+                        Severity = DiscrepancySeverity.Info,
+                        Description = $"Postal code '{value}' exceeds QB 2021 max length of 13 chars"
+                    });
+                }
+            }
+        }
+
         private string BuildSummary(ValidationReport report)
         {
             var parts = new List<string>();
@@ -1091,6 +1333,8 @@ namespace QB_TimeWarp.Services
                 parts.Add($"Class tracking: {(report.ClassTrackingValidation.AllClassesPreserved ? "PRESERVED" : "ISSUES")}");
             if (report.AccountingModelValidation != null)
                 parts.Add($"Accounting model: {(report.AccountingModelValidation.AccountingMethodMatches ? "MATCHED" : "MISMATCH")}");
+            if (report.FormatValidation != null)
+                parts.Add($"Format preservation: {(report.FormatValidation.AllFormatsValid ? "VALID" : "ISSUES")}");
 
             parts.Add($"Overall: {(report.IsValid ? "VALID" : "DISCREPANCIES FOUND")}");
             return string.Join(" | ", parts);

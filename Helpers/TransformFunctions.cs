@@ -1,3 +1,7 @@
+using System.Globalization;
+using System.Text;
+using System.Text.RegularExpressions;
+using QB_TimeWarp.Models;
 using Serilog;
 
 namespace QB_TimeWarp.Helpers
@@ -5,9 +9,14 @@ namespace QB_TimeWarp.Helpers
     /// <summary>
     /// Built-in transformation functions referenced by FieldMappings.json.
     /// These handle common differences between QuickBooks 2023 and 2021 data formats.
+    /// Includes format-preservation logic for dates, currencies, phone numbers, and other field types.
     /// </summary>
     public static class TransformFunctions
     {
+        // ═══════════════════════════════════════════════════════════════════
+        // EXISTING TRANSFORMATION FUNCTIONS
+        // ═══════════════════════════════════════════════════════════════════
+
         /// <summary>
         /// Maps QB 2023 job status values to QB 2021 equivalents.
         /// QB 2023 may have added new statuses not recognized by 2021.
@@ -147,5 +156,550 @@ namespace QB_TimeWarp.Helpers
             }
             return value;
         }
+
+        // ═══════════════════════════════════════════════════════════════════
+        // DATE FORMAT PRESERVATION
+        // ═══════════════════════════════════════════════════════════════════
+
+        /// <summary>
+        /// Known QBXML date formats, ordered from most specific to least specific.
+        /// Used for detection and preservation of the original date encoding format.
+        /// </summary>
+        private static readonly string[] KnownDateFormats = new[]
+        {
+            "yyyy-MM-dd",                   // QBXML standard: 2024-01-15
+            "yyyy-MM-ddTHH:mm:ss",          // QBXML datetime: 2024-01-15T14:30:00
+            "yyyy-MM-ddTHH:mm:sszzz",       // With timezone offset: 2024-01-15T14:30:00-05:00
+            "yyyy-MM-ddTHH:mm:ssZ",         // UTC marker: 2024-01-15T14:30:00Z
+            "MM/dd/yyyy",                   // US format: 01/15/2024
+            "dd/MM/yyyy",                   // European format: 15/01/2024
+            "M/d/yyyy",                     // Short US: 1/15/2024
+            "yyyy/MM/dd",                   // Alternate ISO: 2024/01/15
+            "yyyyMMdd",                     // Compact: 20240115
+        };
+
+        /// <summary>
+        /// Detects the date format used in a given date string value.
+        /// Returns the detected format string, or null if no format is recognized.
+        /// </summary>
+        public static string? DetectDateFormat(string value)
+        {
+            if (string.IsNullOrWhiteSpace(value)) return null;
+
+            foreach (var format in KnownDateFormats)
+            {
+                if (DateTime.TryParseExact(value, format, CultureInfo.InvariantCulture,
+                    DateTimeStyles.None, out _))
+                {
+                    return format;
+                }
+            }
+
+            // Fallback: check if it parses as a general date
+            if (DateTime.TryParse(value, CultureInfo.InvariantCulture,
+                DateTimeStyles.None, out _))
+            {
+                return "auto"; // Parseable but not a known exact format
+            }
+
+            return null;
+        }
+
+        /// <summary>
+        /// Preserves a date value in its original format while ensuring QB 2021 compatibility.
+        /// If the format is QBXML-standard (yyyy-MM-dd), it's preserved as-is.
+        /// If the format includes timezone info, the timezone is stripped for QB 2021 compatibility.
+        /// Timestamp fields (with time component) are preserved in ISO format without timezone.
+        /// </summary>
+        /// <param name="value">The original date string value.</param>
+        /// <param name="formatStandard">The target format standard: "QBXML" or "ISO8601".</param>
+        /// <param name="stripTimezone">Whether to strip timezone information.</param>
+        /// <returns>A FormatPreservationResult containing the processed date and metadata.</returns>
+        public static FormatPreservationResult PreserveDate(string value, string formatStandard = "QBXML", bool stripTimezone = true)
+        {
+            var result = new FormatPreservationResult
+            {
+                OriginalValue = value,
+                FieldType = "date"
+            };
+
+            if (string.IsNullOrWhiteSpace(value))
+            {
+                result.PreservedValue = value;
+                result.WasPreserved = true;
+                return result;
+            }
+
+            var detectedFormat = DetectDateFormat(value);
+            result.DetectedFormat = detectedFormat;
+
+            if (detectedFormat == null)
+            {
+                // Not a recognized date — pass through unchanged
+                result.PreservedValue = value;
+                result.WasPreserved = false;
+                result.Issue = "Unrecognized date format";
+                Log.Warning("Unrecognized date format for value '{Value}'", value);
+                return result;
+            }
+
+            // Parse the date
+            DateTime parsedDate;
+            if (detectedFormat != "auto")
+            {
+                DateTime.TryParseExact(value, detectedFormat, CultureInfo.InvariantCulture,
+                    DateTimeStyles.None, out parsedDate);
+            }
+            else
+            {
+                DateTime.TryParse(value, CultureInfo.InvariantCulture,
+                    DateTimeStyles.None, out parsedDate);
+            }
+
+            // Check if the original value has a time component
+            bool hasTimeComponent = value.Contains('T') || value.Contains(':');
+            bool hasTimezone = value.Contains('+') || value.Contains('Z') ||
+                Regex.IsMatch(value, @"[+-]\d{2}:\d{2}$");
+
+            // Apply format standard
+            if (formatStandard.Equals("QBXML", StringComparison.OrdinalIgnoreCase))
+            {
+                if (hasTimeComponent)
+                {
+                    // Timestamp field: preserve as datetime without timezone
+                    if (stripTimezone && hasTimezone)
+                    {
+                        result.PreservedValue = parsedDate.ToString("yyyy-MM-ddTHH:mm:ss");
+                        result.FormatAction = "StripTimezone";
+                    }
+                    else
+                    {
+                        result.PreservedValue = parsedDate.ToString("yyyy-MM-ddTHH:mm:ss");
+                        result.FormatAction = "PreserveTimestamp";
+                    }
+                }
+                else
+                {
+                    // Date-only field: standard QBXML format
+                    result.PreservedValue = parsedDate.ToString("yyyy-MM-dd");
+                    result.FormatAction = "PreserveQBXML";
+                }
+            }
+            else // ISO8601
+            {
+                result.PreservedValue = hasTimeComponent
+                    ? parsedDate.ToString("yyyy-MM-ddTHH:mm:ss")
+                    : parsedDate.ToString("yyyy-MM-dd");
+                result.FormatAction = "ConvertToISO8601";
+            }
+
+            result.WasPreserved = true;
+
+            // Validate the result is acceptable for QB 2021
+            result.IsValidForQB2021 = ValidateDateForQB2021(result.PreservedValue);
+            if (!result.IsValidForQB2021)
+            {
+                result.Issue = "Date may not be accepted by QB 2021 QBXML SDK";
+                Log.Warning("Date format validation warning for '{Value}' -> '{Preserved}'",
+                    value, result.PreservedValue);
+            }
+
+            return result;
+        }
+
+        /// <summary>
+        /// Validates that a date string is in a format acceptable to QB 2021's QBXML SDK.
+        /// QB 2021 accepts: yyyy-MM-dd for dates, yyyy-MM-ddTHH:mm:ss for timestamps.
+        /// </summary>
+        public static bool ValidateDateForQB2021(string dateValue)
+        {
+            if (string.IsNullOrWhiteSpace(dateValue)) return false;
+
+            // QB 2021 QBXML accepts these formats
+            var validFormats = new[] { "yyyy-MM-dd", "yyyy-MM-ddTHH:mm:ss" };
+            return validFormats.Any(f =>
+                DateTime.TryParseExact(dateValue, f, CultureInfo.InvariantCulture,
+                    DateTimeStyles.None, out _));
+        }
+
+        /// <summary>
+        /// Determines if a field name represents a date field based on known patterns.
+        /// Used for automatic date format detection when no explicit formatType is specified.
+        /// </summary>
+        public static bool IsDateField(string fieldName, List<string>? dateFieldPatterns = null)
+        {
+            if (string.IsNullOrEmpty(fieldName)) return false;
+
+            var patterns = dateFieldPatterns ?? new List<string>
+            {
+                "Date", "DueDate", "TxnDate", "ShipDate", "ServiceDate",
+                "HiredDate", "ReleasedDate", "BirthDate", "OpenBalanceDate",
+                "ExpectedDate", "TimeCreated", "TimeModified"
+            };
+
+            // Check exact match or suffix match
+            var leafField = fieldName.Contains('.') ? fieldName.Split('.').Last() : fieldName;
+            return patterns.Any(p =>
+                leafField.Equals(p, StringComparison.OrdinalIgnoreCase) ||
+                leafField.EndsWith(p, StringComparison.OrdinalIgnoreCase));
+        }
+
+        /// <summary>
+        /// Determines if a field name represents a currency/amount field.
+        /// </summary>
+        public static bool IsCurrencyField(string fieldName, List<string>? currencyFieldPatterns = null)
+        {
+            if (string.IsNullOrEmpty(fieldName)) return false;
+
+            var patterns = currencyFieldPatterns ?? new List<string>
+            {
+                "Amount", "Balance", "Price", "Rate", "Cost", "Total",
+                "CreditLimit", "OpenBalance", "Subtotal"
+            };
+
+            var leafField = fieldName.Contains('.') ? fieldName.Split('.').Last() : fieldName;
+            return patterns.Any(p =>
+                leafField.Equals(p, StringComparison.OrdinalIgnoreCase) ||
+                leafField.EndsWith(p, StringComparison.OrdinalIgnoreCase));
+        }
+
+        // ═══════════════════════════════════════════════════════════════════
+        // CURRENCY FORMAT PRESERVATION
+        // ═══════════════════════════════════════════════════════════════════
+
+        /// <summary>
+        /// Preserves currency/amount format with proper decimal precision.
+        /// Ensures consistent decimal places without altering the actual value.
+        /// </summary>
+        public static FormatPreservationResult PreserveCurrencyFormat(string value, int decimalPlaces = 2)
+        {
+            var result = new FormatPreservationResult
+            {
+                OriginalValue = value,
+                FieldType = "currency"
+            };
+
+            if (string.IsNullOrWhiteSpace(value))
+            {
+                result.PreservedValue = value;
+                result.WasPreserved = true;
+                return result;
+            }
+
+            // Remove any currency symbols for parsing, but track if present
+            var cleanValue = value.Trim();
+            string? currencySymbol = null;
+            if (cleanValue.StartsWith("$") || cleanValue.StartsWith("£") ||
+                cleanValue.StartsWith("€") || cleanValue.StartsWith("¥"))
+            {
+                currencySymbol = cleanValue[0].ToString();
+                cleanValue = cleanValue.Substring(1).Trim();
+            }
+
+            // Remove thousands separators for parsing
+            var parseValue = cleanValue.Replace(",", "");
+
+            if (decimal.TryParse(parseValue, NumberStyles.Any, CultureInfo.InvariantCulture, out var amount))
+            {
+                // Format with specified decimal places
+                var formatString = $"F{decimalPlaces}";
+                result.PreservedValue = amount.ToString(formatString, CultureInfo.InvariantCulture);
+                result.DetectedFormat = currencySymbol != null ? $"Currency({currencySymbol})" : "Decimal";
+                result.WasPreserved = true;
+                result.FormatAction = "PreserveCurrency";
+                result.IsValidForQB2021 = true;
+            }
+            else
+            {
+                result.PreservedValue = value;
+                result.WasPreserved = false;
+                result.Issue = "Unable to parse currency value";
+                Log.Warning("Unable to parse currency value '{Value}'", value);
+            }
+
+            return result;
+        }
+
+        // ═══════════════════════════════════════════════════════════════════
+        // PHONE NUMBER FORMAT PRESERVATION
+        // ═══════════════════════════════════════════════════════════════════
+
+        /// <summary>
+        /// Preserves phone number formatting while ensuring QB 2021 compatibility (max 21 chars).
+        /// Maintains dashes, parentheses, and extension formatting where possible.
+        /// </summary>
+        public static FormatPreservationResult PreservePhoneFormat(string value, int maxLength = 21)
+        {
+            var result = new FormatPreservationResult
+            {
+                OriginalValue = value,
+                FieldType = "phone"
+            };
+
+            if (string.IsNullOrWhiteSpace(value))
+            {
+                result.PreservedValue = value;
+                result.WasPreserved = true;
+                return result;
+            }
+
+            result.DetectedFormat = DetectPhoneFormat(value);
+
+            if (value.Length <= maxLength)
+            {
+                // Phone fits within QB 2021 limits — preserve as-is
+                result.PreservedValue = value;
+                result.WasPreserved = true;
+                result.FormatAction = "PreservePhone";
+                result.IsValidForQB2021 = true;
+            }
+            else
+            {
+                // Need to truncate — try to preserve format integrity
+                // First, try removing extension if present
+                var extPattern = Regex.Match(value, @"\s*(x|ext\.?|extension)\s*\d+$", RegexOptions.IgnoreCase);
+                if (extPattern.Success && (value.Length - extPattern.Length) <= maxLength)
+                {
+                    result.PreservedValue = value.Substring(0, value.Length - extPattern.Length).TrimEnd();
+                    result.FormatAction = "TruncateExtension";
+                }
+                else
+                {
+                    result.PreservedValue = value.Substring(0, maxLength);
+                    result.FormatAction = "TruncatePhone";
+                }
+
+                result.WasPreserved = true;
+                result.IsValidForQB2021 = result.PreservedValue.Length <= maxLength;
+                Log.Debug("Phone number truncated from {Original} to {Max} chars: '{Value}'",
+                    value.Length, result.PreservedValue.Length, result.PreservedValue);
+            }
+
+            return result;
+        }
+
+        /// <summary>
+        /// Detects the format pattern of a phone number string.
+        /// </summary>
+        private static string DetectPhoneFormat(string value)
+        {
+            if (Regex.IsMatch(value, @"^\(\d{3}\)\s?\d{3}-\d{4}")) return "(XXX) XXX-XXXX";
+            if (Regex.IsMatch(value, @"^\d{3}-\d{3}-\d{4}")) return "XXX-XXX-XXXX";
+            if (Regex.IsMatch(value, @"^\+\d")) return "International";
+            if (Regex.IsMatch(value, @"^\d{10}$")) return "Unformatted";
+            return "Other";
+        }
+
+        // ═══════════════════════════════════════════════════════════════════
+        // POSTAL CODE FORMAT PRESERVATION
+        // ═══════════════════════════════════════════════════════════════════
+
+        /// <summary>
+        /// Preserves postal code formatting including leading zeros and hyphenated ZIP+4.
+        /// </summary>
+        public static FormatPreservationResult PreservePostalCodeFormat(string value, int maxLength = 13)
+        {
+            var result = new FormatPreservationResult
+            {
+                OriginalValue = value,
+                FieldType = "postalcode"
+            };
+
+            if (string.IsNullOrWhiteSpace(value))
+            {
+                result.PreservedValue = value;
+                result.WasPreserved = true;
+                return result;
+            }
+
+            // Detect postal code format
+            if (Regex.IsMatch(value, @"^\d{5}-\d{4}$"))
+                result.DetectedFormat = "ZIP+4";
+            else if (Regex.IsMatch(value, @"^\d{5}$"))
+                result.DetectedFormat = "ZIP5";
+            else if (Regex.IsMatch(value, @"^[A-Za-z]\d[A-Za-z]\s?\d[A-Za-z]\d$"))
+                result.DetectedFormat = "Canadian";
+            else
+                result.DetectedFormat = "Other";
+
+            // Preserve as-is (postal codes should maintain exact format, especially leading zeros)
+            if (value.Length <= maxLength)
+            {
+                result.PreservedValue = value;
+                result.WasPreserved = true;
+                result.FormatAction = "PreservePostalCode";
+                result.IsValidForQB2021 = true;
+            }
+            else
+            {
+                result.PreservedValue = value.Substring(0, maxLength);
+                result.WasPreserved = true;
+                result.FormatAction = "TruncatePostalCode";
+                result.IsValidForQB2021 = true;
+                result.Issue = $"Postal code truncated from {value.Length} to {maxLength} chars";
+            }
+
+            return result;
+        }
+
+        // ═══════════════════════════════════════════════════════════════════
+        // MEMO / TEXT FIELD FORMAT PRESERVATION
+        // ═══════════════════════════════════════════════════════════════════
+
+        /// <summary>
+        /// Preserves memo/notes field formatting including line breaks, special characters,
+        /// and UTF-8 encoding while respecting max length constraints.
+        /// </summary>
+        public static FormatPreservationResult PreserveMemoFormat(string value, int maxLength = 4095, bool preserveEncoding = true)
+        {
+            var result = new FormatPreservationResult
+            {
+                OriginalValue = value,
+                FieldType = "memo"
+            };
+
+            if (string.IsNullOrEmpty(value))
+            {
+                result.PreservedValue = value;
+                result.WasPreserved = true;
+                return result;
+            }
+
+            string processed = value;
+
+            // Ensure proper encoding preservation
+            if (preserveEncoding)
+            {
+                // Re-encode through UTF-8 to clean any encoding artifacts
+                var bytes = Encoding.UTF8.GetBytes(processed);
+                processed = Encoding.UTF8.GetString(bytes);
+            }
+
+            // Normalize line breaks to \r\n (QuickBooks standard)
+            processed = processed.Replace("\r\n", "\n").Replace("\r", "\n").Replace("\n", "\r\n");
+
+            // Handle max length with format preservation
+            if (processed.Length > maxLength)
+            {
+                // Try to truncate at a line break boundary
+                var truncateAt = processed.LastIndexOf("\r\n", maxLength, StringComparison.Ordinal);
+                if (truncateAt > maxLength * 0.8) // Only use line-break boundary if it's not too far back
+                {
+                    processed = processed.Substring(0, truncateAt);
+                    result.FormatAction = "TruncateAtLineBreak";
+                }
+                else
+                {
+                    // Truncate at word boundary
+                    truncateAt = processed.LastIndexOf(' ', maxLength);
+                    if (truncateAt > maxLength * 0.8)
+                    {
+                        processed = processed.Substring(0, truncateAt);
+                        result.FormatAction = "TruncateAtWord";
+                    }
+                    else
+                    {
+                        processed = processed.Substring(0, maxLength);
+                        result.FormatAction = "TruncateHard";
+                    }
+                }
+
+                result.Issue = $"Memo truncated from {value.Length} to {processed.Length} chars";
+                Log.Debug("Memo field truncated: {Original} -> {Truncated} chars ({Action})",
+                    value.Length, processed.Length, result.FormatAction);
+            }
+            else
+            {
+                result.FormatAction = "PreserveMemo";
+            }
+
+            result.PreservedValue = processed;
+            result.WasPreserved = true;
+            result.DetectedFormat = "Text/Memo";
+            result.IsValidForQB2021 = processed.Length <= maxLength;
+
+            return result;
+        }
+
+        // ═══════════════════════════════════════════════════════════════════
+        // FORMAT-AWARE TRUNCATION
+        // ═══════════════════════════════════════════════════════════════════
+
+        /// <summary>
+        /// Performs format-aware truncation that preserves field format integrity.
+        /// Unlike simple string truncation, this considers the field type to avoid
+        /// breaking formatted values (e.g., won't truncate a date in the middle).
+        /// </summary>
+        public static string FormatAwareTruncate(string value, int maxLength, string? formatType = null)
+        {
+            if (string.IsNullOrEmpty(value) || value.Length <= maxLength)
+                return value;
+
+            return formatType?.ToLowerInvariant() switch
+            {
+                "date" => value, // Never truncate dates — they must be complete
+                "currency" => TruncateCurrencyValue(value, maxLength),
+                "phone" => PreservePhoneFormat(value, maxLength).PreservedValue,
+                "postalcode" => PreservePostalCodeFormat(value, maxLength).PreservedValue,
+                "memo" => PreserveMemoFormat(value, maxLength).PreservedValue,
+                _ => value.Substring(0, maxLength)
+            };
+        }
+
+        /// <summary>
+        /// Truncates a currency value by reducing decimal precision rather than removing digits.
+        /// </summary>
+        private static string TruncateCurrencyValue(string value, int maxLength)
+        {
+            if (value.Length <= maxLength) return value;
+
+            // Try reducing decimal places
+            if (decimal.TryParse(value, NumberStyles.Any, CultureInfo.InvariantCulture, out var amount))
+            {
+                for (int dp = 2; dp >= 0; dp--)
+                {
+                    var formatted = amount.ToString($"F{dp}", CultureInfo.InvariantCulture);
+                    if (formatted.Length <= maxLength)
+                        return formatted;
+                }
+            }
+
+            return value.Substring(0, maxLength);
+        }
+    }
+
+    // ═══════════════════════════════════════════════════════════════════
+    // FORMAT PRESERVATION RESULT MODEL
+    // ═══════════════════════════════════════════════════════════════════
+
+    /// <summary>
+    /// Result of a format preservation operation, capturing the original and preserved values
+    /// along with metadata about the detected format, action taken, and validation status.
+    /// </summary>
+    public class FormatPreservationResult
+    {
+        /// <summary>The original field value before format processing.</summary>
+        public string OriginalValue { get; set; } = string.Empty;
+
+        /// <summary>The processed/preserved value ready for QB 2021.</summary>
+        public string PreservedValue { get; set; } = string.Empty;
+
+        /// <summary>The type of field: "date", "currency", "phone", "postalcode", "memo".</summary>
+        public string FieldType { get; set; } = string.Empty;
+
+        /// <summary>The detected format pattern (e.g., "yyyy-MM-dd", "ZIP+4", "(XXX) XXX-XXXX").</summary>
+        public string? DetectedFormat { get; set; }
+
+        /// <summary>Whether the format was successfully preserved.</summary>
+        public bool WasPreserved { get; set; }
+
+        /// <summary>The action taken: "PreserveQBXML", "StripTimezone", "TruncatePhone", etc.</summary>
+        public string? FormatAction { get; set; }
+
+        /// <summary>Whether the preserved value is valid for QB 2021 import.</summary>
+        public bool IsValidForQB2021 { get; set; } = true;
+
+        /// <summary>Any issue or warning encountered during format preservation.</summary>
+        public string? Issue { get; set; }
     }
 }

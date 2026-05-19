@@ -13,8 +13,9 @@ A production-ready C# console application that migrates all data from a QuickBoo
 - **Inactive → Active Reactivation** — Automatically converts all inactive entities (Customers, Vendors, Items, Accounts, Employees) to active during transformation, with detailed logging and reporting
 - **Class Tracking Preservation** — Preserves class assignments on all transaction types (Invoices, Bills, Journal Entries, Sales Receipts, Purchase Orders) at both header and line item levels; automatically creates missing classes in QB 2021
 - **Accounting Model Matching** — Detects and preserves the accounting method (Cash basis vs Accrual basis) from QB 2023 and applies it to QB 2021 via QBXML PreferencesQuery/PreferencesMod
+- **Field Format Preservation** — Automatically detects and preserves field-specific data formats during transformation: date formats (QBXML YYYY-MM-DD), currency precision, phone number formatting, postal code formats, memo line breaks, and UTF-8 encoding
 - **Schema Extraction** — Documents QB 2021's supported fields, data types, and constraints as JSON
-- **Configurable Field Mapping** — Human-editable `FieldMappings.json` maps QB 2023 fields to QB 2021 equivalents with support for renaming, transformations, defaults, and skipping deprecated fields
+- **Configurable Field Mapping** — Human-editable `FieldMappings.json` maps QB 2023 fields to QB 2021 equivalents with support for renaming, transformations, defaults, skipping deprecated fields, and format-aware processing
 - **Dependency-Ordered Import** — Imports lists before transactions, respecting referential integrity (Accounts → Classes → Customers/Vendors → Items → Invoices/Bills → Payments)
 - **Journal Integrity Validation** — Comprehensive journal entry validation ensures total debits equal total credits for every journal entry, validates invoice line item sums, bill amounts, and payment application balances
 - **Comprehensive Validation** — Field-by-field comparison, entity count verification, financial totals reconciliation, reactivation verification, class tracking validation, and accounting model validation
@@ -400,6 +401,92 @@ The final migration report includes these sections:
 | Inactive entities in QB 2023 | Reactivated to active in QB 2021 (configurable) |
 | Class tracking differences | Classes auto-created in QB 2021; assignments preserved |
 | Accounting method differences | Cash/Accrual basis matched between QB 2023 → 2021 |
+| Date format variations | Auto-detected and preserved in QBXML standard (yyyy-MM-dd); timezone stripped |
+| Currency format differences | Decimal precision preserved (default 2 places); currency symbols stripped |
+| Phone number formatting | Format preserved within QB 2021's 21-char limit; extensions truncated gracefully |
+| Postal code leading zeros | Preserved as-is; leading zeros and hyphenated ZIP+4 maintained |
+| Memo field special characters | Line breaks normalized to \r\n; UTF-8 encoding preserved |
+
+---
+
+## Field Format Preservation
+
+QB-TimeWarp automatically detects and preserves field-specific data formats during transformation, ensuring data integrity when migrating from QB 2023 to QB 2021.
+
+### Date Format Handling
+
+All date fields are automatically detected by name pattern (TxnDate, DueDate, ShipDate, HiredDate, etc.) and processed with format-aware logic:
+
+| Date Type | Source Example (QB 2023) | Preserved Output (QB 2021) | Action |
+|-----------|-------------------------|---------------------------|--------|
+| Transaction date | `2024-01-15` | `2024-01-15` | PreserveQBXML |
+| Due date | `2024-02-15` | `2024-02-15` | PreserveQBXML |
+| Timestamp | `2024-01-15T14:30:00` | `2024-01-15T14:30:00` | PreserveTimestamp |
+| TZ-aware timestamp | `2024-01-15T14:30:00-05:00` | `2024-01-15T14:30:00` | StripTimezone |
+| UTC timestamp | `2024-01-15T14:30:00Z` | `2024-01-15T14:30:00` | StripTimezone |
+| Employee hire date | `2020-06-01` | `2020-06-01` | PreserveQBXML |
+| Custom field date | `2024-03-20` | `2024-03-20` | PreserveQBXML |
+
+**QBXML Date Standards**: QuickBooks QBXML SDK uses `YYYY-MM-DD` (CCYY-MM-DD) for date fields and `YYYY-MM-DDTHH:mm:ss` for datetime/timestamp fields. QB-TimeWarp ensures all dates conform to these standards.
+
+### Other Format Types
+
+| Format Type | Preservation Behavior |
+|------------|----------------------|
+| **Currency** | Decimal precision maintained (default 2 places). Currency symbols ($, £, €) stripped for QBXML. Thousands separators removed. |
+| **Phone numbers** | Original formatting preserved (dashes, parentheses). Truncated at extension boundary if over 21 chars. |
+| **Postal codes** | Leading zeros preserved. ZIP+4 hyphens maintained. Canadian format supported. |
+| **Memo/Notes** | Line breaks normalized to `\r\n`. UTF-8 special characters preserved. Format-aware truncation at word/line boundaries. |
+| **Custom fields** | Passed through with encoding preservation. |
+
+### Format Rules Configuration
+
+The `FormatRules` section in `FieldMappings.json` controls format preservation:
+
+```json
+"formatRules": {
+  "preserveDateFormat": true,
+  "dateFormatStandard": "QBXML",
+  "preserveCurrencyFormat": true,
+  "currencyDecimalPlaces": 2,
+  "preservePhoneFormat": true,
+  "preservePostalCodeFormat": true,
+  "truncationBehavior": "PreserveFormat",
+  "preserveMemoFormatting": true,
+  "preserveEncoding": true,
+  "stripTimezoneFromDates": true
+}
+```
+
+| Setting | Default | Description |
+|---------|---------|-------------|
+| `preserveDateFormat` | `true` | Maintain QBXML date format (yyyy-MM-dd) |
+| `dateFormatStandard` | `"QBXML"` | Target format: "QBXML" or "ISO8601" |
+| `preserveCurrencyFormat` | `true` | Maintain decimal precision for amounts |
+| `currencyDecimalPlaces` | `2` | Number of decimal places for currency |
+| `preservePhoneFormat` | `true` | Keep phone number formatting |
+| `preservePostalCodeFormat` | `true` | Preserve postal code format (leading zeros) |
+| `truncationBehavior` | `"PreserveFormat"` | Format-aware truncation vs simple character cut |
+| `preserveMemoFormatting` | `true` | Keep line breaks and special chars in memos |
+| `preserveEncoding` | `true` | Maintain UTF-8 encoding integrity |
+| `stripTimezoneFromDates` | `true` | Remove timezone suffixes for QB 2021 compatibility |
+
+### Format Preservation Report
+
+The migration report includes format preservation statistics:
+
+```
+FORMAT PRESERVATION SUMMARY
+    Date fields: 245 processed, 243 preserved, 2 issues
+      Timezone stripped: 12 datetime fields
+      Format 'yyyy-MM-dd': 233 fields
+      Format 'yyyy-MM-ddTHH:mm:ss': 12 fields
+    Currency fields: 189 processed, 189 preserved
+    Phone fields: 56 processed, 56 preserved
+    Postal code fields: 78 processed, 78 preserved
+    Memo/Notes fields: 34 processed
+    Encoding preserved: 34 fields
+```
 
 ---
 
@@ -475,6 +562,7 @@ QB-TimeWarp performs comprehensive post-import validation:
 | **Reactivation Verification** | All formerly-inactive entities confirmed active in QB 2021 |
 | **Class Tracking Validation** | Class assignments preserved on all transactions |
 | **Accounting Model Validation** | Cash/Accrual method matches between source and target |
+| **Format Preservation Validation** | Date formats, currency precision, phone lengths, postal codes verified in QB 2021-compatible format |
 
 ---
 

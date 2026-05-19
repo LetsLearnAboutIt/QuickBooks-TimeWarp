@@ -251,6 +251,64 @@ namespace QB_TimeWarp.Models
         public int TotalFieldsSkipped { get; set; }
         public int TotalFieldsTruncated { get; set; }
 
+        // Format preservation statistics
+        public FormatPreservationStats FormatStats { get; set; } = new();
+
         public string Summary { get; set; } = string.Empty;
+    }
+
+    // ═══════════════════════════════════════════════════════════════════
+    // Format Preservation Statistics
+    // ═══════════════════════════════════════════════════════════════════
+
+    /// <summary>
+    /// Statistics tracking format preservation actions during transformation.
+    /// </summary>
+    public class FormatPreservationStats
+    {
+        /// <summary>Total date fields processed with format preservation.</summary>
+        public int DateFieldsProcessed { get; set; }
+
+        /// <summary>Date fields where original format was successfully preserved.</summary>
+        public int DateFormatsPreserved { get; set; }
+
+        /// <summary>Date fields where timezone was stripped for QB 2021 compatibility.</summary>
+        public int DateTimezonesStripped { get; set; }
+
+        /// <summary>Date fields with format issues or unrecognized formats.</summary>
+        public int DateFormatIssues { get; set; }
+
+        /// <summary>Currency/amount fields processed with format preservation.</summary>
+        public int CurrencyFieldsProcessed { get; set; }
+
+        /// <summary>Currency fields where format was preserved.</summary>
+        public int CurrencyFormatsPreserved { get; set; }
+
+        /// <summary>Phone number fields processed.</summary>
+        public int PhoneFieldsProcessed { get; set; }
+
+        /// <summary>Phone fields where format was preserved.</summary>
+        public int PhoneFormatsPreserved { get; set; }
+
+        /// <summary>Postal code fields processed.</summary>
+        public int PostalCodeFieldsProcessed { get; set; }
+
+        /// <summary>Postal code fields where format was preserved.</summary>
+        public int PostalCodeFormatsPreserved { get; set; }
+
+        /// <summary>Memo/notes fields processed with format-aware handling.</summary>
+        public int MemoFieldsProcessed { get; set; }
+
+        /// <summary>Fields where format-aware truncation was applied (instead of simple truncation).</summary>
+        public int FormatAwareTruncations { get; set; }
+
+        /// <summary>Total fields where encoding was preserved (UTF-8, special chars).</summary>
+        public int EncodingPreserved { get; set; }
+
+        /// <summary>Detailed list of format issues encountered (field name + issue description).</summary>
+        public List<string> FormatIssues { get; set; } = new();
+
+        /// <summary>Breakdown of detected date formats and their counts.</summary>
+        public Dictionary<string, int> DateFormatBreakdown { get; set; } = new();
     }
 }

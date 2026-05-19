@@ -28,6 +28,9 @@ namespace QB_TimeWarp.Models
         public ClassTrackingValidationReport? ClassTrackingValidation { get; set; }
         public AccountingModelValidationReport? AccountingModelValidation { get; set; }
 
+        // Format preservation validation
+        public FormatValidationReport? FormatValidation { get; set; }
+
         // Overall stats
         public int TotalEntitiesCompared { get; set; }
         public int TotalFieldsCompared { get; set; }
@@ -241,5 +244,91 @@ namespace QB_TimeWarp.Models
         Warning,
         /// <summary>Significant imbalance requiring investigation.</summary>
         Critical
+    }
+
+    // ═══════════════════════════════════════════════════════════════════
+    // Format Preservation Validation
+    // ═══════════════════════════════════════════════════════════════════
+
+    /// <summary>
+    /// Validates that field formats were preserved correctly during migration.
+    /// Checks date formats, currency precision, phone formats, and encoding integrity.
+    /// </summary>
+    public class FormatValidationReport
+    {
+        /// <summary>Overall pass/fail status for format validation.</summary>
+        public bool AllFormatsValid { get; set; }
+
+        /// <summary>Total date fields validated.</summary>
+        public int TotalDateFieldsValidated { get; set; }
+
+        /// <summary>Date fields with valid QB 2021-compatible format.</summary>
+        public int DateFieldsValid { get; set; }
+
+        /// <summary>Date fields with format issues.</summary>
+        public int DateFieldsInvalid { get; set; }
+
+        /// <summary>Total currency fields validated.</summary>
+        public int TotalCurrencyFieldsValidated { get; set; }
+
+        /// <summary>Currency fields with proper decimal precision.</summary>
+        public int CurrencyFieldsValid { get; set; }
+
+        /// <summary>Currency fields with precision issues.</summary>
+        public int CurrencyFieldsInvalid { get; set; }
+
+        /// <summary>Total phone fields validated.</summary>
+        public int TotalPhoneFieldsValidated { get; set; }
+
+        /// <summary>Phone fields within QB 2021 length limits.</summary>
+        public int PhoneFieldsValid { get; set; }
+
+        /// <summary>Total postal code fields validated.</summary>
+        public int TotalPostalCodeFieldsValidated { get; set; }
+
+        /// <summary>Postal code fields with format preserved.</summary>
+        public int PostalCodeFieldsValid { get; set; }
+
+        /// <summary>Fields where encoding was verified intact.</summary>
+        public int EncodingFieldsValid { get; set; }
+
+        /// <summary>Detailed list of format validation issues.</summary>
+        public List<FormatValidationIssue> Issues { get; set; } = new();
+
+        /// <summary>Summary of format validation results.</summary>
+        public string Summary { get; set; } = string.Empty;
+    }
+
+    /// <summary>
+    /// Represents a single format validation issue found during migration validation.
+    /// </summary>
+    public class FormatValidationIssue
+    {
+        /// <summary>The entity type (e.g., "Invoices", "Customers").</summary>
+        public string EntityType { get; set; } = string.Empty;
+
+        /// <summary>The entity name/identifier.</summary>
+        public string EntityIdentifier { get; set; } = string.Empty;
+
+        /// <summary>The field name where the issue was found.</summary>
+        public string FieldName { get; set; } = string.Empty;
+
+        /// <summary>The type of format issue: "DateFormat", "CurrencyPrecision", "PhoneLength", "PostalCode", "Encoding".</summary>
+        public string IssueType { get; set; } = string.Empty;
+
+        /// <summary>The original value from QB 2023.</summary>
+        public string? OriginalValue { get; set; }
+
+        /// <summary>The value found in QB 2021 target.</summary>
+        public string? TargetValue { get; set; }
+
+        /// <summary>The expected format.</summary>
+        public string? ExpectedFormat { get; set; }
+
+        /// <summary>Severity of the format issue.</summary>
+        public DiscrepancySeverity Severity { get; set; }
+
+        /// <summary>Description of the format issue.</summary>
+        public string Description { get; set; } = string.Empty;
     }
 }

@@ -23,6 +23,16 @@
       "ReactivateInactiveEntities": "All inactive entities (Customers, Vendors, Items, Accounts, Employees) from QB 2023 are set to IsActive=true during transformation. Controlled by TransformationRules.ReactivateInactiveEntities in appsettings.json.",
       "PreserveClassTracking": "Class assignments on transactions (Invoices, Bills, Journal Entries, Sales Receipts, Purchase Orders) are preserved. ClassRef.FullName is mapped at both header and line item levels. Missing classes are auto-created in QB 2021. Controlled by TransformationRules.PreserveClassTracking.",
       "MatchAccountingModel": "The accounting method (Cash basis vs Accrual basis) and ReportBasis from QB 2023 are queried and applied to QB 2021 via QBXML PreferencesQuery/PreferencesMod. Controlled by TransformationRules.MatchAccountingModel."
+    },
+    "formatRules": {
+      "description": "Controls how field-specific formats are preserved during transformation.",
+      "preserveDateFormat": "When true, date fields maintain QBXML standard format (yyyy-MM-dd). Timestamps use yyyy-MM-ddTHH:mm:ss. Timezone info is stripped for QB 2021 compatibility.",
+      "preserveCurrencyFormat": "When true, currency/amount fields preserve decimal precision (default 2 places). Currency symbols are stripped for QBXML compatibility.",
+      "preservePhoneFormat": "When true, phone numbers maintain their formatting (dashes, parentheses) within QB 2021's 21-char limit.",
+      "preservePostalCodeFormat": "When true, postal codes preserve leading zeros and hyphenated ZIP+4 format.",
+      "truncationBehavior": "PreserveFormat = format-aware truncation (won't break dates, truncates memos at word boundaries). Standard = simple character truncation.",
+      "preserveMemoFormatting": "When true, line breaks and special characters in Memo/Notes fields are preserved.",
+      "preserveEncoding": "When true, UTF-8 encoding is maintained for special characters."
     }
   },
   "globalSettings": {
@@ -577,6 +587,27 @@
         { "sourceField": "ExternalGUID", "targetField": null, "action": "skip" }
       ]
     }
+  },
+  "formatRules": {
+    "preserveDateFormat": true,
+    "dateFormatStandard": "QBXML",
+    "preserveCurrencyFormat": true,
+    "currencyDecimalPlaces": 2,
+    "preservePhoneFormat": true,
+    "preservePostalCodeFormat": true,
+    "truncationBehavior": "PreserveFormat",
+    "preserveMemoFormatting": true,
+    "preserveEncoding": true,
+    "stripTimezoneFromDates": true,
+    "dateFieldPatterns": [
+      "Date", "DueDate", "TxnDate", "ShipDate", "ServiceDate",
+      "HiredDate", "ReleasedDate", "BirthDate", "OpenBalanceDate",
+      "ExpectedDate", "TimeCreated", "TimeModified"
+    ],
+    "currencyFieldPatterns": [
+      "Amount", "Balance", "Price", "Rate", "Cost", "Total",
+      "CreditLimit", "OpenBalance", "Subtotal"
+    ]
   },
   "transformFunctions": {
     "MapJobStatus": {

@@ -1,5 +1,6 @@
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using QB_TimeWarp.Helpers;
 using QB_TimeWarp.Models;
 using Serilog;
 
@@ -8,12 +9,13 @@ namespace QB_TimeWarp.Services
     /// <summary>
     /// Transforms exported QB 2023 data to be compatible with QB 2021 using the FieldMappings.json config.
     /// Applies field mappings, transformations, truncations, default values, entity reactivation,
-    /// class tracking preservation, and accounting model matching.
+    /// class tracking preservation, accounting model matching, and field format preservation.
     /// </summary>
     public class DataTransformer
     {
         private readonly FieldMappingsConfig _mappingsConfig;
         private readonly GlobalMappingSettings _globalSettings;
+        private readonly FormatRulesConfig _formatRules;
         private readonly TransformationRulesConfig _transformationRules;
         private int _unmappedFieldCount;
         private readonly HashSet<string> _loggedUnmappedFields = new();
@@ -53,6 +55,7 @@ namespace QB_TimeWarp.Services
             _mappingsConfig = JsonConvert.DeserializeObject<FieldMappingsConfig>(json)
                 ?? throw new InvalidOperationException($"Could not load field mappings from: {mappingsFilePath}");
             _globalSettings = _mappingsConfig.GlobalSettings;
+            _formatRules = _mappingsConfig.FormatRules;
             _transformationRules = transformationRules;
 
             Log.Information("Loaded field mappings with {Count} entity type configurations.",
@@ -61,6 +64,12 @@ namespace QB_TimeWarp.Services
                 _transformationRules.ReactivateInactiveEntities,
                 _transformationRules.PreserveClassTracking,
                 _transformationRules.MatchAccountingModel);
+            Log.Information("Format preservation: Dates={Dates}, Currency={Currency}, Phone={Phone}, PostalCode={Postal}, Encoding={Encoding}",
+                _formatRules.PreserveDateFormat,
+                _formatRules.PreserveCurrencyFormat,
+                _formatRules.PreservePhoneFormat,
+                _formatRules.PreservePostalCodeFormat,
+                _formatRules.PreserveEncoding);
         }
 
         public DataTransformer(FieldMappingsConfig config)
@@ -72,6 +81,7 @@ namespace QB_TimeWarp.Services
         {
             _mappingsConfig = config;
             _globalSettings = config.GlobalSettings;
+            _formatRules = config.FormatRules;
             _transformationRules = transformationRules;
         }
 
@@ -155,6 +165,9 @@ namespace QB_TimeWarp.Services
             {
                 LogClassTrackingSummary();
             }
+
+            // Log format preservation summary
+            LogFormatPreservationSummary();
 
             Log.Information("═══════════════════════════════════════════════════════");
             Log.Information("  TRANSFORMATION COMPLETE");
@@ -574,23 +587,197 @@ namespace QB_TimeWarp.Services
 
         /// <summary>
         /// Processes a field value according to mapping rules (truncation, type conversion, etc.).
+        /// Now includes format-aware processing for dates, currencies, phone numbers, and other field types.
         /// </summary>
         private JToken ProcessValue(JToken value, FieldMapping mapping)
         {
             var strValue = value.ToString();
 
-            // Truncate if needed
+            // ── Format-Aware Processing ──────────────────────────────────
+            // Determine the format type: explicit from mapping, or auto-detected from field name
+            var formatType = mapping.FormatType
+                ?? DetectFormatType(mapping.SourceField, strValue);
+
+            if (formatType != null)
+            {
+                var formatResult = ApplyFormatPreservation(strValue, formatType, mapping);
+                if (formatResult != null)
+                {
+                    return JToken.FromObject(formatResult);
+                }
+            }
+
+            // ── Standard Truncation (non-formatted fields) ───────────────
             if (mapping.MaxLength.HasValue && _globalSettings.TruncateLongStrings
                 && strValue.Length > mapping.MaxLength.Value)
             {
-                Log.Debug("Truncating field {Field} from {Original} to {Max} chars",
-                    mapping.SourceField, strValue.Length, mapping.MaxLength.Value);
-                strValue = strValue.Substring(0, mapping.MaxLength.Value);
+                // Use format-aware truncation if configured
+                if (_formatRules.TruncationBehavior == "PreserveFormat" && formatType != null)
+                {
+                    strValue = TransformFunctions.FormatAwareTruncate(
+                        strValue, mapping.MaxLength.Value, formatType);
+                    _transformationReport.FormatStats.FormatAwareTruncations++;
+                }
+                else
+                {
+                    Log.Debug("Truncating field {Field} from {Original} to {Max} chars",
+                        mapping.SourceField, strValue.Length, mapping.MaxLength.Value);
+                    strValue = strValue.Substring(0, mapping.MaxLength.Value);
+                }
                 _transformationReport.TotalFieldsTruncated++;
                 return JToken.FromObject(strValue);
             }
 
             return value.DeepClone();
+        }
+
+        /// <summary>
+        /// Auto-detects the format type of a field based on its name and value.
+        /// Returns: "date", "currency", "phone", "postalcode", "memo", or null.
+        /// </summary>
+        private string? DetectFormatType(string fieldName, string value)
+        {
+            if (string.IsNullOrEmpty(fieldName)) return null;
+
+            // Check date fields
+            if (_formatRules.PreserveDateFormat &&
+                TransformFunctions.IsDateField(fieldName, _formatRules.DateFieldPatterns))
+            {
+                return "date";
+            }
+
+            // Check currency fields
+            if (_formatRules.PreserveCurrencyFormat &&
+                TransformFunctions.IsCurrencyField(fieldName, _formatRules.CurrencyFieldPatterns))
+            {
+                return "currency";
+            }
+
+            // Check phone fields by name
+            var leafField = fieldName.Contains('.') ? fieldName.Split('.').Last() : fieldName;
+            if (_formatRules.PreservePhoneFormat &&
+                (leafField.Equals("Phone", StringComparison.OrdinalIgnoreCase) ||
+                 leafField.Equals("AltPhone", StringComparison.OrdinalIgnoreCase) ||
+                 leafField.Equals("Fax", StringComparison.OrdinalIgnoreCase) ||
+                 leafField.Equals("Mobile", StringComparison.OrdinalIgnoreCase)))
+            {
+                return "phone";
+            }
+
+            // Check postal code fields
+            if (_formatRules.PreservePostalCodeFormat &&
+                leafField.Equals("PostalCode", StringComparison.OrdinalIgnoreCase))
+            {
+                return "postalcode";
+            }
+
+            // Check memo/notes fields
+            if (_formatRules.PreserveMemoFormatting &&
+                (leafField.Equals("Memo", StringComparison.OrdinalIgnoreCase) ||
+                 leafField.Equals("Notes", StringComparison.OrdinalIgnoreCase)))
+            {
+                return "memo";
+            }
+
+            return null;
+        }
+
+        /// <summary>
+        /// Applies format-specific preservation logic to a field value.
+        /// Returns the preserved value string, or null if no format processing was applied.
+        /// </summary>
+        private string? ApplyFormatPreservation(string value, string formatType, FieldMapping mapping)
+        {
+            FormatPreservationResult? result = null;
+
+            switch (formatType.ToLowerInvariant())
+            {
+                case "date":
+                    result = TransformFunctions.PreserveDate(
+                        value,
+                        _formatRules.DateFormatStandard,
+                        _formatRules.StripTimezoneFromDates);
+
+                    _transformationReport.FormatStats.DateFieldsProcessed++;
+                    if (result.WasPreserved)
+                    {
+                        _transformationReport.FormatStats.DateFormatsPreserved++;
+                        if (result.FormatAction == "StripTimezone")
+                            _transformationReport.FormatStats.DateTimezonesStripped++;
+                    }
+                    else
+                    {
+                        _transformationReport.FormatStats.DateFormatIssues++;
+                    }
+
+                    // Track date format breakdown
+                    if (result.DetectedFormat != null)
+                    {
+                        var fmt = result.DetectedFormat;
+                        if (!_transformationReport.FormatStats.DateFormatBreakdown.ContainsKey(fmt))
+                            _transformationReport.FormatStats.DateFormatBreakdown[fmt] = 0;
+                        _transformationReport.FormatStats.DateFormatBreakdown[fmt]++;
+                    }
+
+                    if (!string.IsNullOrEmpty(result.Issue))
+                    {
+                        _transformationReport.FormatStats.FormatIssues.Add(
+                            $"[{mapping.SourceField}] {result.Issue}: '{value}'");
+                    }
+
+                    Log.Debug("Date format preserved: {Field} '{Original}' -> '{Preserved}' ({Action})",
+                        mapping.SourceField, value, result.PreservedValue, result.FormatAction);
+                    break;
+
+                case "currency":
+                    result = TransformFunctions.PreserveCurrencyFormat(
+                        value, _formatRules.CurrencyDecimalPlaces);
+
+                    _transformationReport.FormatStats.CurrencyFieldsProcessed++;
+                    if (result.WasPreserved)
+                        _transformationReport.FormatStats.CurrencyFormatsPreserved++;
+                    break;
+
+                case "phone":
+                    var phoneMax = mapping.MaxLength ?? 21;
+                    result = TransformFunctions.PreservePhoneFormat(value, phoneMax);
+
+                    _transformationReport.FormatStats.PhoneFieldsProcessed++;
+                    if (result.WasPreserved)
+                        _transformationReport.FormatStats.PhoneFormatsPreserved++;
+                    break;
+
+                case "postalcode":
+                    var postalMax = mapping.MaxLength ?? 13;
+                    result = TransformFunctions.PreservePostalCodeFormat(value, postalMax);
+
+                    _transformationReport.FormatStats.PostalCodeFieldsProcessed++;
+                    if (result.WasPreserved)
+                        _transformationReport.FormatStats.PostalCodeFormatsPreserved++;
+                    break;
+
+                case "memo":
+                    var memoMax = mapping.MaxLength ?? 4095;
+                    result = TransformFunctions.PreserveMemoFormat(
+                        value, memoMax, _formatRules.PreserveEncoding);
+
+                    _transformationReport.FormatStats.MemoFieldsProcessed++;
+                    if (_formatRules.PreserveEncoding)
+                        _transformationReport.FormatStats.EncodingPreserved++;
+                    break;
+            }
+
+            if (result != null && result.WasPreserved)
+            {
+                if (!string.IsNullOrEmpty(result.Issue))
+                {
+                    _transformationReport.FormatStats.FormatIssues.Add(
+                        $"[{mapping.SourceField}] {result.Issue}");
+                }
+                return result.PreservedValue;
+            }
+
+            return null;
         }
 
         /// <summary>
@@ -661,7 +848,72 @@ namespace QB_TimeWarp.Services
             if (!string.IsNullOrEmpty(_transformationReport.SourceAccountingMethod))
                 parts.Add($"Accounting method: {_transformationReport.SourceAccountingMethod}");
 
+            // Format preservation summary
+            var fs = _transformationReport.FormatStats;
+            if (fs.DateFieldsProcessed > 0)
+                parts.Add($"Dates preserved: {fs.DateFormatsPreserved}/{fs.DateFieldsProcessed}");
+            if (fs.CurrencyFieldsProcessed > 0)
+                parts.Add($"Currency preserved: {fs.CurrencyFormatsPreserved}/{fs.CurrencyFieldsProcessed}");
+            if (fs.FormatIssues.Count > 0)
+                parts.Add($"Format issues: {fs.FormatIssues.Count}");
+
             _transformationReport.Summary = string.Join(" | ", parts);
+        }
+
+        /// <summary>
+        /// Logs a summary of format preservation statistics.
+        /// </summary>
+        private void LogFormatPreservationSummary()
+        {
+            var fs = _transformationReport.FormatStats;
+            var totalFormatted = fs.DateFieldsProcessed + fs.CurrencyFieldsProcessed +
+                fs.PhoneFieldsProcessed + fs.PostalCodeFieldsProcessed + fs.MemoFieldsProcessed;
+
+            if (totalFormatted == 0) return;
+
+            Log.Information("────────────────────────────────────────────");
+            Log.Information("  FORMAT PRESERVATION SUMMARY");
+            Log.Information("────────────────────────────────────────────");
+
+            if (fs.DateFieldsProcessed > 0)
+            {
+                Log.Information("    Date fields: {Processed} processed, {Preserved} preserved, {Issues} issues",
+                    fs.DateFieldsProcessed, fs.DateFormatsPreserved, fs.DateFormatIssues);
+                if (fs.DateTimezonesStripped > 0)
+                    Log.Information("      Timezone stripped: {Count} datetime fields", fs.DateTimezonesStripped);
+                foreach (var (fmt, count) in fs.DateFormatBreakdown.OrderByDescending(kv => kv.Value))
+                    Log.Information("      Format '{Format}': {Count} fields", fmt, count);
+            }
+
+            if (fs.CurrencyFieldsProcessed > 0)
+                Log.Information("    Currency fields: {Processed} processed, {Preserved} preserved",
+                    fs.CurrencyFieldsProcessed, fs.CurrencyFormatsPreserved);
+
+            if (fs.PhoneFieldsProcessed > 0)
+                Log.Information("    Phone fields: {Processed} processed, {Preserved} preserved",
+                    fs.PhoneFieldsProcessed, fs.PhoneFormatsPreserved);
+
+            if (fs.PostalCodeFieldsProcessed > 0)
+                Log.Information("    Postal code fields: {Processed} processed, {Preserved} preserved",
+                    fs.PostalCodeFieldsProcessed, fs.PostalCodeFormatsPreserved);
+
+            if (fs.MemoFieldsProcessed > 0)
+                Log.Information("    Memo/Notes fields: {Processed} processed", fs.MemoFieldsProcessed);
+
+            if (fs.FormatAwareTruncations > 0)
+                Log.Information("    Format-aware truncations: {Count}", fs.FormatAwareTruncations);
+
+            if (fs.EncodingPreserved > 0)
+                Log.Information("    Encoding preserved: {Count} fields", fs.EncodingPreserved);
+
+            if (fs.FormatIssues.Count > 0)
+            {
+                Log.Warning("    Format issues ({Count}):", fs.FormatIssues.Count);
+                foreach (var issue in fs.FormatIssues.Take(10))
+                    Log.Warning("      {Issue}", issue);
+                if (fs.FormatIssues.Count > 10)
+                    Log.Warning("      ... and {More} more issues", fs.FormatIssues.Count - 10);
+            }
         }
 
         /// <summary>
