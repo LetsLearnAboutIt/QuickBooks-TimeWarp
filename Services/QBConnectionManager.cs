@@ -181,8 +181,9 @@ namespace QB_TimeWarp.Services
             }
             catch (System.Runtime.InteropServices.COMException ex)
             {
-                Log.Error(ex, "[{Instance}] COM error processing QBXML request: {Message}",
+                Log.Error("[{Instance}] COM error processing QBXML request: {Message}",
                     _instanceName, ex.Message);
+                Log.Error("[{Instance}] Failed QBXML request:\n{Request}", _instanceName, qbxmlRequest);
                 throw new QBRequestException(
                     $"QBXML request failed ({_instanceName}): {ex.Message}", ex);
             }
