@@ -2,6 +2,16 @@
 
 ## ⚠️ CURRENT STATE — READ THIS FIRST ⚠️
 
+**As of May 19, 2026 ~11:00 UTC:**
+- 🔴 **Import is 100% broken** — 0/2072 records imported successfully
+- **Error**: `0x80040400` — "QuickBooks found an error when parsing the provided XML text stream"
+- **Two failure modes**: "null" errors for simple entities, 0x80040400 for entities with nested fields
+- **Root causes identified** (see `DEBUGGING_NOTES.MD`):
+  1. QBXML element ordering not enforced (JSON iteration order ≠ schema order)
+  2. `Name` field contains full hierarchical path instead of leaf name for sub-entities
+  3. Default SDK version parameters are "16.0" in `BuildQBXMLRequest`/`BuildQueryRequest`
+  4. No diagnostic logging of actual QBXML being sent
+- **Priority fix**: Element ordering + Name/FullName handling + SDK version defaults
 
 ---
 
