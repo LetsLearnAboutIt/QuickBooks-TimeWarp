@@ -26,10 +26,65 @@ namespace QB_TimeWarp.Services
         public bool IsConnected => _isConnected;
         public string InstanceName => _instanceName;
 
+        /// <summary>
+        /// List of protected Desktop folder path fragments.
+        /// Connections to files in these locations will be REJECTED.
+        /// </summary>
+        private static readonly string[] ProtectedDesktopFolders = new[]
+        {
+            @"\Desktop\Joshua's Gold Coast",
+            @"\Desktop\Blank Template",
+            @"\Desktop\Air Masters",
+            @"\Desktop\AirMasters"
+        };
+
         public QBConnectionManager(QBInstanceConfig config, string instanceName)
         {
             _config = config;
             _instanceName = instanceName;
+
+            // SAFETY: Validate the company file path is not an original Desktop file
+            ValidateCompanyFilePath(config.CompanyFilePath);
+        }
+
+        /// <summary>
+        /// Validates that the company file path does NOT point to a protected original file.
+        /// Throws OriginalFileProtectionException if a protected path is detected.
+        /// </summary>
+        private void ValidateCompanyFilePath(string filePath)
+        {
+            if (string.IsNullOrEmpty(filePath))
+                return;
+
+            var normalizedPath = filePath.ToUpperInvariant();
+
+            foreach (var protectedFolder in ProtectedDesktopFolders)
+            {
+                if (normalizedPath.Contains(protectedFolder.ToUpperInvariant()))
+                {
+                    throw new OriginalFileProtectionException(
+                        $"🛑 SAFETY BLOCK: QBConnectionManager [{_instanceName}] attempted to connect to " +
+                        $"PROTECTED original file: {filePath}. " +
+                        $"This path matches protected folder pattern '{protectedFolder}'. " +
+                        "Only working copies in C:\\QB-TimeWarp\\Working\\ may be used. " +
+                        "Ensure WorkingDirectoryManager has initialized working copies.");
+                }
+            }
+
+            // Additional check: warn if path contains \Desktop\ but not \Working\
+            if (normalizedPath.Contains("\\DESKTOP\\") && !normalizedPath.Contains("\\WORKING\\"))
+            {
+                Log.Warning("[{Instance}] ⚠ Company file path appears to be on Desktop: {Path}. " +
+                    "Verify this is intentional and not an original file.",
+                    _instanceName, filePath);
+            }
+
+            // Positive confirmation: log if we're correctly using a Working directory
+            if (normalizedPath.Contains("\\WORKING\\"))
+            {
+                Log.Information("[{Instance}] ✓ Using working copy (originals protected): {Path}",
+                    _instanceName, filePath);
+            }
         }
 
         /// <summary>
@@ -39,6 +94,9 @@ namespace QB_TimeWarp.Services
         {
             try
             {
+                // Re-validate path at connection time (defense in depth)
+                ValidateCompanyFilePath(_config.CompanyFilePath);
+
                 Log.Information("[{Instance}] Connecting to QuickBooks at: {FilePath}",
                     _instanceName, _config.CompanyFilePath);
 

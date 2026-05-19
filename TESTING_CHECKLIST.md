@@ -16,16 +16,43 @@
 
 ---
 
+## Stage 0: Working Copy Verification (SAFETY CHECK)
+
+### 0.1 Verify Original Files Exist on Desktop
+- [ ] Confirm `C:\Users\AIAgent\Desktop\Joshua's Gold Coast\` exists with a `.qbw` file
+- [ ] Confirm `C:\Users\AIAgent\Desktop\Blank Template\` exists with a `.qbw` file
+- [ ] Note the file sizes of both originals
+
+### 0.2 Working Copy Creation
+- [ ] Run QB-TimeWarp — observe "Initialize Working Copies (SAFETY FIRST)" step
+- [ ] Verify `C:\QB-TimeWarp\Working\Source\` is created with a copy of the source `.qbw`
+- [ ] Verify `C:\QB-TimeWarp\Working\Target\` is created with a copy of the target `.qbw`
+- [ ] Verify file sizes in Working directories match original Desktop file sizes
+- [ ] Confirm console shows "WORKING WITH COPIES — ORIGINALS PRESERVED"
+- [ ] Confirm console shows "✓ Using working copy (originals protected)" for each QB connection
+
+### 0.3 Safety Validation
+- [ ] Verify original Desktop files are **unchanged** (same size, same modified date)
+- [ ] Confirm no operations are logged against Desktop paths
+- [ ] Test `--refresh` flag: re-run with `--refresh` and verify files are re-copied
+- [ ] Test `--cleanup` flag: run with `--cleanup` and verify Working directories are removed
+
+### 0.4 Protection Test (Optional)
+- [ ] Temporarily change `appsettings.json` CompanyFilePath to a Desktop path
+- [ ] Run QB-TimeWarp — should exit with code 99 (SAFETY VIOLATION)
+- [ ] Restore correct configuration
+
+---
+
 ## Prerequisites
 
 - [ ] Windows VM is accessible via RDP (`aiagent.hostedremotedesktop.com:4420`)
 - [ ] QuickBooks 2023 is installed and running
 - [ ] QuickBooks 2021 is installed and running
-- [ ] QB 2023 company file (`Air-Masters-QB-2023.qbw`) is open in QB 2023
-- [ ] QB 2021 company file (`Josh Safty 2021.qbw`) is open in QB 2021
+- [ ] **Working copies created** in `C:\QB-TimeWarp\Working\` (automatic on first run)
 - [ ] **Both QuickBooks windows are VISIBLE on screen** (not minimized)
 - [ ] Application is built and deployed to `C:\QB-TimeWarp`
-- [ ] `appsettings.json` has correct paths (verify QB2023 InstallPath includes `QBWPremierAccountant.exe`)
+- [ ] `appsettings.json` has correct paths (verify SourceFiles and TargetFiles Desktop folders)
 
 ---
 

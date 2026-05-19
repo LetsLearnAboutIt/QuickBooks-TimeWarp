@@ -21,8 +21,53 @@ A production-ready C# console application that migrates all data from a QuickBoo
 - **Comprehensive Validation** — Field-by-field comparison, entity count verification, financial totals reconciliation, reactivation verification, class tracking validation, and accounting model validation
 - **Pre-Import Validation** — Catches journal imbalances and financial integrity issues before importing to QB 2021
 - **Error Recovery** — Skips problematic records and continues; logs detailed error reasons for every failure
+- **🛡️ Original File Protection** — Automatically creates working copies of QB company files from Desktop originals; all operations use copies in `C:\QB-TimeWarp\Working\`; multiple safety layers prevent ANY modification to original files; `--refresh` and `--cleanup` commands for working copy management
 - **Rich Console Output** — Step-by-step progress indicators, ASCII art banner, per-entity status breakdown
 - **Structured Logging** — Serilog-based logging to both console and timestamped log files with reactivation summaries, class tracking reports, and journal validation results
+
+---
+
+## 🛡️ Working Copy System (Original File Protection)
+
+QB-TimeWarp **NEVER touches original QuickBooks files**. Instead, it automatically copies them to dedicated Working directories before any operations begin.
+
+### Folder Structure
+
+```
+Desktop (ORIGINALS — READ-ONLY, never modified):
+├── Joshua's Gold Coast\    ← QB 2023 source (30MB test file)
+├── Blank Template\         ← QB 2021 target
+└── Air Masters\            ← QB 2023 production (360MB)
+
+C:\QB-TimeWarp\ (Application workspace):
+├── Working\
+│   ├── Source\             ← COPY of source .qbw (all exports read from here)
+│   └── Target\             ← COPY of target .qbw (all imports write to here)
+├── ExportedData\
+├── Schemas\
+├── Logs\
+└── Validation\
+```
+
+### Safety Layers
+1. **WorkingDirectoryManager** — Copies files and verifies integrity (file size match)
+2. **Config Override** — `CompanyFilePath` values automatically point to Working copies
+3. **QBConnectionManager** — Blocks connections to protected Desktop folders
+4. **Path Validation** — Desktop paths rejected even if manually configured
+
+### Working Copy Commands
+```powershell
+# Normal run (auto-creates working copies if needed)
+QB-TimeWarp.exe
+
+# Force re-copy originals to Working folders
+QB-TimeWarp.exe --refresh
+
+# Delete Working folders (originals untouched)
+QB-TimeWarp.exe --cleanup
+```
+
+See [`SAFETY_FEATURES.md`](SAFETY_FEATURES.md) for complete documentation.
 
 ---
 

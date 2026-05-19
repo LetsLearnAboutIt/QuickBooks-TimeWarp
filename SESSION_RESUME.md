@@ -4,6 +4,29 @@
 
 ---
 
+## 🛡️ WORKING COPY SYSTEM — ORIGINALS ARE NEVER TOUCHED
+
+QB-TimeWarp automatically creates working copies before any operations:
+
+```
+Desktop (ORIGINALS — READ-ONLY, NEVER MODIFIED):
+├── Joshua's Gold Coast\    ← QB 2023 source (30MB test file)
+├── Blank Template\         ← QB 2021 target
+└── Air Masters\            ← QB 2023 production (360MB — DO NOT USE)
+
+C:\QB-TimeWarp\Working\ (WORKING COPIES — all operations happen here):
+├── Source\                 ← Copy of Joshua's Gold Coast .qbw
+└── Target\                 ← Copy of Blank Template .qbw
+```
+
+**Commands:**
+- `--refresh` — Force re-copy from originals to Working folders
+- `--cleanup` — Delete Working folders (originals untouched)
+
+See `SAFETY_FEATURES.md` for full details on multi-layer protection.
+
+---
+
 ## ⚠️ CRITICAL OPERATIONAL DETAILS — READ FIRST ⚠️
 
 ### QuickBooks Company File Passwords

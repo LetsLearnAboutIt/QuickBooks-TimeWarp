@@ -34,6 +34,7 @@ namespace QB_TimeWarp
     class Program
     {
         private static AppConfiguration _config = null!;
+        private static WorkingDirectoryManager? _workingDirManager;
 
         static int Main(string[] args)
         {
@@ -49,11 +50,37 @@ namespace QB_TimeWarp
                 InitializeLogging(_config.Logging, _config.Paths.LogDirectory);
 
                 Log.Information("QB-TimeWarp starting...");
-                Log.Information("Source: {Source}", _config.QuickBooks.QB2023.CompanyFilePath);
-                Log.Information("Target: {Target}", _config.QuickBooks.QB2021.CompanyFilePath);
 
                 // Parse command-line arguments for mode selection
                 var mode = ParseMode(args);
+                bool forceRefresh = args.Any(a => a.Equals("--refresh", StringComparison.OrdinalIgnoreCase));
+
+                // Handle --cleanup command
+                if (args.Any(a => a.Equals("--cleanup", StringComparison.OrdinalIgnoreCase)))
+                {
+                    return RunCleanup();
+                }
+
+                // ─── CRITICAL: Initialize Working Copies BEFORE any QB operations ───
+                if (_config.WorkingDirectories.AutoCreateWorkingCopies &&
+                    !string.IsNullOrEmpty(_config.SourceFiles.DesktopFolder) &&
+                    !string.IsNullOrEmpty(_config.TargetFiles.DesktopFolder))
+                {
+                    InitializeWorkingCopies(forceRefresh);
+                }
+                else
+                {
+                    Log.Information("Working copy auto-creation disabled or source/target folders not configured.");
+                    Log.Information("Using configured CompanyFilePath values directly.");
+                    ValidateCompanyFilePathsAreNotDesktopOriginals();
+                }
+
+                Log.Information("╔══════════════════════════════════════════════════════════════╗");
+                Log.Information("║  WORKING WITH COPIES — ORIGINALS PRESERVED                  ║");
+                Log.Information("╠══════════════════════════════════════════════════════════════╣");
+                Log.Information("║  Source (QB 2023): {Source}", _config.QuickBooks.QB2023.CompanyFilePath);
+                Log.Information("║  Target (QB 2021): {Target}", _config.QuickBooks.QB2021.CompanyFilePath);
+                Log.Information("╚══════════════════════════════════════════════════════════════╝");
 
                 // Execute the selected mode
                 var exitCode = mode switch
@@ -69,6 +96,21 @@ namespace QB_TimeWarp
                 Log.Information("QB-TimeWarp finished with exit code: {ExitCode}", exitCode);
                 return exitCode;
             }
+            catch (OriginalFileProtectionException ex)
+            {
+                Log.Fatal("🛑 SAFETY VIOLATION: {Message}", ex.Message);
+                ConsoleBanner.ShowError("SAFETY VIOLATION — OPERATION HALTED");
+                ConsoleBanner.ShowError(ex.Message);
+                ConsoleBanner.ShowError("Original files are PROTECTED. Check your configuration.");
+                return 99; // Special exit code for safety violations
+            }
+            catch (WorkingCopyException ex)
+            {
+                Log.Fatal("Working copy error: {Message}", ex.Message);
+                ConsoleBanner.ShowError($"Working copy error: {ex.Message}");
+                ConsoleBanner.ShowError("Cannot proceed without valid working copies.");
+                return 2;
+            }
             catch (Exception ex)
             {
                 Log.Fatal(ex, "Unhandled exception in QB-TimeWarp: {Message}", ex.Message);
@@ -80,6 +122,81 @@ namespace QB_TimeWarp
             {
                 Log.CloseAndFlush();
             }
+        }
+
+        /// <summary>
+        /// Initializes working copies of QB company files from Desktop originals.
+        /// Updates _config.QuickBooks paths to point to working copies.
+        /// This MUST run before any QuickBooks operations.
+        /// </summary>
+        private static void InitializeWorkingCopies(bool forceRefresh)
+        {
+            ConsoleBanner.ShowStep(0, 0, "Initialize Working Copies (SAFETY FIRST)");
+
+            _workingDirManager = new WorkingDirectoryManager(
+                _config.SourceFiles,
+                _config.TargetFiles,
+                _config.WorkingDirectories);
+
+            bool success = _workingDirManager.InitializeWorkingCopies(forceRefresh);
+
+            if (!success)
+                throw new WorkingCopyException("Working copy initialization returned false.");
+
+            // CRITICAL: Update QB config to point to WORKING copies, not originals
+            _config.QuickBooks.QB2023.CompanyFilePath = _workingDirManager.WorkingSourceFilePath!;
+            _config.QuickBooks.QB2021.CompanyFilePath = _workingDirManager.WorkingTargetFilePath!;
+
+            Log.Information("QB 2023 CompanyFilePath updated to working copy: {Path}",
+                _config.QuickBooks.QB2023.CompanyFilePath);
+            Log.Information("QB 2021 CompanyFilePath updated to working copy: {Path}",
+                _config.QuickBooks.QB2021.CompanyFilePath);
+
+            // Show working copy summary
+            var summary = _workingDirManager.GetWorkingSummary();
+            ConsoleBanner.ShowSummary("WORKING COPY STATUS", summary);
+        }
+
+        /// <summary>
+        /// Safety check: If working copies are not being auto-created,
+        /// ensure the configured paths are NOT pointing to Desktop originals.
+        /// </summary>
+        private static void ValidateCompanyFilePathsAreNotDesktopOriginals()
+        {
+            var sourcePath = _config.QuickBooks.QB2023.CompanyFilePath.ToUpperInvariant();
+            var targetPath = _config.QuickBooks.QB2021.CompanyFilePath.ToUpperInvariant();
+
+            if (sourcePath.Contains("\\DESKTOP\\") && !sourcePath.Contains("\\WORKING\\"))
+            {
+                throw new OriginalFileProtectionException(
+                    $"QB 2023 CompanyFilePath points to a Desktop folder: {_config.QuickBooks.QB2023.CompanyFilePath}. " +
+                    "Enable AutoCreateWorkingCopies or change the path to a Working directory.");
+            }
+
+            if (targetPath.Contains("\\DESKTOP\\") && !targetPath.Contains("\\WORKING\\"))
+            {
+                throw new OriginalFileProtectionException(
+                    $"QB 2021 CompanyFilePath points to a Desktop folder: {_config.QuickBooks.QB2021.CompanyFilePath}. " +
+                    "Enable AutoCreateWorkingCopies or change the path to a Working directory.");
+            }
+        }
+
+        /// <summary>
+        /// Handles the --cleanup command to remove working directories.
+        /// </summary>
+        private static int RunCleanup()
+        {
+            Log.Information("Running cleanup of working directories...");
+            ConsoleBanner.ShowStep(1, 1, "Cleanup Working Directories");
+
+            var manager = new WorkingDirectoryManager(
+                _config.SourceFiles,
+                _config.TargetFiles,
+                _config.WorkingDirectories);
+
+            manager.CleanupWorkingDirectories();
+            ConsoleBanner.ShowSuccess("Working directories cleaned up. Originals remain untouched.");
+            return 0;
         }
 
         /// <summary>
@@ -502,7 +619,14 @@ namespace QB_TimeWarp
         {
             if (args.Length == 0) return RunMode.Full;
 
-            return args[0].ToLowerInvariant() switch
+            // Find the first mode argument (skip --refresh, --cleanup which are handled separately)
+            var modeArg = args.FirstOrDefault(a =>
+                !a.Equals("--refresh", StringComparison.OrdinalIgnoreCase) &&
+                !a.Equals("--cleanup", StringComparison.OrdinalIgnoreCase));
+
+            if (modeArg == null) return RunMode.Full;
+
+            return modeArg.ToLowerInvariant() switch
             {
                 "--export" or "-e" => RunMode.ExportOnly,
                 "--import" or "-i" => RunMode.ImportOnly,
@@ -516,7 +640,7 @@ namespace QB_TimeWarp
         private static RunMode ShowHelp()
         {
             Console.WriteLine(@"
-  Usage: QB-TimeWarp [mode]
+  Usage: QB-TimeWarp [mode] [options]
 
   Modes:
     (no args)     Full migration (export → transform → import → validate)
@@ -526,6 +650,26 @@ namespace QB_TimeWarp
     --schema, -s  Extract QB 2021 schema only
     --help, -h    Show this help message
 
+  Working Copy Options:
+    --refresh     Force re-copy originals to Working directories (deletes existing copies)
+    --cleanup     Remove all Working directories and exit (originals untouched)
+
+  Safety Features:
+    - Original Desktop files are NEVER modified
+    - Working copies are created automatically in C:\QB-TimeWarp\Working\
+    - All operations use working copies only
+    - Multiple validation layers prevent accidental original file access
+
+  Folder Structure:
+    C:\QB-TimeWarp\
+    ├── Working\
+    │   ├── Source\    ← QB 2023 working copy (from Joshua's Gold Coast)
+    │   └── Target\    ← QB 2021 working copy (from Blank Template)
+    ├── ExportedData\
+    ├── Schemas\
+    ├── Logs\
+    └── Validation\
+
   Configuration:
     Edit appsettings.json for file paths and options.
     Edit Configuration/FieldMappings.json for field transformation rules.
@@ -533,7 +677,7 @@ namespace QB_TimeWarp
   Prerequisites:
     - QuickBooks Desktop 2023 and 2021 installed
     - QuickBooks SDK installed and registered
-    - Company files accessible
+    - Company files accessible on Desktop
     - Application authorized in both QB instances
 ");
             Environment.Exit(0);

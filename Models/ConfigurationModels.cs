@@ -12,6 +12,78 @@ namespace QB_TimeWarp.Models
         public ValidationConfig Validation { get; set; } = new();
         public LoggingConfig Logging { get; set; } = new();
         public TransformationRulesConfig TransformationRules { get; set; } = new();
+        public SourceFilesConfig SourceFiles { get; set; } = new();
+        public TargetFilesConfig TargetFiles { get; set; } = new();
+        public WorkingDirectoriesConfig WorkingDirectories { get; set; } = new();
+    }
+
+    /// <summary>
+    /// Configuration for the original source QB company file location (on Desktop).
+    /// These files are READ-ONLY — they are copied to working directories before use.
+    /// </summary>
+    public class SourceFilesConfig
+    {
+        /// <summary>
+        /// Path to the Desktop folder containing the source QB 2023 company file.
+        /// Example: "C:\Users\AIAgent\Desktop\Joshua's Gold Coast"
+        /// </summary>
+        public string DesktopFolder { get; set; } = string.Empty;
+
+        /// <summary>
+        /// Glob pattern to match the company file within the folder.
+        /// Default: "*.qbw"
+        /// </summary>
+        public string CompanyFileName { get; set; } = "*.qbw";
+    }
+
+    /// <summary>
+    /// Configuration for the original target QB company file location (on Desktop).
+    /// These files are READ-ONLY — they are copied to working directories before use.
+    /// </summary>
+    public class TargetFilesConfig
+    {
+        /// <summary>
+        /// Path to the Desktop folder containing the target QB 2021 company file.
+        /// Example: "C:\Users\AIAgent\Desktop\Blank Template"
+        /// </summary>
+        public string DesktopFolder { get; set; } = string.Empty;
+
+        /// <summary>
+        /// Glob pattern to match the company file within the folder.
+        /// Default: "*.qbw"
+        /// </summary>
+        public string CompanyFileName { get; set; } = "*.qbw";
+    }
+
+    /// <summary>
+    /// Configuration for working directories where copies of QB files are stored.
+    /// ALL migration operations use these paths — originals are NEVER touched.
+    /// </summary>
+    public class WorkingDirectoriesConfig
+    {
+        /// <summary>
+        /// Path for the working source QB file copy.
+        /// Default: "C:\QB-TimeWarp\Working\Source"
+        /// </summary>
+        public string SourcePath { get; set; } = @"C:\QB-TimeWarp\Working\Source";
+
+        /// <summary>
+        /// Path for the working target QB file copy.
+        /// Default: "C:\QB-TimeWarp\Working\Target"
+        /// </summary>
+        public string TargetPath { get; set; } = @"C:\QB-TimeWarp\Working\Target";
+
+        /// <summary>
+        /// When true, automatically creates working copies from Desktop originals
+        /// at startup before any QB operations begin.
+        /// </summary>
+        public bool AutoCreateWorkingCopies { get; set; } = true;
+
+        /// <summary>
+        /// Safety flag — when true, ensures originals are never modified.
+        /// Should ALWAYS be true in production use.
+        /// </summary>
+        public bool PreserveOriginals { get; set; } = true;
     }
 
     /// <summary>

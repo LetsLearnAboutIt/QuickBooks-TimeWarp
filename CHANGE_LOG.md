@@ -160,3 +160,30 @@
 - `ARCHITECTURE.md` — System architecture, service layers, data flow
 - `TESTING_CHECKLIST.md` — Comprehensive testing steps and expected results
 - `README_FOR_NEW_SESSIONS.md` — Quick start guide for resuming work
+
+
+### Change 10: Working Copy System — Original File Protection
+
+**What**: Added automatic working copy creation system that copies original QB company files from Desktop to dedicated Working directories before any operations begin. Multiple safety layers prevent any modification to original files.
+
+**Why**: Original QuickBooks company files (Joshua's Gold Coast, Blank Template, Air Masters) must NEVER be directly modified. The working copy system ensures all operations use disposable copies while originals remain pristine on the Desktop.
+
+**Files Modified**:
+- `Services/WorkingDirectoryManager.cs` — NEW: Manages working directory creation, file copying, verification, and cleanup
+- `Models/ConfigurationModels.cs` — Added `SourceFilesConfig`, `TargetFilesConfig`, `WorkingDirectoriesConfig` classes
+- `appsettings.json` — Added `SourceFiles`, `TargetFiles`, `WorkingDirectories` sections; updated `CompanyFilePath` to Working paths
+- `Program.cs` — Added working copy initialization before QB operations; added `--cleanup` and `--refresh` commands; added safety exception handling
+- `Services/QBConnectionManager.cs` — Added `ValidateCompanyFilePath()` with protected Desktop folder patterns; blocks connections to originals
+- `SAFETY_FEATURES.md` — NEW: Comprehensive documentation of all safety layers
+- `SESSION_RESUME.md` — Added working copy folder structure section
+- `TESTING_CHECKLIST.md` — Added Stage 0: Working Copy Verification
+- `README.md` — Added Working Copy System section and safety feature description
+- `CHANGE_LOG.md` — This entry
+
+**Configuration**: Ensure `SourceFiles.DesktopFolder` and `TargetFiles.DesktopFolder` point to the correct Desktop folders. `WorkingDirectories.AutoCreateWorkingCopies` should be `true`.
+
+**New CLI Options**: `--refresh` (force re-copy), `--cleanup` (delete working dirs)
+
+**New Exit Code**: 99 = Safety violation (attempted operation on original file)
+
+---
