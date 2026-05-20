@@ -162,6 +162,7 @@ namespace QB_TimeWarp.Services
             "TxnLineID",           // Read-only line identifier
             "SeqNum",              // Read-only sequence number
             "LinkedTxn",           // Read-only linked transaction info
+            "TxnType",            // Response-only field on DepositLineRet — not valid in DepositLineAdd
         };
 
         // ═══════════════════════════════════════════════════════════════════

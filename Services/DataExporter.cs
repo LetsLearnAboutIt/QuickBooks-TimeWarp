@@ -101,7 +101,12 @@ namespace QB_TimeWarp.Services
             ["CheckRet"]         = new[] { "ExpenseLineRet", "ItemLineRet", "ItemGroupLineRet" },
             ["VendorCreditRet"]  = new[] { "ExpenseLineRet", "ItemLineRet", "ItemGroupLineRet" },
             ["DepositRet"]       = new[] { "DepositLineRet" },
-            ["JournalEntryRet"]  = new[] { "JournalDebitLineRet", "JournalCreditLineRet" },
+            // FIX #12: JournalEntryRet uses BOTH naming conventions depending on QB version:
+            //   - "JournalDebitLineRet" / "JournalCreditLineRet" (standard *Ret suffix)
+            //   - "JournalDebitLine" / "JournalCreditLine" (no suffix — used by QB 2023)
+            // We must check for BOTH to ensure line items are captured regardless of QB version.
+            ["JournalEntryRet"]  = new[] { "JournalDebitLineRet", "JournalCreditLineRet",
+                                           "JournalDebitLine", "JournalCreditLine" },
         };
 
         public DataExporter(QBConnectionManager connection, ExportConfig exportConfig,
