@@ -2,12 +2,52 @@
 
 ---
 
-## 🔥 READ FIRST: `/home/ubuntu/memory.md`
+## ⚡ STEP 0: START MEMORY SERVICE (EVERY NEW SESSION!)
 
-> **Before doing ANYTHING else**, read `/home/ubuntu/memory.md`.
-> That is the ONE AND ONLY memory file (not in this project dir).
-> It contains all passwords, connection details, paths, current status,
-> and the complete quick-start checklist for immediate session resumption.
+> **THIS MUST RUN BEFORE ANYTHING ELSE — NO EXCEPTIONS.**
+> The MCP Memory Service holds all project knowledge, protocols, credentials,
+> and mistake notes. Without it, you WILL forget critical rules.
+
+### Start the Server:
+```bash
+bash /home/ubuntu/mcp_memory_data/restart_memory_service.sh
+```
+
+### Reconfigure the MCP Connection:
+The preview URL changes every session. After starting the server:
+```bash
+# Get the new preview URL
+echo $PREVIEW_URL
+# The memory service runs on port 8765
+# So the MCP URL will be: <PREVIEW_URL_with_-8765_in_subdomain>/mcp
+# Example: https://abc123-8765.na103.preview.abacusai.app/mcp
+```
+Then use `perform_subtask_mcp_server_configuration` to reconnect with:
+- server_name: `mcp-memory-service`  
+- server_url: `<the new URL>/mcp`
+
+### Verify It Works:
+Use `memory_search` tool to query: "QB-TimeWarp protocols"
+— You should get back notepad protocol, PowerShell enter, RDP resolution, etc.
+
+### What's Stored in Memory:
+- **Protocols**: Notepad = STOP, PowerShell needs {ENTER}, RDP = dynamic resolution
+- **Credentials**: RDP, QB passwords, GitHub
+- **Project State**: 7 fixes, commits, migration status
+- **Workflow Rules**: One QB at a time, working copies only, GitHub deployment
+- **Mistake Notes**: Past errors to avoid repeating
+
+### Persistence Details:
+- ✅ SQLite database PERSISTS on disk: `~/.local/share/mcp-memory/sqlite_vec.db`
+- ❌ Server process does NOT persist — must restart each session
+- ❌ MCP URL does NOT persist — must reconfigure each session
+
+---
+
+## 🔥 STEP 1: READ `/home/ubuntu/memory.md`
+
+> Read `/home/ubuntu/memory.md` for passwords, connection details, paths,
+> current status, and the complete quick-start checklist.
 
 ---
 
