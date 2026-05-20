@@ -27,6 +27,7 @@ namespace QB_TimeWarp.Services
         private int _ccBalanceSignsFixed;
         private int _hierarchicalNamesParsed;
         private int _isActiveOverrides;
+        private int _nameToMemoPreserved;
 
         // Transformation report tracking
         private readonly TransformationReport _transformationReport = new();
@@ -50,6 +51,17 @@ namespace QB_TimeWarp.Services
         {
             "Invoices", "Bills", "SalesReceipts", "PurchaseOrders", "JournalEntries",
             "CreditMemos", "Estimates", "Checks", "VendorCredits"
+        };
+
+        /// <summary>
+        /// Transaction types that have a read-only "Name" field AND a writable "Memo" field.
+        /// Name data from these transactions is preserved by prepending it to the Memo field
+        /// during transformation, preventing data loss from Fix #8's read-only field exclusion.
+        /// Note: Transfers do NOT have a Memo field and are excluded (already at 100% success).
+        /// </summary>
+        private static readonly HashSet<string> NameToMemoTransactionTypes = new(StringComparer.OrdinalIgnoreCase)
+        {
+            "Checks", "Deposits", "SalesReceipts", "JournalEntries"
         };
 
         public DataTransformer(string mappingsFilePath)
@@ -346,6 +358,12 @@ namespace QB_TimeWarp.Services
             // Ensure account numbers are preserved (accountant flagged missing)
             PreserveAccountNumbers(source, transformed, entityType);
 
+            // ── Name → Memo Preservation ──────────────────────────────────
+            // Transactions like Check, Deposit, SalesReceipt, JournalEntry have a
+            // read-only "Name" field that Fix #8 excludes to avoid QBXML parse errors.
+            // To prevent data loss, we prepend the Name value to the writable Memo field.
+            PreserveNameToMemo(source, transformed, entityType);
+
             // Ensure class assignments are preserved in transactions
             if (_transformationRules.PreserveClassTracking && ClassTrackingHeaderTypes.Contains(entityType))
             {
@@ -556,6 +574,69 @@ namespace QB_TimeWarp.Services
                 Log.Debug("  Restored AccountNumber '{AcctNum}' for account '{Name}'",
                     sourceAcctNum, source.Name);
             }
+        }
+
+        /// <summary>
+        /// Preserves transaction "Name" field data by mapping it into the "Memo" field.
+        /// 
+        /// Background: Fix #8 excludes the read-only "Name" field from QBXML Add requests
+        /// to avoid parse errors (Name is system-assigned in QB transactions). However, the
+        /// exported Name often contains meaningful data (e.g., "ADJ - MH", vendor names, 
+        /// reference codes) that would otherwise be lost.
+        /// 
+        /// Strategy: Prepend the Name value to the Memo field using the format:
+        ///   [Imported Name: {name}] {existing_memo}
+        /// This preserves the data in a searchable, writable field without breaking QBXML.
+        /// 
+        /// Applies to: Checks, Deposits, SalesReceipts, JournalEntries
+        /// Skips: Transfers (no Memo field — already at 100% success rate)
+        /// </summary>
+        private void PreserveNameToMemo(QBEntity source, QBEntity transformed, string entityType)
+        {
+            // Only applies to transaction types that have both Name and Memo fields
+            if (!NameToMemoTransactionTypes.Contains(entityType))
+                return;
+
+            // Get the Name value from the SOURCE entity (before any transformation removed it)
+            var nameValue = source.Fields["Name"]?.ToString()
+                ?? source.Name;
+
+            // Skip if there's no Name data to preserve
+            if (string.IsNullOrWhiteSpace(nameValue))
+                return;
+
+            // Build the prefix tag
+            var nameTag = $"[Imported Name: {nameValue.Trim()}]";
+
+            // Get the existing Memo from the TRANSFORMED entity (preserve any existing memo data)
+            var existingMemo = transformed.Fields["Memo"]?.ToString()?.Trim();
+
+            // Combine: prepend Name tag to existing Memo, or use Name tag alone
+            string newMemo;
+            if (!string.IsNullOrWhiteSpace(existingMemo))
+            {
+                newMemo = $"{nameTag} {existingMemo}";
+            }
+            else
+            {
+                newMemo = nameTag;
+            }
+
+            // QB 2021 Memo field max length is 4095 characters — enforce limit
+            const int memoMaxLength = 4095;
+            if (newMemo.Length > memoMaxLength)
+            {
+                newMemo = newMemo.Substring(0, memoMaxLength);
+                Log.Debug("  Name→Memo: Truncated combined memo to {Max} chars for {EntityType}",
+                    memoMaxLength, entityType);
+            }
+
+            // Apply the updated Memo to the transformed entity
+            transformed.Fields["Memo"] = newMemo;
+
+            _nameToMemoPreserved++;
+            Log.Debug("  Name→Memo: Preserved '{Name}' into Memo for {EntityType} (TxnID={TxnID})",
+                nameValue, entityType, source.TxnID ?? "N/A");
         }
 
         /// <summary>
@@ -1240,7 +1321,7 @@ namespace QB_TimeWarp.Services
         {
             var totalAdjustments = _sdk16FieldsRemoved + _fieldsLengthAdjusted +
                 _emptyNameFieldsFixed + _payrollFieldsSimplified + _ccBalanceSignsFixed +
-                _hierarchicalNamesParsed + _isActiveOverrides;
+                _hierarchicalNamesParsed + _isActiveOverrides + _nameToMemoPreserved;
 
             if (totalAdjustments == 0) return;
 
@@ -1262,6 +1343,8 @@ namespace QB_TimeWarp.Services
                 Log.Information("    Payroll fields simplified:         {Count}", _payrollFieldsSimplified);
             if (_ccBalanceSignsFixed > 0)
                 Log.Information("    CC balance signs corrected:        {Count}", _ccBalanceSignsFixed);
+            if (_nameToMemoPreserved > 0)
+                Log.Information("    Name→Memo preserved:               {Count} (transaction names saved to Memo)", _nameToMemoPreserved);
 
             Log.Information("    ────────────────────────────────");
             Log.Information("    TOTAL compatibility adjustments: {Total}", totalAdjustments);
