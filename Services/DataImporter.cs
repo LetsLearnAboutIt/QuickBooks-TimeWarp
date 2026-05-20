@@ -143,6 +143,19 @@ namespace QB_TimeWarp.Services
         };
 
         // ═══════════════════════════════════════════════════════════════════
+        // FIX #12: Fields to exclude from line items in *Add requests
+        // ═══════════════════════════════════════════════════════════════════
+        // These fields appear in *LineRet responses from the export but are
+        // NOT valid inside *LineAdd requests. Including them causes
+        // 0x80040400 XML parse errors in QB 2021.
+        private static readonly HashSet<string> LineItemExcludedFields = new(StringComparer.OrdinalIgnoreCase)
+        {
+            "TxnLineID",           // Read-only line identifier
+            "SeqNum",              // Read-only sequence number
+            "LinkedTxn",           // Read-only linked transaction info
+        };
+
+        // ═══════════════════════════════════════════════════════════════════
         // FIX #8: Per-transaction-type header-field exclusions
         // ═══════════════════════════════════════════════════════════════════
         //
@@ -2441,24 +2454,61 @@ namespace QB_TimeWarp.Services
                     if (prop.Name.StartsWith("_")) continue; // Skip metadata
                     if (ExcludedFields.Contains(prop.Name)) continue;
 
+                    // ══════════════════════════════════════════════════════════
+                    // FIX #12: Skip response-only fields in line items
+                    // ══════════════════════════════════════════════════════════
+                    // Line items from the export contain fields that are only
+                    // valid in *Ret responses, not in *Add requests. Including
+                    // them causes 0x80040400 XML parse errors.
+                    if (LineItemExcludedFields.Contains(prop.Name))
+                    {
+                        _incompatibleFieldSkips++;
+                        continue;
+                    }
+
                     if (prop.Value is JObject nested)
                     {
-                        sb.AppendLine($"      <{prop.Name}>");
-                        foreach (var childProp in nested.Properties())
+                        // ══════════════════════════════════════════════════════
+                        // FIX #12: For reference objects (AccountRef, ItemRef,
+                        // ClassRef, etc.) in line items, use ONLY FullName.
+                        // ListIDs from QB 2023 are invalid in QB 2021 and cause
+                        // XML parse errors or Error 3120 "object not found".
+                        // ══════════════════════════════════════════════════════
+                        bool isRef = prop.Name.EndsWith("Ref");
+                        if (isRef && nested["FullName"] != null)
                         {
-                            if (childProp.Value.Type != JTokenType.Null &&
-                                !string.IsNullOrEmpty(childProp.Value.ToString()))
-                            {
-                                // FIX #7: Strip timezone offsets from nested date/time fields in line items
-                                var nestedValue = childProp.Value.ToString();
-                                if (IsDateTimeField(childProp.Name) && ContainsTimezoneOffset(nestedValue))
-                                {
-                                    nestedValue = StripTimezoneOffset(nestedValue);
-                                }
-                                sb.AppendLine($"        <{childProp.Name}>{EscapeXml(nestedValue)}</{childProp.Name}>");
-                            }
+                            sb.AppendLine($"      <{prop.Name}>");
+                            sb.AppendLine($"        <FullName>{EscapeXml(nested["FullName"]!.ToString())}</FullName>");
+                            sb.AppendLine($"      </{prop.Name}>");
                         }
-                        sb.AppendLine($"      </{prop.Name}>");
+                        else if (isRef && nested["ListID"] != null)
+                        {
+                            // Fallback: if only ListID exists (no FullName), skip the ref entirely
+                            // because the QB 2023 ListID won't resolve in QB 2021
+                            Log.Warning("  FIX #12: Skipping {RefField} in line item — has ListID but no FullName (QB 2023 ListID won't resolve in QB 2021)",
+                                prop.Name);
+                            _incompatibleFieldSkips++;
+                        }
+                        else
+                        {
+                            // Non-reference nested object — emit all children
+                            sb.AppendLine($"      <{prop.Name}>");
+                            foreach (var childProp in nested.Properties())
+                            {
+                                if (childProp.Value.Type != JTokenType.Null &&
+                                    !string.IsNullOrEmpty(childProp.Value.ToString()))
+                                {
+                                    // FIX #7: Strip timezone offsets from nested date/time fields in line items
+                                    var nestedValue = childProp.Value.ToString();
+                                    if (IsDateTimeField(childProp.Name) && ContainsTimezoneOffset(nestedValue))
+                                    {
+                                        nestedValue = StripTimezoneOffset(nestedValue);
+                                    }
+                                    sb.AppendLine($"        <{childProp.Name}>{EscapeXml(nestedValue)}</{childProp.Name}>");
+                                }
+                            }
+                            sb.AppendLine($"      </{prop.Name}>");
+                        }
                     }
                     else if (prop.Value.Type != JTokenType.Null && !string.IsNullOrEmpty(prop.Value.ToString()))
                     {
