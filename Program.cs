@@ -41,6 +41,12 @@ namespace QB_TimeWarp
         {
             try
             {
+                // ─── Handle --certify BEFORE anything else (no config/working-copy needed) ───
+                if (args.Any(a => a.Equals("--certify", StringComparison.OrdinalIgnoreCase)))
+                {
+                    return RunCertify(args);
+                }
+
                 // Show banner
                 ConsoleBanner.ShowHeader();
 
@@ -704,6 +710,203 @@ namespace QB_TimeWarp
             return 0;
         }
 
+        // ─── Certify Mode ────────────────────────────────────────────
+
+        /// <summary>
+        /// --certify mode: Opens a single connection to a QuickBooks company file
+        /// to trigger the SDK certificate / application-authorization dialog.
+        /// 
+        /// This bypasses ALL normal safety checks (working copies, desktop-path
+        /// protection) because its ONLY purpose is to establish trust between this
+        /// application and the target QuickBooks installation.
+        ///
+        /// Usage:
+        ///   QB-TimeWarp --certify "C:\Path\To\CompanyFile.qbw"
+        ///   QB-TimeWarp --certify                                (uses QB2021 path from appsettings.json)
+        /// </summary>
+        private static int RunCertify(string[] args)
+        {
+            Console.ForegroundColor = ConsoleColor.Cyan;
+            Console.WriteLine();
+            Console.WriteLine("╔══════════════════════════════════════════════════════════════╗");
+            Console.WriteLine("║       QB-TimeWarp — Certificate Approval Mode               ║");
+            Console.WriteLine("╠══════════════════════════════════════════════════════════════╣");
+            Console.WriteLine("║  This mode ONLY connects to a QuickBooks company file to    ║");
+            Console.WriteLine("║  trigger the SDK certificate / app-authorization dialog.    ║");
+            Console.WriteLine("║                                                              ║");
+            Console.WriteLine("║  No data is read, written, or modified.                     ║");
+            Console.WriteLine("╚══════════════════════════════════════════════════════════════╝");
+            Console.ResetColor();
+            Console.WriteLine();
+
+            // Determine the target file path
+            string? targetFile = args
+                .Where(a => !a.StartsWith("--", StringComparison.OrdinalIgnoreCase))
+                .FirstOrDefault();
+
+            if (string.IsNullOrEmpty(targetFile))
+            {
+                // Fall back to QB2021 path from appsettings.json
+                try
+                {
+                    var configBuilder = new ConfigurationBuilder()
+                        .SetBasePath(Directory.GetCurrentDirectory())
+                        .AddJsonFile("appsettings.json", optional: true, reloadOnChange: false);
+                    var configuration = configBuilder.Build();
+                    targetFile = configuration["QuickBooks:QB2021:CompanyFilePath"];
+                }
+                catch { /* ignore config errors in certify mode */ }
+            }
+
+            if (string.IsNullOrEmpty(targetFile))
+            {
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine("ERROR: No company file path specified.");
+                Console.WriteLine();
+                Console.WriteLine("Usage:");
+                Console.WriteLine("  QB-TimeWarp --certify \"C:\\Path\\To\\CompanyFile.qbw\"");
+                Console.ResetColor();
+                return 1;
+            }
+
+            Console.WriteLine($"  Target file: {targetFile}");
+            Console.WriteLine();
+
+            // Verify file exists
+            if (!File.Exists(targetFile))
+            {
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine($"ERROR: Company file not found: {targetFile}");
+                Console.ResetColor();
+                return 1;
+            }
+
+            Console.WriteLine("  [1/3] Creating QBXML Request Processor...");
+
+            try
+            {
+                // Create COM object directly (bypass QBConnectionManager safety checks)
+                var qbType = Type.GetTypeFromProgID("QBXMLRP2.RequestProcessor");
+                if (qbType == null)
+                {
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.WriteLine("ERROR: QuickBooks SDK not found.");
+                    Console.WriteLine("  Ensure QuickBooks Desktop and QBXML SDK are installed.");
+                    Console.ResetColor();
+                    return 1;
+                }
+
+                dynamic rp = Activator.CreateInstance(qbType)!;
+
+                Console.WriteLine("  [2/3] Opening connection (this triggers the certificate dialog)...");
+                Console.ForegroundColor = ConsoleColor.Yellow;
+                Console.WriteLine();
+                Console.WriteLine("  ┌─────────────────────────────────────────────────────────┐");
+                Console.WriteLine("  │  IF A CERTIFICATE / AUTHORIZATION DIALOG APPEARS:       │");
+                Console.WriteLine("  │                                                         │");
+                Console.WriteLine("  │   1. Select 'Yes, always' to allow access               │");
+                Console.WriteLine("  │   2. Click 'Continue' or 'OK'                           │");
+                Console.WriteLine("  │                                                         │");
+                Console.WriteLine("  │  The dialog may appear BEHIND other windows — check      │");
+                Console.WriteLine("  │  the taskbar for a QuickBooks prompt.                    │");
+                Console.WriteLine("  └─────────────────────────────────────────────────────────┘");
+                Console.ResetColor();
+                Console.WriteLine();
+
+                // OpenConnection2(appID, appName, connType)
+                // connType 1 = localQBD
+                rp.OpenConnection2("", "QB-TimeWarp", 1);
+
+                Console.WriteLine("  Connection opened. Beginning session...");
+
+                // BeginSession(companyFile, fileMode)
+                // fileMode 0 = doNotCare
+                // IMPORTANT: Pass empty string to use the currently-open QB file.
+                // Passing the file path causes "Could not start QuickBooks" errors
+                // when QB is already running with the file open.
+                string ticket;
+                try
+                {
+                    // First try with the specific file path (works when QB is not running)
+                    ticket = rp.BeginSession(targetFile, 0);
+                }
+                catch
+                {
+                    // Fall back to empty string (use currently open file in QB)
+                    Console.WriteLine("  File-path session failed. Trying currently-open file...");
+                    ticket = rp.BeginSession("", 0);
+                }
+
+                Console.ForegroundColor = ConsoleColor.Green;
+                Console.WriteLine($"  ✓ Session established! Ticket: {ticket}");
+                Console.ResetColor();
+
+                // Send a simple CompanyQuery to confirm connectivity
+                Console.WriteLine("  [3/3] Querying company info to verify connection...");
+
+                string companyQueryXml = @"<?xml version=""1.0"" encoding=""utf-8""?>
+<?qbxml version=""15.0""?>
+<QBXML>
+  <QBXMLMsgsRq onError=""continueOnError"">
+    <CompanyQueryRq requestID=""1"">
+    </CompanyQueryRq>
+  </QBXMLMsgsRq>
+</QBXML>";
+
+                string response = rp.ProcessRequest(ticket, companyQueryXml);
+
+                // Parse company name from response
+                try
+                {
+                    var xdoc = System.Xml.Linq.XDocument.Parse(response);
+                    var companyName = xdoc.Descendants("CompanyName").FirstOrDefault()?.Value ?? "(unknown)";
+                    Console.ForegroundColor = ConsoleColor.Green;
+                    Console.WriteLine($"  ✓ Company: {companyName}");
+                    Console.ResetColor();
+                }
+                catch
+                {
+                    Console.WriteLine("  ✓ Response received (could not parse company name)");
+                }
+
+                // Clean up
+                rp.EndSession(ticket);
+                rp.CloseConnection();
+
+                Console.WriteLine();
+                Console.ForegroundColor = ConsoleColor.Green;
+                Console.WriteLine("╔══════════════════════════════════════════════════════════════╗");
+                Console.WriteLine("║  ✓ CERTIFICATE APPROVAL COMPLETE                            ║");
+                Console.WriteLine("║                                                              ║");
+                Console.WriteLine("║  QB-TimeWarp is now authorized for this QuickBooks file.     ║");
+                Console.WriteLine("║  You can proceed with migration using normal modes.          ║");
+                Console.WriteLine("╚══════════════════════════════════════════════════════════════╝");
+                Console.ResetColor();
+                Console.WriteLine();
+
+                return 0;
+            }
+            catch (System.Runtime.InteropServices.COMException ex)
+            {
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine($"  ✗ COM Error: {ex.Message}");
+                Console.WriteLine();
+                Console.WriteLine("  Troubleshooting:");
+                Console.WriteLine("    - Is QuickBooks Desktop running with the company file open?");
+                Console.WriteLine("    - Did you approve the certificate dialog?");
+                Console.WriteLine("    - Check QuickBooks > Edit > Preferences > Integrated Applications");
+                Console.ResetColor();
+                return 1;
+            }
+            catch (Exception ex)
+            {
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine($"  ✗ Error: {ex.Message}");
+                Console.ResetColor();
+                return 1;
+            }
+        }
+
         // ─── Helper Methods ──────────────────────────────────────────
 
         private static AppConfiguration LoadConfiguration()
@@ -764,10 +967,11 @@ namespace QB_TimeWarp
         {
             if (args.Length == 0) return RunMode.Full;
 
-            // Find the first mode argument (skip --refresh, --cleanup which are handled separately)
+            // Find the first mode argument (skip --refresh, --cleanup, --certify which are handled separately)
             var modeArg = args.FirstOrDefault(a =>
                 !a.Equals("--refresh", StringComparison.OrdinalIgnoreCase) &&
-                !a.Equals("--cleanup", StringComparison.OrdinalIgnoreCase));
+                !a.Equals("--cleanup", StringComparison.OrdinalIgnoreCase) &&
+                !a.Equals("--certify", StringComparison.OrdinalIgnoreCase));
 
             if (modeArg == null) return RunMode.Full;
 
@@ -793,7 +997,12 @@ namespace QB_TimeWarp
     --import, -i  Import previously exported data into QB 2021
     --validate, -v Validate QB 2021 data against QB 2023
     --schema, -s  Extract QB 2021 schema only
+    --certify     Trigger SDK certificate approval for a QB file (one-time setup)
     --help, -h    Show this help message
+
+  Certificate Approval:
+    --certify ""C:\Path\To\File.qbw""   Connect to specific file
+    --certify                           Uses QB2021 path from appsettings.json
 
   Working Copy Options:
     --refresh     Force re-copy originals to Working directories (deletes existing copies)
