@@ -140,6 +140,15 @@ namespace QB_TimeWarp.Services
             "DeliveryInfo", "TaxLineRef", "ForceUOMChange", "LinkToTxnID",
             // Payroll fields not supported in simplified QB 2021 format
             "EmployeePayrollInfo", "ClearEarnings", "BillingRateRef",
+            // ══════════════════════════════════════════════════════════════
+            // FIX #12: Response-only fields that appear in *Ret but are
+            // NEVER valid in any *Add request. Including them causes
+            // 0x80040400 "error parsing XML text stream".
+            // ══════════════════════════════════════════════════════════════
+            "AddressBlock",          // Formatted address block — response-only
+            "IsPending",             // Not in any *Add schema
+            "LinkedTxn",             // Linked transaction info — response-only
+            "DataExtRet",            // Custom field data — response-only format
         };
 
         // ═══════════════════════════════════════════════════════════════════
