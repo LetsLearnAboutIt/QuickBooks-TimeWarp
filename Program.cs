@@ -62,17 +62,30 @@ namespace QB_TimeWarp
                     return RunCleanup();
                 }
 
-                // ─── CRITICAL: Clean up previous run artifacts BEFORE creating new working copies ───
+                // ─── CRITICAL: Working copy setup ───────────────────────────────────────
                 if (_config.WorkingDirectories.AutoCreateWorkingCopies &&
                     !string.IsNullOrEmpty(_config.SourceFiles.DesktopFolder) &&
                     !string.IsNullOrEmpty(_config.TargetFiles.DesktopFolder))
                 {
-                    // Clean up any orphaned files from previous runs
+                    // ── When --refresh is specified, kill ALL QuickBooks processes FIRST ──
+                    // Without this, QB holds file locks and the cleanup/copy fails silently,
+                    // leaving a dirty target file from the previous import run.
+                    if (forceRefresh)
+                    {
+                        Log.Information("╔══════════════════════════════════════════════════════════════╗");
+                        Log.Information("║  --refresh: Killing QuickBooks processes BEFORE cleanup     ║");
+                        Log.Information("╚══════════════════════════════════════════════════════════════╝");
+                        KillQuickBooksProcesses("--refresh flag requires clean file locks before Working directory cleanup");
+                    }
+
+                    // Clean up ExportedData from previous runs (always safe — no locks)
                     WorkingDirectoryManager.CleanupAllWorkingArtifacts(
                         _config.WorkingDirectories.SourcePath,
                         _config.WorkingDirectories.TargetPath,
                         _config.Paths.ExportDirectory);
                     
+                    // InitializeWorkingCopies handles the aggressive per-directory cleanup
+                    // when forceRefresh=true (via ForceCleanWorkingDirectory)
                     InitializeWorkingCopies(forceRefresh);
                 }
                 else
@@ -268,6 +281,9 @@ namespace QB_TimeWarp
             ConsoleBanner.ShowStep(2, totalSteps, "Export Data from QB 2023");
             Dictionary<string, ExportedEntitySet> exportedData;
 
+            // Track source accounting method (extracted while QB 2023 is open)
+            CompanyPreferences? sourcePreferences = null;
+
             using (var qb2023Conn = new QBConnectionManager(
                 _config.QuickBooks.QB2023, "QB2023-Export"))
             {
@@ -282,6 +298,32 @@ namespace QB_TimeWarp
 
                 exportedData = exporter.ExportAll();
                 ConsoleBanner.ShowSuccess($"Exported {exportedData.Values.Sum(e => e.TotalCount)} records across {exportedData.Count} entity types");
+
+                // ── Extract source accounting method NOW while QB 2023 is open ──
+                // (Previously this was attempted during import phase when QB 2021 was
+                // already open, causing "Could not start QuickBooks" errors.)
+                if (_config.TransformationRules.MatchAccountingModel)
+                {
+                    try
+                    {
+                        Log.Information("Extracting accounting preferences from QB 2023 source...");
+                        var tempImporter = new DataImporter(
+                            qb2023Conn, _config.Import,
+                            _config.QuickBooks.QB2023.SDKVersion,
+                            _config.TransformationRules);
+                        sourcePreferences = tempImporter.QueryCompanyPreferences();
+                        Log.Information("╔══════════════════════════════════════════════════════════════╗");
+                        Log.Information("║  SOURCE ACCOUNTING METHOD: {Method,-35} ║",
+                            sourcePreferences.AccountingMethod?.ToUpper() ?? "UNKNOWN");
+                        Log.Information("╚══════════════════════════════════════════════════════════════╝");
+                        ConsoleBanner.ShowSuccess($"Source accounting method: {sourcePreferences.AccountingMethod}");
+                    }
+                    catch (Exception ex)
+                    {
+                        Log.Warning(ex, "Could not extract source accounting preferences: {Message}", ex.Message);
+                        ConsoleBanner.ShowWarning($"Source accounting preferences extraction failed: {ex.Message}");
+                    }
+                }
             }
 
             // ─── Step 3: Transform Data ────────────────────────────────
@@ -385,39 +427,71 @@ namespace QB_TimeWarp
                     _config.QuickBooks.QB2021.SDKVersion,
                     _config.TransformationRules);
 
-                // Step 4a: Apply accounting preferences before import
+                // Step 4a: Apply and VERIFY accounting preferences before import
+                // Source preferences were already extracted during Step 2 (while QB 2023 was open)
                 if (_config.TransformationRules.MatchAccountingModel)
                 {
-                    ConsoleBanner.ShowStep(4, totalSteps, "Applying Accounting Preferences");
+                    ConsoleBanner.ShowStep(4, totalSteps, "Applying & Verifying Accounting Preferences");
+                    report = new MigrationReport { StartTime = overallStart };
+
                     try
                     {
-                        // Query source preferences
-                        using var qb2023PrefsConn = new QBConnectionManager(
-                            _config.QuickBooks.QB2023, "QB2023-Prefs");
-                        qb2023PrefsConn.Connect();
-                        var sourcePrefsImporter = new DataImporter(
-                            qb2023PrefsConn, _config.Import,
-                            _config.QuickBooks.QB2023.SDKVersion,
-                            _config.TransformationRules);
-                        var sourcePrefs = sourcePrefsImporter.QueryCompanyPreferences();
-                        report = new MigrationReport { StartTime = overallStart };
-                        report.SourcePreferences = sourcePrefs;
+                        if (sourcePreferences != null)
+                        {
+                            report.SourcePreferences = sourcePreferences;
 
-                        // Apply to target
-                        var applied = importer.ApplyAccountingPreferences(sourcePrefs);
-                        if (applied)
-                            ConsoleBanner.ShowSuccess($"Accounting method set to: {sourcePrefs.AccountingMethod}");
+                            // Apply source accounting method to target
+                            var applied = importer.ApplyAccountingPreferences(sourcePreferences);
+
+                            // Query target preferences to verify the setting took
+                            var targetPrefs = importer.QueryCompanyPreferences();
+                            report.TargetPreferences = targetPrefs;
+
+                            // ── CRITICAL VERIFICATION: Compare source vs target accounting method ──
+                            var sourceMethod = sourcePreferences.AccountingMethod ?? "Unknown";
+                            var targetMethod = targetPrefs?.AccountingMethod ?? "Unknown";
+                            bool methodsMatch = sourceMethod.Equals(targetMethod, StringComparison.OrdinalIgnoreCase);
+
+                            Log.Information("╔══════════════════════════════════════════════════════════════╗");
+                            Log.Information("║  ACCOUNTING METHOD VERIFICATION                              ║");
+                            Log.Information("╠══════════════════════════════════════════════════════════════╣");
+                            Log.Information("║  Source (QB 2023): {Source,-42} ║", sourceMethod.ToUpper());
+                            Log.Information("║  Target (QB 2021): {Target,-42} ║", targetMethod.ToUpper());
+                            Log.Information("║  Match:            {Match,-42} ║",
+                                methodsMatch ? "✓ YES — Methods match" : "⚠ NO — MISMATCH DETECTED");
+                            Log.Information("╚══════════════════════════════════════════════════════════════╝");
+
+                            if (methodsMatch)
+                            {
+                                ConsoleBanner.ShowSuccess($"Accounting method VERIFIED: Source={sourceMethod}, Target={targetMethod} — MATCH ✓");
+                            }
+                            else
+                            {
+                                Log.Warning("╔══════════════════════════════════════════════════════════════╗");
+                                Log.Warning("║  ⚠ ACCOUNTING METHOD MISMATCH WARNING ⚠                    ║");
+                                Log.Warning("╠══════════════════════════════════════════════════════════════╣");
+                                Log.Warning("║  Source uses {Source} but Target uses {Target}.", sourceMethod, targetMethod);
+                                Log.Warning("║  This WILL affect how transactions are recorded.            ║");
+                                Log.Warning("║  Financial reports will show different figures.              ║");
+                                Log.Warning("║  Consult your accountant before proceeding!                 ║");
+                                Log.Warning("╚══════════════════════════════════════════════════════════════╝");
+                                ConsoleBanner.ShowWarning($"ACCOUNTING METHOD MISMATCH: Source={sourceMethod} vs Target={targetMethod}");
+                                ConsoleBanner.ShowWarning("Transaction recording WILL differ — consult your accountant!");
+                            }
+                        }
                         else
-                            ConsoleBanner.ShowWarning("Accounting preferences may need manual verification");
-
-                        // Query target preferences to verify
-                        var targetPrefs = importer.QueryCompanyPreferences();
-                        report.TargetPreferences = targetPrefs;
+                        {
+                            Log.Warning("Source accounting preferences were not extracted during export phase.");
+                            Log.Warning("Cannot verify accounting method match. Querying target only...");
+                            var targetPrefs = importer.QueryCompanyPreferences();
+                            report.TargetPreferences = targetPrefs;
+                            ConsoleBanner.ShowWarning($"Target accounting method: {targetPrefs?.AccountingMethod ?? "Unknown"} (source not available for comparison)");
+                        }
                     }
                     catch (Exception ex)
                     {
-                        Log.Warning(ex, "Could not apply accounting preferences: {Message}", ex.Message);
-                        ConsoleBanner.ShowWarning($"Accounting preferences: {ex.Message}");
+                        Log.Warning(ex, "Could not verify accounting preferences: {Message}", ex.Message);
+                        ConsoleBanner.ShowWarning($"Accounting preferences verification failed: {ex.Message}");
                     }
                 }
 

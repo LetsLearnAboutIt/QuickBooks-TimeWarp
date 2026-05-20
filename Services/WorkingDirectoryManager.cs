@@ -50,12 +50,23 @@ namespace QB_TimeWarp.Services
         {
             Log.Information("╔══════════════════════════════════════════════════════════════╗");
             Log.Information("║  WORKING COPY INITIALIZATION — ORIGINALS WILL BE PRESERVED  ║");
+            if (forceRefresh)
+            {
+                Log.Information("║  *** --refresh FLAG ACTIVE: FORCING CLEAN COPIES ***        ║");
+            }
             Log.Information("╚══════════════════════════════════════════════════════════════╝");
 
             try
             {
                 // Step 1: Resolve original file paths
                 ResolveOriginalFilePaths();
+
+                // Step 1.5: If --refresh, aggressively clean BOTH working directories first
+                if (forceRefresh)
+                {
+                    ForceCleanWorkingDirectory(_workingConfig.SourcePath, "Source");
+                    ForceCleanWorkingDirectory(_workingConfig.TargetPath, "Target");
+                }
 
                 // Step 2: Create working directories
                 CreateWorkingDirectories();
@@ -64,14 +75,25 @@ namespace QB_TimeWarp.Services
                 CopySourceFile(forceRefresh);
                 CopyTargetFile(forceRefresh);
 
-                // Step 4: Verify working copies
+                // Step 4: Verify working copies (includes size-match verification on refresh)
                 VerifyWorkingCopies();
+
+                // Step 4.5: On refresh, verify target is a PRISTINE copy (not from a previous import)
+                if (forceRefresh)
+                {
+                    VerifyPristineCopy(OriginalTargetFilePath!, WorkingTargetFilePath!, "Target");
+                    VerifyPristineCopy(OriginalSourceFilePath!, WorkingSourceFilePath!, "Source");
+                }
 
                 Log.Information("╔══════════════════════════════════════════════════════════════╗");
                 Log.Information("║  ✓ WORKING COPIES READY — ORIGINALS ARE SAFE               ║");
                 Log.Information("╠══════════════════════════════════════════════════════════════╣");
                 Log.Information("║  Source: {SourcePath}", WorkingSourceFilePath);
                 Log.Information("║  Target: {TargetPath}", WorkingTargetFilePath);
+                if (forceRefresh)
+                {
+                    Log.Information("║  ✓ REFRESH: Both copies are PRISTINE (size-verified)       ║");
+                }
                 Log.Information("╚══════════════════════════════════════════════════════════════╝");
 
                 return true;
@@ -354,6 +376,107 @@ namespace QB_TimeWarp.Services
                 Log.Warning("SAFETY WARNING: Path '{Path}' appears to be on the Desktop " +
                     "but not in a Working directory. Operation: {Op}", filePath, operationDescription);
             }
+        }
+
+        /// <summary>
+        /// Aggressively cleans all files from a working directory when --refresh is active.
+        /// Unlike the normal cleanup, this method:
+        ///   1. Clears read-only attributes on ALL files (QB sets these)
+        ///   2. Deletes ALL files including .ND, .TLG, .DSN (QB-generated associated files)
+        ///   3. FAILS HARD if any file cannot be deleted (no silent swallowing)
+        ///   4. Logs every file deleted for audit trail
+        /// </summary>
+        private static void ForceCleanWorkingDirectory(string directoryPath, string label)
+        {
+            Log.Information("  --refresh: Force-cleaning {Label} working directory: {Path}", label, directoryPath);
+
+            if (!Directory.Exists(directoryPath))
+            {
+                Log.Information("    {Label} working directory does not exist — nothing to clean.", label);
+                return;
+            }
+
+            var files = Directory.GetFiles(directoryPath, "*.*", SearchOption.AllDirectories);
+            if (files.Length == 0)
+            {
+                Log.Information("    {Label} working directory is already empty.", label);
+                return;
+            }
+
+            int deletedCount = 0;
+            var failedFiles = new List<string>();
+
+            foreach (var file in files)
+            {
+                try
+                {
+                    // Clear read-only, hidden, system attributes (QB often sets these)
+                    var attrs = File.GetAttributes(file);
+                    if ((attrs & (FileAttributes.ReadOnly | FileAttributes.Hidden | FileAttributes.System)) != 0)
+                    {
+                        File.SetAttributes(file, FileAttributes.Normal);
+                    }
+                    File.Delete(file);
+                    deletedCount++;
+                    Log.Information("    Deleted: {File}", Path.GetFileName(file));
+                }
+                catch (Exception ex)
+                {
+                    failedFiles.Add($"{Path.GetFileName(file)}: {ex.Message}");
+                    Log.Error("    FAILED to delete: {File} — {Error}", Path.GetFileName(file), ex.Message);
+                }
+            }
+
+            // Also remove any subdirectories
+            foreach (var dir in Directory.GetDirectories(directoryPath))
+            {
+                try
+                {
+                    Directory.Delete(dir, recursive: true);
+                    Log.Information("    Deleted directory: {Dir}", Path.GetFileName(dir));
+                }
+                catch (Exception ex)
+                {
+                    Log.Warning("    Could not delete subdirectory: {Dir} — {Error}", dir, ex.Message);
+                }
+            }
+
+            Log.Information("    --refresh: Deleted {Count}/{Total} files from {Label} working directory.",
+                deletedCount, files.Length, label);
+
+            // FAIL HARD if any files couldn't be deleted — user needs to know
+            if (failedFiles.Any())
+            {
+                var failedList = string.Join("\n      ", failedFiles);
+                throw new WorkingCopyException(
+                    $"--refresh FAILED: Could not delete {failedFiles.Count} file(s) in {label} working directory. " +
+                    $"QuickBooks may still have these files locked. Close all QuickBooks instances and retry.\n" +
+                    $"      Failed files:\n      {failedList}");
+            }
+        }
+
+        /// <summary>
+        /// Verifies that a working copy is a pristine byte-for-byte copy of the original.
+        /// This catches the scenario where --refresh was requested but the old (dirty) file survived.
+        /// </summary>
+        private static void VerifyPristineCopy(string originalPath, string workingPath, string label)
+        {
+            var originalSize = new FileInfo(originalPath).Length;
+            var workingSize = new FileInfo(workingPath).Length;
+
+            if (originalSize != workingSize)
+            {
+                throw new WorkingCopyException(
+                    $"--refresh VERIFICATION FAILED for {label}!\n" +
+                    $"  Original:     {originalPath} ({FormatFileSize(originalSize)})\n" +
+                    $"  Working copy: {workingPath} ({FormatFileSize(workingSize)})\n" +
+                    $"  Size mismatch means the working copy is NOT a pristine copy of the original.\n" +
+                    $"  This typically happens when QuickBooks had the file locked during cleanup.\n" +
+                    $"  Close all QuickBooks instances and retry with --refresh.");
+            }
+
+            Log.Information("  ✓ --refresh VERIFIED: {Label} working copy matches original ({Size})",
+                label, FormatFileSize(workingSize));
         }
 
         /// <summary>
