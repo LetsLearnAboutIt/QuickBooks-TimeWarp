@@ -119,11 +119,127 @@ namespace QB_TimeWarp.Services
             "ListID", "TxnID", "TimeCreated", "TimeModified", "EditSequence",
             "TxnNumber", "Balance", "TotalBalance", "Subtotal", "BalanceRemaining",
             "IsPaid", "ExternalGUID", "FullName", "OpenBalance",
+            // FIX #8: TxnLineID is read-only — present on every *LineRet from export
+            // but is NEVER valid inside a *LineAdd request (causes 0x80040400 XML parse failure).
+            "TxnLineID",
             // SDK 16.0-only fields (cause 0x80040400 in QB 2021)
             "TaxRegistrationNumber", "PreferredDeliveryMethod", "SubscriptionPaymentStatus",
             "DeliveryInfo", "TaxLineRef", "ForceUOMChange", "LinkToTxnID",
             // Payroll fields not supported in simplified QB 2021 format
             "EmployeePayrollInfo", "ClearEarnings", "BillingRateRef",
+        };
+
+        // ═══════════════════════════════════════════════════════════════════
+        // FIX #8: Per-transaction-type header-field exclusions
+        // ═══════════════════════════════════════════════════════════════════
+        //
+        // ROOT CAUSE: 1,634 / 1,634 transactions failed with
+        //   "QuickBooks found an error when parsing the provided XML text stream"
+        // because the *Add request XML contained fields that are NOT valid in
+        // the corresponding QBXML XSD schema. Two culprits:
+        //
+        //   1. <Name>  — Never a valid child of any transaction *Add element.
+        //      DataTransformer.FixEmptyNameField synthesises a placeholder
+        //      "Name" into entity.Fields when the source QBEntity had no Name
+        //      (because transactions identify themselves with TxnID, not Name).
+        //      That placeholder must be stripped on the way out.
+        //
+        //   2. <Amount> at header level for Checks / JournalEntries /
+        //      Deposits / SalesReceipts. The CheckRet response contains
+        //      a header <Amount> (the rolled-up total), but CheckAdd does
+        //      NOT — the amount belongs inside each <ExpenseLineAdd>.
+        //      Same story for the other three. TransferAdd is the exception:
+        //      it IS header-only, so its <Amount> stays at header.
+        //
+        //   3. <FromAccountBalance> / <ToAccountBalance> — TransferRet
+        //      returns these read-only balances; TransferAdd does not
+        //      accept them.
+        //
+        //   4. Various computed totals (TotalAmount, AppliedAmount,
+        //      BalanceRemaining, etc.) returned in *Ret but rejected by
+        //      *Add — preserved here as defensive exclusions for the
+        //      remaining transaction types so a future run does not
+        //      regress them.
+        //
+        // The map is keyed by collection name (matches AddMap keys and
+        // ImportStage.EntityTypes). HashSet is case-insensitive so callers
+        // do not have to normalise.
+        //
+        private static readonly Dictionary<string, HashSet<string>> TransactionHeaderExcludedFields
+            = new(StringComparer.OrdinalIgnoreCase)
+        {
+            // ── The 5 transaction types in scope for FIX #8 ──────────────
+            ["Checks"] = new(StringComparer.OrdinalIgnoreCase)
+            {
+                "Name",              // not in CheckAdd schema
+                "Amount",            // belongs on <ExpenseLineAdd><Amount>
+            },
+            ["JournalEntries"] = new(StringComparer.OrdinalIgnoreCase)
+            {
+                "Name",              // not in JournalEntryAdd schema
+                "Amount",            // belongs on each JournalDebitLine/JournalCreditLine
+                "TotalAmount",       // computed rollup
+                "DebitTotal",        // computed rollup
+                "CreditTotal",       // computed rollup
+            },
+            ["Deposits"] = new(StringComparer.OrdinalIgnoreCase)
+            {
+                "Name",              // not in DepositAdd schema
+                "Amount",            // belongs on <DepositLineAdd><Amount>
+                "DepositTotal",      // computed rollup
+                "TotalDeposit",      // computed rollup
+            },
+            ["SalesReceipts"] = new(StringComparer.OrdinalIgnoreCase)
+            {
+                "Name",              // not in SalesReceiptAdd schema
+                "Amount",            // belongs on <SalesReceiptLineAdd><Amount>
+                "TotalAmount",       // computed rollup
+                "AppliedAmount",     // computed rollup
+            },
+            ["Transfers"] = new(StringComparer.OrdinalIgnoreCase)
+            {
+                "Name",                // not in TransferAdd schema
+                "FromAccountBalance",  // read-only on TransferRet
+                "ToAccountBalance",    // read-only on TransferRet
+                // NOTE: Amount stays at header level for Transfers — it IS in TransferAddOrder.
+            },
+
+            // ── Defensive exclusions for the other transaction types ─────
+            // (they were not in the failing-1,634 cohort but FixEmptyNameField
+            //  will inject "Name" into them too, and the *Add schemas all
+            //  reject computed rollups returned by their *Ret counterparts).
+            ["Bills"] = new(StringComparer.OrdinalIgnoreCase)
+            {
+                "Name", "AmountDue", "AppliedAmount",
+            },
+            ["Invoices"] = new(StringComparer.OrdinalIgnoreCase)
+            {
+                "Name", "AppliedAmount", "BalanceRemaining",
+            },
+            ["CreditMemos"] = new(StringComparer.OrdinalIgnoreCase)
+            {
+                "Name", "AppliedAmount", "TotalAmount", "CreditRemaining",
+            },
+            ["Estimates"] = new(StringComparer.OrdinalIgnoreCase)
+            {
+                "Name", "TotalAmount",
+            },
+            ["PurchaseOrders"] = new(StringComparer.OrdinalIgnoreCase)
+            {
+                "Name", "TotalAmount", "ReceivedAmount",
+            },
+            ["VendorCredits"] = new(StringComparer.OrdinalIgnoreCase)
+            {
+                "Name", "AppliedAmount", "CreditRemaining",
+            },
+            ["Payments"] = new(StringComparer.OrdinalIgnoreCase)
+            {
+                "Name", "UnusedPayment", "UnusedCredits",
+            },
+            ["InventoryAdjustments"] = new(StringComparer.OrdinalIgnoreCase)
+            {
+                "Name",
+            },
         };
 
         /// <summary>
@@ -1891,6 +2007,16 @@ namespace QB_TimeWarp.Services
             // ── FIX #2: Track whether we need to force IsActive ──────────
             bool isActiveEmitted = false;
 
+            // ── FIX #8: Look up per-transaction-type header exclusions ───
+            // For transaction entity types, certain fields returned in the *Ret
+            // response (Name, header Amount, computed totals, read-only balances)
+            // are NOT valid in the *Add request. We strip them here so the
+            // resulting QBXML conforms to the QB 2021 XSD schema. Without this,
+            // QuickBooks rejects the entire request with 0x80040400 — which is
+            // exactly what bit all 1,634 transactions in the prior run.
+            HashSet<string>? txnHeaderExcl = null;
+            TransactionHeaderExcludedFields.TryGetValue(entityType, out txnHeaderExcl);
+
             foreach (var prop in sortedProperties)
             {
                 // Skip static excluded fields
@@ -1901,6 +2027,19 @@ namespace QB_TimeWarp.Services
                 if (_dynamicExcludedFields.Contains(prop.Name))
                 {
                     _incompatibleFieldSkips++;
+                    continue;
+                }
+
+                // ── FIX #8: Per-transaction-type header-field exclusion ───
+                // Applied at the top-level loop only — child elements inside
+                // nested objects (e.g., <Address><Name>...</Name></Address>)
+                // are intentionally NOT affected by this map.
+                if (txnHeaderExcl != null && txnHeaderExcl.Contains(prop.Name))
+                {
+                    _incompatibleFieldSkips++;
+                    Log.Debug("  FIX #8: Excluding '{Field}' from {EntityType} header " +
+                        "(not in *Add schema or belongs on a line item)",
+                        prop.Name, entityType);
                     continue;
                 }
 
@@ -2160,10 +2299,44 @@ namespace QB_TimeWarp.Services
             foreach (var lineItem in lineItems)
             {
                 var lineType = lineItem["_lineType"]?.ToString() ?? lineAddType;
-                // Convert Ret suffix to Add suffix for the request
-                var addLineType = lineType.Replace("Ret", "Add").Replace("LineRet", "LineAdd");
-                if (!addLineType.EndsWith("Add") && !addLineType.Contains("LineAdd"))
-                    addLineType = lineAddType;
+
+                // ========================================================================
+                // FIX #8: JournalEntry line-element naming
+                // ========================================================================
+                // For most line-bearing transactions the QBXML *Add request uses
+                // <FooLineAdd> (e.g. <ExpenseLineAdd>, <DepositLineAdd>, <SalesReceiptLineAdd>).
+                //
+                // BUT JournalEntryAdd is special — its child elements are literally
+                //   <JournalDebitLine> ... </JournalDebitLine>
+                //   <JournalCreditLine> ... </JournalCreditLine>
+                // with NO "Add" suffix. The existing logic of
+                //   lineType.Replace("Ret","Add")
+                // would emit <JournalDebitLineAdd>, which QuickBooks rejects with
+                //   "QuickBooks found an error when parsing the provided XML text stream"
+                //   (0x80040400).
+                //
+                // Special-case these two element names so JournalEntryAdd posts cleanly.
+                // GetLineItemFieldOrder("JournalDebitLine") still works because it
+                // strips Add/Ret then matches Contains("JournalDebit").
+                // ========================================================================
+                string addLineType;
+                if (lineType.Equals("JournalDebitLineRet", StringComparison.OrdinalIgnoreCase) ||
+                    lineType.Equals("JournalDebitLine", StringComparison.OrdinalIgnoreCase))
+                {
+                    addLineType = "JournalDebitLine"; // no "Add" suffix per QBXML schema
+                }
+                else if (lineType.Equals("JournalCreditLineRet", StringComparison.OrdinalIgnoreCase) ||
+                         lineType.Equals("JournalCreditLine", StringComparison.OrdinalIgnoreCase))
+                {
+                    addLineType = "JournalCreditLine"; // no "Add" suffix per QBXML schema
+                }
+                else
+                {
+                    // Convert Ret suffix to Add suffix for the request
+                    addLineType = lineType.Replace("Ret", "Add").Replace("LineRet", "LineAdd");
+                    if (!addLineType.EndsWith("Add") && !addLineType.Contains("LineAdd"))
+                        addLineType = lineAddType;
+                }
 
                 // Get XSD field ordering for this line item type
                 var lineFieldOrder = QBXMLFieldOrdering.GetLineItemFieldOrder(addLineType);
@@ -2234,7 +2407,7 @@ namespace QB_TimeWarp.Services
                 "Checks" => "ExpenseLineAdd",
                 "VendorCredits" => "ExpenseLineAdd",
                 "Deposits" => "DepositLineAdd",
-                "JournalEntries" => "JournalDebitLineAdd",
+                "JournalEntries" => "JournalDebitLine", // FIX #8: no "Add" suffix per QBXML schema
                 _ => "LineAdd"
             };
         }
