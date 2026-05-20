@@ -68,38 +68,54 @@ namespace QB_TimeWarp
                     return RunCleanup();
                 }
 
-                // ─── CRITICAL: Working copy setup ───────────────────────────────────────
-                if (_config.WorkingDirectories.AutoCreateWorkingCopies &&
-                    !string.IsNullOrEmpty(_config.SourceFiles.DesktopFolder) &&
-                    !string.IsNullOrEmpty(_config.TargetFiles.DesktopFolder))
-                {
-                    // ── When --refresh is specified, kill ALL QuickBooks processes FIRST ──
-                    // Without this, QB holds file locks and the cleanup/copy fails silently,
-                    // leaving a dirty target file from the previous import run.
-                    if (forceRefresh)
-                    {
-                        Log.Information("╔══════════════════════════════════════════════════════════════╗");
-                        Log.Information("║  --refresh: Killing QuickBooks processes BEFORE cleanup     ║");
-                        Log.Information("╚══════════════════════════════════════════════════════════════╝");
-                        KillQuickBooksProcesses("--refresh flag requires clean file locks before Working directory cleanup");
-                    }
+                // ─── DISABLED: Auto-copy from originals to Working directories ──────────
+                // Working copies are already certified for QB SDK access.
+                // Re-copying would overwrite certified files and require re-certification.
+                // To re-enable, uncomment the block below and remove the direct-path block.
+                //
+                // if (_config.WorkingDirectories.AutoCreateWorkingCopies &&
+                //     !string.IsNullOrEmpty(_config.SourceFiles.DesktopFolder) &&
+                //     !string.IsNullOrEmpty(_config.TargetFiles.DesktopFolder))
+                // {
+                //     if (forceRefresh)
+                //     {
+                //         Log.Information("╔══════════════════════════════════════════════════════════════╗");
+                //         Log.Information("║  --refresh: Killing QuickBooks processes BEFORE cleanup     ║");
+                //         Log.Information("╚══════════════════════════════════════════════════════════════╝");
+                //         KillQuickBooksProcesses("--refresh flag requires clean file locks before Working directory cleanup");
+                //     }
+                //
+                //     WorkingDirectoryManager.CleanupAllWorkingArtifacts(
+                //         _config.WorkingDirectories.SourcePath,
+                //         _config.WorkingDirectories.TargetPath,
+                //         _config.Paths.ExportDirectory);
+                //     
+                //     InitializeWorkingCopies(forceRefresh);
+                // }
+                // else
+                // {
+                //     Log.Information("Working copy auto-creation disabled or source/target folders not configured.");
+                //     Log.Information("Using configured CompanyFilePath values directly.");
+                //     ValidateCompanyFilePathsAreNotDesktopOriginals();
+                // }
 
-                    // Clean up ExportedData from previous runs (always safe — no locks)
-                    WorkingDirectoryManager.CleanupAllWorkingArtifacts(
-                        _config.WorkingDirectories.SourcePath,
-                        _config.WorkingDirectories.TargetPath,
-                        _config.Paths.ExportDirectory);
-                    
-                    // InitializeWorkingCopies handles the aggressive per-directory cleanup
-                    // when forceRefresh=true (via ForceCleanWorkingDirectory)
-                    InitializeWorkingCopies(forceRefresh);
-                }
-                else
-                {
-                    Log.Information("Working copy auto-creation disabled or source/target folders not configured.");
-                    Log.Information("Using configured CompanyFilePath values directly.");
-                    ValidateCompanyFilePathsAreNotDesktopOriginals();
-                }
+                // ─── ACTIVE: Use pre-certified working copies directly ─────────────────
+                // Paths configured in appsettings.json → QuickBooks.QB2023/QB2021.CompanyFilePath
+                // already point to C:\QB-TimeWarp\Working\Source and Working\Target
+                Log.Information("╔══════════════════════════════════════════════════════════════╗");
+                Log.Information("║  USING PRE-CERTIFIED WORKING COPIES (auto-copy disabled)    ║");
+                Log.Information("╠══════════════════════════════════════════════════════════════╣");
+                Log.Information("║  Source: {Source}", _config.QuickBooks.QB2023.CompanyFilePath);
+                Log.Information("║  Target: {Target}", _config.QuickBooks.QB2021.CompanyFilePath);
+                Log.Information("╚══════════════════════════════════════════════════════════════╝");
+
+                // Validate the working copies actually exist before proceeding
+                if (!File.Exists(_config.QuickBooks.QB2023.CompanyFilePath))
+                    throw new FileNotFoundException(
+                        $"Pre-certified source working copy not found: {_config.QuickBooks.QB2023.CompanyFilePath}");
+                if (!File.Exists(_config.QuickBooks.QB2021.CompanyFilePath))
+                    throw new FileNotFoundException(
+                        $"Pre-certified target working copy not found: {_config.QuickBooks.QB2021.CompanyFilePath}");
 
                 Log.Information("╔══════════════════════════════════════════════════════════════╗");
                 Log.Information("║  WORKING WITH COPIES — ORIGINALS PRESERVED                  ║");
