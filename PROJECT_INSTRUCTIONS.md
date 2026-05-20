@@ -100,7 +100,7 @@ nohup xfreerdp /v:aiagent.hostedremotedesktop.com:4420 /u:'VM-4420-11\AIAgent' /
 | Path | What |
 |------|------|
 | `C:\QB-TimeWarp\` | Deployed application |
-| `C:\Users\AIAgent\dotnet\dotnet.exe` | .NET runtime |
+| `dotnet` (system PATH) | .NET 6.0 runtime |
 | `C:\Users\AIAgent\Desktop\Joshs_Gold_Coast\Joshs_Gold_Coast_II_2023.qbw` | QB 2023 source (TESTING — 30MB) |
 | `C:\Users\AIAgent\Desktop\Air_Masters\Air_Masters_QB_2023.qbw` | QB 2023 production (360MB — DO NOT USE for testing) |
 | `C:\Users\AIAgent\Desktop\QB21_Blank_Template\Blank_Template.qbw` | QB 2021 target |
