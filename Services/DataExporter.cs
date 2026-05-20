@@ -32,6 +32,15 @@ namespace QB_TimeWarp.Services
             ["Vendors"]         = ("VendorQuery",          "VendorRet"),
             ["Employees"]       = ("EmployeeQuery",        "EmployeeRet"),
             ["Items"]           = ("ItemQuery",            "ItemRet"),         // Generic item query returns all types
+            // ── FIX #9: ItemSalesTax must be queried explicitly ───────────────
+            // The generic ItemQuery returns ItemServiceRet / ItemInventoryRet /
+            // etc., but NOT ItemSalesTaxRet. Sales-tax items (e.g. "WI SALES
+            // & EXPO") are referenced by Customer.ItemSalesTaxRef and
+            // SalesReceipt.ItemSalesTaxRef yet were missing from every export.
+            // Adding a dedicated ItemSalesTaxQuery surfaces them so the
+            // dependency analyzer and Stage 1 foundation importer can see
+            // and recreate them in QB 2021.
+            ["ItemSalesTax"]    = ("ItemSalesTaxQuery",    "ItemSalesTaxRet"),
             ["PaymentMethods"]  = ("PaymentMethodQuery",   "PaymentMethodRet"),
             ["Terms"]           = ("TermsQuery",           "StandardTermsRet"),
             ["Classes"]         = ("ClassQuery",           "ClassRet"),
@@ -145,7 +154,11 @@ namespace QB_TimeWarp.Services
         {
             "Accounts", "Customers", "Vendors", "Employees", "Items",
             "PaymentMethods", "Terms", "Classes", "SalesTaxCodes", "ShipMethods",
-            "CustomerTypes", "VendorTypes", "JobTypes", "PriceLevels"
+            "CustomerTypes", "VendorTypes", "JobTypes", "PriceLevels",
+            // FIX #9: ItemSalesTax supports ActiveStatus filter; include inactive
+            // sales-tax items in export so reactivated entities can resolve their
+            // ItemSalesTaxRef back to a known sales-tax item in QB 2021.
+            "ItemSalesTax"
         };
 
         /// <summary>

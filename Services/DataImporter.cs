@@ -59,6 +59,13 @@ namespace QB_TimeWarp.Services
             ["Terms"]           = ("StandardTermsAddRq", "StandardTermsAdd", "StandardTermsRet"),
             ["Classes"]         = ("ClassAddRq",         "ClassAdd",         "ClassRet"),
             ["SalesTaxCodes"]   = ("SalesTaxCodeAddRq",  "SalesTaxCodeAdd",  "SalesTaxCodeRet"),
+            // ── FIX #9: ItemSalesTax as a top-level entity type ──────────────
+            // Sales-tax items (e.g. "WI SALES & EXPO") were previously only
+            // reachable through ItemSubTypeMap during generic Items import.
+            // Now they are exported and imported as a first-class entity type
+            // in Stage 1 (Foundation), so Customers / SalesReceipts that
+            // reference ItemSalesTaxRef have a valid target in QB 2021.
+            ["ItemSalesTax"]    = ("ItemSalesTaxAddRq",  "ItemSalesTaxAdd",  "ItemSalesTaxRet"),
             ["ShipMethods"]     = ("ShipMethodAddRq",    "ShipMethodAdd",    "ShipMethodRet"),
             ["CustomerTypes"]   = ("CustomerTypeAddRq",  "CustomerTypeAdd",  "CustomerTypeRet"),
             ["VendorTypes"]     = ("VendorTypeAddRq",    "VendorTypeAdd",    "VendorTypeRet"),
@@ -375,7 +382,12 @@ namespace QB_TimeWarp.Services
                 IsCritical = true,
                 EntityTypes = new List<string>
                 {
-                    "Accounts", "SalesTaxCodes", "Terms", "PaymentMethods",
+                    "Accounts", "SalesTaxCodes",
+                    // FIX #9: ItemSalesTax belongs in Stage 1 — Customers and
+                    // SalesReceipts in later stages reference ItemSalesTaxRef
+                    // and need the target sales-tax items to exist first.
+                    "ItemSalesTax",
+                    "Terms", "PaymentMethods",
                     "CustomerTypes", "VendorTypes", "JobTypes", "Classes",
                     "ShipMethods", "PriceLevels"
                 }
@@ -929,6 +941,40 @@ namespace QB_TimeWarp.Services
                 }
             }
 
+            // ── FIX #9: Create missing ItemSalesTax entries ────────────
+            // DependencyAnalyzer scans Customer.ItemSalesTaxRef and
+            // SalesReceipt.ItemSalesTaxRef into ReferencedSalesTaxItems.
+            // Previously nothing read this set, so referenced sales-tax
+            // items (e.g. "WI SALES & EXPO") were never created in QB
+            // 2021. Customers and SalesReceipts referencing them would
+            // then fail with "no matching ItemSalesTax found" errors at
+            // import. Mirror the SalesTaxCodes flow above: query what
+            // exists, diff against what's referenced, auto-create the
+            // missing ones with a safe 0 % TaxRate placeholder.
+            if (dependencies.ReferencedSalesTaxItems.Any())
+            {
+                var existingIST = QueryExistingItems("ItemSalesTax");
+                var missingIST = dependencies.ReferencedSalesTaxItems
+                    .Where(n => !existingIST.Contains(n))
+                    .ToList();
+
+                if (missingIST.Any())
+                {
+                    Log.Information("  FIX #9: Creating {Count} missing ItemSalesTax: [{Names}]",
+                        missingIST.Count, string.Join(", ", missingIST));
+
+                    foreach (var name in missingIST)
+                    {
+                        if (AutoCreateSingleItem("ItemSalesTax", name))
+                        {
+                            totalCreated++;
+                            autoCreateSummary.AutoCreatedItemNames.Add($"ItemSalesTax:{name}");
+                            Log.Information("    ✓ Created ItemSalesTax: '{Name}' (default TaxRate 0)", name);
+                        }
+                    }
+                }
+            }
+
             // ── Create missing payment terms ──────────────────────────
             if (dependencies.ReferencedTerms.Any())
             {
@@ -1143,6 +1189,12 @@ namespace QB_TimeWarp.Services
                 string requestXml = entityType switch
                 {
                     "SalesTaxCodes" => BuildSalesTaxCodeAddRequest(name),
+                    // FIX #9: route ItemSalesTax auto-create through a
+                    // dedicated builder that emits a valid ItemSalesTaxAdd
+                    // (Name + IsActive + TaxRate=0). TaxVendorRef is omitted
+                    // intentionally because no vendor target is guaranteed
+                    // to exist yet — QB 2021 will accept the placeholder.
+                    "ItemSalesTax" => BuildItemSalesTaxAddRequest(name),
                     "Terms" => BuildTermsAddRequest(name),
                     "PaymentMethods" => BuildPaymentMethodAddRequest(name),
                     "CustomerTypes" => BuildSimpleListAddRequest("CustomerTypeAddRq", "CustomerTypeAdd", name),
@@ -1207,6 +1259,37 @@ namespace QB_TimeWarp.Services
 </SalesTaxCodeAddRq>";
         }
 
+        /// <summary>
+        /// FIX #9: Builds a minimal ItemSalesTaxAdd request.
+        ///
+        /// Per QBXML XSD (ItemSalesTaxAddOrder in QBXMLFieldOrdering.cs):
+        ///   Name        — required (0)
+        ///   BarCode     — optional (1)
+        ///   IsActive    — optional (2)
+        ///   ClassRef    — optional (3)
+        ///   ItemDesc    — optional (4)
+        ///   TaxRate     — required (5)         ← QB rejects ItemSalesTaxAdd without it
+        ///   TaxVendorRef         — optional (6) but the referenced vendor must
+        ///                          already exist; omitted to keep the request
+        ///                          safe when the vendor is unknown.
+        ///   SalesTaxReturnLineRef — optional (7) and equally vendor-dependent.
+        ///
+        /// We default TaxRate to 0 (a tax-exempt placeholder). The real tax
+        /// rate will be set when the full ItemSalesTax entity is imported
+        /// during Stage 1 via the normal Add path — auto-create here only
+        /// needs to make the ListID resolvable for downstream references.
+        /// </summary>
+        private string BuildItemSalesTaxAddRequest(string name)
+        {
+            return $@"<ItemSalesTaxAddRq>
+  <ItemSalesTaxAdd>
+    <Name>{EscapeXml(name)}</Name>
+    <IsActive>true</IsActive>
+    <TaxRate>0</TaxRate>
+  </ItemSalesTaxAdd>
+</ItemSalesTaxAddRq>";
+        }
+
         private string BuildTermsAddRequest(string name)
         {
             // StandardTermsAdd — default to Net 30
@@ -1267,6 +1350,9 @@ namespace QB_TimeWarp.Services
             {
                 "Accounts" => "AccountQueryRq",
                 "SalesTaxCodes" => "SalesTaxCodeQueryRq",
+                // FIX #9: dedicated ItemSalesTax query (generic ItemQuery
+                // does NOT return ItemSalesTaxRet records).
+                "ItemSalesTax" => "ItemSalesTaxQueryRq",
                 "Terms" => "StandardTermsQueryRq",
                 "PaymentMethods" => "PaymentMethodQueryRq",
                 "Classes" => "ClassQueryRq",
@@ -1286,6 +1372,7 @@ namespace QB_TimeWarp.Services
             {
                 "Accounts" => "AccountRet",
                 "SalesTaxCodes" => "SalesTaxCodeRet",
+                "ItemSalesTax" => "ItemSalesTaxRet", // FIX #9
                 "Terms" => "StandardTermsRet",
                 "PaymentMethods" => "PaymentMethodRet",
                 "Classes" => "ClassRet",
@@ -1663,6 +1750,10 @@ namespace QB_TimeWarp.Services
                     ["Items"] = ("ItemQuery", "ItemRet"),
                     ["Classes"] = ("ClassQuery", "ClassRet"),
                     ["SalesTaxCodes"] = ("SalesTaxCodeQuery", "SalesTaxCodeRet"),
+                    // FIX #9: dedicated lookup so "already exists" recovery
+                    // can fetch the ListID of a pre-existing ItemSalesTax in
+                    // QB 2021 and store it for later reference resolution.
+                    ["ItemSalesTax"] = ("ItemSalesTaxQuery", "ItemSalesTaxRet"),
                     ["Terms"] = ("TermsQuery", "StandardTermsRet"),
                     ["PaymentMethods"] = ("PaymentMethodQuery", "PaymentMethodRet"),
                     ["CustomerTypes"] = ("CustomerTypeQuery", "CustomerTypeRet"),
