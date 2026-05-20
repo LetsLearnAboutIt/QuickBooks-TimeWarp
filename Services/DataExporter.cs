@@ -50,6 +50,12 @@ namespace QB_TimeWarp.Services
             ["VendorTypes"]     = ("VendorTypeQuery",      "VendorTypeRet"),
             ["JobTypes"]        = ("JobTypeQuery",         "JobTypeRet"),
             ["PriceLevels"]     = ("PriceLevelQuery",      "PriceLevelRet"),
+            // FIX #10: CustomerMsgs as a first-class export type.
+            //          Invoice/SalesReceipt/CreditMemo records carry a CustomerMsgRef
+            //          (e.g. "Thank you for your business!"). Without an export of the
+            //          CustomerMsg list, the destination QB has no record of those
+            //          messages and importing the transactions fails with Error 3140.
+            ["CustomerMsgs"]    = ("CustomerMsgQuery",     "CustomerMsgRet"),
 
             // Transactions
             ["Invoices"]        = ("InvoiceQuery",         "InvoiceRet"),
@@ -158,7 +164,11 @@ namespace QB_TimeWarp.Services
             // FIX #9: ItemSalesTax supports ActiveStatus filter; include inactive
             // sales-tax items in export so reactivated entities can resolve their
             // ItemSalesTaxRef back to a known sales-tax item in QB 2021.
-            "ItemSalesTax"
+            "ItemSalesTax",
+            // FIX #10: CustomerMsgs supports ActiveStatus filter — include inactive
+            // messages too so referenced (but possibly retired) CustomerMsgs still
+            // round-trip into the destination QB.
+            "CustomerMsgs"
         };
 
         /// <summary>

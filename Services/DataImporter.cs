@@ -71,6 +71,12 @@ namespace QB_TimeWarp.Services
             ["VendorTypes"]     = ("VendorTypeAddRq",    "VendorTypeAdd",    "VendorTypeRet"),
             ["JobTypes"]        = ("JobTypeAddRq",       "JobTypeAdd",       "JobTypeRet"),
             ["PriceLevels"]     = ("PriceLevelAddRq",    "PriceLevelAdd",    "PriceLevelRet"),
+            // FIX #10: CustomerMsgs (e.g. "Thank you for your business!") referenced
+            //          from Invoice/SalesReceipt/CreditMemo CustomerMsgRef. Added so the
+            //          schema-driven pre-creation loop can call BuildSimpleListAddRequest
+            //          for them and so the generic import path can find the Add request
+            //          type when CustomerMsgs are exported as a top-level entity set.
+            ["CustomerMsgs"]    = ("CustomerMsgAddRq",   "CustomerMsgAdd",   "CustomerMsgRet"),
 
             // Transactions
             ["Invoices"]        = ("InvoiceAddRq",       "InvoiceAdd",       "InvoiceRet"),
@@ -896,208 +902,142 @@ namespace QB_TimeWarp.Services
         }
 
         // ═══════════════════════════════════════════════════════════════════
-        // FIX #4: Create Missing Reference Types
+        // FIX #4 / FIX #10: Create Missing Reference Types
         // ═══════════════════════════════════════════════════════════════════
 
         /// <summary>
-        /// FIX #4: Creates missing reference types (sales tax codes, payment terms,
-        /// customer types, etc.) BEFORE the main import stages.
-        /// This prevents StatusCode 3140/3200 errors when entities reference
-        /// items that don't exist yet.
+        /// FIX #10: Schema-driven configuration table for the pre-creation loop.
+        ///
+        /// Each entry describes ONE reference type that we know how to
+        /// pre-create in QB 2021 before the main import stages run. Adding a new
+        /// pre-createable ref type now requires only:
+        ///   1. Adding a Referenced{X} HashSet on DependencyAnalysisResult and
+        ///      routing it from AddReferencedItem (DependencyAnalyzer.cs).
+        ///   2. Adding a new builder branch in AutoCreateSingleItem (if needed —
+        ///      simple list types can use BuildSimpleListAddRequest directly).
+        ///   3. Appending one row to this table.
+        /// No new copy/paste of an "if (...Any()) { existing = ...; missing = ...; foreach {...} }"
+        /// block per type.
+        ///
+        /// Tuple semantics:
+        ///   EntityType        — token passed to QueryExistingItems / AutoCreateSingleItem
+        ///   GetReferenced     — selector that returns the analyzer's referenced-name set
+        ///   LogLabel          — singular label used in the per-name "Created X: 'Name'" log
+        ///   FixTag            — comment tag emitted in the bulk log line ("FIX #4", "FIX #9", "FIX #10")
+        ///   ExtraSuffix       — optional trailing note appended to the per-name log
+        ///                       (e.g. " (default Net 30)") for transparency about placeholder values
+        ///
+        /// NOTE: Templates are NOT in this table — they cannot be created via QBXML SDK
+        /// and are handled by a dedicated warning block below.
+        /// </summary>
+        private static readonly (
+            string EntityType,
+            Func<DependencyAnalysisResult, HashSet<string>> GetReferenced,
+            string LogLabel,
+            string FixTag,
+            string ExtraSuffix)[] PreCreationConfig = new[]
+        {
+            ("SalesTaxCodes",  (Func<DependencyAnalysisResult, HashSet<string>>)(d => d.ReferencedSalesTaxCodes),  "SalesTaxCode",  "FIX #4",  ""),
+            ("ItemSalesTax",   (Func<DependencyAnalysisResult, HashSet<string>>)(d => d.ReferencedSalesTaxItems),  "ItemSalesTax",  "FIX #9",  " (default TaxRate 0)"),
+            ("Terms",          (Func<DependencyAnalysisResult, HashSet<string>>)(d => d.ReferencedTerms),          "Terms",         "FIX #4",  " (default Net 30)"),
+            ("CustomerTypes",  (Func<DependencyAnalysisResult, HashSet<string>>)(d => d.ReferencedCustomerTypes),  "CustomerType",  "FIX #4",  ""),
+            ("VendorTypes",    (Func<DependencyAnalysisResult, HashSet<string>>)(d => d.ReferencedVendorTypes),    "VendorType",    "FIX #4",  ""),
+            ("JobTypes",       (Func<DependencyAnalysisResult, HashSet<string>>)(d => d.ReferencedJobTypes),       "JobType",       "FIX #4",  ""),
+            ("PaymentMethods", (Func<DependencyAnalysisResult, HashSet<string>>)(d => d.ReferencedPaymentMethods), "PaymentMethod", "FIX #4",  ""),
+            ("ShipMethods",    (Func<DependencyAnalysisResult, HashSet<string>>)(d => d.ReferencedShipMethods),    "ShipMethod",    "FIX #4",  ""),
+            // FIX #10: PriceLevels referenced by customers (PriceLevelRef) — placeholder
+            //          uses PriceLevelFixedPercentage of 0 (no actual discount applied).
+            //          The real PriceLevel will be imported during Stage 1 if present in
+            //          the exported data; this pre-creation only guarantees the ListID is
+            //          resolvable when customers referencing it land in QB first.
+            ("PriceLevels",    (Func<DependencyAnalysisResult, HashSet<string>>)(d => d.ReferencedPriceLevels),    "PriceLevel",    "FIX #10", " (placeholder 0%)"),
+            // FIX #10: CustomerMsgs (e.g. "Thank you for your business!") referenced by
+            //          Invoice/SalesReceipt/CreditMemo CustomerMsgRef. Created as a
+            //          simple list item via BuildSimpleListAddRequest. Without this, any
+            //          transaction carrying a CustomerMsgRef fails with QB Error 3140.
+            ("CustomerMsgs",   (Func<DependencyAnalysisResult, HashSet<string>>)(d => d.ReferencedCustomerMsgs),   "CustomerMsg",   "FIX #10", ""),
+        };
+
+        /// <summary>
+        /// FIX #4 + FIX #10: Creates missing reference types (sales tax codes, payment
+        /// terms, customer types, ship methods, price levels, customer messages, …)
+        /// BEFORE the main import stages so transactions/customers don't fail with
+        /// StatusCode 3140 / 3200 when they reference items that don't exist yet.
+        ///
+        /// FIX #10 — Systematic schema-driven pre-creation:
+        ///   Previously this method contained ~9 near-identical copy/pasted blocks,
+        ///   one per ref type. Each block manually did:
+        ///       1. Bail if the dependency set is empty.
+        ///       2. Query QB for what already exists.
+        ///       3. Diff referenced vs existing to produce a "missing" list.
+        ///       4. Foreach missing → call AutoCreateSingleItem.
+        ///       5. Tally totalCreated and accumulate the per-name log lines.
+        ///   Adding a new ref type meant duplicating that block, fixing five names
+        ///   inside, and remembering to bump totalCreated correctly. Easy to forget
+        ///   a step (e.g. CustomerMsgs and PriceLevels were missing entirely before
+        ///   this fix — that's why CustomerMsgRef references on transactions failed).
+        ///
+        ///   The new structure replaces all of those blocks with a single loop that
+        ///   walks PreCreationConfig (a small static table mapping entity type →
+        ///   analyzer selector → log labels). Adding a new pre-createable ref type
+        ///   is now a one-line append to PreCreationConfig + a builder branch in
+        ///   AutoCreateSingleItem.
+        ///
+        ///   Templates remain a special case: they cannot be created via QBXML SDK
+        ///   (they're built into QB itself), so referencing them is handled below
+        ///   with a dedicated warning block instead of being routed through the
+        ///   pre-creation loop.
         /// </summary>
         private void CreateMissingReferenceTypes(DependencyAnalysisResult dependencies, StagedImportSummary summary)
         {
             var autoCreateSummary = new StageSummary
             {
                 StageNumber = 0,
-                StageName = "Create Missing Reference Types (FIX #4)",
+                StageName = "Create Missing Reference Types (FIX #4 / FIX #10)",
                 StartTime = DateTime.UtcNow
             };
 
             int totalCreated = 0;
 
-            // ── Create missing sales tax codes ────────────────────────
-            if (dependencies.ReferencedSalesTaxCodes.Any())
+            // FIX #10: Single data-driven loop replaces the per-type copy/paste blocks.
+            //          Order matters only for readability — each entry is independent.
+            foreach (var entry in PreCreationConfig)
             {
-                var existingSTC = QueryExistingItems("SalesTaxCodes");
-                var missingSTC = dependencies.ReferencedSalesTaxCodes
-                    .Where(n => !existingSTC.Contains(n))
-                    .ToList();
+                var referenced = entry.GetReferenced(dependencies);
+                if (!referenced.Any()) continue;
 
-                if (missingSTC.Any())
+                var existing = QueryExistingItems(entry.EntityType);
+                var missing = referenced.Where(n => !existing.Contains(n)).ToList();
+                if (!missing.Any()) continue;
+
+                Log.Information("  {Fix}: Creating {Count} missing {Type}: [{Names}]",
+                    entry.FixTag, missing.Count, entry.EntityType, string.Join(", ", missing));
+
+                foreach (var name in missing)
                 {
-                    Log.Information("  FIX #4: Creating {Count} missing SalesTaxCodes: [{Names}]",
-                        missingSTC.Count, string.Join(", ", missingSTC));
-
-                    foreach (var name in missingSTC)
+                    if (AutoCreateSingleItem(entry.EntityType, name))
                     {
-                        if (AutoCreateSingleItem("SalesTaxCodes", name))
-                        {
-                            totalCreated++;
-                            autoCreateSummary.AutoCreatedItemNames.Add($"SalesTaxCode:{name}");
-                            Log.Information("    ✓ Created SalesTaxCode: '{Name}'", name);
-                        }
+                        totalCreated++;
+                        autoCreateSummary.AutoCreatedItemNames.Add($"{entry.LogLabel}:{name}");
+                        Log.Information("    ✓ Created {Label}: '{Name}'{Suffix}",
+                            entry.LogLabel, name, entry.ExtraSuffix);
                     }
                 }
             }
 
-            // ── FIX #9: Create missing ItemSalesTax entries ────────────
-            // DependencyAnalyzer scans Customer.ItemSalesTaxRef and
-            // SalesReceipt.ItemSalesTaxRef into ReferencedSalesTaxItems.
-            // Previously nothing read this set, so referenced sales-tax
-            // items (e.g. "WI SALES & EXPO") were never created in QB
-            // 2021. Customers and SalesReceipts referencing them would
-            // then fail with "no matching ItemSalesTax found" errors at
-            // import. Mirror the SalesTaxCodes flow above: query what
-            // exists, diff against what's referenced, auto-create the
-            // missing ones with a safe 0 % TaxRate placeholder.
-            if (dependencies.ReferencedSalesTaxItems.Any())
+            // FIX #10: Templates handled separately — cannot be created via QBXML SDK.
+            //          The destination QB company must already have a matching template
+            //          installed (typically copied from the source QB's template list).
+            //          We emit a single warning naming all referenced templates so the
+            //          user can verify their presence before re-running the import.
+            if (dependencies.ReferencedTemplates.Any())
             {
-                var existingIST = QueryExistingItems("ItemSalesTax");
-                var missingIST = dependencies.ReferencedSalesTaxItems
-                    .Where(n => !existingIST.Contains(n))
-                    .ToList();
-
-                if (missingIST.Any())
-                {
-                    Log.Information("  FIX #9: Creating {Count} missing ItemSalesTax: [{Names}]",
-                        missingIST.Count, string.Join(", ", missingIST));
-
-                    foreach (var name in missingIST)
-                    {
-                        if (AutoCreateSingleItem("ItemSalesTax", name))
-                        {
-                            totalCreated++;
-                            autoCreateSummary.AutoCreatedItemNames.Add($"ItemSalesTax:{name}");
-                            Log.Information("    ✓ Created ItemSalesTax: '{Name}' (default TaxRate 0)", name);
-                        }
-                    }
-                }
-            }
-
-            // ── Create missing payment terms ──────────────────────────
-            if (dependencies.ReferencedTerms.Any())
-            {
-                var existingTerms = QueryExistingItems("Terms");
-                var missingTerms = dependencies.ReferencedTerms
-                    .Where(n => !existingTerms.Contains(n))
-                    .ToList();
-
-                if (missingTerms.Any())
-                {
-                    Log.Information("  FIX #4: Creating {Count} missing Terms: [{Names}]",
-                        missingTerms.Count, string.Join(", ", missingTerms));
-
-                    foreach (var name in missingTerms)
-                    {
-                        if (AutoCreateSingleItem("Terms", name))
-                        {
-                            totalCreated++;
-                            autoCreateSummary.AutoCreatedItemNames.Add($"Terms:{name}");
-                            Log.Information("    ✓ Created Terms: '{Name}' (default Net 30)", name);
-                        }
-                    }
-                }
-            }
-
-            // ── Create missing customer types ─────────────────────────
-            if (dependencies.ReferencedCustomerTypes.Any())
-            {
-                var existingCT = QueryExistingItems("CustomerTypes");
-                var missingCT = dependencies.ReferencedCustomerTypes
-                    .Where(n => !existingCT.Contains(n))
-                    .ToList();
-
-                if (missingCT.Any())
-                {
-                    Log.Information("  FIX #4: Creating {Count} missing CustomerTypes: [{Names}]",
-                        missingCT.Count, string.Join(", ", missingCT));
-
-                    foreach (var name in missingCT)
-                    {
-                        if (AutoCreateSingleItem("CustomerTypes", name))
-                        {
-                            totalCreated++;
-                            autoCreateSummary.AutoCreatedItemNames.Add($"CustomerType:{name}");
-                            Log.Information("    ✓ Created CustomerType: '{Name}'", name);
-                        }
-                    }
-                }
-            }
-
-            // ── Create missing vendor types ───────────────────────────
-            if (dependencies.ReferencedVendorTypes.Any())
-            {
-                var existingVT = QueryExistingItems("VendorTypes");
-                var missingVT = dependencies.ReferencedVendorTypes
-                    .Where(n => !existingVT.Contains(n))
-                    .ToList();
-
-                if (missingVT.Any())
-                {
-                    Log.Information("  FIX #4: Creating {Count} missing VendorTypes: [{Names}]",
-                        missingVT.Count, string.Join(", ", missingVT));
-
-                    foreach (var name in missingVT)
-                    {
-                        if (AutoCreateSingleItem("VendorTypes", name))
-                        {
-                            totalCreated++;
-                            autoCreateSummary.AutoCreatedItemNames.Add($"VendorType:{name}");
-                            Log.Information("    ✓ Created VendorType: '{Name}'", name);
-                        }
-                    }
-                }
-            }
-
-            // ── Create missing payment methods ────────────────────────
-            if (dependencies.ReferencedPaymentMethods.Any())
-            {
-                var existingPM = QueryExistingItems("PaymentMethods");
-                var missingPM = dependencies.ReferencedPaymentMethods
-                    .Where(n => !existingPM.Contains(n))
-                    .ToList();
-
-                if (missingPM.Any())
-                {
-                    Log.Information("  FIX #4: Creating {Count} missing PaymentMethods: [{Names}]",
-                        missingPM.Count, string.Join(", ", missingPM));
-
-                    foreach (var name in missingPM)
-                    {
-                        if (AutoCreateSingleItem("PaymentMethods", name))
-                        {
-                            totalCreated++;
-                            autoCreateSummary.AutoCreatedItemNames.Add($"PaymentMethod:{name}");
-                            Log.Information("    ✓ Created PaymentMethod: '{Name}'", name);
-                        }
-                    }
-                }
-            }
-
-            // ── Create missing ship methods ───────────────────────────
-            if (dependencies.ReferencedShipMethods.Any())
-            {
-                var existingSM = QueryExistingItems("ShipMethods");
-                var missingSM = dependencies.ReferencedShipMethods
-                    .Where(n => !existingSM.Contains(n))
-                    .ToList();
-
-                if (missingSM.Any())
-                {
-                    Log.Information("  FIX #4: Creating {Count} missing ShipMethods: [{Names}]",
-                        missingSM.Count, string.Join(", ", missingSM));
-
-                    foreach (var name in missingSM)
-                    {
-                        if (AutoCreateSingleItem("ShipMethods", name))
-                        {
-                            totalCreated++;
-                            autoCreateSummary.AutoCreatedItemNames.Add($"ShipMethod:{name}");
-                            Log.Information("    ✓ Created ShipMethod: '{Name}'", name);
-                        }
-                    }
-                }
+                Log.Warning("  FIX #10: {Count} Templates referenced but cannot be auto-created via QBXML SDK: [{Names}]",
+                    dependencies.ReferencedTemplates.Count,
+                    string.Join(", ", dependencies.ReferencedTemplates));
+                Log.Warning("           Templates are built into QuickBooks. Ensure the destination QB company");
+                Log.Warning("           has matching template names installed, or transactions referencing them");
+                Log.Warning("           may fall back to the default template on import.");
             }
 
             autoCreateSummary.AutoCreatedItems = totalCreated;
@@ -1107,11 +1047,11 @@ namespace QB_TimeWarp.Services
             if (totalCreated > 0)
             {
                 summary.Stages.Add(autoCreateSummary);
-                Log.Information("  FIX #4: Created {Count} missing reference types before import", totalCreated);
+                Log.Information("  FIX #4 / FIX #10: Created {Count} missing reference types before import", totalCreated);
             }
             else
             {
-                Log.Information("  FIX #4: No missing reference types to create — all dependencies satisfied");
+                Log.Information("  FIX #4 / FIX #10: No missing reference types to create — all dependencies satisfied");
             }
         }
 
@@ -1201,6 +1141,12 @@ namespace QB_TimeWarp.Services
                     "VendorTypes" => BuildSimpleListAddRequest("VendorTypeAddRq", "VendorTypeAdd", name),
                     "JobTypes" => BuildSimpleListAddRequest("JobTypeAddRq", "JobTypeAdd", name),
                     "ShipMethods" => BuildSimpleListAddRequest("ShipMethodAddRq", "ShipMethodAdd", name),
+                    // FIX #10: PriceLevels need their own builder because the XSD requires
+                    //          PriceLevelFixedPercentage (or PriceLevelPerItem). Simple Name+IsActive
+                    //          is NOT accepted by QB 2021 — it returns Status 3170 ("Invalid Object").
+                    "PriceLevels" => BuildPriceLevelAddRequest(name),
+                    // FIX #10: CustomerMsgs are a plain list (Name + IsActive) — the simple builder works.
+                    "CustomerMsgs" => BuildSimpleListAddRequest("CustomerMsgAddRq", "CustomerMsgAdd", name),
                     "Classes" => BuildClassAddRequestXml(name),
                     _ => string.Empty
                 };
@@ -1322,6 +1268,35 @@ namespace QB_TimeWarp.Services
 </{reqType}>";
         }
 
+        /// <summary>
+        /// FIX #10: Builds a minimal PriceLevelAdd request.
+        ///
+        /// Per QBXML XSD, PriceLevelAdd requires:
+        ///   Name        — required
+        ///   IsActive    — optional
+        ///   One of:
+        ///     PriceLevelFixedPercentage (single decimal) — flat percentage discount/markup
+        ///     PriceLevelPerItem (one or more nested PriceLevelPerItem entries) — per-item override
+        /// QB 2021 will REJECT a PriceLevelAdd that has neither (StatusCode 3170 — "Invalid Object").
+        ///
+        /// For the auto-create placeholder we use PriceLevelFixedPercentage of 0 (no price change).
+        /// If the source export also contains the PriceLevel as a Stage 1 entity, the
+        /// real percentage / per-item rules will be applied when that entity is imported
+        /// (QB will update the existing record by ListID/Name). The placeholder only needs
+        /// to make the ListID resolvable so customers referencing PriceLevelRef can be
+        /// imported in the correct stage order.
+        /// </summary>
+        private string BuildPriceLevelAddRequest(string name)
+        {
+            return $@"<PriceLevelAddRq>
+  <PriceLevelAdd>
+    <Name>{EscapeXml(name)}</Name>
+    <IsActive>true</IsActive>
+    <PriceLevelFixedPercentage>0</PriceLevelFixedPercentage>
+  </PriceLevelAdd>
+</PriceLevelAddRq>";
+        }
+
         private string BuildClassAddRequestXml(string className)
         {
             var parts = className.Split(':');
@@ -1361,6 +1336,10 @@ namespace QB_TimeWarp.Services
                 "JobTypes" => "JobTypeQueryRq",
                 "ShipMethods" => "ShipMethodQueryRq",
                 "PriceLevels" => "PriceLevelQueryRq",
+                // FIX #10: CustomerMsgs query — required so pre-creation can diff
+                //          referenced names against what's already present in QB 2021
+                //          and skip recreation of any matching CustomerMsg.
+                "CustomerMsgs" => "CustomerMsgQueryRq",
                 "Customers" => "CustomerQueryRq",
                 "Vendors" => "VendorQueryRq",
                 _ => string.Empty
@@ -1381,6 +1360,7 @@ namespace QB_TimeWarp.Services
                 "JobTypes" => "JobTypeRet",
                 "ShipMethods" => "ShipMethodRet",
                 "PriceLevels" => "PriceLevelRet",
+                "CustomerMsgs" => "CustomerMsgRet", // FIX #10
                 "Customers" => "CustomerRet",
                 "Vendors" => "VendorRet",
                 _ => string.Empty

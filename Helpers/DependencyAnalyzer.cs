@@ -57,6 +57,20 @@ namespace QB_TimeWarp.Helpers
             /// <summary>Price level names referenced by customers/items.</summary>
             public HashSet<string> ReferencedPriceLevels { get; set; } = new(StringComparer.OrdinalIgnoreCase);
 
+            // FIX #10: Track customer messages referenced by invoices/sales receipts/credit memos.
+            //          These appear on transactions via CustomerMsgRef and must exist in QB
+            //          before importing those transactions or QB returns Error 3140 (object not found).
+            /// <summary>Customer message names referenced by transactions.</summary>
+            public HashSet<string> ReferencedCustomerMsgs { get; set; } = new(StringComparer.OrdinalIgnoreCase);
+
+            // FIX #10: Track templates referenced by invoices/sales receipts/estimates.
+            //          NOTE: Templates CANNOT be created via QBXML SDK — they are built into QB
+            //          (e.g., "Custom Sales Receipt", "Intuit Service Invoice"). We track usage
+            //          for logging/warning purposes only; pre-creation will log a warning and
+            //          require the user to install matching templates in the destination QB manually.
+            /// <summary>Template names referenced by transactions (cannot be auto-created).</summary>
+            public HashSet<string> ReferencedTemplates { get; set; } = new(StringComparer.OrdinalIgnoreCase);
+
             /// <summary>Item FullNames referenced by transaction line items.</summary>
             public HashSet<string> ReferencedItems { get; set; } = new(StringComparer.OrdinalIgnoreCase);
 
@@ -91,6 +105,10 @@ namespace QB_TimeWarp.Helpers
                     $"Referenced job types: {ReferencedJobTypes.Count}",
                     $"Referenced ship methods: {ReferencedShipMethods.Count}",
                     $"Referenced price levels: {ReferencedPriceLevels.Count}",
+                    // FIX #10: include CustomerMsgs/Templates in summary so missing-dependency
+                    //          diagnostics surface them alongside the other ref types.
+                    $"Referenced customer messages: {ReferencedCustomerMsgs.Count}",
+                    $"Referenced templates: {ReferencedTemplates.Count}",
                     $"Referenced items: {ReferencedItems.Count}",
                 };
 
@@ -122,6 +140,10 @@ namespace QB_TimeWarp.Helpers
             ["DepositToAccountRef"] = "Accounts",
             ["BankAccountRef"] = "Accounts",
             ["SalesTaxCodeRef"] = "SalesTaxCodes",
+            // FIX #10: Customer record uses SalesTaxCodeRef AND CustomerSalesTaxCodeRef
+            //          (varies by QB version). Both must map to SalesTaxCodes or customers
+            //          will fail import with Error 3140 on the destination tax code.
+            ["CustomerSalesTaxCodeRef"] = "SalesTaxCodes",
             ["ItemSalesTaxRef"] = "SalesTaxItems",
             ["TermsRef"] = "Terms",
             ["PaymentMethodRef"] = "PaymentMethods",
@@ -136,6 +158,18 @@ namespace QB_TimeWarp.Helpers
             ["ShipMethodRef"] = "ShipMethods",
             ["PriceLevelRef"] = "PriceLevels",
             ["ItemRef"] = "Items",
+            // FIX #10: Transfer transactions use TransferFromAccountRef/TransferToAccountRef
+            //          rather than the generic AccountRef. Without these mappings, transfer
+            //          source/destination bank accounts are not detected as dependencies and
+            //          imports fail when those accounts haven't been pre-created.
+            ["TransferFromAccountRef"] = "Accounts",
+            ["TransferToAccountRef"] = "Accounts",
+            // FIX #10: Customer messages on invoices/sales receipts/credit memos.
+            //          Pre-create as a CustomerMsg list item in QB (see PreCreationConfig in DataImporter).
+            ["CustomerMsgRef"] = "CustomerMsgs",
+            // FIX #10: Templates referenced by transactions. NOT pre-creatable via QBXML SDK
+            //          (they are built into QB), so we only TRACK references for warning purposes.
+            ["TemplateRef"] = "Templates",
         };
 
         /// <summary>
@@ -202,6 +236,9 @@ namespace QB_TimeWarp.Helpers
             Log.Information("  Job types referenced: {Count}", result.ReferencedJobTypes.Count);
             Log.Information("  Ship methods referenced: {Count}", result.ReferencedShipMethods.Count);
             Log.Information("  Price levels referenced: {Count}", result.ReferencedPriceLevels.Count);
+            // FIX #10: surface CustomerMsg/Template dependency counts in the per-run summary.
+            Log.Information("  Customer messages referenced: {Count}", result.ReferencedCustomerMsgs.Count);
+            Log.Information("  Templates referenced: {Count}", result.ReferencedTemplates.Count);
             Log.Information("  Customers referenced by txns: {Count}", result.ReferencedCustomers.Count);
             Log.Information("  Vendors referenced by txns: {Count}", result.ReferencedVendors.Count);
             Log.Information("  Items referenced by txns: {Count}", result.ReferencedItems.Count);
@@ -299,6 +336,10 @@ namespace QB_TimeWarp.Helpers
                 case "JobTypes": result.ReferencedJobTypes.Add(name); break;
                 case "ShipMethods": result.ReferencedShipMethods.Add(name); break;
                 case "PriceLevels": result.ReferencedPriceLevels.Add(name); break;
+                // FIX #10: Route CustomerMsgs/Templates to their dedicated tracking sets so
+                //          pre-creation logic (and warnings for Templates) can act on them.
+                case "CustomerMsgs": result.ReferencedCustomerMsgs.Add(name); break;
+                case "Templates": result.ReferencedTemplates.Add(name); break;
                 case "Items": result.ReferencedItems.Add(name); break;
                 case "Entities":
                     // EntityRef could be customer or vendor — add to both for safety
@@ -340,6 +381,12 @@ namespace QB_TimeWarp.Helpers
             CheckMissing(result, "JobTypes", result.ReferencedJobTypes, availableNames);
             CheckMissing(result, "ShipMethods", result.ReferencedShipMethods, availableNames);
             CheckMissing(result, "PriceLevels", result.ReferencedPriceLevels, availableNames);
+            // FIX #10: Pre-creation considers CustomerMsgs missing-and-creatable.
+            //          Templates are intentionally EXCLUDED — they cannot be created via QBXML SDK,
+            //          so listing them as "missing items" would imply they can be auto-fixed.
+            //          The Analyze() method still logs their count for diagnostics, and
+            //          CreateMissingReferenceTypes will emit a dedicated warning if any are referenced.
+            CheckMissing(result, "CustomerMsgs", result.ReferencedCustomerMsgs, availableNames);
             // Note: Accounts, Customers, Vendors, Items are usually all in exported data.
             // We check them too but they are Stage 1-3 items.
             CheckMissing(result, "Accounts", result.ReferencedAccounts, availableNames);
