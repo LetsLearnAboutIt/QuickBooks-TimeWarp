@@ -280,17 +280,30 @@ namespace QB_TimeWarp.Services
 
             // Build the query - use effective SDK version (auto-adjusted for QB compatibility)
             var includeInactive = supportsActiveStatus && _exportConfig.IncludeInactiveRecords;
+
+            // FIX #11: Include line items for transaction types that have them.
+            // Without <IncludeLineItems>true</IncludeLineItems>, QBXML queries
+            // return ONLY header fields — no ExpenseLineRet, DepositLineRet,
+            // JournalDebitLineRet/JournalCreditLineRet, SalesReceiptLineRet, etc.
+            // This caused 100% failure (0/1,467) on all 4 line-item transaction types.
+            var hasLineItems = LineItemElements.ContainsKey(responseType);
+
             var qbxmlRequest = QBConnectionManager.BuildQueryRequest(
                 queryType,
                 _effectiveSDKVersion,  // Use effective version (may be adjusted from configured)
                 includeInactive: includeInactive,
                 fromDate: isTransaction ? _exportConfig.DateRangeStart : null,
-                toDate: isTransaction ? _exportConfig.DateRangeEnd : null
+                toDate: isTransaction ? _exportConfig.DateRangeEnd : null,
+                includeLineItems: hasLineItems
             );
 
             if (includeInactive)
             {
                 Log.Debug("  Including inactive records for {EntityType} (ActiveStatus=All)", entityType);
+            }
+            if (hasLineItems)
+            {
+                Log.Information("  FIX #11: Including line items for {EntityType} (IncludeLineItems=true)", entityType);
             }
 
             // Execute query
@@ -317,6 +330,21 @@ namespace QB_TimeWarp.Services
             // Calculate active/inactive counts
             var activeCount = entities.Count(e => e.IsActive);
             var inactiveCount = entities.Count(e => !e.IsActive);
+
+            // FIX #11: Log line item counts for diagnostic verification
+            if (hasLineItems)
+            {
+                var entitiesWithLines = entities.Count(e => e.LineItems.Count > 0);
+                var totalLineItems = entities.Sum(e => e.LineItems.Count);
+                Log.Information("  FIX #11: {EntityType} line item stats: {WithLines}/{Total} entities have line items, {TotalLines} total line items exported",
+                    entityType, entitiesWithLines, entities.Count, totalLineItems);
+                if (entitiesWithLines == 0 && entities.Count > 0)
+                {
+                    Log.Warning("  FIX #11 WARNING: {EntityType} has {Count} entities but ZERO line items! " +
+                        "This may indicate IncludeLineItems is not being applied correctly.",
+                        entityType, entities.Count);
+                }
+            }
 
             return new ExportedEntitySet
             {

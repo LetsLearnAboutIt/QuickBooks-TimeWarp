@@ -1963,6 +1963,22 @@ namespace QB_TimeWarp.Services
             var fieldsXml = BuildFieldsXml(entity.Fields, entityType);
             var lineItemsXml = BuildLineItemsXml(entityType, entity.LineItems);
 
+            // FIX #11: Diagnostic — warn if a transaction type that REQUIRES line items has none
+            if (string.IsNullOrEmpty(lineItemsXml) && entity.LineItems.Count == 0)
+            {
+                var lineRequiringTypes = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
+                {
+                    "Checks", "Deposits", "JournalEntries", "SalesReceipts",
+                    "Invoices", "Bills", "CreditMemos", "Estimates", "PurchaseOrders", "VendorCredits"
+                };
+                if (lineRequiringTypes.Contains(entityType))
+                {
+                    Log.Warning("  FIX #11: {EntityType} entity '{Name}' has 0 line items — QBXML Add will likely fail. " +
+                        "Verify that IncludeLineItems=true was set in the export query.",
+                        entityType, entity.Name ?? entity.TxnID ?? "unknown");
+                }
+            }
+
             var innerXml = new StringBuilder();
             innerXml.AppendLine($"<{addReqType}>");
             innerXml.AppendLine($"  <{addElemType}>");

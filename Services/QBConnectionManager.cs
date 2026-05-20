@@ -242,7 +242,8 @@ namespace QB_TimeWarp.Services
         /// </summary>
         public static string BuildQueryRequest(string queryType, string sdkVersion = "16.0",
             bool includeInactive = true, int? maxReturned = null,
-            string? fromDate = null, string? toDate = null)
+            string? fromDate = null, string? toDate = null,
+            bool includeLineItems = false)
         {
             var innerXml = $"<{queryType}Rq>";
 
@@ -262,6 +263,26 @@ namespace QB_TimeWarp.Services
                     innerXml += $"<ToTxnDate>{toDate}</ToTxnDate>";
                 innerXml += "</TxnDateRangeFilter>";
             }
+
+            // ══════════════════════════════════════════════════════════
+            // FIX #11: Include line items in transaction query responses
+            // ══════════════════════════════════════════════════════════
+            // QBXML transaction queries (CheckQuery, DepositQuery,
+            // JournalEntryQuery, SalesReceiptQuery, InvoiceQuery, etc.)
+            // do NOT return line items by default. Without this flag,
+            // the response contains only header fields — no
+            // ExpenseLineRet, DepositLineRet, JournalDebitLineRet, etc.
+            //
+            // This caused 100% failure (0/1,467) on all line-item-bearing
+            // transaction types: entity.LineItems was empty, so
+            // BuildLineItemsXml returned empty string, and QB 2021
+            // rejected the Add request with either:
+            //   - Error 3150: "missing element: DepositLineAdd"
+            //   - 0x80040400: XML parse error (no content after header)
+            //
+            // The fix: <IncludeLineItems>true</IncludeLineItems>
+            if (includeLineItems)
+                innerXml += "<IncludeLineItems>true</IncludeLineItems>";
 
             innerXml += $"</{queryType}Rq>";
 
