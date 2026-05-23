@@ -63,6 +63,10 @@ namespace QB_TimeWarp.Services
             ["VendorCredit"]  = ("VendorCreditQueryRq",  "VendorCreditRet",  "VendorCreditAddRq",  "VendorCreditAdd",  true),
             ["InventoryAdjustment"] = ("InventoryAdjustmentQueryRq", "InventoryAdjustmentRet", "InventoryAdjustmentAddRq", "InventoryAdjustmentAdd", true),
             ["Transfer"]      = ("TransferQueryRq",      "TransferRet",      "TransferAddRq",      "TransferAdd",      true),
+            
+            // Credit Card transactions - testing if QB 2021 SDK 15.0 supports these
+            ["CreditCardCharge"] = ("CreditCardChargeQueryRq", "CreditCardChargeRet", "CreditCardChargeAddRq", "CreditCardChargeAdd", true),
+            ["CreditCardCredit"] = ("CreditCardCreditQueryRq", "CreditCardCreditRet", "CreditCardCreditAddRq", "CreditCardCreditAdd", true),
         };
 
         /// <summary>
