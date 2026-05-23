@@ -51,7 +51,8 @@ namespace QB_TimeWarp.Services
         private static readonly HashSet<string> ClassTrackingHeaderTypes = new(StringComparer.OrdinalIgnoreCase)
         {
             "Invoices", "Bills", "SalesReceipts", "PurchaseOrders", "JournalEntries",
-            "CreditMemos", "Estimates", "Checks", "VendorCredits"
+            "CreditMemos", "Estimates", "Checks", "CreditCardCharges", "CreditCardCredits",
+            "VendorCredits"
         };
 
         /// <summary>
@@ -62,7 +63,8 @@ namespace QB_TimeWarp.Services
         /// </summary>
         private static readonly HashSet<string> NameToMemoTransactionTypes = new(StringComparer.OrdinalIgnoreCase)
         {
-            "Checks", "Deposits", "SalesReceipts", "JournalEntries"
+            "Checks", "CreditCardCharges", "CreditCardCredits",
+            "Deposits", "SalesReceipts", "JournalEntries"
         };
 
         public DataTransformer(string mappingsFilePath)

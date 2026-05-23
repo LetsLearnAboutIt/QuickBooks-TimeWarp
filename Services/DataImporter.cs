@@ -36,7 +36,8 @@ namespace QB_TimeWarp.Services
         {
             "Invoices", "Bills", "Payments", "SalesReceipts", "PurchaseOrders",
             "JournalEntries", "CreditMemos", "Estimates", "Deposits",
-            "Checks", "VendorCredits", "InventoryAdjustments", "Transfers"
+            "Checks", "CreditCardCharges", "CreditCardCredits",
+            "VendorCredits", "InventoryAdjustments", "Transfers"
         };
 
         /// <summary>
@@ -89,6 +90,8 @@ namespace QB_TimeWarp.Services
             ["Estimates"]       = ("EstimateAddRq",      "EstimateAdd",      "EstimateRet"),
             ["Deposits"]        = ("DepositAddRq",       "DepositAdd",       "DepositRet"),
             ["Checks"]          = ("CheckAddRq",         "CheckAdd",         "CheckRet"),
+            ["CreditCardCharges"] = ("CreditCardChargeAddRq", "CreditCardChargeAdd", "CreditCardChargeRet"),
+            ["CreditCardCredits"] = ("CreditCardCreditAddRq", "CreditCardCreditAdd", "CreditCardCreditRet"),
             ["VendorCredits"]   = ("VendorCreditAddRq",  "VendorCreditAdd",  "VendorCreditRet"),
             ["InventoryAdjustments"] = ("InventoryAdjustmentAddRq", "InventoryAdjustmentAdd", "InventoryAdjustmentRet"),
             ["Transfers"]       = ("TransferAddRq",      "TransferAdd",      "TransferRet"),
@@ -213,6 +216,22 @@ namespace QB_TimeWarp.Services
             ["Checks"] = new(StringComparer.OrdinalIgnoreCase)
             {
                 "Name",              // not in CheckAdd schema
+                "Amount",            // belongs on <ExpenseLineAdd><Amount>
+            },
+            // ═══════════════════════════════════════════════════════════════════
+            // FIX #25/#26: CreditCardCharge and CreditCardCredit — same structure
+            // as Checks (AccountRef + PayeeEntityRef + ExpenseLineAdd/ItemLineAdd).
+            // Exclude header-level Name (not in schema) and Amount (rolled-up total;
+            // the real amounts belong on each ExpenseLineAdd/ItemLineAdd).
+            // ═══════════════════════════════════════════════════════════════════
+            ["CreditCardCharges"] = new(StringComparer.OrdinalIgnoreCase)
+            {
+                "Name",              // not in CreditCardChargeAdd schema
+                "Amount",            // belongs on <ExpenseLineAdd><Amount>
+            },
+            ["CreditCardCredits"] = new(StringComparer.OrdinalIgnoreCase)
+            {
+                "Name",              // not in CreditCardCreditAdd schema
                 "Amount",            // belongs on <ExpenseLineAdd><Amount>
             },
             ["JournalEntries"] = new(StringComparer.OrdinalIgnoreCase)
@@ -520,13 +539,14 @@ namespace QB_TimeWarp.Services
             {
                 StageNumber = 3,
                 StageName = "Transactions",
-                Description = "Invoices, Bills, Checks, Deposits, Journal Entries, Credit Memos, Sales Receipts",
+                Description = "Invoices, Bills, Checks, CC Charges/Credits, Deposits, Journal Entries, Credit Memos, Sales Receipts",
                 IsCritical = false,
                 EntityTypes = new List<string>
                 {
                     "Invoices", "Bills", "Payments", "SalesReceipts", "PurchaseOrders",
                     "JournalEntries", "CreditMemos", "Estimates", "Deposits",
-                    "Checks", "VendorCredits", "InventoryAdjustments", "Transfers"
+                    "Checks", "CreditCardCharges", "CreditCardCredits",
+                    "VendorCredits", "InventoryAdjustments", "Transfers"
                 }
             }
         };
@@ -2205,7 +2225,8 @@ namespace QB_TimeWarp.Services
             {
                 var lineRequiringTypes = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
                 {
-                    "Checks", "Deposits", "JournalEntries", "SalesReceipts",
+                    "Checks", "CreditCardCharges", "CreditCardCredits",
+                    "Deposits", "JournalEntries", "SalesReceipts",
                     "Invoices", "Bills", "CreditMemos", "Estimates", "PurchaseOrders", "VendorCredits"
                 };
                 if (lineRequiringTypes.Contains(entityType))
@@ -2868,6 +2889,8 @@ namespace QB_TimeWarp.Services
                 "CreditMemos" => "CreditMemoLineAdd",
                 "Estimates" => "EstimateLineAdd",
                 "Checks" => "ExpenseLineAdd",
+                "CreditCardCharges" => "ExpenseLineAdd",
+                "CreditCardCredits" => "ExpenseLineAdd",
                 "VendorCredits" => "ExpenseLineAdd",
                 "Deposits" => "DepositLineAdd",
                 "JournalEntries" => "JournalDebitLine", // FIX #8: no "Add" suffix per QBXML schema

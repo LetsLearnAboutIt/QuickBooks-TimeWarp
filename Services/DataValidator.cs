@@ -745,7 +745,8 @@ namespace QB_TimeWarp.Services
         {
             var comparisons = new List<TransactionTotalComparison>();
             var txnTypes = new[] { "Invoices", "Bills", "Payments", "SalesReceipts",
-                "PurchaseOrders", "JournalEntries", "CreditMemos", "Checks", "Deposits" };
+                "PurchaseOrders", "JournalEntries", "CreditMemos", "Checks",
+                "CreditCardCharges", "CreditCardCredits", "Deposits" };
 
             foreach (var txnType in txnTypes)
             {

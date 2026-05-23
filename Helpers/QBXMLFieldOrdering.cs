@@ -580,6 +580,48 @@ namespace QB_TimeWarp.Helpers
         };
 
         /// <summary>
+        /// FIX #25: CreditCardChargeAdd element order per QBXML XSD schema.
+        /// Reference: consolibyte/quickbooks-php CreditCardChargeAddRq schema.
+        /// Same structure as CheckAdd minus Address/IsToBePrinted/ApplyCheckToTxnAdd.
+        /// </summary>
+        public static readonly Dictionary<string, int> CreditCardChargeAddOrder = new(StringComparer.OrdinalIgnoreCase)
+        {
+            { "AccountRef", 0 },
+            { "PayeeEntityRef", 1 },
+            { "TxnDate", 2 },
+            { "RefNumber", 3 },
+            { "Memo", 4 },
+            { "IsTaxIncluded", 5 },
+            { "SalesTaxCodeRef", 6 },
+            { "ExchangeRate", 7 },
+            { "ExternalGUID", 8 },
+            // Line items handled separately
+            { "ExpenseLineAdd", 100 },
+            { "ItemLineAdd", 101 },
+            { "ItemGroupLineAdd", 102 },
+        };
+
+        /// <summary>
+        /// FIX #26: CreditCardCreditAdd element order per QBXML XSD schema.
+        /// Reference: consolibyte/quickbooks-php CreditCardCreditAddRq schema.
+        /// Same structure as CreditCardChargeAdd minus IsTaxIncluded/SalesTaxCodeRef.
+        /// </summary>
+        public static readonly Dictionary<string, int> CreditCardCreditAddOrder = new(StringComparer.OrdinalIgnoreCase)
+        {
+            { "AccountRef", 0 },
+            { "PayeeEntityRef", 1 },
+            { "TxnDate", 2 },
+            { "RefNumber", 3 },
+            { "Memo", 4 },
+            { "ExchangeRate", 5 },
+            { "ExternalGUID", 6 },
+            // Line items handled separately
+            { "ExpenseLineAdd", 100 },
+            { "ItemLineAdd", 101 },
+            { "ItemGroupLineAdd", 102 },
+        };
+
+        /// <summary>
         /// DepositAdd element order per QBXML XSD schema.
         /// Reference: consolibyte/quickbooks-php DepositAddRq schema.
         /// </summary>
@@ -993,6 +1035,8 @@ namespace QB_TimeWarp.Helpers
             { "Estimates", EstimateAddOrder },
             { "Deposits", DepositAddOrder },
             { "Checks", CheckAddOrder },
+            { "CreditCardCharges", CreditCardChargeAddOrder },
+            { "CreditCardCredits", CreditCardCreditAddOrder },
             { "VendorCredits", VendorCreditAddOrder },
             { "InventoryAdjustments", InventoryAdjustmentAddOrder },
             { "Transfers", TransferAddOrder },
@@ -1021,6 +1065,8 @@ namespace QB_TimeWarp.Helpers
             { "EstimateAdd", EstimateAddOrder },
             { "DepositAdd", DepositAddOrder },
             { "CheckAdd", CheckAddOrder },
+            { "CreditCardChargeAdd", CreditCardChargeAddOrder },
+            { "CreditCardCreditAdd", CreditCardCreditAddOrder },
             { "VendorCreditAdd", VendorCreditAddOrder },
             { "InventoryAdjustmentAdd", InventoryAdjustmentAddOrder },
             { "TransferAdd", TransferAddOrder },

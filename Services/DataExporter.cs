@@ -68,6 +68,8 @@ namespace QB_TimeWarp.Services
             ["Estimates"]       = ("EstimateQuery",        "EstimateRet"),
             ["Deposits"]        = ("DepositQuery",         "DepositRet"),
             ["Checks"]          = ("CheckQuery",           "CheckRet"),
+            ["CreditCardCharges"] = ("CreditCardChargeQuery", "CreditCardChargeRet"),
+            ["CreditCardCredits"] = ("CreditCardCreditQuery", "CreditCardCreditRet"),
             ["VendorCredits"]   = ("VendorCreditQuery",    "VendorCreditRet"),
             ["InventoryAdjustments"] = ("InventoryAdjustmentQuery", "InventoryAdjustmentRet"),
             ["Transfers"]       = ("TransferQuery",        "TransferRet"),
@@ -84,6 +86,7 @@ namespace QB_TimeWarp.Services
         {
             "Invoices", "Bills", "Payments", "SalesReceipts", "PurchaseOrders",
             "JournalEntries", "CreditMemos", "Estimates", "Deposits", "Checks",
+            "CreditCardCharges", "CreditCardCredits",
             "VendorCredits", "InventoryAdjustments", "Transfers"
         };
 
@@ -99,6 +102,8 @@ namespace QB_TimeWarp.Services
             ["CreditMemoRet"]    = new[] { "CreditMemoLineRet", "CreditMemoLineGroupRet" },
             ["EstimateRet"]      = new[] { "EstimateLineRet", "EstimateLineGroupRet" },
             ["CheckRet"]         = new[] { "ExpenseLineRet", "ItemLineRet", "ItemGroupLineRet" },
+            ["CreditCardChargeRet"] = new[] { "ExpenseLineRet", "ItemLineRet", "ItemGroupLineRet" },
+            ["CreditCardCreditRet"] = new[] { "ExpenseLineRet", "ItemLineRet", "ItemGroupLineRet" },
             ["VendorCreditRet"]  = new[] { "ExpenseLineRet", "ItemLineRet", "ItemGroupLineRet" },
             ["DepositRet"]       = new[] { "DepositLineRet" },
             // FIX #12: JournalEntryRet uses BOTH naming conventions depending on QB version:
