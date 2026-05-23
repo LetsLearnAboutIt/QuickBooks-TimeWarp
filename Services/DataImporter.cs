@@ -236,10 +236,9 @@ namespace QB_TimeWarp.Services
                 "Amount",            // belongs on <SalesReceiptLineAdd><Amount>
                 "TotalAmount",       // computed rollup
                 "AppliedAmount",     // computed rollup
-                // Fix #23: Remove tax fields — target QB may not have sales tax enabled
-                "SalesTaxCodeRef",
-                "IsTaxIncluded",
-                "ItemSalesTaxRef",
+                // FIX #24 (reverts FIX #23): Sales tax fields RESTORED — we preserve
+                // tax data. If target QB 2021 has sales tax disabled, the pre-import
+                // CheckAndReportSalesTaxStatus() will warn with manual setup steps.
             },
             ["Transfers"] = new(StringComparer.OrdinalIgnoreCase)
             {
@@ -572,6 +571,14 @@ namespace QB_TimeWarp.Services
             Log.Information("  └─────────────────────────────────────────┘");
 
             VerifyAccountTypesExist();
+
+            // ── FIX #24: Check Sales Tax Status ──────────────────────
+            Log.Information("");
+            Log.Information("  ┌──────────────────────────────────────────────────────┐");
+            Log.Information("  │  Phase 0a: Verify Sales Tax Enabled (FIX #24)         │");
+            Log.Information("  └──────────────────────────────────────────────────────┘");
+
+            CheckAndReportSalesTaxStatus();
 
             // ── Pre-Analysis Phase ──────────────────────────────────
             Log.Information("");
@@ -1023,6 +1030,95 @@ namespace QB_TimeWarp.Services
             {
                 Log.Warning("  FIX #3: Could not verify account types (non-fatal): {Message}. " +
                     "Import will proceed and handle errors per-entity.", ex.Message);
+            }
+        }
+
+        // ═══════════════════════════════════════════════════════════════════
+        // FIX #24: Check Sales Tax Status in QB 2021
+        // ═══════════════════════════════════════════════════════════════════
+        //
+        // The QBXML SDK does NOT support PreferencesMod — preferences are
+        // READ-ONLY via PreferencesQuery. Sales tax must be enabled manually
+        // in QuickBooks: Edit > Preferences > Sales Tax > Company Preferences.
+        //
+        // This method queries the target QB 2021 company file to detect
+        // whether sales tax is configured. If not, it logs a prominent
+        // warning with step-by-step instructions.
+        // ═══════════════════════════════════════════════════════════════════
+
+        /// <summary>
+        /// FIX #24: Queries QB 2021 PreferencesQuery to check if sales tax
+        /// is enabled. If not, logs a clear warning with manual setup steps.
+        /// The QBXML SDK only supports PreferencesQuery (read) — there is
+        /// NO PreferencesMod, so sales tax cannot be enabled programmatically.
+        /// </summary>
+        private void CheckAndReportSalesTaxStatus()
+        {
+            try
+            {
+                Log.Information("  FIX #24: Querying QB 2021 sales tax preferences...");
+
+                var requestXml = "<PreferencesQueryRq/>";
+                var fullRequest = QBConnectionManager.BuildQBXMLRequest(requestXml, _effectiveSDKVersion);
+                var response = _connection.ProcessRequestWithRetry(fullRequest);
+                var doc = System.Xml.Linq.XDocument.Parse(response);
+
+                // Check if SalesTaxPreferences section exists in the response
+                var salesTaxPrefs = doc.Descendants("SalesTaxPreferences").FirstOrDefault();
+
+                if (salesTaxPrefs == null)
+                {
+                    // SalesTaxPreferences section is absent — sales tax is NOT enabled
+                    Log.Warning("  ╔════════════════════════════════════════════════════════════════╗");
+                    Log.Warning("  ║  FIX #24: ⚠ SALES TAX IS NOT ENABLED IN TARGET QB 2021!      ║");
+                    Log.Warning("  ║                                                                ║");
+                    Log.Warning("  ║  Transactions with SalesTaxCodeRef or ItemSalesTaxRef will     ║");
+                    Log.Warning("  ║  FAIL to import. To enable sales tax:                          ║");
+                    Log.Warning("  ║                                                                ║");
+                    Log.Warning("  ║  1. Open the target company file in QuickBooks 2021            ║");
+                    Log.Warning("  ║  2. Go to: Edit > Preferences > Sales Tax                     ║");
+                    Log.Warning("  ║  3. Click 'Company Preferences' tab                           ║");
+                    Log.Warning("  ║  4. Select 'Yes' for 'Do you charge sales tax?'               ║");
+                    Log.Warning("  ║  5. Set a default tax item (any — will be overridden)          ║");
+                    Log.Warning("  ║  6. Click OK and re-run the migration                          ║");
+                    Log.Warning("  ║                                                                ║");
+                    Log.Warning("  ║  NOTE: The QBXML SDK does NOT support PreferencesMod —         ║");
+                    Log.Warning("  ║  sales tax CANNOT be enabled programmatically.                 ║");
+                    Log.Warning("  ╚════════════════════════════════════════════════════════════════╝");
+                }
+                else
+                {
+                    // SalesTaxPreferences exists — check what's configured
+                    var defaultTaxRef = salesTaxPrefs.Element("DefaultItemSalesTaxRef");
+                    var defaultTaxName = defaultTaxRef?.Element("FullName")?.Value;
+                    var paySalesTax = salesTaxPrefs.Element("PaySalesTax")?.Value;
+                    var defaultTaxable = salesTaxPrefs.Element("DefaultTaxableSalesTaxCodeRef")
+                        ?.Element("FullName")?.Value;
+                    var defaultNonTaxable = salesTaxPrefs.Element("DefaultNonTaxableSalesTaxCodeRef")
+                        ?.Element("FullName")?.Value;
+
+                    if (!string.IsNullOrEmpty(defaultTaxName))
+                    {
+                        Log.Information("  FIX #24: ✓ Sales tax IS ENABLED in target QB 2021");
+                        Log.Information("    Default tax item:   {DefaultTax}", defaultTaxName);
+                        Log.Information("    Payment frequency:  {PayFreq}", paySalesTax ?? "not set");
+                        Log.Information("    Taxable code:       {TaxCode}", defaultTaxable ?? "not set");
+                        Log.Information("    Non-taxable code:   {NonTaxCode}", defaultNonTaxable ?? "not set");
+                    }
+                    else
+                    {
+                        // Section exists but no default tax item — may be partially configured
+                        Log.Warning("  FIX #24: ⚠ SalesTaxPreferences section exists but no default " +
+                            "tax item is configured. Sales tax may be partially enabled.");
+                        Log.Warning("  FIX #24: Verify in QB 2021: Edit > Preferences > Sales Tax > " +
+                            "Company Preferences > set a default tax item.");
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Log.Warning("  FIX #24: Could not query sales tax preferences (non-fatal): {Message}. " +
+                    "Import will proceed — sales tax errors will be handled per-entity.", ex.Message);
             }
         }
 
@@ -2691,16 +2787,6 @@ namespace QB_TimeWarp.Services
                     // valid in *Ret responses, not in *Add requests. Including
                     // them causes 0x80040400 XML parse errors.
                     if (LineItemExcludedFields.Contains(prop.Name))
-                    {
-                        _incompatibleFieldSkips++;
-                        continue;
-                    }
-
-                    // Fix #23: Remove tax fields from SalesReceipt line items —
-                    // target QB may not have sales tax enabled
-                    if (entityType == "SalesReceipts" &&
-                        (prop.Name.Equals("SalesTaxCodeRef", StringComparison.OrdinalIgnoreCase) ||
-                         prop.Name.Equals("IsTaxIncluded", StringComparison.OrdinalIgnoreCase)))
                     {
                         _incompatibleFieldSkips++;
                         continue;
