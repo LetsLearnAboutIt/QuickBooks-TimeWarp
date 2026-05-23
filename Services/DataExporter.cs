@@ -70,6 +70,8 @@ namespace QB_TimeWarp.Services
             ["Checks"]          = ("CheckQuery",           "CheckRet"),
             ["CreditCardCharges"] = ("CreditCardChargeQuery", "CreditCardChargeRet"),
             ["CreditCardCredits"] = ("CreditCardCreditQuery", "CreditCardCreditRet"),
+            ["BillPaymentChecks"]     = ("BillPaymentCheckQuery",      "BillPaymentCheckRet"),
+            ["BillPaymentCreditCards"]= ("BillPaymentCreditCardQuery", "BillPaymentCreditCardRet"),
             ["VendorCredits"]   = ("VendorCreditQuery",    "VendorCreditRet"),
             ["InventoryAdjustments"] = ("InventoryAdjustmentQuery", "InventoryAdjustmentRet"),
             ["Transfers"]       = ("TransferQuery",        "TransferRet"),
@@ -87,6 +89,7 @@ namespace QB_TimeWarp.Services
             "Invoices", "Bills", "Payments", "SalesReceipts", "PurchaseOrders",
             "JournalEntries", "CreditMemos", "Estimates", "Deposits", "Checks",
             "CreditCardCharges", "CreditCardCredits",
+            "BillPaymentChecks", "BillPaymentCreditCards",
             "VendorCredits", "InventoryAdjustments", "Transfers"
         };
 
@@ -104,6 +107,10 @@ namespace QB_TimeWarp.Services
             ["CheckRet"]         = new[] { "ExpenseLineRet", "ItemLineRet", "ItemGroupLineRet" },
             ["CreditCardChargeRet"] = new[] { "ExpenseLineRet", "ItemLineRet", "ItemGroupLineRet" },
             ["CreditCardCreditRet"] = new[] { "ExpenseLineRet", "ItemLineRet", "ItemGroupLineRet" },
+            // FIX #30/#31: BillPayment types use AppliedToTxnRet as their "line items"
+            // (references to the bills being paid, with payment amounts).
+            ["BillPaymentCheckRet"]      = new[] { "AppliedToTxnRet" },
+            ["BillPaymentCreditCardRet"] = new[] { "AppliedToTxnRet" },
             ["VendorCreditRet"]  = new[] { "ExpenseLineRet", "ItemLineRet", "ItemGroupLineRet" },
             ["DepositRet"]       = new[] { "DepositLineRet" },
             // FIX #12: JournalEntryRet uses BOTH naming conventions depending on QB version:

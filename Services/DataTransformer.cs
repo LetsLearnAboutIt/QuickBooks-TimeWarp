@@ -52,7 +52,7 @@ namespace QB_TimeWarp.Services
         {
             "Invoices", "Bills", "SalesReceipts", "PurchaseOrders", "JournalEntries",
             "CreditMemos", "Estimates", "Checks", "CreditCardCharges", "CreditCardCredits",
-            "VendorCredits"
+            "BillPaymentChecks", "BillPaymentCreditCards", "VendorCredits"
         };
 
         /// <summary>
@@ -64,6 +64,7 @@ namespace QB_TimeWarp.Services
         private static readonly HashSet<string> NameToMemoTransactionTypes = new(StringComparer.OrdinalIgnoreCase)
         {
             "Checks", "CreditCardCharges", "CreditCardCredits",
+            "BillPaymentChecks", "BillPaymentCreditCards",
             "Deposits", "SalesReceipts", "JournalEntries"
         };
 

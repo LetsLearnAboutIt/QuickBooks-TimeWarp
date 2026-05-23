@@ -602,6 +602,41 @@ namespace QB_TimeWarp.Helpers
         };
 
         /// <summary>
+        /// FIX #30: BillPaymentCheckAdd element order per QBXML XSD schema.
+        /// Reference: consolibyte/quickbooks-php BillPaymentCheckAddRq schema.
+        /// </summary>
+        public static readonly Dictionary<string, int> BillPaymentCheckAddOrder = new(StringComparer.OrdinalIgnoreCase)
+        {
+            { "PayeeEntityRef", 0 },
+            { "APAccountRef", 1 },
+            { "TxnDate", 2 },
+            { "BankAccountRef", 3 },
+            { "IsToBePrinted", 4 },
+            { "RefNumber", 5 },
+            { "Memo", 6 },
+            // Applied-to transactions (references to bills being paid)
+            { "AppliedToTxnAdd", 100 },
+        };
+
+        /// <summary>
+        /// FIX #31: BillPaymentCreditCardAdd element order per QBXML XSD schema.
+        /// Reference: consolibyte/quickbooks-php BillPaymentCreditCardAddRq schema.
+        /// Same as BillPaymentCheckAdd but uses CreditCardAccountRef instead of BankAccountRef,
+        /// and does not have IsToBePrinted.
+        /// </summary>
+        public static readonly Dictionary<string, int> BillPaymentCreditCardAddOrder = new(StringComparer.OrdinalIgnoreCase)
+        {
+            { "PayeeEntityRef", 0 },
+            { "APAccountRef", 1 },
+            { "TxnDate", 2 },
+            { "CreditCardAccountRef", 3 },
+            { "RefNumber", 4 },
+            { "Memo", 5 },
+            // Applied-to transactions (references to bills being paid)
+            { "AppliedToTxnAdd", 100 },
+        };
+
+        /// <summary>
         /// FIX #26: CreditCardCreditAdd element order per QBXML XSD schema.
         /// Reference: consolibyte/quickbooks-php CreditCardCreditAddRq schema.
         /// Same structure as CreditCardChargeAdd minus IsTaxIncluded/SalesTaxCodeRef.
@@ -998,6 +1033,21 @@ namespace QB_TimeWarp.Helpers
             { "Amount", 10 },
         };
 
+        /// <summary>
+        /// FIX #30: AppliedToTxnAdd field order for BillPaymentCheck/CreditCard.
+        /// Each AppliedToTxnAdd block references a bill and the payment amount.
+        /// </summary>
+        public static readonly Dictionary<string, int> AppliedToTxnAddFieldOrder = new(StringComparer.OrdinalIgnoreCase)
+        {
+            { "TxnID", 0 },
+            { "PaymentAmount", 1 },
+            { "TxnLineDetail", 2 },
+            { "SetCredit", 3 },
+            { "DiscountAmount", 4 },
+            { "DiscountAccountRef", 5 },
+            { "DiscountClassRef", 6 },
+        };
+
         // =====================================================================
         // LOOKUP METHODS
         // =====================================================================
@@ -1037,6 +1087,8 @@ namespace QB_TimeWarp.Helpers
             { "Checks", CheckAddOrder },
             { "CreditCardCharges", CreditCardChargeAddOrder },
             { "CreditCardCredits", CreditCardCreditAddOrder },
+            { "BillPaymentChecks", BillPaymentCheckAddOrder },
+            { "BillPaymentCreditCards", BillPaymentCreditCardAddOrder },
             { "VendorCredits", VendorCreditAddOrder },
             { "InventoryAdjustments", InventoryAdjustmentAddOrder },
             { "Transfers", TransferAddOrder },
@@ -1067,6 +1119,8 @@ namespace QB_TimeWarp.Helpers
             { "CheckAdd", CheckAddOrder },
             { "CreditCardChargeAdd", CreditCardChargeAddOrder },
             { "CreditCardCreditAdd", CreditCardCreditAddOrder },
+            { "BillPaymentCheckAdd", BillPaymentCheckAddOrder },
+            { "BillPaymentCreditCardAdd", BillPaymentCreditCardAddOrder },
             { "VendorCreditAdd", VendorCreditAddOrder },
             { "InventoryAdjustmentAdd", InventoryAdjustmentAddOrder },
             { "TransferAdd", TransferAddOrder },
@@ -1178,6 +1232,10 @@ namespace QB_TimeWarp.Helpers
 
             if (normalized.Contains("DepositLine", StringComparison.OrdinalIgnoreCase))
                 return DepositLineAddFieldOrder;
+
+            // FIX #30: AppliedToTxnAdd for BillPaymentCheck/CreditCard
+            if (normalized.Contains("AppliedToTxn", StringComparison.OrdinalIgnoreCase))
+                return AppliedToTxnAddFieldOrder;
 
             return new Dictionary<string, int>();
         }

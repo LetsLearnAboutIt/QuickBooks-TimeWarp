@@ -27,6 +27,9 @@ namespace QB_TimeWarp.Services
         /// </summary>
         private readonly Dictionary<string, IdMapping> _idMappings = new();
         private readonly Dictionary<string, string> _nameToListIdMap = new();
+        // FIX #30: Source TxnID → Target TxnID mapping for cross-transaction references
+        // (e.g., BillPaymentCheckAdd.AppliedToTxnAdd.TxnID → the new TxnID of the imported Bill)
+        private readonly Dictionary<string, string> _sourceTxnIdToTargetTxnId = new();
 
         /// <summary>
         /// Transaction entity types — these use TxnID instead of Name/FullName.
@@ -37,6 +40,7 @@ namespace QB_TimeWarp.Services
             "Invoices", "Bills", "Payments", "SalesReceipts", "PurchaseOrders",
             "JournalEntries", "CreditMemos", "Estimates", "Deposits",
             "Checks", "CreditCardCharges", "CreditCardCredits",
+            "BillPaymentChecks", "BillPaymentCreditCards",
             "VendorCredits", "InventoryAdjustments", "Transfers"
         };
 
@@ -92,6 +96,8 @@ namespace QB_TimeWarp.Services
             ["Checks"]          = ("CheckAddRq",         "CheckAdd",         "CheckRet"),
             ["CreditCardCharges"] = ("CreditCardChargeAddRq", "CreditCardChargeAdd", "CreditCardChargeRet"),
             ["CreditCardCredits"] = ("CreditCardCreditAddRq", "CreditCardCreditAdd", "CreditCardCreditRet"),
+            ["BillPaymentChecks"]      = ("BillPaymentCheckAddRq",      "BillPaymentCheckAdd",      "BillPaymentCheckRet"),
+            ["BillPaymentCreditCards"] = ("BillPaymentCreditCardAddRq", "BillPaymentCreditCardAdd", "BillPaymentCreditCardRet"),
             ["VendorCredits"]   = ("VendorCreditAddRq",  "VendorCreditAdd",  "VendorCreditRet"),
             ["InventoryAdjustments"] = ("InventoryAdjustmentAddRq", "InventoryAdjustmentAdd", "InventoryAdjustmentRet"),
             ["Transfers"]       = ("TransferAddRq",      "TransferAdd",      "TransferRet"),
@@ -233,6 +239,26 @@ namespace QB_TimeWarp.Services
             {
                 "Name",              // not in CreditCardCreditAdd schema
                 "Amount",            // belongs on <ExpenseLineAdd><Amount>
+            },
+            // ═══════════════════════════════════════════════════════════════════
+            // FIX #30/#31: BillPaymentCheck and BillPaymentCreditCard
+            // Exclude header-level Name (not in schema), Amount (rolled-up
+            // total — the real amounts belong on each AppliedToTxnAdd), and
+            // read-only balance fields.
+            // ═══════════════════════════════════════════════════════════════════
+            ["BillPaymentChecks"] = new(StringComparer.OrdinalIgnoreCase)
+            {
+                "Name",              // not in BillPaymentCheckAdd schema
+                "Amount",            // rolled-up total; amounts are on AppliedToTxnAdd
+                "IsPaid",            // read-only on Ret
+                "AmountDue",         // read-only on Ret
+            },
+            ["BillPaymentCreditCards"] = new(StringComparer.OrdinalIgnoreCase)
+            {
+                "Name",              // not in BillPaymentCreditCardAdd schema
+                "Amount",            // rolled-up total; amounts are on AppliedToTxnAdd
+                "IsPaid",            // read-only on Ret
+                "AmountDue",         // read-only on Ret
             },
             ["JournalEntries"] = new(StringComparer.OrdinalIgnoreCase)
             {
@@ -539,13 +565,16 @@ namespace QB_TimeWarp.Services
             {
                 StageNumber = 3,
                 StageName = "Transactions",
-                Description = "Invoices, Bills, Checks, CC Charges/Credits, Deposits, Journal Entries, Credit Memos, Sales Receipts",
+                Description = "Invoices, Bills, Checks, CC Charges/Credits, Bill Payments, Deposits, Journal Entries, Credit Memos, Sales Receipts",
                 IsCritical = false,
                 EntityTypes = new List<string>
                 {
+                    // NOTE: Order matters — Bills must be imported BEFORE BillPayments
+                    // so that TxnID remapping can resolve AppliedToTxnAdd references.
                     "Invoices", "Bills", "Payments", "SalesReceipts", "PurchaseOrders",
                     "JournalEntries", "CreditMemos", "Estimates", "Deposits",
                     "Checks", "CreditCardCharges", "CreditCardCredits",
+                    "BillPaymentChecks", "BillPaymentCreditCards",
                     "VendorCredits", "InventoryAdjustments", "Transfers"
                 }
             }
@@ -852,6 +881,10 @@ namespace QB_TimeWarp.Services
         {
             int resolved = 0;
 
+            // FIX #30: Determine if this entity type uses TxnID-based line item references
+            bool isBillPaymentType = entityType.Equals("BillPaymentChecks", StringComparison.OrdinalIgnoreCase) ||
+                                     entityType.Equals("BillPaymentCreditCards", StringComparison.OrdinalIgnoreCase);
+
             foreach (var entity in entitySet.Entities)
             {
                 resolved += ResolveFieldReferences(entity.Fields);
@@ -859,6 +892,14 @@ namespace QB_TimeWarp.Services
                 foreach (var lineItem in entity.LineItems)
                 {
                     resolved += ResolveFieldReferences(lineItem);
+
+                    // FIX #30: Resolve TxnID references in AppliedToTxnAdd line items
+                    // BillPayments reference the bills being paid by source TxnID —
+                    // we must remap these to the new TxnIDs assigned during bill import.
+                    if (isBillPaymentType)
+                    {
+                        resolved += ResolveTxnIdReferences(lineItem, entityType);
+                    }
                 }
             }
 
@@ -933,6 +974,60 @@ namespace QB_TimeWarp.Services
         }
 
         /// <summary>
+        /// FIX #30: Resolves TxnID references in AppliedToTxnAdd line items.
+        /// BillPaymentCheck/CreditCard reference bills by TxnID — we remap
+        /// the source TxnID to the target TxnID assigned during bill import.
+        /// Also handles nested TxnLineID within TxnLineDetail.
+        /// </summary>
+        private int ResolveTxnIdReferences(JObject lineItem, string entityType)
+        {
+            int resolved = 0;
+
+            // Resolve the top-level TxnID (references the bill being paid)
+            var txnId = lineItem["TxnID"]?.ToString();
+            if (!string.IsNullOrEmpty(txnId))
+            {
+                if (_sourceTxnIdToTargetTxnId.TryGetValue(txnId, out var newTxnId))
+                {
+                    lineItem["TxnID"] = newTxnId;
+                    resolved++;
+                    Log.Debug("      FIX #30: Resolved AppliedToTxn TxnID: {OldTxnID} → {NewTxnID} ({EntityType})",
+                        txnId, newTxnId, entityType);
+                }
+                else
+                {
+                    Log.Warning("      FIX #30: Cannot resolve AppliedToTxn TxnID '{TxnID}' for {EntityType} — " +
+                        "the referenced transaction may not have been imported yet. The bill payment may fail.",
+                        txnId, entityType);
+                }
+            }
+
+            // Resolve TxnLineDetail.TxnLineID if present (references a specific line in the bill)
+            if (lineItem["TxnLineDetail"] is JObject txnLineDetail)
+            {
+                var lineId = txnLineDetail["TxnLineID"]?.ToString();
+                if (!string.IsNullOrEmpty(lineId) && _sourceTxnIdToTargetTxnId.TryGetValue(lineId, out var newLineId))
+                {
+                    txnLineDetail["TxnLineID"] = newLineId;
+                    resolved++;
+                }
+            }
+
+            // Resolve SetCredit.CreditTxnID if present (references a vendor credit)
+            if (lineItem["SetCredit"] is JObject setCredit)
+            {
+                var creditTxnId = setCredit["CreditTxnID"]?.ToString();
+                if (!string.IsNullOrEmpty(creditTxnId) && _sourceTxnIdToTargetTxnId.TryGetValue(creditTxnId, out var newCreditTxnId))
+                {
+                    setCredit["CreditTxnID"] = newCreditTxnId;
+                    resolved++;
+                }
+            }
+
+            return resolved;
+        }
+
+        /// <summary>
         /// Maps a reference field name to the entity type it points to.
         /// </summary>
         private static string? GetEntityTypeForRefField(string refFieldName)
@@ -941,14 +1036,15 @@ namespace QB_TimeWarp.Services
             {
                 "AccountRef" or "ARAccountRef" or "APAccountRef" or
                 "IncomeAccountRef" or "COGSAccountRef" or "AssetAccountRef" or
-                "ExpenseAccountRef" or "DepositToAccountRef" or "BankAccountRef" => "Accounts",
+                "ExpenseAccountRef" or "DepositToAccountRef" or "BankAccountRef" or
+                "CreditCardAccountRef" => "Accounts",
                 "SalesTaxCodeRef" => "SalesTaxCodes",
                 "ItemSalesTaxRef" => "Items",  // Sales tax items are under Items
                 "TermsRef" => "Terms",
                 "PaymentMethodRef" or "PreferredPaymentMethodRef" => "PaymentMethods",
                 "ClassRef" => "Classes",
                 "CustomerRef" => "Customers",
-                "VendorRef" => "Vendors",
+                "VendorRef" or "PayeeEntityRef" => "Vendors",
                 "CustomerTypeRef" => "CustomerTypes",
                 "VendorTypeRef" => "VendorTypes",
                 "JobTypeRef" => "JobTypes",
@@ -2226,6 +2322,7 @@ namespace QB_TimeWarp.Services
                 var lineRequiringTypes = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
                 {
                     "Checks", "CreditCardCharges", "CreditCardCredits",
+                    "BillPaymentChecks", "BillPaymentCreditCards",
                     "Deposits", "JournalEntries", "SalesReceipts",
                     "Invoices", "Bills", "CreditMemos", "Estimates", "PurchaseOrders", "VendorCredits"
                 };
@@ -2891,6 +2988,8 @@ namespace QB_TimeWarp.Services
                 "Checks" => "ExpenseLineAdd",
                 "CreditCardCharges" => "ExpenseLineAdd",
                 "CreditCardCredits" => "ExpenseLineAdd",
+                "BillPaymentChecks" => "AppliedToTxnAdd",
+                "BillPaymentCreditCards" => "AppliedToTxnAdd",
                 "VendorCredits" => "ExpenseLineAdd",
                 "Deposits" => "DepositLineAdd",
                 "JournalEntries" => "JournalDebitLine", // FIX #8: no "Add" suffix per QBXML schema
@@ -2919,6 +3018,15 @@ namespace QB_TimeWarp.Services
             if (!string.IsNullOrEmpty(result.NewListID))
             {
                 _nameToListIdMap[$"{entityType}:{source.FullName ?? source.Name}"] = result.NewListID;
+            }
+
+            // FIX #30: Store TxnID → TxnID mapping for cross-transaction references
+            // (BillPayments reference Bills by TxnID in AppliedToTxnAdd)
+            if (!string.IsNullOrEmpty(source.TxnID) && !string.IsNullOrEmpty(result.NewTxnID))
+            {
+                _sourceTxnIdToTargetTxnId[source.TxnID] = result.NewTxnID;
+                Log.Debug("  FIX #30: Stored TxnID mapping: {SourceTxnID} → {TargetTxnID} ({EntityType})",
+                    source.TxnID, result.NewTxnID, entityType);
             }
         }
 
