@@ -34,16 +34,13 @@ namespace QB_TimeWarp.Services
         /// <summary>
         /// Transaction entity types — these use TxnID instead of Name/FullName.
         /// They should NOT be skipped for having empty names.
+        /// FIX #37: Cleaned up to only include QB 2021 schema-supported types.
         /// </summary>
         private static readonly HashSet<string> TransactionEntityTypes = new(StringComparer.OrdinalIgnoreCase)
         {
             "Invoices", "Bills", "Payments", "SalesReceipts", "PurchaseOrders",
-            "JournalEntries", "CreditMemos", "Estimates", "Deposits",
-            "Checks", "CreditCardCharges", "CreditCardCredits",
-            "BillPaymentChecks", "BillPaymentCreditCards",
-            "VendorCredits", "InventoryAdjustments", "Transfers",
-            // FIX #33-36: Additional transaction types
-            "ItemReceipts", "SalesOrders", "TimeTracking", "SalesTaxPaymentChecks"
+            "JournalEntries", "CreditMemos", "Estimates", "Deposits", "Checks",
+            "VendorCredits", "InventoryAdjustments", "Transfers"
         };
 
         /// <summary>
@@ -96,18 +93,10 @@ namespace QB_TimeWarp.Services
             ["Estimates"]       = ("EstimateAddRq",      "EstimateAdd",      "EstimateRet"),
             ["Deposits"]        = ("DepositAddRq",       "DepositAdd",       "DepositRet"),
             ["Checks"]          = ("CheckAddRq",         "CheckAdd",         "CheckRet"),
-            ["CreditCardCharges"] = ("CreditCardChargeAddRq", "CreditCardChargeAdd", "CreditCardChargeRet"),
-            ["CreditCardCredits"] = ("CreditCardCreditAddRq", "CreditCardCreditAdd", "CreditCardCreditRet"),
-            ["BillPaymentChecks"]      = ("BillPaymentCheckAddRq",      "BillPaymentCheckAdd",      "BillPaymentCheckRet"),
-            ["BillPaymentCreditCards"] = ("BillPaymentCreditCardAddRq", "BillPaymentCreditCardAdd", "BillPaymentCreditCardRet"),
             ["VendorCredits"]   = ("VendorCreditAddRq",  "VendorCreditAdd",  "VendorCreditRet"),
             ["InventoryAdjustments"] = ("InventoryAdjustmentAddRq", "InventoryAdjustmentAdd", "InventoryAdjustmentRet"),
             ["Transfers"]       = ("TransferAddRq",      "TransferAdd",      "TransferRet"),
-            // FIX #33-36: Additional transaction types
-            ["ItemReceipts"]    = ("ItemReceiptAddRq",   "ItemReceiptAdd",   "ItemReceiptRet"),
-            ["SalesOrders"]     = ("SalesOrderAddRq",    "SalesOrderAdd",    "SalesOrderRet"),
-            ["TimeTracking"]    = ("TimeTrackingAddRq",  "TimeTrackingAdd",  "TimeTrackingRet"),
-            ["SalesTaxPaymentChecks"] = ("SalesTaxPaymentCheckAddRq", "SalesTaxPaymentCheckAdd", "SalesTaxPaymentCheckRet"),
+            // FIX #37: Removed unsupported types - NOT in QB 2021 schema
         };
 
         /// <summary>
@@ -237,36 +226,12 @@ namespace QB_TimeWarp.Services
             // Exclude header-level Name (not in schema) and Amount (rolled-up total;
             // the real amounts belong on each ExpenseLineAdd/ItemLineAdd).
             // ═══════════════════════════════════════════════════════════════════
-            ["CreditCardCharges"] = new(StringComparer.OrdinalIgnoreCase)
-            {
-                "Name",              // not in CreditCardChargeAdd schema
-                "Amount",            // belongs on <ExpenseLineAdd><Amount>
-            },
-            ["CreditCardCredits"] = new(StringComparer.OrdinalIgnoreCase)
-            {
-                "Name",              // not in CreditCardCreditAdd schema
-                "Amount",            // belongs on <ExpenseLineAdd><Amount>
-            },
             // ═══════════════════════════════════════════════════════════════════
             // FIX #30/#31: BillPaymentCheck and BillPaymentCreditCard
             // Exclude header-level Name (not in schema), Amount (rolled-up
             // total — the real amounts belong on each AppliedToTxnAdd), and
             // read-only balance fields.
             // ═══════════════════════════════════════════════════════════════════
-            ["BillPaymentChecks"] = new(StringComparer.OrdinalIgnoreCase)
-            {
-                "Name",              // not in BillPaymentCheckAdd schema
-                "Amount",            // rolled-up total; amounts are on AppliedToTxnAdd
-                "IsPaid",            // read-only on Ret
-                "AmountDue",         // read-only on Ret
-            },
-            ["BillPaymentCreditCards"] = new(StringComparer.OrdinalIgnoreCase)
-            {
-                "Name",              // not in BillPaymentCreditCardAdd schema
-                "Amount",            // rolled-up total; amounts are on AppliedToTxnAdd
-                "IsPaid",            // read-only on Ret
-                "AmountDue",         // read-only on Ret
-            },
             ["JournalEntries"] = new(StringComparer.OrdinalIgnoreCase)
             {
                 "Name",              // not in JournalEntryAdd schema
@@ -339,22 +304,6 @@ namespace QB_TimeWarp.Services
             // ═══════════════════════════════════════════════════════════════════
             // FIX #33-36: Additional transaction types — exclude computed fields
             // ═══════════════════════════════════════════════════════════════════
-            ["ItemReceipts"] = new(StringComparer.OrdinalIgnoreCase)
-            {
-                "Name", "TotalAmount", "ReceivedAmount",
-            },
-            ["SalesOrders"] = new(StringComparer.OrdinalIgnoreCase)
-            {
-                "Name", "TotalAmount", "InvoicedAmount", "IsManuallyClosed", "IsFullyInvoiced",
-            },
-            ["TimeTracking"] = new(StringComparer.OrdinalIgnoreCase)
-            {
-                "Name", "IsBillable", // IsBillable is set via BillableStatus
-            },
-            ["SalesTaxPaymentChecks"] = new(StringComparer.OrdinalIgnoreCase)
-            {
-                "Name", "TotalAmount",
-            },
 
             // ═══════════════════════════════════════════════════════════════════
             // FIX #16: Employee — exclude combined "Name" field
@@ -3003,6 +2952,7 @@ namespace QB_TimeWarp.Services
         /// </summary>
         private static string GetLineAddType(string entityType)
         {
+            // FIX #37: Cleaned up to only include QB 2021 schema-supported types
             return entityType switch
             {
                 "Invoices" => "InvoiceLineAdd",
@@ -3012,18 +2962,9 @@ namespace QB_TimeWarp.Services
                 "CreditMemos" => "CreditMemoLineAdd",
                 "Estimates" => "EstimateLineAdd",
                 "Checks" => "ExpenseLineAdd",
-                "CreditCardCharges" => "ExpenseLineAdd",
-                "CreditCardCredits" => "ExpenseLineAdd",
-                "BillPaymentChecks" => "AppliedToTxnAdd",
-                "BillPaymentCreditCards" => "AppliedToTxnAdd",
                 "VendorCredits" => "ExpenseLineAdd",
                 "Deposits" => "DepositLineAdd",
                 "JournalEntries" => "JournalDebitLine", // FIX #8: no "Add" suffix per QBXML schema
-                // FIX #33-36: Line types for additional transaction types
-                "ItemReceipts" => "ItemLineAdd",
-                "SalesOrders" => "SalesOrderLineAdd",
-                "SalesTaxPaymentChecks" => "SalesTaxPaymentLineAdd",
-                // TimeTracking has no line items (single-record transactions)
                 _ => "LineAdd"
             };
         }
