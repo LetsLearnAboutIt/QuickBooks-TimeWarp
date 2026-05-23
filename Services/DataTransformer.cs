@@ -270,9 +270,41 @@ namespace QB_TimeWarp.Services
                     reactivatedCount, entityType);
             }
 
+            // FIX #38: Convert CreditCardCharge/CreditCardCredit to JournalEntry
+            // QB 2021 doesn't support these transaction types, but "the journal is the truth"
+            // Convert them to journal entries to preserve accounting integrity
+            string outputEntityType = entityType;
+            if (entityType.Equals("CreditCardCharges", StringComparison.OrdinalIgnoreCase) ||
+                entityType.Equals("CreditCardCredits", StringComparison.OrdinalIgnoreCase))
+            {
+                Log.Information("  ► Converting {Count} {EntityType} to JournalEntry format (Fix #38: QB 2021 compatibility)",
+                    transformedEntities.Count, entityType);
+
+                var convertedEntities = new List<QBEntity>();
+                foreach (var entity in transformedEntities)
+                {
+                    try
+                    {
+                        var journalEntry = ConvertCreditCardToJournalEntry(entity, entityType);
+                        convertedEntities.Add(journalEntry);
+                    }
+                    catch (Exception ex)
+                    {
+                        Log.Error(ex, "  ✗ Error converting {EntityType} TxnID {TxnID} to JournalEntry: {Message}",
+                            entityType, entity.TxnID, ex.Message);
+                        // Skip this entity rather than failing the entire migration
+                    }
+                }
+
+                transformedEntities = convertedEntities;
+                outputEntityType = "JournalEntries";  // These will be imported as journal entries
+                Log.Information("  ✓ Converted {Count} {Source} records to JournalEntry format",
+                    convertedEntities.Count, entityType);
+            }
+
             return new ExportedEntitySet
             {
-                EntityType = entityType,
+                EntityType = outputEntityType,  // Changed to JournalEntries if converted
                 SourceVersion = "QB2023_Transformed",
                 ExportTimestamp = DateTime.UtcNow,
                 TotalCount = transformedEntities.Count,
@@ -647,6 +679,139 @@ namespace QB_TimeWarp.Services
             _nameToMemoPreserved++;
             Log.Debug("  Name→Memo: Preserved '{Name}' into Memo for {EntityType} (TxnID={TxnID})",
                 nameValue, entityType, source.TxnID ?? "N/A");
+        }
+
+        /// <summary>
+        /// FIX #38: Converts CreditCardCharge/CreditCardCredit transactions to JournalEntry format.
+        /// 
+        /// QB 2021 does not support CreditCardCharge or CreditCardCredit transaction types.
+        /// However, "the journal is the truth" - every transaction is ultimately just debits and credits.
+        /// This method converts credit card transactions to journal entries, preserving the accounting
+        /// integrity while ensuring QB 2021 compatibility.
+        /// 
+        /// Conversion Logic:
+        /// - CreditCardCharge:
+        ///   * Original: Debit expense accounts, Credit credit card liability account
+        ///   * Journal: Same - convert expense lines to debit journal lines, add credit line for CC account
+        /// 
+        /// - CreditCardCredit (refund):
+        ///   * Original: Debit credit card account, Credit expense/income accounts
+        ///   * Journal: Same - CC account becomes debit line, expense lines become credit lines
+        /// 
+        /// Preserved Fields:
+        /// - TxnDate, RefNumber, Memo (with "[From CreditCard...]" prefix for audit trail)
+        /// - All line item account references and amounts
+        /// - TxnID preserved in Memo for reference tracking
+        /// </summary>
+        private QBEntity ConvertCreditCardToJournalEntry(QBEntity creditCardTxn, string originalType)
+        {
+            bool isCreditCardCharge = originalType.Equals("CreditCardCharges", StringComparison.OrdinalIgnoreCase);
+            string txnPrefix = isCreditCardCharge ? "[From CreditCardCharge]" : "[From CreditCardCredit]";
+
+            var journalEntry = new QBEntity
+            {
+                EntityType = "JournalEntry",
+                TxnID = creditCardTxn.TxnID,  // Preserve original TxnID for reference
+                Name = creditCardTxn.Name,
+                FullName = creditCardTxn.FullName,
+                IsActive = true,
+                ExportedAt = creditCardTxn.ExportedAt,
+                Fields = new JObject(),
+                LineItems = new List<JObject>()
+            };
+
+            // Copy header fields
+            var headerFieldsToCopy = new[] { "TxnDate", "RefNumber", "IsAdjustment" };
+            foreach (var field in headerFieldsToCopy)
+            {
+                if (creditCardTxn.Fields.ContainsKey(field))
+                {
+                    journalEntry.Fields[field] = creditCardTxn.Fields[field]?.DeepClone();
+                }
+            }
+
+            // Build Memo with conversion info and original TxnID
+            var originalMemo = creditCardTxn.Fields["Memo"]?.ToString()?.Trim();
+            var txnIdNote = !string.IsNullOrEmpty(creditCardTxn.TxnID) ? $" TxnID:{creditCardTxn.TxnID}" : "";
+            string newMemo;
+            if (!string.IsNullOrWhiteSpace(originalMemo))
+            {
+                newMemo = $"{txnPrefix}{txnIdNote} {originalMemo}";
+            }
+            else
+            {
+                newMemo = $"{txnPrefix}{txnIdNote}";
+            }
+            journalEntry.Fields["Memo"] = newMemo.Length > 4095 ? newMemo.Substring(0, 4095) : newMemo;
+
+            // Get the credit card account reference from the header
+            var ccAccountRef = creditCardTxn.Fields["AccountRef"]?.DeepClone() as JObject;
+            var ccAccountName = ccAccountRef?["FullName"]?.ToString() ?? "Credit Card";
+
+            // Get total amount
+            var totalAmount = decimal.Parse(creditCardTxn.Fields["Amount"]?.ToString() ?? "0",
+                System.Globalization.CultureInfo.InvariantCulture);
+
+            // Convert line items
+            // CreditCardCharge lines (ExpenseLineRet, ItemLineRet) become DEBIT journal lines
+            // CreditCardCredit lines become CREDIT journal lines
+            foreach (var line in creditCardTxn.LineItems)
+            {
+                var journalLine = new JObject();
+
+                // Determine if this is debit or credit based on transaction type
+                if (isCreditCardCharge)
+                {
+                    // Charge: expense lines are debits
+                    journalLine["DebitAmount"] = line["Amount"]?.DeepClone();
+                }
+                else
+                {
+                    // Credit/refund: expense lines are credits
+                    journalLine["CreditAmount"] = line["Amount"]?.DeepClone();
+                }
+
+                // Copy account reference
+                if (line.ContainsKey("AccountRef"))
+                {
+                    journalLine["AccountRef"] = line["AccountRef"]?.DeepClone();
+                }
+
+                // Copy other relevant fields
+                if (line.ContainsKey("Memo"))
+                {
+                    journalLine["Memo"] = line["Memo"]?.DeepClone();
+                }
+                if (line.ContainsKey("ClassRef"))
+                {
+                    journalEntry.Fields["ClassRef"] = line["ClassRef"]?.DeepClone();  // Move to header
+                }
+
+                journalEntry.LineItems.Add(journalLine);
+            }
+
+            // Add offsetting line for the credit card account
+            var ccLine = new JObject();
+            ccLine["AccountRef"] = ccAccountRef;
+            ccLine["Memo"] = $"Credit card transaction";
+
+            if (isCreditCardCharge)
+            {
+                // Charge: CC account is credited (increases liability)
+                ccLine["CreditAmount"] = totalAmount.ToString("F2", System.Globalization.CultureInfo.InvariantCulture);
+            }
+            else
+            {
+                // Credit/refund: CC account is debited (reduces liability)
+                ccLine["DebitAmount"] = totalAmount.ToString("F2", System.Globalization.CultureInfo.InvariantCulture);
+            }
+
+            journalEntry.LineItems.Add(ccLine);
+
+            Log.Debug("  Converted {Type} (TxnID={TxnID}, Amount={Amount}) to JournalEntry with {Lines} lines",
+                originalType, creditCardTxn.TxnID ?? "N/A", totalAmount, journalEntry.LineItems.Count);
+
+            return journalEntry;
         }
 
         // ═══════════════════════════════════════════════════════════════════

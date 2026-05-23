@@ -68,11 +68,11 @@ namespace QB_TimeWarp.Services
             ["Estimates"]       = ("EstimateQuery",        "EstimateRet"),
             ["Deposits"]        = ("DepositQuery",         "DepositRet"),
             ["Checks"]          = ("CheckQuery",           "CheckRet"),
+            ["CreditCardCharges"] = ("CreditCardChargeQuery", "CreditCardChargeRet"),  // FIX #38: Export to convert to JournalEntry
+            ["CreditCardCredits"] = ("CreditCardCreditQuery", "CreditCardCreditRet"),  // FIX #38: Export to convert to JournalEntry
             ["VendorCredits"]   = ("VendorCreditQuery",    "VendorCreditRet"),
             ["InventoryAdjustments"] = ("InventoryAdjustmentQuery", "InventoryAdjustmentRet"),
             ["Transfers"]       = ("TransferQuery",        "TransferRet"),
-            // FIX #37: Removed unsupported types (CreditCardCharges/Credits, BillPayments, ItemReceipts,
-            //          SalesOrders, TimeTracking, SalesTaxPaymentChecks) - NOT in QB 2021 schema
 
             // Settings
             ["Preferences"]     = ("PreferencesQuery",     "PreferencesRet"),
@@ -81,18 +81,17 @@ namespace QB_TimeWarp.Services
 
         /// <summary>
         /// Transaction entity types that support date range filtering.
-        /// FIX #37: Cleaned up to only include QB 2021 schema-supported types.
         /// </summary>
         private static readonly HashSet<string> TransactionTypes = new()
         {
             "Invoices", "Bills", "Payments", "SalesReceipts", "PurchaseOrders",
             "JournalEntries", "CreditMemos", "Estimates", "Deposits", "Checks",
+            "CreditCardCharges", "CreditCardCredits",  // FIX #38: Export for conversion to JournalEntry
             "VendorCredits", "InventoryAdjustments", "Transfers"
         };
 
         /// <summary>
         /// Known line item element names within transaction responses.
-        /// FIX #37: Cleaned up to only include QB 2021 schema-supported types.
         /// </summary>
         private static readonly Dictionary<string, string[]> LineItemElements = new()
         {
@@ -103,6 +102,8 @@ namespace QB_TimeWarp.Services
             ["CreditMemoRet"]    = new[] { "CreditMemoLineRet", "CreditMemoLineGroupRet" },
             ["EstimateRet"]      = new[] { "EstimateLineRet", "EstimateLineGroupRet" },
             ["CheckRet"]         = new[] { "ExpenseLineRet", "ItemLineRet", "ItemGroupLineRet" },
+            ["CreditCardChargeRet"] = new[] { "ExpenseLineRet", "ItemLineRet", "ItemGroupLineRet" },  // FIX #38
+            ["CreditCardCreditRet"] = new[] { "ExpenseLineRet", "ItemLineRet", "ItemGroupLineRet" },  // FIX #38
             ["VendorCreditRet"]  = new[] { "ExpenseLineRet", "ItemLineRet", "ItemGroupLineRet" },
             ["DepositRet"]       = new[] { "DepositLineRet" },
             // FIX #12: JournalEntryRet uses BOTH naming conventions depending on QB version:
