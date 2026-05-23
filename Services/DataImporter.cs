@@ -1961,6 +1961,47 @@ namespace QB_TimeWarp.Services
                         LearnFromErrorResponse(statusMessage, entityType);
                         _incompatibleFieldSkips++;
                     }
+                    // ═══════════════════════════════════════════════════════════════════
+                    // FIX #39: Handle Error 3180 for Accounts specifically
+                    // ═══════════════════════════════════════════════════════════════════
+                    // Error 3180 "account number already in use" does NOT mean the account
+                    // exists — it means a DIFFERENT account has that number. If we treat
+                    // this as "already exists", transactions reference the WRONG account.
+                    // SOLUTION: Retry AccountAdd WITHOUT AccountNumber/BankNumber fields.
+                    // ═══════════════════════════════════════════════════════════════════
+                    else if (statusCode == "3180" && entityType == "Accounts" && 
+                             statusMessage?.ToUpperInvariant().Contains("ACCOUNT NUMBER") == true)
+                    {
+                        Log.Warning("  ⚠️  FIX #39: Error 3180 - Account number conflict for '{Name}'. Retrying without AccountNumber/BankNumber...",
+                            sourceId);
+                        
+                        // Clone entity and strip conflicting fields
+                        var retryEntity = new QBEntity
+                        {
+                            Name = entity.Name,
+                            Fields = entity.Fields.DeepClone() as JObject ?? new JObject(),
+                            LineItems = entity.LineItems
+                        };
+                        retryEntity.Fields.Remove("AccountNumber");
+                        retryEntity.Fields.Remove("BankNumber");
+                        
+                        // Retry the import without account numbers
+                        var retryXml = BuildAddRequestXml(entityType, retryEntity);
+                        var retryResult = ImportSingleEntity(entityType, retryEntity, retryXml);
+                        
+                        if (retryResult.Success)
+                        {
+                            Log.Information("  ✓ FIX #39: Account '{Name}' created successfully without account number", sourceId);
+                            result = retryResult; // Use retry result
+                        }
+                        else
+                        {
+                            Log.Error("  ❌ FIX #39: Retry failed for '{Name}': {Error}", sourceId, retryResult.ErrorMessage);
+                            result.Success = false;
+                            result.ErrorCode = statusCode;
+                            result.ErrorMessage = $"Account number conflict, retry failed: {retryResult.ErrorMessage}";
+                        }
+                    }
                     else if (IsAlreadyExistsError(statusCode, statusMessage))
                     {
                         // Entity already exists in target — treat as soft success
@@ -2029,7 +2070,8 @@ namespace QB_TimeWarp.Services
         /// <summary>
         /// Checks if a QBXML error indicates the entity already exists in the target file.
         /// Error 3100: "The name 'X' of the list element is already in use."
-        /// Error 3180: "There was an error when saving a X list, element 'Y'. QuickBooks error message: The account number is already in use."
+        /// NOTE: Error 3180 (account number conflict) is NOT "already exists" — it's
+        /// handled separately in FIX #39 by retrying without the conflicting number.
         /// </summary>
         private static bool IsAlreadyExistsError(string? statusCode, string? statusMessage)
         {
@@ -2042,13 +2084,13 @@ namespace QB_TimeWarp.Services
             if (statusCode == "3100" && msg.Contains("ALREADY IN USE"))
                 return true;
 
-            // Error 3180: account number already in use, or other save errors indicating duplicates
-            if (statusCode == "3180" && (msg.Contains("ALREADY IN USE") || msg.Contains("ALREADY EXISTS")))
-                return true;
-
             // Error 3110: name already in use (alternate code)
             if (statusCode == "3110" && msg.Contains("ALREADY IN USE"))
                 return true;
+
+            // FIX #39: Error 3180 removed — account number conflicts don't mean
+            // "already exists", they mean "number taken by different account".
+            // Handled separately with retry logic.
 
             return false;
         }
