@@ -1,0 +1,43 @@
+# Fix #39: Account Posting Diagnostic Plan
+
+## Quick Win Strategy
+
+Based on evidence, implement these 3 targeted fixes in order:
+
+### FIX #39-A: Enhanced Account Reference Logging (5 min)
+Add logging in ResolveFieldReferences to show:
+- What AccountRef FullName we're looking for
+- What we found in QB 2021
+- Any fallback or default behavior
+
+**Goal:** See EXACTLY where transactions are going
+
+### FIX #39-B: Verify AccountType Preservation (10 min)
+Check that when we create accounts in QB 2021:
+- AccountType field is explicitly set in QBXML
+- It matches the source account type
+- No auto-assignment by QB
+
+**Goal:** Ensure account types are correct
+
+### FIX #39-C: Add Transaction Account Tracking (10 min)
+Log every transaction import with:
+- Transaction type
+- AccountRef being referenced
+- Whether account was found
+- Final posting account
+
+**Goal:** Track where each transaction posts
+
+## Expected Results
+
+With these diagnostics, the next run will show:
+- Which accounts are getting mis-mapped
+- Whether it's name mismatch or type issue
+- Exact pattern of the $400K posting
+
+Then we implement the surgical fix.
+
+## Implementation Now
+
+I'll add these diagnostics, commit, push, run on Windows, analyze logs.

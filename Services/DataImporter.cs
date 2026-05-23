@@ -912,6 +912,35 @@ namespace QB_TimeWarp.Services
                             resolved++;
                             Log.Debug("      Resolved {RefField} '{Name}' → ListID {ListID}",
                                 prop.Name, fullName, listId);
+                            
+                            // ═══════════════════════════════════════════════════════════════════
+                            // FIX #39: Diagnostic logging for problem accounts
+                            // ═══════════════════════════════════════════════════════════════════
+                            if (prop.Name.Contains("AccountRef") && 
+                                (fullName.Contains("Educators") || fullName.Contains("Cash") || fullName.Contains("Register")))
+                            {
+                                Log.Warning("  🔍 FIX #39 DIAGNOSTIC: AccountRef '{Name}' resolved to ListID {ListID} (entity type: {Type})",
+                                    fullName, listId, refEntityType);
+                            }
+                        }
+                        else
+                        {
+                            // ═══════════════════════════════════════════════════════════════════
+                            // FIX #39: Log UNRESOLVED account references
+                            // ═══════════════════════════════════════════════════════════════════
+                            if (prop.Name.Contains("AccountRef"))
+                            {
+                                Log.Warning("  ⚠️  FIX #39: UNRESOLVED AccountRef '{Name}' (type: {Type}) - not found in _nameToListIdMap! Transaction will fail or use wrong account.",
+                                    fullName, refEntityType);
+                                
+                                // Show what accounts ARE available (for debugging)
+                                var availableAccounts = _nameToListIdMap.Keys
+                                    .Where(k => k.StartsWith("Accounts:"))
+                                    .Take(20)
+                                    .ToList();
+                                Log.Warning("     Available accounts in map (first 20): {Accounts}",
+                                    string.Join(", ", availableAccounts.Select(k => k.Replace("Accounts:", ""))));
+                            }
                         }
                     }
                     else
