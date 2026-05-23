@@ -41,7 +41,9 @@ namespace QB_TimeWarp.Services
             "JournalEntries", "CreditMemos", "Estimates", "Deposits",
             "Checks", "CreditCardCharges", "CreditCardCredits",
             "BillPaymentChecks", "BillPaymentCreditCards",
-            "VendorCredits", "InventoryAdjustments", "Transfers"
+            "VendorCredits", "InventoryAdjustments", "Transfers",
+            // FIX #33-36: Additional transaction types
+            "ItemReceipts", "SalesOrders", "TimeTracking", "SalesTaxPaymentChecks"
         };
 
         /// <summary>
@@ -101,6 +103,11 @@ namespace QB_TimeWarp.Services
             ["VendorCredits"]   = ("VendorCreditAddRq",  "VendorCreditAdd",  "VendorCreditRet"),
             ["InventoryAdjustments"] = ("InventoryAdjustmentAddRq", "InventoryAdjustmentAdd", "InventoryAdjustmentRet"),
             ["Transfers"]       = ("TransferAddRq",      "TransferAdd",      "TransferRet"),
+            // FIX #33-36: Additional transaction types
+            ["ItemReceipts"]    = ("ItemReceiptAddRq",   "ItemReceiptAdd",   "ItemReceiptRet"),
+            ["SalesOrders"]     = ("SalesOrderAddRq",    "SalesOrderAdd",    "SalesOrderRet"),
+            ["TimeTracking"]    = ("TimeTrackingAddRq",  "TimeTrackingAdd",  "TimeTrackingRet"),
+            ["SalesTaxPaymentChecks"] = ("SalesTaxPaymentCheckAddRq", "SalesTaxPaymentCheckAdd", "SalesTaxPaymentCheckRet"),
         };
 
         /// <summary>
@@ -328,6 +335,25 @@ namespace QB_TimeWarp.Services
             ["InventoryAdjustments"] = new(StringComparer.OrdinalIgnoreCase)
             {
                 "Name",
+            },
+            // ═══════════════════════════════════════════════════════════════════
+            // FIX #33-36: Additional transaction types — exclude computed fields
+            // ═══════════════════════════════════════════════════════════════════
+            ["ItemReceipts"] = new(StringComparer.OrdinalIgnoreCase)
+            {
+                "Name", "TotalAmount", "ReceivedAmount",
+            },
+            ["SalesOrders"] = new(StringComparer.OrdinalIgnoreCase)
+            {
+                "Name", "TotalAmount", "InvoicedAmount", "IsManuallyClosed", "IsFullyInvoiced",
+            },
+            ["TimeTracking"] = new(StringComparer.OrdinalIgnoreCase)
+            {
+                "Name", "IsBillable", // IsBillable is set via BillableStatus
+            },
+            ["SalesTaxPaymentChecks"] = new(StringComparer.OrdinalIgnoreCase)
+            {
+                "Name", "TotalAmount",
             },
 
             // ═══════════════════════════════════════════════════════════════════
@@ -2993,6 +3019,11 @@ namespace QB_TimeWarp.Services
                 "VendorCredits" => "ExpenseLineAdd",
                 "Deposits" => "DepositLineAdd",
                 "JournalEntries" => "JournalDebitLine", // FIX #8: no "Add" suffix per QBXML schema
+                // FIX #33-36: Line types for additional transaction types
+                "ItemReceipts" => "ItemLineAdd",
+                "SalesOrders" => "SalesOrderLineAdd",
+                "SalesTaxPaymentChecks" => "SalesTaxPaymentLineAdd",
+                // TimeTracking has no line items (single-record transactions)
                 _ => "LineAdd"
             };
         }

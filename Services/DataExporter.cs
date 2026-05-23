@@ -75,6 +75,14 @@ namespace QB_TimeWarp.Services
             ["VendorCredits"]   = ("VendorCreditQuery",    "VendorCreditRet"),
             ["InventoryAdjustments"] = ("InventoryAdjustmentQuery", "InventoryAdjustmentRet"),
             ["Transfers"]       = ("TransferQuery",        "TransferRet"),
+            // FIX #33: ItemReceipts (receiving inventory from vendors)
+            ["ItemReceipts"]    = ("ItemReceiptQuery",     "ItemReceiptRet"),
+            // FIX #34: SalesOrders (quotes that convert to invoices)
+            ["SalesOrders"]     = ("SalesOrderQuery",      "SalesOrderRet"),
+            // FIX #35: TimeTracking (billable time entries)
+            ["TimeTracking"]    = ("TimeTrackingQuery",    "TimeTrackingRet"),
+            // FIX #36: SalesTaxPaymentChecks (sales tax payments to agencies)
+            ["SalesTaxPaymentChecks"] = ("SalesTaxPaymentCheckQuery", "SalesTaxPaymentCheckRet"),
 
             // Settings
             ["Preferences"]     = ("PreferencesQuery",     "PreferencesRet"),
@@ -90,7 +98,9 @@ namespace QB_TimeWarp.Services
             "JournalEntries", "CreditMemos", "Estimates", "Deposits", "Checks",
             "CreditCardCharges", "CreditCardCredits",
             "BillPaymentChecks", "BillPaymentCreditCards",
-            "VendorCredits", "InventoryAdjustments", "Transfers"
+            "VendorCredits", "InventoryAdjustments", "Transfers",
+            // FIX #33-36: Additional transaction types
+            "ItemReceipts", "SalesOrders", "TimeTracking", "SalesTaxPaymentChecks"
         };
 
         /// <summary>
@@ -119,6 +129,11 @@ namespace QB_TimeWarp.Services
             // We must check for BOTH to ensure line items are captured regardless of QB version.
             ["JournalEntryRet"]  = new[] { "JournalDebitLineRet", "JournalCreditLineRet",
                                            "JournalDebitLine", "JournalCreditLine" },
+            // FIX #33-36: Line items for additional transaction types
+            ["ItemReceiptRet"]   = new[] { "ExpenseLineRet", "ItemLineRet", "ItemGroupLineRet" },
+            ["SalesOrderRet"]    = new[] { "SalesOrderLineRet", "SalesOrderLineGroupRet" },
+            // TimeTrackingRet has no line items (single-record entries)
+            ["SalesTaxPaymentCheckRet"] = new[] { "SalesTaxPaymentLineRet" },
         };
 
         public DataExporter(QBConnectionManager connection, ExportConfig exportConfig,
