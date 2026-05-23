@@ -492,6 +492,8 @@ namespace QB_TimeWarp.Services
 
         /// <summary>
         /// Loads previously exported data from files (for re-processing without re-querying QB).
+        /// Includes FIX #15: Post-deserialization recovery for LineItems that may not
+        /// have been mapped during standard deserialization.
         /// </summary>
         public static Dictionary<string, ExportedEntitySet> LoadExportedData(string exportDirectory)
         {
@@ -508,6 +510,22 @@ namespace QB_TimeWarp.Services
                     var data = JsonConvert.DeserializeObject<ExportedEntitySet>(json);
                     if (data != null)
                     {
+                        // ═══════════════════════════════════════════════════════════
+                        // FIX #15: Post-deserialization LineItems recovery
+                        // ═══════════════════════════════════════════════════════════
+                        // In some scenarios, the "LineItems" array in the JSON file
+                        // is not automatically mapped to QBEntity.LineItems during
+                        // deserialization (e.g., naming policy mismatch, serializer
+                        // config differences between save and load). This caused
+                        // 30/30 SalesReceipts to fail because the importer generated
+                        // QBXML without any <SalesReceiptLineAdd> elements.
+                        //
+                        // Recovery strategy: parse the raw JSON as JObject, then for
+                        // each entity with empty LineItems, check if the JSON has a
+                        // "LineItems" array and manually hydrate it.
+                        // ═══════════════════════════════════════════════════════════
+                        RecoverLineItemsIfNeeded(json, data);
+
                         allExports[data.EntityType] = data;
                     }
                 }
@@ -518,6 +536,74 @@ namespace QB_TimeWarp.Services
             }
 
             return allExports;
+        }
+
+        /// <summary>
+        /// FIX #15: Checks if any entities in the loaded data set have empty LineItems
+        /// despite the raw JSON containing a non-empty "LineItems" array. If so,
+        /// manually deserializes the line items from the raw JSON to recover them.
+        /// This is a defensive fallback — if deserialization works correctly,
+        /// this method is a no-op.
+        /// </summary>
+        private static void RecoverLineItemsIfNeeded(string rawJson, ExportedEntitySet data)
+        {
+            // Quick check: are there ANY entities with empty LineItems?
+            bool anyEmpty = data.Entities.Any(e => e.LineItems == null || e.LineItems.Count == 0);
+            if (!anyEmpty) return;
+
+            // Does the raw JSON even mention "LineItems" with content?
+            if (!rawJson.Contains("\"LineItems\""))
+                return;
+
+            try
+            {
+                // Parse the raw JSON to access the Entities array directly
+                var rawObj = JObject.Parse(rawJson);
+                var rawEntities = rawObj["Entities"] as JArray;
+                if (rawEntities == null) return;
+
+                int recovered = 0;
+                for (int i = 0; i < data.Entities.Count && i < rawEntities.Count; i++)
+                {
+                    var entity = data.Entities[i];
+                    if (entity.LineItems != null && entity.LineItems.Count > 0)
+                        continue; // Already has line items — skip
+
+                    var rawEntity = rawEntities[i] as JObject;
+                    if (rawEntity == null) continue;
+
+                    // Check for "LineItems" in the raw entity JSON (case-insensitive)
+                    var lineItemsToken = rawEntity["LineItems"]
+                                      ?? rawEntity["lineItems"]
+                                      ?? rawEntity["lineitems"];
+
+                    if (lineItemsToken is JArray lineItemsArray && lineItemsArray.Count > 0)
+                    {
+                        entity.LineItems = lineItemsArray
+                            .OfType<JObject>()
+                            .Select(li => li.DeepClone() as JObject ?? new JObject())
+                            .ToList();
+
+                        recovered++;
+                        Log.Debug("  FIX #15: Recovered {Count} line items for '{Name}' (index {Index})",
+                            entity.LineItems.Count,
+                            entity.Name ?? entity.TxnID ?? $"index-{i}",
+                            i);
+                    }
+                }
+
+                if (recovered > 0)
+                {
+                    Log.Warning("  FIX #15: Recovered LineItems for {Count}/{Total} {EntityType} entities " +
+                        "that lost them during deserialization",
+                        recovered, data.Entities.Count, data.EntityType);
+                }
+            }
+            catch (Exception ex)
+            {
+                Log.Warning("  FIX #15: LineItems recovery failed for {EntityType}: {Message}",
+                    data.EntityType, ex.Message);
+            }
         }
     }
 }

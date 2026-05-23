@@ -15,7 +15,19 @@ namespace QB_TimeWarp.Models
         public string FullName { get; set; } = string.Empty;
         public bool IsActive { get; set; } = true;
         public JObject Fields { get; set; } = new JObject();
+
+        // ═══════════════════════════════════════════════════════════════════
+        // FIX #15: Explicit [JsonProperty] to guarantee deserialization maps
+        // the "LineItems" JSON array to this property. Without it, certain
+        // serializer configurations (e.g., camelCase naming policies, or a
+        // mismatch between serialization and deserialization settings) can
+        // silently drop the array, leaving LineItems as an empty list.
+        // This caused 30/30 SalesReceipts to fail because the importer
+        // generated QBXML without any <SalesReceiptLineAdd> elements.
+        // ═══════════════════════════════════════════════════════════════════
+        [JsonProperty("LineItems")]
         public List<JObject> LineItems { get; set; } = new List<JObject>();
+
         public DateTime ExportedAt { get; set; } = DateTime.UtcNow;
     }
 

@@ -1984,6 +1984,22 @@ namespace QB_TimeWarp.Services
 
             // Use entity type for field ordering — QBXML requires strict XSD element sequence
             var fieldsXml = BuildFieldsXml(entity.Fields, entityType);
+
+            // ═══════════════════════════════════════════════════════════════════
+            // FIX #15: Diagnostic — log LineItems count before QBXML generation.
+            // This confirms whether line items survived deserialization and
+            // transformation. If count is 0 for a transaction type that requires
+            // line items, the QBXML will be rejected by QB 2021.
+            // ═══════════════════════════════════════════════════════════════════
+            if (entity.LineItems == null)
+            {
+                Log.Warning("  FIX #15: entity.LineItems is NULL for {EntityType} '{Name}' — initializing empty list",
+                    entityType, entity.Name ?? entity.TxnID ?? "unknown");
+                entity.LineItems = new List<JObject>();
+            }
+            Log.Debug("  FIX #15: {EntityType} '{Name}' has {Count} line items before QBXML generation",
+                entityType, entity.Name ?? entity.TxnID ?? "unknown", entity.LineItems.Count);
+
             var lineItemsXml = BuildLineItemsXml(entityType, entity.LineItems);
 
             // FIX #11: Diagnostic — warn if a transaction type that REQUIRES line items has none
