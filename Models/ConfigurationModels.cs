@@ -184,10 +184,9 @@ namespace QB_TimeWarp.Models
     /// </summary>
     public class StagedImportStagesConfig
     {
-        public bool Stage1_Foundation { get; set; } = true;
-        public bool Stage2_Entities { get; set; } = true;
-        public bool Stage3_Items { get; set; } = true;
-        public bool Stage4_Transactions { get; set; } = true;
+        public bool Stage1_FoundationAndEntities { get; set; } = true;
+        public bool Stage2_Items { get; set; } = true;
+        public bool Stage3_Transactions { get; set; } = true;
     }
 
     public class ValidationConfig

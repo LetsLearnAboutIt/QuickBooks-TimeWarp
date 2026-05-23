@@ -414,8 +414,49 @@ namespace QB_TimeWarp.Services
         // STAGED IMPORT — Dependency-aware multi-stage import
         // ═══════════════════════════════════════════════════════════════════
 
+        // ═══════════════════════════════════════════════════════════════════
+        // FIX #17: Reordered import stages for correct dependency resolution.
+        // ═══════════════════════════════════════════════════════════════════
+        //
+        // DEPENDENCY CHAIN (arrows mean "must exist before"):
+        //
+        //   Accounts ──────┐
+        //   Vendors ───────┤
+        //   Customers ─────┼─► ItemSalesTax (TaxVendorRef → Vendor)
+        //   Employees ─────┤   Items        (IncomeAccountRef → Account,
+        //   Classes ───────┤                 SalesTaxCodeRef → SalesTaxCode)
+        //   SalesTaxCodes ─┤
+        //   Terms ─────────┤
+        //   PaymentMethods ┤
+        //   CustomerTypes ─┤
+        //   VendorTypes ───┤
+        //   CustomerMsgs ──┘
+        //                      │
+        //                      ▼
+        //                  Transactions (reference all of the above)
+        //
+        // OLD ORDERING (broken):
+        //   Stage 1: Accounts, SalesTaxCodes, ItemSalesTax(!), Terms, ...
+        //   Stage 2: Customers, Vendors(!), Employees
+        //   Stage 3: Items
+        //   Stage 4: Transactions
+        //
+        //   ItemSalesTax was in Stage 1 but its TaxVendorRef pointed to
+        //   Vendors in Stage 2 → 0/6 failures on a fresh Blank Template.
+        //
+        // NEW ORDERING (fixed):
+        //   Stage 1: Foundation + Entities (no inter-dependencies)
+        //            Accounts, Vendors, Customers, Employees, Classes,
+        //            PaymentMethods, SalesTaxCodes, Terms, CustomerTypes,
+        //            VendorTypes, JobTypes, ShipMethods, PriceLevels,
+        //            CustomerMsgs
+        //   Stage 2: Items & Tax Items (depend on Stage 1 entities)
+        //            ItemSalesTax (needs Vendors), Items (needs Accounts)
+        //   Stage 3: Transactions (depend on everything above)
+        // ═══════════════════════════════════════════════════════════════════
+
         /// <summary>
-        /// The 4 import stages, in dependency order.
+        /// The 3 import stages, in dependency order.
         /// Stage 1 must complete before Stage 2, etc.
         /// </summary>
         private static readonly List<ImportStage> ImportStages = new()
@@ -423,46 +464,53 @@ namespace QB_TimeWarp.Services
             new ImportStage
             {
                 StageNumber = 1,
-                StageName = "Foundation",
-                Description = "Chart of Accounts, Sales Tax, Payment Terms, Classes, and other lookup items",
+                StageName = "Foundation + Entities",
+                Description = "Accounts, Vendors, Customers, Employees, Classes, Terms, Tax Codes, Lookups",
                 IsCritical = true,
                 EntityTypes = new List<string>
                 {
-                    "Accounts", "SalesTaxCodes",
-                    // FIX #9: ItemSalesTax belongs in Stage 1 — Customers and
-                    // SalesReceipts in later stages reference ItemSalesTaxRef
-                    // and need the target sales-tax items to exist first.
-                    "ItemSalesTax",
-                    "Terms", "PaymentMethods",
-                    "CustomerTypes", "VendorTypes", "JobTypes", "Classes",
-                    "ShipMethods", "PriceLevels"
+                    // ── Chart of Accounts (everything references these) ──
+                    "Accounts",
+
+                    // ── People / Orgs (no inter-dependencies at this level) ──
+                    // FIX #17: Vendors MUST be here so ItemSalesTax.TaxVendorRef
+                    //          resolves in Stage 2.
+                    "Vendors",
+                    "Customers",
+                    "Employees",
+
+                    // ── Lookup / reference types ──
+                    "Classes",
+                    "PaymentMethods",
+                    "SalesTaxCodes",
+                    "Terms",
+                    "CustomerTypes",
+                    "VendorTypes",
+                    "JobTypes",
+                    "ShipMethods",
+                    "PriceLevels",
+                    "CustomerMsgs"
                 }
             },
             new ImportStage
             {
                 StageNumber = 2,
-                StageName = "Entities",
-                Description = "Customers, Vendors, Employees, and Other Names",
+                StageName = "Items & Tax Items",
+                Description = "ItemSalesTax (needs Vendors), Service/Inventory/Non-Inventory Items",
                 IsCritical = true,
                 EntityTypes = new List<string>
                 {
-                    "Customers", "Vendors", "Employees"
-                }
-            },
-            new ImportStage
-            {
-                StageNumber = 3,
-                StageName = "Items",
-                Description = "Service Items, Inventory Items, Non-Inventory Items, Item Groups",
-                IsCritical = true,
-                EntityTypes = new List<string>
-                {
+                    // FIX #17: ItemSalesTax moved from Stage 1 → Stage 2.
+                    // It references TaxVendorRef (→ Vendors, now in Stage 1)
+                    // and must exist before transactions that carry
+                    // ItemSalesTaxRef (SalesReceipts, Invoices, etc.).
+                    "ItemSalesTax",
                     "Items"
                 }
             },
             new ImportStage
             {
-                StageNumber = 4,
+                StageNumber = 3,
                 StageName = "Transactions",
                 Description = "Invoices, Bills, Checks, Deposits, Journal Entries, Credit Memos, Sales Receipts",
                 IsCritical = false,
@@ -547,7 +595,7 @@ namespace QB_TimeWarp.Services
             {
                 Log.Information("");
                 Log.Information("  ┌─────────────────────────────────────────┐");
-                Log.Information("  │  Stage {StageNum}/4: {StageName,-33} │",
+                Log.Information("  │  Stage {StageNum}/3: {StageName,-33} │",
                     stage.StageNumber, stage.StageName);
                 Log.Information("  │  {Desc,-41} │", stage.Description.Length > 41
                     ? stage.Description[..38] + "..."
@@ -658,10 +706,9 @@ namespace QB_TimeWarp.Services
             {
                 bool isEnabled = stage.StageNumber switch
                 {
-                    1 => stageConfig.Stage1_Foundation,
-                    2 => stageConfig.Stage2_Entities,
-                    3 => stageConfig.Stage3_Items,
-                    4 => stageConfig.Stage4_Transactions,
+                    1 => stageConfig.Stage1_FoundationAndEntities,
+                    2 => stageConfig.Stage2_Items,
+                    3 => stageConfig.Stage3_Transactions,
                     _ => true
                 };
 
