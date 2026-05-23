@@ -1979,6 +1979,9 @@ namespace QB_TimeWarp.Services
                         var retryEntity = new QBEntity
                         {
                             Name = entity.Name,
+                            FullName = entity.FullName,
+                            ListID = entity.ListID,
+                            TxnID = entity.TxnID,
                             Fields = entity.Fields.DeepClone() as JObject ?? new JObject(),
                             LineItems = entity.LineItems
                         };
@@ -1986,8 +1989,7 @@ namespace QB_TimeWarp.Services
                         retryEntity.Fields.Remove("BankNumber");
                         
                         // Retry the import without account numbers
-                        var retryXml = BuildAddRequestXml(entityType, retryEntity);
-                        var retryResult = ImportSingleEntity(entityType, retryEntity, retryXml);
+                        var retryResult = ImportSingleEntity(entityType, retryEntity);
                         
                         if (retryResult.Success)
                         {
