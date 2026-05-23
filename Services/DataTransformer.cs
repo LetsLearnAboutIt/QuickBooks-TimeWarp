@@ -365,12 +365,11 @@ namespace QB_TimeWarp.Services
             // To prevent data loss, we prepend the Name value to the writable Memo field.
             PreserveNameToMemo(source, transformed, entityType);
 
-            // ── FIX #14: Truncate & sanitize Employee Notes field ──────────
-            // QB 2021 has a 4,095 character limit on <Notes>. Employees with
-            // "RAISES AND PROMOTIONS HISTORY" blocks exceed this and cause
-            // QBXML parse errors. Truncate to 4,000 chars (leaving room for
-            // the "[TRUNCATED]" marker) and escape XML special characters.
-            SanitizeNotesField(transformed, entityType);
+            // ── Fix #14 (Revised): Zero out Notes field for Employees ────────
+            // Historical data (RAISES AND PROMOTIONS HISTORY blocks) is not
+            // needed in the migration and was causing QBXML parse errors for
+            // 10 employees. Rather than truncating, simply remove the field.
+            ZeroOutEmployeeNotes(transformed, entityType);
 
             // Ensure class assignments are preserved in transactions
             if (_transformationRules.PreserveClassTracking && ClassTrackingHeaderTypes.Contains(entityType))
@@ -648,84 +647,49 @@ namespace QB_TimeWarp.Services
         }
 
         // ═══════════════════════════════════════════════════════════════════
-        // FIX #14: Employee Notes Truncation & XML Sanitization
+        // Fix #14 (Revised): Zero out Notes field - historical data not
+        // needed in migration
         // ═══════════════════════════════════════════════════════════════════
         // 10 Employees were failing import because their <Notes> field
-        // contained massive "RAISES AND PROMOTIONS HISTORY" blocks that
-        // exceeded QB 2021's 4,095-character limit and/or contained
-        // characters that broke QBXML parsing (e.g., &, <, >).
+        // contained massive "RAISES AND PROMOTIONS HISTORY FROM EMPLOYEE
+        // ORGANIZER" blocks with compensation history, formatted text, and
+        // special characters that broke QBXML parsing.
         //
-        // This method:
-        //   1. Escapes XML special characters (&, <, >, ", ')
-        //   2. Truncates to 4,000 chars (leaves room for "... [TRUNCATED]")
-        //   3. Appends a truncation marker if content was cut
-        //
-        // Applies to ALL entity types that have a Notes field (Employees,
-        // Customers, Vendors, etc.) for defensive coverage.
+        // Original approach: truncate to 4,000 chars + sanitize XML chars.
+        // Revised approach (per Joseph): simply zero out the Notes field
+        // entirely for Employees. The historical payroll/promotion data is
+        // not needed in the migrated QB 2021 file — it's archival data
+        // that lives in the source QB 2023 file.
         // ═══════════════════════════════════════════════════════════════════
 
         /// <summary>
-        /// Maximum length for the Notes field in QB 2021 (SDK 15.0).
-        /// The XSD limit is 4,095 characters. We truncate at 4,000 to leave
-        /// room for the "... [TRUNCATED]" suffix.
+        /// Fix #14 (Revised): Zero out Notes field for Employees.
+        /// Historical data (raises, promotions, compensation history) is not
+        /// needed in the migration and was causing QBXML parse errors.
+        /// Only applies to Employees — other entity types keep their Notes.
         /// </summary>
-        private const int NotesMaxLength = 4000;
-        private const string NotesTruncationMarker = "... [TRUNCATED]";
-
-        /// <summary>
-        /// FIX #14: Sanitizes the Notes field for QB 2021 compatibility.
-        /// - Strips invalid XML 1.0 control characters (0x00-0x08, 0x0B, 0x0C, 0x0E-0x1F)
-        /// - Truncates to NotesMaxLength (4,000) characters
-        /// - Appends a truncation marker ("... [TRUNCATED]") if content was cut
-        /// XML entity escaping (&amp;, &lt;, etc.) is handled downstream by
-        /// DataImporter.EscapeXml() at QBXML generation time.
-        /// </summary>
-        private void SanitizeNotesField(QBEntity entity, string entityType)
+        private void ZeroOutEmployeeNotes(QBEntity entity, string entityType)
         {
+            // Only zero out Notes for Employees
+            if (!entityType.Equals("Employees", StringComparison.OrdinalIgnoreCase))
+                return;
+
             var notesToken = entity.Fields["Notes"];
             if (notesToken == null || notesToken.Type == JTokenType.Null)
                 return;
 
-            var notes = notesToken.ToString();
-            if (string.IsNullOrWhiteSpace(notes))
+            var originalNotes = notesToken.ToString();
+            if (string.IsNullOrWhiteSpace(originalNotes))
                 return;
 
-            var originalLength = notes.Length;
+            // Remove the Notes field entirely from the entity
+            entity.Fields.Remove("Notes");
+            _employeeNotesTruncated++;
 
-            // Step 1: Strip characters that are invalid in XML 1.0 content.
-            // Control characters (0x00-0x08, 0x0B, 0x0C, 0x0E-0x1F) are not valid
-            // in XML and will cause QBXML parse failures even when escaped.
-            // Tab (0x09), LF (0x0A), and CR (0x0D) are the only allowed control chars.
-            // NOTE: We do NOT pre-escape &, <, >, etc. here because the DataImporter's
-            // EscapeXml() method handles that at QBXML generation time. Pre-escaping
-            // here would cause double-escaping (&amp;amp; instead of &amp;).
-            notes = new string(notes.Where(c =>
-                c == '\t' || c == '\n' || c == '\r' || // allowed control chars
-                c >= 0x20                               // all printable chars
-            ).ToArray());
-
-            // Step 2: Truncate if the text exceeds QB 2021's limit.
-            bool wasTruncated = false;
-            if (notes.Length > NotesMaxLength)
-            {
-                notes = notes.Substring(0, NotesMaxLength) + NotesTruncationMarker;
-                wasTruncated = true;
-                _employeeNotesTruncated++;
-
-                Log.Information("  FIX #14: Truncated Notes for {EntityType} '{Name}' " +
-                    "from {OrigLen} to {NewLen} chars (QB 2021 limit: 4,095)",
-                    entityType, entity.Name ?? entity.FullName ?? "unknown",
-                    originalLength, notes.Length);
-            }
-
-            entity.Fields["Notes"] = notes;
-
-            if (wasTruncated)
-            {
-                Log.Debug("  FIX #14: Notes truncation applied — entity '{Name}', " +
-                    "original length {OrigLen}, escaped+truncated to {NewLen}",
-                    entity.Name, originalLength, notes.Length);
-            }
+            Log.Information("  Fix #14: Zeroed out Notes for Employee '{Name}' " +
+                "(was {Len} chars — historical data not needed in migration)",
+                entity.Name ?? entity.FullName ?? "unknown",
+                originalNotes.Length);
         }
 
         /// <summary>
@@ -1436,7 +1400,7 @@ namespace QB_TimeWarp.Services
             if (_nameToMemoPreserved > 0)
                 Log.Information("    Name→Memo preserved:               {Count} (transaction names saved to Memo)", _nameToMemoPreserved);
             if (_employeeNotesTruncated > 0)
-                Log.Information("    FIX #14 Notes truncated:           {Count} (exceeded QB 2021 4,095 char limit)", _employeeNotesTruncated);
+                Log.Information("    Fix #14 Employee Notes zeroed:     {Count} (historical data not needed)", _employeeNotesTruncated);
 
             Log.Information("    ────────────────────────────────");
             Log.Information("    TOTAL compatibility adjustments: {Total}", totalAdjustments);
