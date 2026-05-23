@@ -735,6 +735,93 @@
           "action": "map"
         },
         {
+          "sourceField": "SalesOrPurchase",
+          "targetField": "SalesOrPurchase",
+          "action": "map",
+          "notes": "FIX #22: Required block for ItemNonInventory/ItemOtherCharge (contains Desc, Price, AccountRef)"
+        },
+        {
+          "sourceField": "SalesAndPurchase",
+          "targetField": "SalesAndPurchase",
+          "action": "map",
+          "notes": "FIX #22: Alternative block for items sold AND purchased (contains SalesDesc, SalesPrice, IncomeAccountRef, PurchaseDesc, PurchaseCost, ExpenseAccountRef)"
+        },
+        {
+          "sourceField": "ItemDesc",
+          "targetField": "ItemDesc",
+          "action": "map",
+          "maxLength": 4095,
+          "notes": "FIX #22: Description for ItemSalesTax, ItemSalesTaxGroup, ItemSubtotal, ItemPayment"
+        },
+        {
+          "sourceField": "ItemSalesTaxRef",
+          "targetField": "ItemSalesTaxRef",
+          "action": "map",
+          "notes": "FIX #22: Component tax item references for ItemSalesTaxGroup"
+        },
+        {
+          "sourceField": "TaxRate",
+          "targetField": "TaxRate",
+          "action": "map",
+          "notes": "FIX #22: Tax rate for ItemSalesTax"
+        },
+        {
+          "sourceField": "TaxVendorRef",
+          "targetField": "TaxVendorRef",
+          "action": "map",
+          "notes": "FIX #22: Tax vendor reference for ItemSalesTax"
+        },
+        {
+          "sourceField": "SalesDesc",
+          "targetField": "SalesDesc",
+          "action": "map",
+          "maxLength": 4095,
+          "notes": "FIX #22: Sales description for ItemInventory/ItemInventoryAssembly"
+        },
+        {
+          "sourceField": "SalesPrice",
+          "targetField": "SalesPrice",
+          "action": "map",
+          "notes": "FIX #22: Sales price for ItemInventory/ItemInventoryAssembly"
+        },
+        {
+          "sourceField": "PurchaseDesc",
+          "targetField": "PurchaseDesc",
+          "action": "map",
+          "maxLength": 4095,
+          "notes": "FIX #22: Purchase description for ItemInventory"
+        },
+        {
+          "sourceField": "PurchaseCost",
+          "targetField": "PurchaseCost",
+          "action": "map",
+          "notes": "FIX #22: Purchase cost for ItemInventory"
+        },
+        {
+          "sourceField": "IncomeAccountRef",
+          "targetField": "IncomeAccountRef",
+          "action": "map",
+          "notes": "FIX #22: Income account for ItemInventory/ItemService"
+        },
+        {
+          "sourceField": "COGSAccountRef",
+          "targetField": "COGSAccountRef",
+          "action": "map",
+          "notes": "FIX #22: COGS account for ItemInventory"
+        },
+        {
+          "sourceField": "AssetAccountRef",
+          "targetField": "AssetAccountRef",
+          "action": "map",
+          "notes": "FIX #22: Asset account for ItemInventory"
+        },
+        {
+          "sourceField": "PrefVendorRef",
+          "targetField": "PrefVendorRef",
+          "action": "map",
+          "notes": "FIX #22: Preferred vendor for ItemInventory"
+        },
+        {
           "sourceField": "ExternalGUID",
           "targetField": null,
           "action": "skip"

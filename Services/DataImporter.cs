@@ -847,25 +847,54 @@ namespace QB_TimeWarp.Services
 
             foreach (var prop in fields.Properties().ToList())
             {
-                if (!prop.Name.EndsWith("Ref")) continue;
-                if (prop.Value is not JObject refObj) continue;
-
-                var fullName = refObj["FullName"]?.ToString();
-                if (string.IsNullOrEmpty(fullName)) continue;
-
-                // Determine the entity type this ref points to
-                string? refEntityType = GetEntityTypeForRefField(prop.Name);
-                if (refEntityType == null) continue;
-
-                // Look up in our ID mappings
-                var mapKey = $"{refEntityType}:{fullName}";
-                if (_nameToListIdMap.TryGetValue(mapKey, out var listId))
+                if (prop.Value is JObject nested)
                 {
-                    // We have a ListID — add it to the ref object for QB 2021
-                    refObj["ListID"] = listId;
-                    resolved++;
-                    Log.Debug("      Resolved {RefField} '{Name}' → ListID {ListID}",
-                        prop.Name, fullName, listId);
+                    if (prop.Name.EndsWith("Ref"))
+                    {
+                        // It's a reference field
+                        var fullName = nested["FullName"]?.ToString();
+                        if (string.IsNullOrEmpty(fullName)) continue;
+
+                        string? refEntityType = GetEntityTypeForRefField(prop.Name);
+                        if (refEntityType == null) continue;
+
+                        var mapKey = $"{refEntityType}:{fullName}";
+                        if (_nameToListIdMap.TryGetValue(mapKey, out var listId))
+                        {
+                            nested["ListID"] = listId;
+                            resolved++;
+                            Log.Debug("      Resolved {RefField} '{Name}' → ListID {ListID}",
+                                prop.Name, fullName, listId);
+                        }
+                    }
+                    else
+                    {
+                        // FIX #22: Recurse into composite blocks (e.g., SalesOrPurchase)
+                        // to resolve nested refs like AccountRef inside SalesOrPurchase
+                        resolved += ResolveFieldReferences(nested);
+                    }
+                }
+                // FIX #22: Handle JArray of refs (e.g., ItemSalesTaxRef array)
+                else if (prop.Value is JArray array && prop.Name.EndsWith("Ref"))
+                {
+                    foreach (var item in array)
+                    {
+                        if (item is not JObject refObj) continue;
+                        var fullName = refObj["FullName"]?.ToString();
+                        if (string.IsNullOrEmpty(fullName)) continue;
+
+                        string? refEntityType = GetEntityTypeForRefField(prop.Name);
+                        if (refEntityType == null) continue;
+
+                        var mapKey = $"{refEntityType}:{fullName}";
+                        if (_nameToListIdMap.TryGetValue(mapKey, out var listId))
+                        {
+                            refObj["ListID"] = listId;
+                            resolved++;
+                            Log.Debug("      Resolved {RefField}[] '{Name}' → ListID {ListID}",
+                                prop.Name, fullName, listId);
+                        }
+                    }
                 }
             }
 
@@ -2308,10 +2337,12 @@ namespace QB_TimeWarp.Services
                     }
                     else
                     {
-                        // Regular nested object (like Address) — sort internal fields too
+                        // Regular nested object (like Address, SalesOrPurchase) — sort internal fields too
                         var childOrderMap = QBXMLFieldOrdering.IsAddressElement(prop.Name)
                             ? QBXMLFieldOrdering.GetAddressFieldOrder()
-                            : new Dictionary<string, int>();
+                            : QBXMLFieldOrdering.IsCompositeBlock(prop.Name)
+                                ? QBXMLFieldOrdering.GetCompositeBlockFieldOrder(prop.Name)
+                                : new Dictionary<string, int>();
 
                         var sortedChildren = nested.Properties()
                             .OrderBy(c => QBXMLFieldOrdering.GetFieldIndex(childOrderMap, c.Name))
@@ -2326,7 +2357,36 @@ namespace QB_TimeWarp.Services
                                 _dynamicExcludedFields.Contains(childProp.Name))
                                 continue;
 
-                            if (childProp.Value.Type != JTokenType.Null &&
+                            // FIX #22: Handle nested ref types within composite blocks
+                            // e.g., AccountRef inside SalesOrPurchase, IncomeAccountRef inside SalesAndPurchase
+                            if (childProp.Value is JObject childNested)
+                            {
+                                if (childNested["FullName"] != null || childNested["ListID"] != null)
+                                {
+                                    // It's a reference — emit as ref block
+                                    sb.AppendLine($"      <{childProp.Name}>");
+                                    if (childNested["FullName"] != null)
+                                        sb.AppendLine($"        <FullName>{EscapeXml(childNested["FullName"]!.ToString())}</FullName>");
+                                    else if (childNested["ListID"] != null)
+                                        sb.AppendLine($"        <ListID>{EscapeXml(childNested["ListID"]!.ToString())}</ListID>");
+                                    sb.AppendLine($"      </{childProp.Name}>");
+                                }
+                                else
+                                {
+                                    // Deeper nested object — emit children as simple elements
+                                    sb.AppendLine($"      <{childProp.Name}>");
+                                    foreach (var grandChild in childNested.Properties())
+                                    {
+                                        if (grandChild.Value.Type != JTokenType.Null &&
+                                            !string.IsNullOrEmpty(grandChild.Value.ToString()))
+                                        {
+                                            sb.AppendLine($"        <{grandChild.Name}>{EscapeXml(grandChild.Value.ToString())}</{grandChild.Name}>");
+                                        }
+                                    }
+                                    sb.AppendLine($"      </{childProp.Name}>");
+                                }
+                            }
+                            else if (childProp.Value.Type != JTokenType.Null &&
                                 !string.IsNullOrEmpty(childProp.Value.ToString()))
                             {
                                 // Enforce QB 2021 field length limits
@@ -2335,6 +2395,46 @@ namespace QB_TimeWarp.Services
                             }
                         }
                         sb.AppendLine($"    </{prop.Name}>");
+                    }
+                }
+                // FIX #22: Handle JArray values for repeated elements
+                // e.g., multiple <ItemSalesTaxRef> in ItemSalesTaxGroupAdd
+                else if (prop.Value is JArray array)
+                {
+                    foreach (var item in array)
+                    {
+                        if (item is JObject arrayObj)
+                        {
+                            // Check if it's a reference type
+                            if (arrayObj["FullName"] != null || arrayObj["ListID"] != null)
+                            {
+                                sb.AppendLine($"    <{prop.Name}>");
+                                if (arrayObj["FullName"] != null)
+                                    sb.AppendLine($"      <FullName>{EscapeXml(arrayObj["FullName"]!.ToString())}</FullName>");
+                                else if (arrayObj["ListID"] != null)
+                                    sb.AppendLine($"      <ListID>{EscapeXml(arrayObj["ListID"]!.ToString())}</ListID>");
+                                sb.AppendLine($"    </{prop.Name}>");
+                            }
+                            else
+                            {
+                                // Generic nested object in array
+                                sb.AppendLine($"    <{prop.Name}>");
+                                foreach (var arrProp in arrayObj.Properties())
+                                {
+                                    if (arrProp.Value.Type != JTokenType.Null &&
+                                        !string.IsNullOrEmpty(arrProp.Value.ToString()))
+                                    {
+                                        sb.AppendLine($"      <{arrProp.Name}>{EscapeXml(arrProp.Value.ToString())}</{arrProp.Name}>");
+                                    }
+                                }
+                                sb.AppendLine($"    </{prop.Name}>");
+                            }
+                        }
+                        else if (item.Type != JTokenType.Null && !string.IsNullOrEmpty(item.ToString()))
+                        {
+                            // Simple value in array
+                            sb.AppendLine($"    <{prop.Name}>{EscapeXml(item.ToString())}</{prop.Name}>");
+                        }
                     }
                 }
                 else if (prop.Value.Type != JTokenType.Null && !string.IsNullOrEmpty(prop.Value.ToString()))

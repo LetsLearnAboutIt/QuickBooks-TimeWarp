@@ -1151,6 +1151,60 @@ namespace QB_TimeWarp.Helpers
                    elementName == "ShipToAddress";
         }
 
+        // =====================================================================
+        // FIX #22: Composite block field orderings
+        // =====================================================================
+
+        /// <summary>
+        /// SalesOrPurchase sub-element order per QBXML XSD schema.
+        /// Used by ItemNonInventoryAdd and ItemOtherChargeAdd.
+        /// </summary>
+        private static readonly Dictionary<string, int> SalesOrPurchaseFieldOrder = new(StringComparer.OrdinalIgnoreCase)
+        {
+            { "Desc", 0 },
+            { "Price", 1 },
+            { "RatePercent", 2 },
+            { "AccountRef", 3 },
+        };
+
+        /// <summary>
+        /// SalesAndPurchase sub-element order per QBXML XSD schema.
+        /// Used by items that are both sold and purchased.
+        /// </summary>
+        private static readonly Dictionary<string, int> SalesAndPurchaseFieldOrder = new(StringComparer.OrdinalIgnoreCase)
+        {
+            { "SalesDesc", 0 },
+            { "SalesPrice", 1 },
+            { "IncomeAccountRef", 2 },
+            { "PurchaseDesc", 3 },
+            { "PurchaseCost", 4 },
+            { "PrefVendorRef", 5 },
+            { "ExpenseAccountRef", 6 },
+        };
+
+        /// <summary>
+        /// Gets the field ordering for a composite sub-element block (e.g., SalesOrPurchase, SalesAndPurchase).
+        /// Returns an empty dictionary if the element name is not recognized.
+        /// </summary>
+        public static Dictionary<string, int> GetCompositeBlockFieldOrder(string elementName)
+        {
+            return elementName switch
+            {
+                "SalesOrPurchase" => SalesOrPurchaseFieldOrder,
+                "SalesAndPurchase" => SalesAndPurchaseFieldOrder,
+                _ => new Dictionary<string, int>()
+            };
+        }
+
+        /// <summary>
+        /// Determines if the given element name is a composite block that needs
+        /// internal field ordering (like SalesOrPurchase).
+        /// </summary>
+        public static bool IsCompositeBlock(string elementName)
+        {
+            return elementName is "SalesOrPurchase" or "SalesAndPurchase";
+        }
+
         /// <summary>
         /// Returns the sort index for a field within a given ordering map.
         /// Fields not in the map get 9999 (sorted to the end).

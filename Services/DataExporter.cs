@@ -522,16 +522,36 @@ namespace QB_TimeWarp.Services
                         continue;
                 }
 
+                JToken newValue;
                 if (child.HasElements)
                 {
                     // Nested element - create sub-object
-                    var subObj = ConvertXmlToJObject(child);
-                    obj[name] = subObj;
+                    newValue = ConvertXmlToJObject(child);
                 }
                 else
                 {
                     // Leaf element - store value
-                    obj[name] = child.Value;
+                    newValue = child.Value;
+                }
+
+                // FIX #22: Handle repeated elements (e.g., multiple <ItemSalesTaxRef>
+                // in ItemSalesTaxGroupRet). If a key already exists, promote to JArray.
+                if (obj[name] != null)
+                {
+                    var existing = obj[name]!;
+                    if (existing is JArray arr)
+                    {
+                        arr.Add(newValue);
+                    }
+                    else
+                    {
+                        // Convert single value to array
+                        obj[name] = new JArray(existing, newValue);
+                    }
+                }
+                else
+                {
+                    obj[name] = newValue;
                 }
             }
 
