@@ -1,0 +1,43 @@
+﻿QB-TimeWarp Item Failure Analysis
+==================================================
+Date: 2026-05-23  Migration: 2054/2088 (98.4%)
+Blocking: 4 items failed -> 30 SalesReceipts cascade = 34 total
+
+=== THE 4 FAILING ITEMS ===
+
+1. 3rd Party Sales (ItemNonInventory)
+   Error: XML parse error - missing required SalesOrPurchase block
+   XML has: Name, IsActive, SalesTaxCodeRef(Non)
+   MISSING: SalesOrPurchase(Desc=Sales to 3rd party, Price=0.00, AccountRef=3rd Party Sales)
+
+2. FOOD (ItemNonInventory)
+   Error: XML parse error - missing required SalesOrPurchase block
+   XML has: Name, IsActive, SalesTaxCodeRef(Tax)
+   MISSING: SalesOrPurchase(Desc=SALES PRE REGISTER, Price=0.00, AccountRef=Food Sales)
+
+3. COMMISSIONS PD (ItemOtherCharge)
+   Error: XML parse error - missing required SalesOrPurchase block
+   XML has: Name, IsActive, SalesTaxCodeRef(COM)
+   MISSING: SalesOrPurchase(Desc=UPCHARGE COMM PD, Price=0.00, AccountRef=COMMESSIONS)
+
+4. WI SALES and EXPO (ItemSalesTaxGroup)
+   Error: XML parse error - missing required ItemSalesTaxRef elements
+   XML has: Name, IsActive
+   MISSING: ItemSalesTaxRef list (component tax items like EXPO, WI SALES TAX)
+
+=== ROOT CAUSE ===
+QBXML builder only maps Name, IsActive, SalesTaxCodeRef for items.
+It does NOT map SalesOrPurchase or ItemSalesTaxRef blocks.
+
+=== FIXES NEEDED ===
+Fix #17: ItemNonInventory/ItemOtherCharge - add SalesOrPurchase block:
+  Map Fields.SalesOrPurchase.Desc -> <SalesOrPurchase><Desc>
+  Map Fields.SalesOrPurchase.Price -> <SalesOrPurchase><Price>
+  Map Fields.SalesOrPurchase.AccountRef.FullName -> <SalesOrPurchase><AccountRef><FullName>
+
+Fix #18: ItemSalesTaxGroup - add ItemSalesTaxRef elements:
+  Need to export component tax refs from QB2023
+  Then emit <ItemSalesTaxRef><FullName>X</FullName></ItemSalesTaxRef> for each
+
+=== CASCADE ===
+Fix these 4 items -> 30 SalesReceipts auto-resolve -> 2088/2088 = 100%

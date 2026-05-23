@@ -1,0 +1,283 @@
+{
+  "EntityType": "Items",
+  "SourceVersion": "QB2023",
+  "ExportTimestamp": "2026-05-23T14:05:11.6416344Z",
+  "TotalCount": 10,
+  "ActiveCount": 10,
+  "InactiveCount": 0,
+  "Entities": [
+    {
+      "EntityType": "Items",
+      "ListID": "8000000A-1739213053",
+      "TxnID": "",
+      "Name": "3rd Party Sales",
+      "FullName": "3rd Party Sales",
+      "IsActive": true,
+      "Fields": {
+        "ListID": "8000000A-1739213053",
+        "TimeCreated": "2025-02-10T12:44:13-06:00",
+        "TimeModified": "2025-02-10T12:44:13-06:00",
+        "EditSequence": "1739213053",
+        "Name": "3rd Party Sales",
+        "FullName": "3rd Party Sales",
+        "IsActive": "true",
+        "Sublevel": "0",
+        "SalesTaxCodeRef": {
+          "ListID": "80000002-1698719620",
+          "FullName": "Non"
+        },
+        "SalesOrPurchase": {
+          "Desc": "Sales to 3rd party. They are responsible for sales and expo",
+          "Price": "0.00",
+          "AccountRef": {
+            "ListID": "800000BD-1739212856",
+            "FullName": "3rd Party Sales"
+          }
+        },
+        "Type": "ItemNonInventory"
+      },
+      "LineItems": [],
+      "ExportedAt": "2026-05-23T14:05:11.6413622Z"
+    },
+    {
+      "EntityType": "Items",
+      "ListID": "80000008-1698719844",
+      "TxnID": "",
+      "Name": "FOOD",
+      "FullName": "FOOD",
+      "IsActive": true,
+      "Fields": {
+        "ListID": "80000008-1698719844",
+        "TimeCreated": "2023-10-30T21:37:24-06:00",
+        "TimeModified": "2023-10-30T21:37:24-06:00",
+        "EditSequence": "1698719844",
+        "Name": "FOOD",
+        "FullName": "FOOD",
+        "IsActive": "true",
+        "Sublevel": "0",
+        "SalesTaxCodeRef": {
+          "ListID": "80000001-1698719620",
+          "FullName": "Tax"
+        },
+        "SalesOrPurchase": {
+          "Desc": "SALES PRE REGISTER",
+          "Price": "0.00",
+          "AccountRef": {
+            "ListID": "80000044-1698719654",
+            "FullName": "Food Sales"
+          }
+        },
+        "Type": "ItemNonInventory"
+      },
+      "LineItems": [],
+      "ExportedAt": "2026-05-23T14:05:11.6415983Z"
+    },
+    {
+      "EntityType": "Items",
+      "ListID": "80000009-1736201428",
+      "TxnID": "",
+      "Name": "COMMISSIONS PD",
+      "FullName": "COMMISSIONS PD",
+      "IsActive": true,
+      "Fields": {
+        "ListID": "80000009-1736201428",
+        "TimeCreated": "2025-01-06T16:10:28-06:00",
+        "TimeModified": "2025-01-06T16:10:28-06:00",
+        "EditSequence": "1736201428",
+        "Name": "COMMISSIONS PD",
+        "FullName": "COMMISSIONS PD",
+        "IsActive": "true",
+        "Sublevel": "0",
+        "SalesTaxCodeRef": {
+          "ListID": "80000003-1736201148",
+          "FullName": "COM"
+        },
+        "SalesOrPurchase": {
+          "Desc": "UPCHARGE COMM PD",
+          "Price": "0.00",
+          "AccountRef": {
+            "ListID": "800000BC-1736200486",
+            "FullName": "COMMESSIONS"
+          }
+        },
+        "Type": "ItemOtherCharge"
+      },
+      "LineItems": [],
+      "ExportedAt": "2026-05-23T14:05:11.641606Z"
+    },
+    {
+      "EntityType": "Items",
+      "ListID": "80000001-1698719835",
+      "TxnID": "",
+      "Name": "EXPO",
+      "FullName": "EXPO",
+      "IsActive": true,
+      "Fields": {
+        "ListID": "80000001-1698719835",
+        "TimeCreated": "2023-10-30T21:37:15-06:00",
+        "TimeModified": "2023-10-30T21:37:15-06:00",
+        "EditSequence": "1698719835",
+        "Name": "EXPO",
+        "IsActive": "true",
+        "ItemDesc": "WI EXPO TAX",
+        "TaxRate": "0.50",
+        "TaxVendorRef": {
+          "ListID": "800000A6-1698719804",
+          "FullName": "WISCONSIN DEPT OF REV"
+        },
+        "Type": "ItemSalesTax"
+      },
+      "LineItems": [],
+      "ExportedAt": "2026-05-23T14:05:11.64161Z"
+    },
+    {
+      "EntityType": "Items",
+      "ListID": "80000002-1698719836",
+      "TxnID": "",
+      "Name": "MILW COUNTY",
+      "FullName": "MILW COUNTY",
+      "IsActive": true,
+      "Fields": {
+        "ListID": "80000002-1698719836",
+        "TimeCreated": "2023-10-30T21:37:16-06:00",
+        "TimeModified": "2023-12-06T13:27:44-06:00",
+        "EditSequence": "1701890864",
+        "Name": "MILW COUNTY",
+        "IsActive": "true",
+        "ItemDesc": "MILWAUKEE COUNTY SALES TAX",
+        "TaxRate": "0.90",
+        "TaxVendorRef": {
+          "ListID": "800000A6-1698719804",
+          "FullName": "WISCONSIN DEPT OF REV"
+        },
+        "Type": "ItemSalesTax"
+      },
+      "LineItems": [],
+      "ExportedAt": "2026-05-23T14:05:11.6416137Z"
+    },
+    {
+      "EntityType": "Items",
+      "ListID": "80000003-1698719837",
+      "TxnID": "",
+      "Name": "Out of State",
+      "FullName": "Out of State",
+      "IsActive": true,
+      "Fields": {
+        "ListID": "80000003-1698719837",
+        "TimeCreated": "2023-10-30T21:37:17-06:00",
+        "TimeModified": "2023-10-30T21:37:17-06:00",
+        "EditSequence": "1698719837",
+        "Name": "Out of State",
+        "IsActive": "true",
+        "ItemDesc": "Out-of-state sale, exempt from sales tax",
+        "TaxRate": "0.00",
+        "TaxVendorRef": {
+          "ListID": "800000A6-1698719804",
+          "FullName": "WISCONSIN DEPT OF REV"
+        },
+        "Type": "ItemSalesTax"
+      },
+      "LineItems": [],
+      "ExportedAt": "2026-05-23T14:05:11.6416159Z"
+    },
+    {
+      "EntityType": "Items",
+      "ListID": "80000004-1698719838",
+      "TxnID": "",
+      "Name": "SALES TAX",
+      "FullName": "SALES TAX",
+      "IsActive": true,
+      "Fields": {
+        "ListID": "80000004-1698719838",
+        "TimeCreated": "2023-10-30T21:37:18-06:00",
+        "TimeModified": "2023-12-06T13:28:30-06:00",
+        "EditSequence": "1701890910",
+        "Name": "SALES TAX",
+        "IsActive": "true",
+        "ItemDesc": "SALES TAX",
+        "TaxRate": "5.90",
+        "TaxVendorRef": {
+          "ListID": "800000A6-1698719804",
+          "FullName": "WISCONSIN DEPT OF REV"
+        },
+        "Type": "ItemSalesTax"
+      },
+      "LineItems": [],
+      "ExportedAt": "2026-05-23T14:05:11.6416178Z"
+    },
+    {
+      "EntityType": "Items",
+      "ListID": "80000005-1698719839",
+      "TxnID": "",
+      "Name": "STATUM TAX",
+      "FullName": "STATUM TAX",
+      "IsActive": true,
+      "Fields": {
+        "ListID": "80000005-1698719839",
+        "TimeCreated": "2023-10-30T21:37:19-06:00",
+        "TimeModified": "2023-10-30T21:37:19-06:00",
+        "EditSequence": "1698719839",
+        "Name": "STATUM TAX",
+        "IsActive": "true",
+        "ItemDesc": "STADIUM TAX",
+        "TaxRate": "0.00",
+        "TaxVendorRef": {
+          "ListID": "800000A6-1698719804",
+          "FullName": "WISCONSIN DEPT OF REV"
+        },
+        "Type": "ItemSalesTax"
+      },
+      "LineItems": [],
+      "ExportedAt": "2026-05-23T14:05:11.6416197Z"
+    },
+    {
+      "EntityType": "Items",
+      "ListID": "80000006-1698719840",
+      "TxnID": "",
+      "Name": "WI SALES TAX",
+      "FullName": "WI SALES TAX",
+      "IsActive": true,
+      "Fields": {
+        "ListID": "80000006-1698719840",
+        "TimeCreated": "2023-10-30T21:37:20-06:00",
+        "TimeModified": "2023-10-30T21:37:20-06:00",
+        "EditSequence": "1698719840",
+        "Name": "WI SALES TAX",
+        "IsActive": "true",
+        "ItemDesc": "WI SALES TAX",
+        "TaxRate": "5.00",
+        "TaxVendorRef": {
+          "ListID": "800000A6-1698719804",
+          "FullName": "WISCONSIN DEPT OF REV"
+        },
+        "Type": "ItemSalesTax"
+      },
+      "LineItems": [],
+      "ExportedAt": "2026-05-23T14:05:11.6416223Z"
+    },
+    {
+      "EntityType": "Items",
+      "ListID": "80000007-1698719841",
+      "TxnID": "",
+      "Name": "WI SALES & EXPO",
+      "FullName": "WI SALES & EXPO",
+      "IsActive": true,
+      "Fields": {
+        "ListID": "80000007-1698719841",
+        "TimeCreated": "2023-10-30T21:37:21-06:00",
+        "TimeModified": "2023-12-06T13:27:44-06:00",
+        "EditSequence": "1701890864",
+        "Name": "WI SALES & EXPO",
+        "IsActive": "true",
+        "ItemDesc": "Sales Tax & EXPO",
+        "ItemSalesTaxRef": {
+          "ListID": "80000001-1698719835",
+          "FullName": "EXPO"
+        },
+        "Type": "ItemSalesTaxGroup"
+      },
+      "LineItems": [],
+      "ExportedAt": "2026-05-23T14:05:11.6416247Z"
+    }
+  ]
+}
