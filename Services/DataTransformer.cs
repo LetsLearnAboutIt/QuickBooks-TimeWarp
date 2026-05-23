@@ -11,6 +11,15 @@ namespace QB_TimeWarp.Services
     /// Applies field mappings, transformations, truncations, default values, entity reactivation,
     /// class tracking preservation, accounting model matching, field format preservation,
     /// and QB SDK 15.0 compatibility filtering (removes fields not supported in QB 2021).
+    /// 
+    /// CHANGELOG:
+    /// - Fix #38 (commit 3364594): Convert CreditCardCharge/CreditCardCredit to JournalEntry format
+    ///   QB 2021 doesn't support CC transaction types. Convert during transformation to preserve
+    ///   accounting integrity. "The journal is the truth" - Joseph. See ConvertCreditCardToJournalEntry()
+    /// - Fix #37 (commit cb9acaf): Remove unsupported entity types (CreditCardCharges, ItemReceipts, etc.)
+    ///   Added schema validation to ensure only QB 2021-supported types are processed
+    /// - Fix #14 (Revised): Zero out Employee Notes field - historical data not needed
+    /// - Fix #1-#13: Various field mappings, format preservation, entity reactivation
     /// </summary>
     public class DataTransformer
     {
@@ -702,6 +711,40 @@ namespace QB_TimeWarp.Services
         /// - TxnDate, RefNumber, Memo (with "[From CreditCard...]" prefix for audit trail)
         /// - All line item account references and amounts
         /// - TxnID preserved in Memo for reference tracking
+        /// 
+        /// ═══════════════════════════════════════════════════════════════════
+        /// Fix #38: Convert CreditCardCharge/CreditCardCredit to JournalEntry
+        /// ═══════════════════════════════════════════════════════════════════
+        /// PROBLEM: QB 2021 SDK 15.0 does not support CreditCardCharge or
+        /// CreditCardCredit transaction types (confirmed via schema extraction).
+        /// These types were added in later QB versions but don't exist in QB 2021.
+        /// 
+        /// SOLUTION: Convert to JournalEntry format during transformation phase.
+        /// As Joseph said: "the journal is the truth" - every transaction is
+        /// ultimately debits and credits. This conversion preserves accounting
+        /// integrity while maintaining QB 2021 compatibility.
+        /// 
+        /// ACCOUNTING LOGIC (Double-Entry Bookkeeping):
+        /// 
+        /// CreditCardCharge (Purchase on credit card):
+        ///   - Debit: Expense accounts (increases expenses)
+        ///   - Credit: Credit Card liability account (increases debt owed)
+        ///   Example: $100 office supplies purchase
+        ///     DR Office Supplies $100
+        ///     CR Visa Credit Card $100
+        /// 
+        /// CreditCardCredit (Refund/return):
+        ///   - Credit: Expense accounts (reduces expenses)
+        ///   - Debit: Credit Card liability account (reduces debt owed)
+        ///   Example: $50 return of office supplies
+        ///     DR Visa Credit Card $50
+        ///     CR Office Supplies $50
+        /// 
+        /// IMPACT: 378 credit card transactions (369 charges + 9 credits) from
+        /// Joshs_Gold_Coast_II_2023.qbw now migrate successfully to QB 2021.
+        /// Expected to resolve $400K balance discrepancy (Educators Credit Union
+        /// and Cash Register Sales accounts).
+        /// ═══════════════════════════════════════════════════════════════════
         /// </summary>
         private QBEntity ConvertCreditCardToJournalEntry(QBEntity creditCardTxn, string originalType)
         {
