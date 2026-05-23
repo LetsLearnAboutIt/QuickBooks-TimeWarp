@@ -2494,6 +2494,31 @@ namespace QB_TimeWarp.Services
 
             foreach (var lineItem in lineItems)
             {
+                // ========================================================================
+                // FIX #20: Skip memo-only DepositLineAdd items that lack required fields
+                // ========================================================================
+                // The QBXML XSD requires DepositLineAdd to have EITHER:
+                //   (PaymentTxnID + PaymentTxnLineID) OR (AccountRef + Amount + optional others)
+                // Some QB 2023 deposits have memo-only lines (just Memo text, no AccountRef
+                // or Amount). These cause "error parsing XML text stream" (0x80040400).
+                // We skip these incomplete lines since they carry no financial data.
+                // ========================================================================
+                if (entityType.Equals("Deposits", StringComparison.OrdinalIgnoreCase))
+                {
+                    bool hasAccountRef = lineItem["AccountRef"] != null;
+                    bool hasAmount = lineItem["Amount"] != null && 
+                                     !string.IsNullOrWhiteSpace(lineItem["Amount"]?.ToString());
+                    bool hasPaymentTxnID = lineItem["PaymentTxnID"] != null;
+
+                    if (!hasAccountRef && !hasAmount && !hasPaymentTxnID)
+                    {
+                        var memo = lineItem["Memo"]?.ToString() ?? "(no memo)";
+                        Log.Warning("  FIX #20: Skipping incomplete DepositLineAdd — has Memo but no AccountRef/Amount/PaymentTxnID. Memo: {Memo}",
+                            memo.Length > 80 ? memo[..80] + "..." : memo);
+                        continue;
+                    }
+                }
+
                 var lineType = lineItem["_lineType"]?.ToString() ?? lineAddType;
 
                 // ========================================================================

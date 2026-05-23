@@ -160,6 +160,10 @@ namespace QB_TimeWarp.Helpers
         // The "Name" field is excluded from QBXML output via
         // TransactionHeaderExcludedFields["Employees"] in DataImporter.cs.
         // ═══════════════════════════════════════════════════════════════════
+        // Fix #19: Reordered per QBXML XSD schema — SSN must come BEFORE Email,
+        // and Mobile/Pager/Fax removed (not valid in EmployeeAdd, only in Customer/Vendor).
+        // Old ordering had Email(13) before SSN(14), causing 10/32 parse failures for
+        // employees that had an Email address.
         public static readonly Dictionary<string, int> EmployeeAddOrder = new(StringComparer.OrdinalIgnoreCase)
         {
             { "IsActive", 0 },
@@ -171,21 +175,18 @@ namespace QB_TimeWarp.Helpers
             { "EmployeeAddress", 6 },
             { "PrintAs", 7 },
             { "Phone", 8 },
-            { "Mobile", 9 },
-            { "Pager", 10 },
-            { "AltPhone", 11 },
-            { "Fax", 12 },
-            { "Email", 13 },
-            { "SSN", 14 },
-            { "EmployeeType", 15 },
-            { "Gender", 16 },
-            { "HiredDate", 17 },
-            { "ReleasedDate", 18 },
-            { "BirthDate", 19 },
-            { "AccountNumber", 20 },
-            { "Notes", 21 },
-            { "BillingRateRef", 22 },
-            { "EmployeePayrollInfo", 23 },
+            { "AltPhone", 9 },
+            { "SSN", 10 },              // Fix #19: moved BEFORE Email per XSD
+            { "Email", 11 },            // Fix #19: moved AFTER SSN per XSD
+            { "EmployeeType", 12 },
+            { "Gender", 13 },
+            { "HiredDate", 14 },
+            { "ReleasedDate", 15 },
+            { "BirthDate", 16 },
+            { "AccountNumber", 17 },
+            { "Notes", 18 },
+            { "BillingRateRef", 19 },
+            { "EmployeePayrollInfo", 20 },
         };
 
         /// <summary>
@@ -567,6 +568,8 @@ namespace QB_TimeWarp.Helpers
         /// <summary>
         /// SalesReceiptAdd element order per QBXML XSD schema.
         /// </summary>
+        // Fix #18: Reordered per QBXML XSD schema — DepositToAccountRef must come
+        // AFTER IsToBePrinted/CustomerSalesTaxCodeRef (was at index 15, caused 30/30 parse failures)
         public static readonly Dictionary<string, int> SalesReceiptAddOrder = new(StringComparer.OrdinalIgnoreCase)
         {
             { "CustomerRef", 0 },
@@ -584,14 +587,14 @@ namespace QB_TimeWarp.Helpers
             { "ShipDate", 12 },
             { "ShipMethodRef", 13 },
             { "FOB", 14 },
-            { "DepositToAccountRef", 15 },
-            { "ItemSalesTaxRef", 16 },
-            { "Memo", 17 },
-            { "CustomerMsgRef", 18 },
-            { "IsToBePrinted", 19 },
-            { "IsToBeEmailed", 20 },
-            { "IsTaxIncluded", 21 },
-            { "CustomerSalesTaxCodeRef", 22 },
+            { "ItemSalesTaxRef", 15 },
+            { "Memo", 16 },
+            { "CustomerMsgRef", 17 },
+            { "IsToBePrinted", 18 },
+            { "CustomerSalesTaxCodeRef", 19 },
+            { "DepositToAccountRef", 20 },  // Fix #18: moved from 15 → 20 per XSD
+            { "IsToBeEmailed", 21 },
+            { "IsTaxIncluded", 22 },
             { "Other", 23 },
             { "ExchangeRate", 24 },
             { "ExternalGUID", 25 },
