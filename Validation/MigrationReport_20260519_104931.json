@@ -1,0 +1,1597 @@
+{
+  "StartTime": "2026-05-19T15:49:12.9343601Z",
+  "EndTime": "2026-05-19T15:49:31.172581Z",
+  "TotalDuration": "00:00:18.2382209",
+  "SourceCompanyFile": "QB 2023",
+  "TargetCompanyFile": "QB 2021",
+  "OverallStatus": "Failed",
+  "EntitySummaries": {
+    "Accounts": {
+      "EntityType": "Accounts",
+      "TotalAttempted": 142,
+      "Succeeded": 0,
+      "Failed": 142,
+      "Skipped": 0,
+      "Duration": "00:00:06.6598815",
+      "FailedRecords": [
+        {
+          "EntityType": "Accounts",
+          "SourceIdentifier": "Personal Bk Acct",
+          "Success": false,
+          "QBXMLRequest": "<?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<?qbxml version=\"15.0\"?>\r\n<QBXML>\r\n  <QBXMLMsgsRq onError=\"continueOnError\">\r\n    <AccountAddRq>\r\n  <AccountAdd>\r\n    <Name>Personal Bk Acct</Name>\r\n    <IsActive>true</IsActive>\r\n    <AccountType>Bank</AccountType>\r\n  </AccountAdd>\r\n</AccountAddRq>\r\n\r\n  </QBXMLMsgsRq>\r\n</QBXML>",
+          "QBXMLResponse": "<?xml version=\"1.0\" ?>\n<QBXML>\n<QBXMLMsgsRs>\n<AccountAddRs statusCode=\"3100\" statusSeverity=\"Error\" statusMessage=\"The name &quot;Personal Bk Acct&quot; of the list element is already in use.\" />\n</QBXMLMsgsRs>\n</QBXML>\n",
+          "Timestamp": "2026-05-19T15:49:13.0134256Z"
+        },
+        {
+          "EntityType": "Accounts",
+          "SourceIdentifier": "Educators Credit Union",
+          "Success": false,
+          "QBXMLRequest": "<?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<?qbxml version=\"15.0\"?>\r\n<QBXML>\r\n  <QBXMLMsgsRq onError=\"continueOnError\">\r\n    <AccountAddRq>\r\n  <AccountAdd>\r\n    <Name>Educators Credit Union</Name>\r\n    <IsActive>true</IsActive>\r\n    <AccountType>Bank</AccountType>\r\n    <AccountNumber>1-1020</AccountNumber>\r\n    <BankNumber>08006898506</BankNumber>\r\n  </AccountAdd>\r\n</AccountAddRq>\r\n\r\n  </QBXMLMsgsRq>\r\n</QBXML>",
+          "QBXMLResponse": "<?xml version=\"1.0\" ?>\n<QBXML>\n<QBXMLMsgsRs>\n<AccountAddRs statusCode=\"3180\" statusSeverity=\"Error\" statusMessage=\"There was an error when saving a Accounts list, element &quot;Educators Credit Union&quot;.  QuickBooks error message: The account number is already in use.\" />\n</QBXMLMsgsRs>\n</QBXML>\n",
+          "Timestamp": "2026-05-19T15:49:13.0652981Z"
+        },
+        {
+          "EntityType": "Accounts",
+          "SourceIdentifier": "ED SAVING ACCT",
+          "Success": false,
+          "QBXMLRequest": "<?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<?qbxml version=\"15.0\"?>\r\n<QBXML>\r\n  <QBXMLMsgsRq onError=\"continueOnError\">\r\n    <AccountAddRq>\r\n  <AccountAdd>\r\n    <Name>ED SAVING ACCT</Name>\r\n    <IsActive>true</IsActive>\r\n    <AccountType>Bank</AccountType>\r\n    <AccountNumber>1-1030</AccountNumber>\r\n  </AccountAdd>\r\n</AccountAddRq>\r\n\r\n  </QBXMLMsgsRq>\r\n</QBXML>",
+          "QBXMLResponse": "<?xml version=\"1.0\" ?>\n<QBXML>\n<QBXMLMsgsRs>\n<AccountAddRs statusCode=\"3180\" statusSeverity=\"Error\" statusMessage=\"There was an error when saving a Accounts list, element &quot;ED SAVING ACCT&quot;.  QuickBooks error message: The account number is already in use.\" />\n</QBXMLMsgsRs>\n</QBXML>\n",
+          "Timestamp": "2026-05-19T15:49:13.1083604Z"
+        },
+        {
+          "EntityType": "Accounts",
+          "SourceIdentifier": "ADJUSTMENT ACCT",
+          "Success": false,
+          "QBXMLRequest": "<?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<?qbxml version=\"15.0\"?>\r\n<QBXML>\r\n  <QBXMLMsgsRq onError=\"continueOnError\">\r\n    <AccountAddRq>\r\n  <AccountAdd>\r\n    <Name>ADJUSTMENT ACCT</Name>\r\n    <IsActive>true</IsActive>\r\n    <AccountType>Bank</AccountType>\r\n    <AccountNumber>1-1040</AccountNumber>\r\n  </AccountAdd>\r\n</AccountAddRq>\r\n\r\n  </QBXMLMsgsRq>\r\n</QBXML>",
+          "QBXMLResponse": "<?xml version=\"1.0\" ?>\n<QBXML>\n<QBXMLMsgsRs>\n<AccountAddRs statusCode=\"3180\" statusSeverity=\"Error\" statusMessage=\"There was an error when saving a Accounts list, element &quot;ADJUSTMENT ACCT&quot;.  QuickBooks error message: The account number is already in use.\" />\n</QBXMLMsgsRs>\n</QBXML>\n",
+          "Timestamp": "2026-05-19T15:49:13.158658Z"
+        },
+        {
+          "EntityType": "Accounts",
+          "SourceIdentifier": "1 CASH REGISTER SALES",
+          "Success": false,
+          "QBXMLRequest": "<?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<?qbxml version=\"15.0\"?>\r\n<QBXML>\r\n  <QBXMLMsgsRq onError=\"continueOnError\">\r\n    <AccountAddRq>\r\n  <AccountAdd>\r\n    <Name>1 CASH REGISTER SALES</Name>\r\n    <IsActive>true</IsActive>\r\n    <AccountType>Bank</AccountType>\r\n    <AccountNumber>1-1010</AccountNumber>\r\n  </AccountAdd>\r\n</AccountAddRq>\r\n\r\n  </QBXMLMsgsRq>\r\n</QBXML>",
+          "QBXMLResponse": "<?xml version=\"1.0\" ?>\n<QBXML>\n<QBXMLMsgsRs>\n<AccountAddRs statusCode=\"3180\" statusSeverity=\"Error\" statusMessage=\"There was an error when saving a Accounts list, element &quot;1 CASH REGISTER SALES&quot;.  QuickBooks error message: The account number is already in use.\" />\n</QBXMLMsgsRs>\n</QBXML>\n",
+          "Timestamp": "2026-05-19T15:49:13.2050886Z"
+        },
+        {
+          "EntityType": "Accounts",
+          "SourceIdentifier": "zz old bank header",
+          "Success": false,
+          "QBXMLRequest": "<?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<?qbxml version=\"15.0\"?>\r\n<QBXML>\r\n  <QBXMLMsgsRq onError=\"continueOnError\">\r\n    <AccountAddRq>\r\n  <AccountAdd>\r\n    <Name>zz old bank header</Name>\r\n    <IsActive>true</IsActive>\r\n    <AccountType>Bank</AccountType>\r\n    <AccountNumber>9-9999</AccountNumber>\r\n  </AccountAdd>\r\n</AccountAddRq>\r\n\r\n  </QBXMLMsgsRq>\r\n</QBXML>",
+          "QBXMLResponse": "<?xml version=\"1.0\" ?>\n<QBXML>\n<QBXMLMsgsRs>\n<AccountAddRs statusCode=\"3180\" statusSeverity=\"Error\" statusMessage=\"There was an error when saving a Accounts list, element &quot;zz old bank header&quot;.  QuickBooks error message: The account number is already in use.\" />\n</QBXMLMsgsRs>\n</QBXML>\n",
+          "Timestamp": "2026-05-19T15:49:13.2517689Z"
+        },
+        {
+          "EntityType": "Accounts",
+          "SourceIdentifier": "zz old bank header:CASH ACCOUNT PAYROLL ADV",
+          "Success": false,
+          "QBXMLRequest": "<?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<?qbxml version=\"15.0\"?>\r\n<QBXML>\r\n  <QBXMLMsgsRq onError=\"continueOnError\">\r\n    <AccountAddRq>\r\n  <AccountAdd>\r\n    <Name>zz old bank header:CASH ACCOUNT PAYROLL A</Name>\r\n    <IsActive>true</IsActive>\r\n    <ParentRef>\r\n      <FullName>zz old bank header</FullName>\r\n    </ParentRef>\r\n    <AccountType>Bank</AccountType>\r\n  </AccountAdd>\r\n</AccountAddRq>\r\n\r\n  </QBXMLMsgsRq>\r\n</QBXML>",
+          "QBXMLResponse": "<?xml version=\"1.0\" ?>\n<QBXML>\n<QBXMLMsgsRs>\n<AccountAddRs statusCode=\"3070\" statusSeverity=\"Error\" statusMessage=\"The string &quot;zz old bank header:CASH ACCOUNT PAYROLL A&quot; in the field &quot;Name&quot; is too long.\" />\n</QBXMLMsgsRs>\n</QBXML>\n",
+          "Timestamp": "2026-05-19T15:49:13.2964827Z"
+        },
+        {
+          "EntityType": "Accounts",
+          "SourceIdentifier": "zz old bank header:PR CK ACCT - ROD PAY NOT TAKEN",
+          "Success": false,
+          "QBXMLRequest": "<?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<?qbxml version=\"15.0\"?>\r\n<QBXML>\r\n  <QBXMLMsgsRq onError=\"continueOnError\">\r\n    <AccountAddRq>\r\n  <AccountAdd>\r\n    <Name>zz old bank header:PR CK ACCT - ROD PAY N</Name>\r\n    <IsActive>true</IsActive>\r\n    <ParentRef>\r\n      <FullName>zz old bank header</FullName>\r\n    </ParentRef>\r\n    <AccountType>Bank</AccountType>\r\n  </AccountAdd>\r\n</AccountAddRq>\r\n\r\n  </QBXMLMsgsRq>\r\n</QBXML>",
+          "QBXMLResponse": "<?xml version=\"1.0\" ?>\n<QBXML>\n<QBXMLMsgsRs>\n<AccountAddRs statusCode=\"3070\" statusSeverity=\"Error\" statusMessage=\"The string &quot;zz old bank header:PR CK ACCT - ROD PAY N&quot; in the field &quot;Name&quot; is too long.\" />\n</QBXMLMsgsRs>\n</QBXML>\n",
+          "Timestamp": "2026-05-19T15:49:13.3405874Z"
+        },
+        {
+          "EntityType": "Accounts",
+          "SourceIdentifier": "zz old bank header:PR CK TURNAROUND EMPLOYEES",
+          "Success": false,
+          "QBXMLRequest": "<?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<?qbxml version=\"15.0\"?>\r\n<QBXML>\r\n  <QBXMLMsgsRq onError=\"continueOnError\">\r\n    <AccountAddRq>\r\n  <AccountAdd>\r\n    <Name>zz old bank header:PR CK TURNAROUND EMPLO</Name>\r\n    <IsActive>true</IsActive>\r\n    <ParentRef>\r\n      <FullName>zz old bank header</FullName>\r\n    </ParentRef>\r\n    <AccountType>Bank</AccountType>\r\n  </AccountAdd>\r\n</AccountAddRq>\r\n\r\n  </QBXMLMsgsRq>\r\n</QBXML>",
+          "QBXMLResponse": "<?xml version=\"1.0\" ?>\n<QBXML>\n<QBXMLMsgsRs>\n<AccountAddRs statusCode=\"3070\" statusSeverity=\"Error\" statusMessage=\"The string &quot;zz old bank header:PR CK TURNAROUND EMPLO&quot; in the field &quot;Name&quot; is too long.\" />\n</QBXMLMsgsRs>\n</QBXML>\n",
+          "Timestamp": "2026-05-19T15:49:13.3856875Z"
+        },
+        {
+          "EntityType": "Accounts",
+          "SourceIdentifier": "zz old bank header:TRI CITY MAIN BUS CK 4274",
+          "Success": false,
+          "QBXMLRequest": "<?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<?qbxml version=\"15.0\"?>\r\n<QBXML>\r\n  <QBXMLMsgsRq onError=\"continueOnError\">\r\n    <AccountAddRq>\r\n  <AccountAdd>\r\n    <Name>zz old bank header:TRI CITY MAIN BUS CK 4</Name>\r\n    <IsActive>true</IsActive>\r\n    <ParentRef>\r\n      <FullName>zz old bank header</FullName>\r\n    </ParentRef>\r\n    <AccountType>Bank</AccountType>\r\n  </AccountAdd>\r\n</AccountAddRq>\r\n\r\n  </QBXMLMsgsRq>\r\n</QBXML>",
+          "QBXMLResponse": "<?xml version=\"1.0\" ?>\n<QBXML>\n<QBXMLMsgsRs>\n<AccountAddRs statusCode=\"3070\" statusSeverity=\"Error\" statusMessage=\"The string &quot;zz old bank header:TRI CITY MAIN BUS CK 4&quot; in the field &quot;Name&quot; is too long.\" />\n</QBXMLMsgsRs>\n</QBXML>\n",
+          "Timestamp": "2026-05-19T15:49:13.4326869Z"
+        },
+        {
+          "EntityType": "Accounts",
+          "SourceIdentifier": "Accounts Receivable",
+          "Success": false,
+          "QBXMLRequest": "<?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<?qbxml version=\"15.0\"?>\r\n<QBXML>\r\n  <QBXMLMsgsRq onError=\"continueOnError\">\r\n    <AccountAddRq>\r\n  <AccountAdd>\r\n    <Name>Accounts Receivable</Name>\r\n    <IsActive>true</IsActive>\r\n    <AccountType>AccountsReceivable</AccountType>\r\n    <AccountNumber>11000</AccountNumber>\r\n  </AccountAdd>\r\n</AccountAddRq>\r\n\r\n  </QBXMLMsgsRq>\r\n</QBXML>",
+          "QBXMLResponse": "<?xml version=\"1.0\" ?>\n<QBXML>\n<QBXMLMsgsRs>\n<AccountAddRs statusCode=\"3180\" statusSeverity=\"Error\" statusMessage=\"There was an error when saving a Accounts list, element &quot;Accounts Receivable&quot;.  QuickBooks error message: The account number is already in use.\" />\n</QBXMLMsgsRs>\n</QBXML>\n",
+          "Timestamp": "2026-05-19T15:49:13.4776953Z"
+        },
+        {
+          "EntityType": "Accounts",
+          "SourceIdentifier": "Outside Loan Rec",
+          "Success": false,
+          "QBXMLRequest": "<?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<?qbxml version=\"15.0\"?>\r\n<QBXML>\r\n  <QBXMLMsgsRq onError=\"continueOnError\">\r\n    <AccountAddRq>\r\n  <AccountAdd>\r\n    <Name>Outside Loan Rec</Name>\r\n    <IsActive>true</IsActive>\r\n    <AccountType>OtherCurrentAsset</AccountType>\r\n    <AccountNumber>2-9995</AccountNumber>\r\n  </AccountAdd>\r\n</AccountAddRq>\r\n\r\n  </QBXMLMsgsRq>\r\n</QBXML>",
+          "QBXMLResponse": "<?xml version=\"1.0\" ?>\n<QBXML>\n<QBXMLMsgsRs>\n<AccountAddRs statusCode=\"3180\" statusSeverity=\"Error\" statusMessage=\"There was an error when saving a Accounts list, element &quot;Outside Loan Rec&quot;.  QuickBooks error message: The account number is already in use.\" />\n</QBXMLMsgsRs>\n</QBXML>\n",
+          "Timestamp": "2026-05-19T15:49:13.5230515Z"
+        },
+        {
+          "EntityType": "Accounts",
+          "SourceIdentifier": "EMPLOYEE LOAN REC",
+          "Success": false,
+          "QBXMLRequest": "<?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<?qbxml version=\"15.0\"?>\r\n<QBXML>\r\n  <QBXMLMsgsRq onError=\"continueOnError\">\r\n    <AccountAddRq>\r\n  <AccountAdd>\r\n    <Name>EMPLOYEE LOAN REC</Name>\r\n    <IsActive>true</IsActive>\r\n    <AccountType>OtherCurrentAsset</AccountType>\r\n    <AccountNumber>1-9991</AccountNumber>\r\n  </AccountAdd>\r\n</AccountAddRq>\r\n\r\n  </QBXMLMsgsRq>\r\n</QBXML>",
+          "QBXMLResponse": "<?xml version=\"1.0\" ?>\n<QBXML>\n<QBXMLMsgsRs>\n<AccountAddRs statusCode=\"3180\" statusSeverity=\"Error\" statusMessage=\"There was an error when saving a Accounts list, element &quot;EMPLOYEE LOAN REC&quot;.  QuickBooks error message: The account number is already in use.\" />\n</QBXMLMsgsRs>\n</QBXML>\n",
+          "Timestamp": "2026-05-19T15:49:13.5694051Z"
+        },
+        {
+          "EntityType": "Accounts",
+          "SourceIdentifier": "Employee Advances",
+          "Success": false,
+          "QBXMLRequest": "<?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<?qbxml version=\"15.0\"?>\r\n<QBXML>\r\n  <QBXMLMsgsRq onError=\"continueOnError\">\r\n    <AccountAddRq>\r\n  <AccountAdd>\r\n    <Name>Employee Advances</Name>\r\n    <IsActive>true</IsActive>\r\n    <AccountType>OtherCurrentAsset</AccountType>\r\n    <AccountNumber>1510</AccountNumber>\r\n  </AccountAdd>\r\n</AccountAddRq>\r\n\r\n  </QBXMLMsgsRq>\r\n</QBXML>",
+          "QBXMLResponse": "<?xml version=\"1.0\" ?>\n<QBXML>\n<QBXMLMsgsRs>\n<AccountAddRs statusCode=\"3180\" statusSeverity=\"Error\" statusMessage=\"There was an error when saving a Accounts list, element &quot;Employee Advances&quot;.  QuickBooks error message: The account number is already in use.\" />\n</QBXMLMsgsRs>\n</QBXML>\n",
+          "Timestamp": "2026-05-19T15:49:13.6198456Z"
+        },
+        {
+          "EntityType": "Accounts",
+          "SourceIdentifier": "Inventory",
+          "Success": false,
+          "QBXMLRequest": "<?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<?qbxml version=\"15.0\"?>\r\n<QBXML>\r\n  <QBXMLMsgsRq onError=\"continueOnError\">\r\n    <AccountAddRq>\r\n  <AccountAdd>\r\n    <Name>Inventory</Name>\r\n    <IsActive>true</IsActive>\r\n    <AccountType>OtherCurrentAsset</AccountType>\r\n    <AccountNumber>1-2100</AccountNumber>\r\n  </AccountAdd>\r\n</AccountAddRq>\r\n\r\n  </QBXMLMsgsRq>\r\n</QBXML>",
+          "QBXMLResponse": "<?xml version=\"1.0\" ?>\n<QBXML>\n<QBXMLMsgsRs>\n<AccountAddRs statusCode=\"3180\" statusSeverity=\"Error\" statusMessage=\"There was an error when saving a Accounts list, element &quot;Inventory&quot;.  QuickBooks error message: The account number is already in use.\" />\n</QBXMLMsgsRs>\n</QBXML>\n",
+          "Timestamp": "2026-05-19T15:49:13.6662282Z"
+        },
+        {
+          "EntityType": "Accounts",
+          "SourceIdentifier": "Inventory:1 Food",
+          "Success": false,
+          "QBXMLRequest": "<?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<?qbxml version=\"15.0\"?>\r\n<QBXML>\r\n  <QBXMLMsgsRq onError=\"continueOnError\">\r\n    <AccountAddRq>\r\n  <AccountAdd>\r\n    <Name>Inventory:1 Food</Name>\r\n    <IsActive>true</IsActive>\r\n    <ParentRef>\r\n      <FullName>Inventory</FullName>\r\n    </ParentRef>\r\n    <AccountType>OtherCurrentAsset</AccountType>\r\n    <AccountNumber>1550</AccountNumber>\r\n  </AccountAdd>\r\n</AccountAddRq>\r\n\r\n  </QBXMLMsgsRq>\r\n</QBXML>",
+          "QBXMLResponse": "<?xml version=\"1.0\" ?>\n<QBXML>\n<QBXMLMsgsRs>\n<AccountAddRs statusCode=\"3090\" statusSeverity=\"Error\" statusMessage=\"There was an error when storing &quot;Inventory:1 Food&quot; in the &quot;account name&quot; field.  QuickBooks error message: Names in this list cannot contain a colon. The colon is a special character used to indicate a parent/child relationship.\" />\n</QBXMLMsgsRs>\n</QBXML>\n",
+          "Timestamp": "2026-05-19T15:49:13.7113735Z"
+        },
+        {
+          "EntityType": "Accounts",
+          "SourceIdentifier": "Inventory:Beverages",
+          "Success": false,
+          "QBXMLRequest": "<?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<?qbxml version=\"15.0\"?>\r\n<QBXML>\r\n  <QBXMLMsgsRq onError=\"continueOnError\">\r\n    <AccountAddRq>\r\n  <AccountAdd>\r\n    <Name>Inventory:Beverages</Name>\r\n    <IsActive>true</IsActive>\r\n    <ParentRef>\r\n      <FullName>Inventory</FullName>\r\n    </ParentRef>\r\n    <AccountType>OtherCurrentAsset</AccountType>\r\n    <AccountNumber>1540</AccountNumber>\r\n  </AccountAdd>\r\n</AccountAddRq>\r\n\r\n  </QBXMLMsgsRq>\r\n</QBXML>",
+          "QBXMLResponse": "<?xml version=\"1.0\" ?>\n<QBXML>\n<QBXMLMsgsRs>\n<AccountAddRs statusCode=\"3090\" statusSeverity=\"Error\" statusMessage=\"There was an error when storing &quot;Inventory:Beverages&quot; in the &quot;account name&quot; field.  QuickBooks error message: Names in this list cannot contain a colon. The colon is a special character used to indicate a parent/child relationship.\" />\n</QBXMLMsgsRs>\n</QBXML>\n",
+          "Timestamp": "2026-05-19T15:49:13.7561892Z"
+        },
+        {
+          "EntityType": "Accounts",
+          "SourceIdentifier": "Inventory:Supplies",
+          "Success": false,
+          "QBXMLRequest": "<?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<?qbxml version=\"15.0\"?>\r\n<QBXML>\r\n  <QBXMLMsgsRq onError=\"continueOnError\">\r\n    <AccountAddRq>\r\n  <AccountAdd>\r\n    <Name>Inventory:Supplies</Name>\r\n    <IsActive>true</IsActive>\r\n    <ParentRef>\r\n      <FullName>Inventory</FullName>\r\n    </ParentRef>\r\n    <AccountType>OtherCurrentAsset</AccountType>\r\n    <AccountNumber>1560</AccountNumber>\r\n  </AccountAdd>\r\n</AccountAddRq>\r\n\r\n  </QBXMLMsgsRq>\r\n</QBXML>",
+          "QBXMLResponse": "<?xml version=\"1.0\" ?>\n<QBXML>\n<QBXMLMsgsRs>\n<AccountAddRs statusCode=\"3090\" statusSeverity=\"Error\" statusMessage=\"There was an error when storing &quot;Inventory:Supplies&quot; in the &quot;account name&quot; field.  QuickBooks error message: Names in this list cannot contain a colon. The colon is a special character used to indicate a parent/child relationship.\" />\n</QBXMLMsgsRs>\n</QBXML>\n",
+          "Timestamp": "2026-05-19T15:49:13.8006376Z"
+        },
+        {
+          "EntityType": "Accounts",
+          "SourceIdentifier": "SH LOANS REC",
+          "Success": false,
+          "QBXMLRequest": "<?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<?qbxml version=\"15.0\"?>\r\n<QBXML>\r\n  <QBXMLMsgsRq onError=\"continueOnError\">\r\n    <AccountAddRq>\r\n  <AccountAdd>\r\n    <Name>SH LOANS REC</Name>\r\n    <IsActive>true</IsActive>\r\n    <AccountType>OtherCurrentAsset</AccountType>\r\n    <AccountNumber>1-9990</AccountNumber>\r\n  </AccountAdd>\r\n</AccountAddRq>\r\n\r\n  </QBXMLMsgsRq>\r\n</QBXML>",
+          "QBXMLResponse": "<?xml version=\"1.0\" ?>\n<QBXML>\n<QBXMLMsgsRs>\n<AccountAddRs statusCode=\"3180\" statusSeverity=\"Error\" statusMessage=\"There was an error when saving a Accounts list, element &quot;SH LOANS REC&quot;.  QuickBooks error message: The account number is already in use.\" />\n</QBXMLMsgsRs>\n</QBXML>\n",
+          "Timestamp": "2026-05-19T15:49:13.8525694Z"
+        },
+        {
+          "EntityType": "Accounts",
+          "SourceIdentifier": "Startup Exp",
+          "Success": false,
+          "QBXMLRequest": "<?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<?qbxml version=\"15.0\"?>\r\n<QBXML>\r\n  <QBXMLMsgsRq onError=\"continueOnError\">\r\n    <AccountAddRq>\r\n  <AccountAdd>\r\n    <Name>Startup Exp</Name>\r\n    <IsActive>true</IsActive>\r\n    <AccountType>FixedAsset</AccountType>\r\n    <AccountNumber>1-4600</AccountNumber>\r\n  </AccountAdd>\r\n</AccountAddRq>\r\n\r\n  </QBXMLMsgsRq>\r\n</QBXML>",
+          "QBXMLResponse": "<?xml version=\"1.0\" ?>\n<QBXML>\n<QBXMLMsgsRs>\n<AccountAddRs statusCode=\"3180\" statusSeverity=\"Error\" statusMessage=\"There was an error when saving a Accounts list, element &quot;Startup Exp&quot;.  QuickBooks error message: The account number is already in use.\" />\n</QBXMLMsgsRs>\n</QBXML>\n",
+          "Timestamp": "2026-05-19T15:49:13.8968988Z"
+        },
+        {
+          "EntityType": "Accounts",
+          "SourceIdentifier": "Goodwill",
+          "Success": false,
+          "QBXMLRequest": "<?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<?qbxml version=\"15.0\"?>\r\n<QBXML>\r\n  <QBXMLMsgsRq onError=\"continueOnError\">\r\n    <AccountAddRq>\r\n  <AccountAdd>\r\n    <Name>Goodwill</Name>\r\n    <IsActive>true</IsActive>\r\n    <AccountType>FixedAsset</AccountType>\r\n    <AccountNumber>1-5000</AccountNumber>\r\n  </AccountAdd>\r\n</AccountAddRq>\r\n\r\n  </QBXMLMsgsRq>\r\n</QBXML>",
+          "QBXMLResponse": "<?xml version=\"1.0\" ?>\n<QBXML>\n<QBXMLMsgsRs>\n<AccountAddRs statusCode=\"3180\" statusSeverity=\"Error\" statusMessage=\"There was an error when saving a Accounts list, element &quot;Goodwill&quot;.  QuickBooks error message: The account number is already in use.\" />\n</QBXMLMsgsRs>\n</QBXML>\n",
+          "Timestamp": "2026-05-19T15:49:13.9433021Z"
+        },
+        {
+          "EntityType": "Accounts",
+          "SourceIdentifier": "Fixed Assets Property",
+          "Success": false,
+          "QBXMLRequest": "<?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<?qbxml version=\"15.0\"?>\r\n<QBXML>\r\n  <QBXMLMsgsRq onError=\"continueOnError\">\r\n    <AccountAddRq>\r\n  <AccountAdd>\r\n    <Name>Fixed Assets Property</Name>\r\n    <IsActive>true</IsActive>\r\n    <AccountType>FixedAsset</AccountType>\r\n    <AccountNumber>1-4100</AccountNumber>\r\n  </AccountAdd>\r\n</AccountAddRq>\r\n\r\n  </QBXMLMsgsRq>\r\n</QBXML>",
+          "QBXMLResponse": "<?xml version=\"1.0\" ?>\n<QBXML>\n<QBXMLMsgsRs>\n<AccountAddRs statusCode=\"3180\" statusSeverity=\"Error\" statusMessage=\"There was an error when saving a Accounts list, element &quot;Fixed Assets Property&quot;.  QuickBooks error message: The account number is already in use.\" />\n</QBXMLMsgsRs>\n</QBXML>\n",
+          "Timestamp": "2026-05-19T15:49:13.9911741Z"
+        },
+        {
+          "EntityType": "Accounts",
+          "SourceIdentifier": "Coolers and other Eq",
+          "Success": false,
+          "QBXMLRequest": "<?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<?qbxml version=\"15.0\"?>\r\n<QBXML>\r\n  <QBXMLMsgsRq onError=\"continueOnError\">\r\n    <AccountAddRq>\r\n  <AccountAdd>\r\n    <Name>Coolers and other Eq</Name>\r\n    <IsActive>true</IsActive>\r\n    <AccountType>FixedAsset</AccountType>\r\n    <AccountNumber>1-4200</AccountNumber>\r\n  </AccountAdd>\r\n</AccountAddRq>\r\n\r\n  </QBXMLMsgsRq>\r\n</QBXML>",
+          "QBXMLResponse": "<?xml version=\"1.0\" ?>\n<QBXML>\n<QBXMLMsgsRs>\n<AccountAddRs statusCode=\"3180\" statusSeverity=\"Error\" statusMessage=\"There was an error when saving a Accounts list, element &quot;Coolers and other Eq&quot;.  QuickBooks error message: The account number is already in use.\" />\n</QBXMLMsgsRs>\n</QBXML>\n",
+          "Timestamp": "2026-05-19T15:49:14.0396818Z"
+        },
+        {
+          "EntityType": "Accounts",
+          "SourceIdentifier": "Accumulated Depreciation",
+          "Success": false,
+          "QBXMLRequest": "<?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<?qbxml version=\"15.0\"?>\r\n<QBXML>\r\n  <QBXMLMsgsRq onError=\"continueOnError\">\r\n    <AccountAddRq>\r\n  <AccountAdd>\r\n    <Name>Accumulated Depreciation</Name>\r\n    <IsActive>true</IsActive>\r\n    <AccountType>FixedAsset</AccountType>\r\n    <AccountNumber>1-4400</AccountNumber>\r\n  </AccountAdd>\r\n</AccountAddRq>\r\n\r\n  </QBXMLMsgsRq>\r\n</QBXML>",
+          "QBXMLResponse": "<?xml version=\"1.0\" ?>\n<QBXML>\n<QBXMLMsgsRs>\n<AccountAddRs statusCode=\"3180\" statusSeverity=\"Error\" statusMessage=\"There was an error when saving a Accounts list, element &quot;Accumulated Depreciation&quot;.  QuickBooks error message: The account number is already in use.\" />\n</QBXMLMsgsRs>\n</QBXML>\n",
+          "Timestamp": "2026-05-19T15:49:14.0898881Z"
+        },
+        {
+          "EntityType": "Accounts",
+          "SourceIdentifier": "Accumulated Amortization",
+          "Success": false,
+          "QBXMLRequest": "<?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<?qbxml version=\"15.0\"?>\r\n<QBXML>\r\n  <QBXMLMsgsRq onError=\"continueOnError\">\r\n    <AccountAddRq>\r\n  <AccountAdd>\r\n    <Name>Accumulated Amortization</Name>\r\n    <IsActive>true</IsActive>\r\n    <AccountType>FixedAsset</AccountType>\r\n    <AccountNumber>1-5100</AccountNumber>\r\n  </AccountAdd>\r\n</AccountAddRq>\r\n\r\n  </QBXMLMsgsRq>\r\n</QBXML>",
+          "QBXMLResponse": "<?xml version=\"1.0\" ?>\n<QBXML>\n<QBXMLMsgsRs>\n<AccountAddRs statusCode=\"3180\" statusSeverity=\"Error\" statusMessage=\"There was an error when saving a Accounts list, element &quot;Accumulated Amortization&quot;.  QuickBooks error message: The account number is already in use.\" />\n</QBXMLMsgsRs>\n</QBXML>\n",
+          "Timestamp": "2026-05-19T15:49:14.1362848Z"
+        },
+        {
+          "EntityType": "Accounts",
+          "SourceIdentifier": "OTHER ADJ ACCOUNT & PRIOR ERROR",
+          "Success": false,
+          "QBXMLRequest": "<?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<?qbxml version=\"15.0\"?>\r\n<QBXML>\r\n  <QBXMLMsgsRq onError=\"continueOnError\">\r\n    <AccountAddRq>\r\n  <AccountAdd>\r\n    <Name>OTHER ADJ ACCOUNT &amp; PRIOR ERROR</Name>\r\n    <IsActive>true</IsActive>\r\n    <AccountType>OtherAsset</AccountType>\r\n  </AccountAdd>\r\n</AccountAddRq>\r\n\r\n  </QBXMLMsgsRq>\r\n</QBXML>",
+          "QBXMLResponse": "<?xml version=\"1.0\" ?>\n<QBXML>\n<QBXMLMsgsRs>\n<AccountAddRs statusCode=\"3100\" statusSeverity=\"Error\" statusMessage=\"The name &quot;OTHER ADJ ACCOUNT &amp; PRIOR ERROR&quot; of the list element is already in use.\" />\n</QBXMLMsgsRs>\n</QBXML>\n",
+          "Timestamp": "2026-05-19T15:49:14.1821728Z"
+        },
+        {
+          "EntityType": "Accounts",
+          "SourceIdentifier": "Security Deposit",
+          "Success": false,
+          "QBXMLRequest": "<?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<?qbxml version=\"15.0\"?>\r\n<QBXML>\r\n  <QBXMLMsgsRq onError=\"continueOnError\">\r\n    <AccountAddRq>\r\n  <AccountAdd>\r\n    <Name>Security Deposit</Name>\r\n    <IsActive>true</IsActive>\r\n    <AccountType>OtherAsset</AccountType>\r\n    <AccountNumber>1-6000</AccountNumber>\r\n  </AccountAdd>\r\n</AccountAddRq>\r\n\r\n  </QBXMLMsgsRq>\r\n</QBXML>",
+          "QBXMLResponse": "<?xml version=\"1.0\" ?>\n<QBXML>\n<QBXMLMsgsRs>\n<AccountAddRs statusCode=\"3180\" statusSeverity=\"Error\" statusMessage=\"There was an error when saving a Accounts list, element &quot;Security Deposit&quot;.  QuickBooks error message: The account number is already in use.\" />\n</QBXMLMsgsRs>\n</QBXML>\n",
+          "Timestamp": "2026-05-19T15:49:14.2281177Z"
+        },
+        {
+          "EntityType": "Accounts",
+          "SourceIdentifier": "Accounts Payable",
+          "Success": false,
+          "QBXMLRequest": "<?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<?qbxml version=\"15.0\"?>\r\n<QBXML>\r\n  <QBXMLMsgsRq onError=\"continueOnError\">\r\n    <AccountAddRq>\r\n  <AccountAdd>\r\n    <Name>Accounts Payable</Name>\r\n    <IsActive>true</IsActive>\r\n    <AccountType>AccountsPayable</AccountType>\r\n    <AccountNumber>20000</AccountNumber>\r\n  </AccountAdd>\r\n</AccountAddRq>\r\n\r\n  </QBXMLMsgsRq>\r\n</QBXML>",
+          "QBXMLResponse": "<?xml version=\"1.0\" ?>\n<QBXML>\n<QBXMLMsgsRs>\n<AccountAddRs statusCode=\"3180\" statusSeverity=\"Error\" statusMessage=\"There was an error when saving a Accounts list, element &quot;Accounts Payable&quot;.  QuickBooks error message: The account number is already in use.\" />\n</QBXMLMsgsRs>\n</QBXML>\n",
+          "Timestamp": "2026-05-19T15:49:14.2732148Z"
+        },
+        {
+          "EntityType": "Accounts",
+          "SourceIdentifier": "Ed CU Credit Card",
+          "Success": false,
+          "QBXMLRequest": "<?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<?qbxml version=\"15.0\"?>\r\n<QBXML>\r\n  <QBXMLMsgsRq onError=\"continueOnError\">\r\n    <AccountAddRq>\r\n  <AccountAdd>\r\n    <Name>Ed CU Credit Card</Name>\r\n    <IsActive>true</IsActive>\r\n    <AccountType>CreditCard</AccountType>\r\n    <AccountNumber>2-2100</AccountNumber>\r\n  </AccountAdd>\r\n</AccountAddRq>\r\n\r\n  </QBXMLMsgsRq>\r\n</QBXML>",
+          "QBXMLResponse": "<?xml version=\"1.0\" ?>\n<QBXML>\n<QBXMLMsgsRs>\n<AccountAddRs statusCode=\"3180\" statusSeverity=\"Error\" statusMessage=\"There was an error when saving a Accounts list, element &quot;Ed CU Credit Card&quot;.  QuickBooks error message: The account number is already in use.\" />\n</QBXMLMsgsRs>\n</QBXML>\n",
+          "Timestamp": "2026-05-19T15:49:14.3184478Z"
+        },
+        {
+          "EntityType": "Accounts",
+          "SourceIdentifier": "Capital One - 8071",
+          "Success": false,
+          "QBXMLRequest": "<?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<?qbxml version=\"15.0\"?>\r\n<QBXML>\r\n  <QBXMLMsgsRq onError=\"continueOnError\">\r\n    <AccountAddRq>\r\n  <AccountAdd>\r\n    <Name>Capital One - 8071</Name>\r\n    <IsActive>true</IsActive>\r\n    <AccountType>CreditCard</AccountType>\r\n    <AccountNumber>2-2200</AccountNumber>\r\n  </AccountAdd>\r\n</AccountAddRq>\r\n\r\n  </QBXMLMsgsRq>\r\n</QBXML>",
+          "QBXMLResponse": "<?xml version=\"1.0\" ?>\n<QBXML>\n<QBXMLMsgsRs>\n<AccountAddRs statusCode=\"3180\" statusSeverity=\"Error\" statusMessage=\"There was an error when saving a Accounts list, element &quot;Capital One - 8071&quot;.  QuickBooks error message: The account number is already in use.\" />\n</QBXMLMsgsRs>\n</QBXML>\n",
+          "Timestamp": "2026-05-19T15:49:14.3615572Z"
+        },
+        {
+          "EntityType": "Accounts",
+          "SourceIdentifier": "2-3110 - Bogus PR Liab Acct",
+          "Success": false,
+          "QBXMLRequest": "<?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<?qbxml version=\"15.0\"?>\r\n<QBXML>\r\n  <QBXMLMsgsRq onError=\"continueOnError\">\r\n    <AccountAddRq>\r\n  <AccountAdd>\r\n    <Name>2-3110 - Bogus PR Liab Acct</Name>\r\n    <IsActive>true</IsActive>\r\n    <AccountType>OtherCurrentLiability</AccountType>\r\n  </AccountAdd>\r\n</AccountAddRq>\r\n\r\n  </QBXMLMsgsRq>\r\n</QBXML>",
+          "QBXMLResponse": "<?xml version=\"1.0\" ?>\n<QBXML>\n<QBXMLMsgsRs>\n<AccountAddRs statusCode=\"3100\" statusSeverity=\"Error\" statusMessage=\"The name &quot;2-3110 - Bogus PR Liab Acct&quot; of the list element is already in use.\" />\n</QBXMLMsgsRs>\n</QBXML>\n",
+          "Timestamp": "2026-05-19T15:49:14.4050818Z"
+        },
+        {
+          "EntityType": "Accounts",
+          "SourceIdentifier": "*Direct Deposit Liabilities",
+          "Success": false,
+          "QBXMLRequest": "<?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<?qbxml version=\"15.0\"?>\r\n<QBXML>\r\n  <QBXMLMsgsRq onError=\"continueOnError\">\r\n    <AccountAddRq>\r\n  <AccountAdd>\r\n    <Name>*Direct Deposit Liabilities</Name>\r\n    <IsActive>true</IsActive>\r\n    <AccountType>OtherCurrentLiability</AccountType>\r\n    <AccountNumber>2-3110</AccountNumber>\r\n  </AccountAdd>\r\n</AccountAddRq>\r\n\r\n  </QBXMLMsgsRq>\r\n</QBXML>",
+          "QBXMLResponse": "<?xml version=\"1.0\" ?>\n<QBXML>\n<QBXMLMsgsRs>\n<AccountAddRs statusCode=\"3180\" statusSeverity=\"Error\" statusMessage=\"There was an error when saving a Accounts list, element &quot;*Direct Deposit Liabilities&quot;.  QuickBooks error message: The account number is already in use.\" />\n</QBXMLMsgsRs>\n</QBXML>\n",
+          "Timestamp": "2026-05-19T15:49:14.4511999Z"
+        },
+        {
+          "EntityType": "Accounts",
+          "SourceIdentifier": "*Payroll Liabilities",
+          "Success": false,
+          "QBXMLRequest": "<?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<?qbxml version=\"15.0\"?>\r\n<QBXML>\r\n  <QBXMLMsgsRq onError=\"continueOnError\">\r\n    <AccountAddRq>\r\n  <AccountAdd>\r\n    <Name>*Payroll Liabilities</Name>\r\n    <IsActive>true</IsActive>\r\n    <AccountType>OtherCurrentLiability</AccountType>\r\n    <AccountNumber>2-3100</AccountNumber>\r\n  </AccountAdd>\r\n</AccountAddRq>\r\n\r\n  </QBXMLMsgsRq>\r\n</QBXML>",
+          "QBXMLResponse": "<?xml version=\"1.0\" ?>\n<QBXML>\n<QBXMLMsgsRs>\n<AccountAddRs statusCode=\"3180\" statusSeverity=\"Error\" statusMessage=\"There was an error when saving a Accounts list, element &quot;*Payroll Liabilities&quot;.  QuickBooks error message: The account number is already in use.\" />\n</QBXMLMsgsRs>\n</QBXML>\n",
+          "Timestamp": "2026-05-19T15:49:14.4964026Z"
+        },
+        {
+          "EntityType": "Accounts",
+          "SourceIdentifier": "AMERICAN GENERAL FINANCE",
+          "Success": false,
+          "QBXMLRequest": "<?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<?qbxml version=\"15.0\"?>\r\n<QBXML>\r\n  <QBXMLMsgsRq onError=\"continueOnError\">\r\n    <AccountAddRq>\r\n  <AccountAdd>\r\n    <Name>AMERICAN GENERAL FINANCE</Name>\r\n    <IsActive>true</IsActive>\r\n    <AccountType>OtherCurrentLiability</AccountType>\r\n  </AccountAdd>\r\n</AccountAddRq>\r\n\r\n  </QBXMLMsgsRq>\r\n</QBXML>",
+          "QBXMLResponse": "<?xml version=\"1.0\" ?>\n<QBXML>\n<QBXMLMsgsRs>\n<AccountAddRs statusCode=\"3100\" statusSeverity=\"Error\" statusMessage=\"The name &quot;AMERICAN GENERAL FINANCE&quot; of the list element is already in use.\" />\n</QBXMLMsgsRs>\n</QBXML>\n",
+          "Timestamp": "2026-05-19T15:49:14.5450284Z"
+        },
+        {
+          "EntityType": "Accounts",
+          "SourceIdentifier": "BROTHER LOAN",
+          "Success": false,
+          "QBXMLRequest": "<?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<?qbxml version=\"15.0\"?>\r\n<QBXML>\r\n  <QBXMLMsgsRq onError=\"continueOnError\">\r\n    <AccountAddRq>\r\n  <AccountAdd>\r\n    <Name>BROTHER LOAN</Name>\r\n    <IsActive>true</IsActive>\r\n    <AccountType>OtherCurrentLiability</AccountType>\r\n  </AccountAdd>\r\n</AccountAddRq>\r\n\r\n  </QBXMLMsgsRq>\r\n</QBXML>",
+          "QBXMLResponse": "<?xml version=\"1.0\" ?>\n<QBXML>\n<QBXMLMsgsRs>\n<AccountAddRs statusCode=\"3100\" statusSeverity=\"Error\" statusMessage=\"The name &quot;BROTHER LOAN&quot; of the list element is already in use.\" />\n</QBXMLMsgsRs>\n</QBXML>\n",
+          "Timestamp": "2026-05-19T15:49:14.5888725Z"
+        },
+        {
+          "EntityType": "Accounts",
+          "SourceIdentifier": "CHILD SUPPORT",
+          "Success": false,
+          "QBXMLRequest": "<?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<?qbxml version=\"15.0\"?>\r\n<QBXML>\r\n  <QBXMLMsgsRq onError=\"continueOnError\">\r\n    <AccountAddRq>\r\n  <AccountAdd>\r\n    <Name>CHILD SUPPORT</Name>\r\n    <IsActive>true</IsActive>\r\n    <AccountType>OtherCurrentLiability</AccountType>\r\n  </AccountAdd>\r\n</AccountAddRq>\r\n\r\n  </QBXMLMsgsRq>\r\n</QBXML>",
+          "QBXMLResponse": "<?xml version=\"1.0\" ?>\n<QBXML>\n<QBXMLMsgsRs>\n<AccountAddRs statusCode=\"3100\" statusSeverity=\"Error\" statusMessage=\"The name &quot;CHILD SUPPORT&quot; of the list element is already in use.\" />\n</QBXMLMsgsRs>\n</QBXML>\n",
+          "Timestamp": "2026-05-19T15:49:14.6332245Z"
+        },
+        {
+          "EntityType": "Accounts",
+          "SourceIdentifier": "CURRENT YR ESTIMATE",
+          "Success": false,
+          "QBXMLRequest": "<?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<?qbxml version=\"15.0\"?>\r\n<QBXML>\r\n  <QBXMLMsgsRq onError=\"continueOnError\">\r\n    <AccountAddRq>\r\n  <AccountAdd>\r\n    <Name>CURRENT YR ESTIMATE</Name>\r\n    <IsActive>true</IsActive>\r\n    <AccountType>OtherCurrentLiability</AccountType>\r\n    <AccountNumber>2-9990</AccountNumber>\r\n  </AccountAdd>\r\n</AccountAddRq>\r\n\r\n  </QBXMLMsgsRq>\r\n</QBXML>",
+          "QBXMLResponse": "<?xml version=\"1.0\" ?>\n<QBXML>\n<QBXMLMsgsRs>\n<AccountAddRs statusCode=\"3180\" statusSeverity=\"Error\" statusMessage=\"There was an error when saving a Accounts list, element &quot;CURRENT YR ESTIMATE&quot;.  QuickBooks error message: The account number is already in use.\" />\n</QBXMLMsgsRs>\n</QBXML>\n",
+          "Timestamp": "2026-05-19T15:49:14.6770343Z"
+        },
+        {
+          "EntityType": "Accounts",
+          "SourceIdentifier": "CURRENT YR ESTIMATE:FEDERAL",
+          "Success": false,
+          "QBXMLRequest": "<?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<?qbxml version=\"15.0\"?>\r\n<QBXML>\r\n  <QBXMLMsgsRq onError=\"continueOnError\">\r\n    <AccountAddRq>\r\n  <AccountAdd>\r\n    <Name>CURRENT YR ESTIMATE:FEDERAL</Name>\r\n    <IsActive>true</IsActive>\r\n    <ParentRef>\r\n      <FullName>CURRENT YR ESTIMATE</FullName>\r\n    </ParentRef>\r\n    <AccountType>OtherCurrentLiability</AccountType>\r\n  </AccountAdd>\r\n</AccountAddRq>\r\n\r\n  </QBXMLMsgsRq>\r\n</QBXML>",
+          "QBXMLResponse": "<?xml version=\"1.0\" ?>\n<QBXML>\n<QBXMLMsgsRs>\n<AccountAddRs statusCode=\"3090\" statusSeverity=\"Error\" statusMessage=\"There was an error when storing &quot;CURRENT YR ESTIMATE:FEDERAL&quot; in the &quot;account name&quot; field.  QuickBooks error message: Names in this list cannot contain a colon. The colon is a special character used to indicate a parent/child relationship.\" />\n</QBXMLMsgsRs>\n</QBXML>\n",
+          "Timestamp": "2026-05-19T15:49:14.721821Z"
+        },
+        {
+          "EntityType": "Accounts",
+          "SourceIdentifier": "CURRENT YR ESTIMATE:STATE",
+          "Success": false,
+          "QBXMLRequest": "<?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<?qbxml version=\"15.0\"?>\r\n<QBXML>\r\n  <QBXMLMsgsRq onError=\"continueOnError\">\r\n    <AccountAddRq>\r\n  <AccountAdd>\r\n    <Name>CURRENT YR ESTIMATE:STATE</Name>\r\n    <IsActive>true</IsActive>\r\n    <ParentRef>\r\n      <FullName>CURRENT YR ESTIMATE</FullName>\r\n    </ParentRef>\r\n    <AccountType>OtherCurrentLiability</AccountType>\r\n  </AccountAdd>\r\n</AccountAddRq>\r\n\r\n  </QBXMLMsgsRq>\r\n</QBXML>",
+          "QBXMLResponse": "<?xml version=\"1.0\" ?>\n<QBXML>\n<QBXMLMsgsRs>\n<AccountAddRs statusCode=\"3090\" statusSeverity=\"Error\" statusMessage=\"There was an error when storing &quot;CURRENT YR ESTIMATE:STATE&quot; in the &quot;account name&quot; field.  QuickBooks error message: Names in this list cannot contain a colon. The colon is a special character used to indicate a parent/child relationship.\" />\n</QBXMLMsgsRs>\n</QBXML>\n",
+          "Timestamp": "2026-05-19T15:49:14.767637Z"
+        },
+        {
+          "EntityType": "Accounts",
+          "SourceIdentifier": "Current Yr Fed & St IC Tax liab",
+          "Success": false,
+          "QBXMLRequest": "<?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<?qbxml version=\"15.0\"?>\r\n<QBXML>\r\n  <QBXMLMsgsRq onError=\"continueOnError\">\r\n    <AccountAddRq>\r\n  <AccountAdd>\r\n    <Name>Current Yr Fed &amp; St IC Tax liab</Name>\r\n    <IsActive>true</IsActive>\r\n    <AccountType>OtherCurrentLiability</AccountType>\r\n    <AccountNumber>2-9991</AccountNumber>\r\n  </AccountAdd>\r\n</AccountAddRq>\r\n\r\n  </QBXMLMsgsRq>\r\n</QBXML>",
+          "QBXMLResponse": "<?xml version=\"1.0\" ?>\n<QBXML>\n<QBXMLMsgsRs>\n<AccountAddRs statusCode=\"3180\" statusSeverity=\"Error\" statusMessage=\"There was an error when saving a Accounts list, element &quot;Current Yr Fed &amp; St IC Tax liab&quot;.  QuickBooks error message: The account number is already in use.\" />\n</QBXMLMsgsRs>\n</QBXML>\n",
+          "Timestamp": "2026-05-19T15:49:14.8118215Z"
+        },
+        {
+          "EntityType": "Accounts",
+          "SourceIdentifier": "Direct Deposit Liabilities 2",
+          "Success": false,
+          "QBXMLRequest": "<?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<?qbxml version=\"15.0\"?>\r\n<QBXML>\r\n  <QBXMLMsgsRq onError=\"continueOnError\">\r\n    <AccountAddRq>\r\n  <AccountAdd>\r\n    <Name>Direct Deposit Liabilities 2</Name>\r\n    <IsActive>true</IsActive>\r\n    <AccountType>OtherCurrentLiability</AccountType>\r\n    <AccountNumber>2-3115</AccountNumber>\r\n  </AccountAdd>\r\n</AccountAddRq>\r\n\r\n  </QBXMLMsgsRq>\r\n</QBXML>",
+          "QBXMLResponse": "<?xml version=\"1.0\" ?>\n<QBXML>\n<QBXMLMsgsRs>\n<AccountAddRs statusCode=\"3180\" statusSeverity=\"Error\" statusMessage=\"There was an error when saving a Accounts list, element &quot;Direct Deposit Liabilities 2&quot;.  QuickBooks error message: The account number is already in use.\" />\n</QBXMLMsgsRs>\n</QBXML>\n",
+          "Timestamp": "2026-05-19T15:49:14.8639709Z"
+        },
+        {
+          "EntityType": "Accounts",
+          "SourceIdentifier": "Eq Loan",
+          "Success": false,
+          "QBXMLRequest": "<?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<?qbxml version=\"15.0\"?>\r\n<QBXML>\r\n  <QBXMLMsgsRq onError=\"continueOnError\">\r\n    <AccountAddRq>\r\n  <AccountAdd>\r\n    <Name>Eq Loan</Name>\r\n    <IsActive>true</IsActive>\r\n    <AccountType>OtherCurrentLiability</AccountType>\r\n  </AccountAdd>\r\n</AccountAddRq>\r\n\r\n  </QBXMLMsgsRq>\r\n</QBXML>",
+          "QBXMLResponse": "<?xml version=\"1.0\" ?>\n<QBXML>\n<QBXMLMsgsRs>\n<AccountAddRs statusCode=\"3100\" statusSeverity=\"Error\" statusMessage=\"The name &quot;Eq Loan&quot; of the list element is already in use.\" />\n</QBXMLMsgsRs>\n</QBXML>\n",
+          "Timestamp": "2026-05-19T15:49:14.911818Z"
+        },
+        {
+          "EntityType": "Accounts",
+          "SourceIdentifier": "Gift certificates",
+          "Success": false,
+          "QBXMLRequest": "<?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<?qbxml version=\"15.0\"?>\r\n<QBXML>\r\n  <QBXMLMsgsRq onError=\"continueOnError\">\r\n    <AccountAddRq>\r\n  <AccountAdd>\r\n    <Name>Gift certificates</Name>\r\n    <IsActive>true</IsActive>\r\n    <AccountType>OtherCurrentLiability</AccountType>\r\n    <AccountNumber>1710</AccountNumber>\r\n  </AccountAdd>\r\n</AccountAddRq>\r\n\r\n  </QBXMLMsgsRq>\r\n</QBXML>",
+          "QBXMLResponse": "<?xml version=\"1.0\" ?>\n<QBXML>\n<QBXMLMsgsRs>\n<AccountAddRs statusCode=\"3180\" statusSeverity=\"Error\" statusMessage=\"There was an error when saving a Accounts list, element &quot;Gift certificates&quot;.  QuickBooks error message: The account number is already in use.\" />\n</QBXMLMsgsRs>\n</QBXML>\n",
+          "Timestamp": "2026-05-19T15:49:14.9584367Z"
+        },
+        {
+          "EntityType": "Accounts",
+          "SourceIdentifier": "GOVERNMENT LIAB PAST DUE",
+          "Success": false,
+          "QBXMLRequest": "<?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<?qbxml version=\"15.0\"?>\r\n<QBXML>\r\n  <QBXMLMsgsRq onError=\"continueOnError\">\r\n    <AccountAddRq>\r\n  <AccountAdd>\r\n    <Name>GOVERNMENT LIAB PAST DUE</Name>\r\n    <IsActive>true</IsActive>\r\n    <AccountType>OtherCurrentLiability</AccountType>\r\n  </AccountAdd>\r\n</AccountAddRq>\r\n\r\n  </QBXMLMsgsRq>\r\n</QBXML>",
+          "QBXMLResponse": "<?xml version=\"1.0\" ?>\n<QBXML>\n<QBXMLMsgsRs>\n<AccountAddRs statusCode=\"3100\" statusSeverity=\"Error\" statusMessage=\"The name &quot;GOVERNMENT LIAB PAST DUE&quot; of the list element is already in use.\" />\n</QBXMLMsgsRs>\n</QBXML>\n",
+          "Timestamp": "2026-05-19T15:49:15.0041767Z"
+        },
+        {
+          "EntityType": "Accounts",
+          "SourceIdentifier": "GOVERNMENT LIAB PAST DUE:FEDERAL",
+          "Success": false,
+          "QBXMLRequest": "<?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<?qbxml version=\"15.0\"?>\r\n<QBXML>\r\n  <QBXMLMsgsRq onError=\"continueOnError\">\r\n    <AccountAddRq>\r\n  <AccountAdd>\r\n    <Name>GOVERNMENT LIAB PAST DUE:FEDERAL</Name>\r\n    <IsActive>true</IsActive>\r\n    <ParentRef>\r\n      <FullName>GOVERNMENT LIAB PAST DUE</FullName>\r\n    </ParentRef>\r\n    <AccountType>OtherCurrentLiability</AccountType>\r\n  </AccountAdd>\r\n</AccountAddRq>\r\n\r\n  </QBXMLMsgsRq>\r\n</QBXML>",
+          "QBXMLResponse": "<?xml version=\"1.0\" ?>\n<QBXML>\n<QBXMLMsgsRs>\n<AccountAddRs statusCode=\"3070\" statusSeverity=\"Error\" statusMessage=\"The string &quot;GOVERNMENT LIAB PAST DUE:FEDERAL&quot; in the field &quot;Name&quot; is too long.\" />\n</QBXMLMsgsRs>\n</QBXML>\n",
+          "Timestamp": "2026-05-19T15:49:15.0584778Z"
+        },
+        {
+          "EntityType": "Accounts",
+          "SourceIdentifier": "GOVERNMENT LIAB PAST DUE:FEDERAL:1120 CORP TAX",
+          "Success": false,
+          "QBXMLRequest": "<?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<?qbxml version=\"15.0\"?>\r\n<QBXML>\r\n  <QBXMLMsgsRq onError=\"continueOnError\">\r\n    <AccountAddRq>\r\n  <AccountAdd>\r\n    <Name>GOVERNMENT LIAB PAST DUE:FEDERAL:1120 COR</Name>\r\n    <IsActive>true</IsActive>\r\n    <ParentRef>\r\n      <FullName>GOVERNMENT LIAB PAST DUE:FEDERAL</FullName>\r\n    </ParentRef>\r\n    <AccountType>OtherCurrentLiability</AccountType>\r\n  </AccountAdd>\r\n</AccountAddRq>\r\n\r\n  </QBXMLMsgsRq>\r\n</QBXML>",
+          "QBXMLResponse": "<?xml version=\"1.0\" ?>\n<QBXML>\n<QBXMLMsgsRs>\n<AccountAddRs statusCode=\"3070\" statusSeverity=\"Error\" statusMessage=\"The string &quot;GOVERNMENT LIAB PAST DUE:FEDERAL:1120 COR&quot; in the field &quot;Name&quot; is too long.\" />\n</QBXMLMsgsRs>\n</QBXML>\n",
+          "Timestamp": "2026-05-19T15:49:15.1034115Z"
+        },
+        {
+          "EntityType": "Accounts",
+          "SourceIdentifier": "GOVERNMENT LIAB PAST DUE:FEDERAL:940",
+          "Success": false,
+          "QBXMLRequest": "<?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<?qbxml version=\"15.0\"?>\r\n<QBXML>\r\n  <QBXMLMsgsRq onError=\"continueOnError\">\r\n    <AccountAddRq>\r\n  <AccountAdd>\r\n    <Name>GOVERNMENT LIAB PAST DUE:FEDERAL:940</Name>\r\n    <IsActive>true</IsActive>\r\n    <ParentRef>\r\n      <FullName>GOVERNMENT LIAB PAST DUE:FEDERAL</FullName>\r\n    </ParentRef>\r\n    <AccountType>OtherCurrentLiability</AccountType>\r\n  </AccountAdd>\r\n</AccountAddRq>\r\n\r\n  </QBXMLMsgsRq>\r\n</QBXML>",
+          "QBXMLResponse": "<?xml version=\"1.0\" ?>\n<QBXML>\n<QBXMLMsgsRs>\n<AccountAddRs statusCode=\"3070\" statusSeverity=\"Error\" statusMessage=\"The string &quot;GOVERNMENT LIAB PAST DUE:FEDERAL:940&quot; in the field &quot;Name&quot; is too long.\" />\n</QBXMLMsgsRs>\n</QBXML>\n",
+          "Timestamp": "2026-05-19T15:49:15.1556498Z"
+        },
+        {
+          "EntityType": "Accounts",
+          "SourceIdentifier": "GOVERNMENT LIAB PAST DUE:FEDERAL:941",
+          "Success": false,
+          "QBXMLRequest": "<?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<?qbxml version=\"15.0\"?>\r\n<QBXML>\r\n  <QBXMLMsgsRq onError=\"continueOnError\">\r\n    <AccountAddRq>\r\n  <AccountAdd>\r\n    <Name>GOVERNMENT LIAB PAST DUE:FEDERAL:941</Name>\r\n    <IsActive>true</IsActive>\r\n    <ParentRef>\r\n      <FullName>GOVERNMENT LIAB PAST DUE:FEDERAL</FullName>\r\n    </ParentRef>\r\n    <AccountType>OtherCurrentLiability</AccountType>\r\n  </AccountAdd>\r\n</AccountAddRq>\r\n\r\n  </QBXMLMsgsRq>\r\n</QBXML>",
+          "QBXMLResponse": "<?xml version=\"1.0\" ?>\n<QBXML>\n<QBXMLMsgsRs>\n<AccountAddRs statusCode=\"3070\" statusSeverity=\"Error\" statusMessage=\"The string &quot;GOVERNMENT LIAB PAST DUE:FEDERAL:941&quot; in the field &quot;Name&quot; is too long.\" />\n</QBXMLMsgsRs>\n</QBXML>\n",
+          "Timestamp": "2026-05-19T15:49:15.1987497Z"
+        },
+        {
+          "EntityType": "Accounts",
+          "SourceIdentifier": "GOVERNMENT LIAB PAST DUE:WISCONSIN",
+          "Success": false,
+          "QBXMLRequest": "<?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<?qbxml version=\"15.0\"?>\r\n<QBXML>\r\n  <QBXMLMsgsRq onError=\"continueOnError\">\r\n    <AccountAddRq>\r\n  <AccountAdd>\r\n    <Name>GOVERNMENT LIAB PAST DUE:WISCONSIN</Name>\r\n    <IsActive>true</IsActive>\r\n    <ParentRef>\r\n      <FullName>GOVERNMENT LIAB PAST DUE</FullName>\r\n    </ParentRef>\r\n    <AccountType>OtherCurrentLiability</AccountType>\r\n  </AccountAdd>\r\n</AccountAddRq>\r\n\r\n  </QBXMLMsgsRq>\r\n</QBXML>",
+          "QBXMLResponse": "<?xml version=\"1.0\" ?>\n<QBXML>\n<QBXMLMsgsRs>\n<AccountAddRs statusCode=\"3070\" statusSeverity=\"Error\" statusMessage=\"The string &quot;GOVERNMENT LIAB PAST DUE:WISCONSIN&quot; in the field &quot;Name&quot; is too long.\" />\n</QBXMLMsgsRs>\n</QBXML>\n",
+          "Timestamp": "2026-05-19T15:49:15.2427124Z"
+        },
+        {
+          "EntityType": "Accounts",
+          "SourceIdentifier": "GOVERNMENT LIAB PAST DUE:WISCONSIN:CORP TAX",
+          "Success": false,
+          "QBXMLRequest": "<?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<?qbxml version=\"15.0\"?>\r\n<QBXML>\r\n  <QBXMLMsgsRq onError=\"continueOnError\">\r\n    <AccountAddRq>\r\n  <AccountAdd>\r\n    <Name>GOVERNMENT LIAB PAST DUE:WISCONSIN:CORP T</Name>\r\n    <IsActive>true</IsActive>\r\n    <ParentRef>\r\n      <FullName>GOVERNMENT LIAB PAST DUE:WISCONSIN</FullName>\r\n    </ParentRef>\r\n    <AccountType>OtherCurrentLiability</AccountType>\r\n  </AccountAdd>\r\n</AccountAddRq>\r\n\r\n  </QBXMLMsgsRq>\r\n</QBXML>",
+          "QBXMLResponse": "<?xml version=\"1.0\" ?>\n<QBXML>\n<QBXMLMsgsRs>\n<AccountAddRs statusCode=\"3070\" statusSeverity=\"Error\" statusMessage=\"The string &quot;GOVERNMENT LIAB PAST DUE:WISCONSIN:CORP T&quot; in the field &quot;Name&quot; is too long.\" />\n</QBXMLMsgsRs>\n</QBXML>\n",
+          "Timestamp": "2026-05-19T15:49:15.2878174Z"
+        },
+        {
+          "EntityType": "Accounts",
+          "SourceIdentifier": "GOVERNMENT LIAB PAST DUE:WISCONSIN:EXPO",
+          "Success": false,
+          "QBXMLRequest": "<?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<?qbxml version=\"15.0\"?>\r\n<QBXML>\r\n  <QBXMLMsgsRq onError=\"continueOnError\">\r\n    <AccountAddRq>\r\n  <AccountAdd>\r\n    <Name>GOVERNMENT LIAB PAST DUE:WISCONSIN:EXPO</Name>\r\n    <IsActive>true</IsActive>\r\n    <ParentRef>\r\n      <FullName>GOVERNMENT LIAB PAST DUE:WISCONSIN</FullName>\r\n    </ParentRef>\r\n    <AccountType>OtherCurrentLiability</AccountType>\r\n  </AccountAdd>\r\n</AccountAddRq>\r\n\r\n  </QBXMLMsgsRq>\r\n</QBXML>",
+          "QBXMLResponse": "<?xml version=\"1.0\" ?>\n<QBXML>\n<QBXMLMsgsRs>\n<AccountAddRs statusCode=\"3070\" statusSeverity=\"Error\" statusMessage=\"The string &quot;GOVERNMENT LIAB PAST DUE:WISCONSIN:EXPO&quot; in the field &quot;Name&quot; is too long.\" />\n</QBXMLMsgsRs>\n</QBXML>\n",
+          "Timestamp": "2026-05-19T15:49:15.3324132Z"
+        },
+        {
+          "EntityType": "Accounts",
+          "SourceIdentifier": "GOVERNMENT LIAB PAST DUE:WISCONSIN:OTHER MUST ALLOCATE",
+          "Success": false,
+          "QBXMLRequest": "<?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<?qbxml version=\"15.0\"?>\r\n<QBXML>\r\n  <QBXMLMsgsRq onError=\"continueOnError\">\r\n    <AccountAddRq>\r\n  <AccountAdd>\r\n    <Name>GOVERNMENT LIAB PAST DUE:WISCONSIN:OTHER </Name>\r\n    <IsActive>true</IsActive>\r\n    <ParentRef>\r\n      <FullName>GOVERNMENT LIAB PAST DUE:WISCONSIN</FullName>\r\n    </ParentRef>\r\n    <AccountType>OtherCurrentLiability</AccountType>\r\n  </AccountAdd>\r\n</AccountAddRq>\r\n\r\n  </QBXMLMsgsRq>\r\n</QBXML>",
+          "QBXMLResponse": "<?xml version=\"1.0\" ?>\n<QBXML>\n<QBXMLMsgsRs>\n<AccountAddRs statusCode=\"3070\" statusSeverity=\"Error\" statusMessage=\"The string &quot;GOVERNMENT LIAB PAST DUE:WISCONSIN:OTHER&quot; in the field &quot;Name&quot; is too long.\" />\n</QBXMLMsgsRs>\n</QBXML>\n",
+          "Timestamp": "2026-05-19T15:49:15.3778727Z"
+        },
+        {
+          "EntityType": "Accounts",
+          "SourceIdentifier": "GOVERNMENT LIAB PAST DUE:WISCONSIN:PAYROLL WT6",
+          "Success": false,
+          "QBXMLRequest": "<?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<?qbxml version=\"15.0\"?>\r\n<QBXML>\r\n  <QBXMLMsgsRq onError=\"continueOnError\">\r\n    <AccountAddRq>\r\n  <AccountAdd>\r\n    <Name>GOVERNMENT LIAB PAST DUE:WISCONSIN:PAYROL</Name>\r\n    <IsActive>true</IsActive>\r\n    <ParentRef>\r\n      <FullName>GOVERNMENT LIAB PAST DUE:WISCONSIN</FullName>\r\n    </ParentRef>\r\n    <AccountType>OtherCurrentLiability</AccountType>\r\n  </AccountAdd>\r\n</AccountAddRq>\r\n\r\n  </QBXMLMsgsRq>\r\n</QBXML>",
+          "QBXMLResponse": "<?xml version=\"1.0\" ?>\n<QBXML>\n<QBXMLMsgsRs>\n<AccountAddRs statusCode=\"3070\" statusSeverity=\"Error\" statusMessage=\"The string &quot;GOVERNMENT LIAB PAST DUE:WISCONSIN:PAYROL&quot; in the field &quot;Name&quot; is too long.\" />\n</QBXMLMsgsRs>\n</QBXML>\n",
+          "Timestamp": "2026-05-19T15:49:15.422847Z"
+        },
+        {
+          "EntityType": "Accounts",
+          "SourceIdentifier": "GOVERNMENT LIAB PAST DUE:WISCONSIN:PERSONAL 1040",
+          "Success": false,
+          "QBXMLRequest": "<?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<?qbxml version=\"15.0\"?>\r\n<QBXML>\r\n  <QBXMLMsgsRq onError=\"continueOnError\">\r\n    <AccountAddRq>\r\n  <AccountAdd>\r\n    <Name>GOVERNMENT LIAB PAST DUE:WISCONSIN:PERSON</Name>\r\n    <IsActive>true</IsActive>\r\n    <ParentRef>\r\n      <FullName>GOVERNMENT LIAB PAST DUE:WISCONSIN</FullName>\r\n    </ParentRef>\r\n    <AccountType>OtherCurrentLiability</AccountType>\r\n  </AccountAdd>\r\n</AccountAddRq>\r\n\r\n  </QBXMLMsgsRq>\r\n</QBXML>",
+          "QBXMLResponse": "<?xml version=\"1.0\" ?>\n<QBXML>\n<QBXMLMsgsRs>\n<AccountAddRs statusCode=\"3070\" statusSeverity=\"Error\" statusMessage=\"The string &quot;GOVERNMENT LIAB PAST DUE:WISCONSIN:PERSON&quot; in the field &quot;Name&quot; is too long.\" />\n</QBXMLMsgsRs>\n</QBXML>\n",
+          "Timestamp": "2026-05-19T15:49:15.470052Z"
+        },
+        {
+          "EntityType": "Accounts",
+          "SourceIdentifier": "GOVERNMENT LIAB PAST DUE:WISCONSIN:SALES TAX",
+          "Success": false,
+          "QBXMLRequest": "<?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<?qbxml version=\"15.0\"?>\r\n<QBXML>\r\n  <QBXMLMsgsRq onError=\"continueOnError\">\r\n    <AccountAddRq>\r\n  <AccountAdd>\r\n    <Name>GOVERNMENT LIAB PAST DUE:WISCONSIN:SALES </Name>\r\n    <IsActive>true</IsActive>\r\n    <ParentRef>\r\n      <FullName>GOVERNMENT LIAB PAST DUE:WISCONSIN</FullName>\r\n    </ParentRef>\r\n    <AccountType>OtherCurrentLiability</AccountType>\r\n  </AccountAdd>\r\n</AccountAddRq>\r\n\r\n  </QBXMLMsgsRq>\r\n</QBXML>",
+          "QBXMLResponse": "<?xml version=\"1.0\" ?>\n<QBXML>\n<QBXMLMsgsRs>\n<AccountAddRs statusCode=\"3070\" statusSeverity=\"Error\" statusMessage=\"The string &quot;GOVERNMENT LIAB PAST DUE:WISCONSIN:SALES&quot; in the field &quot;Name&quot; is too long.\" />\n</QBXMLMsgsRs>\n</QBXML>\n",
+          "Timestamp": "2026-05-19T15:49:15.5129126Z"
+        },
+        {
+          "EntityType": "Accounts",
+          "SourceIdentifier": "GOVERNMENT LIAB PAST DUE:WISCONSIN:SUTA",
+          "Success": false,
+          "QBXMLRequest": "<?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<?qbxml version=\"15.0\"?>\r\n<QBXML>\r\n  <QBXMLMsgsRq onError=\"continueOnError\">\r\n    <AccountAddRq>\r\n  <AccountAdd>\r\n    <Name>GOVERNMENT LIAB PAST DUE:WISCONSIN:SUTA</Name>\r\n    <IsActive>true</IsActive>\r\n    <ParentRef>\r\n      <FullName>GOVERNMENT LIAB PAST DUE:WISCONSIN</FullName>\r\n    </ParentRef>\r\n    <AccountType>OtherCurrentLiability</AccountType>\r\n  </AccountAdd>\r\n</AccountAddRq>\r\n\r\n  </QBXMLMsgsRq>\r\n</QBXML>",
+          "QBXMLResponse": "<?xml version=\"1.0\" ?>\n<QBXML>\n<QBXMLMsgsRs>\n<AccountAddRs statusCode=\"3070\" statusSeverity=\"Error\" statusMessage=\"The string &quot;GOVERNMENT LIAB PAST DUE:WISCONSIN:SUTA&quot; in the field &quot;Name&quot; is too long.\" />\n</QBXMLMsgsRs>\n</QBXML>\n",
+          "Timestamp": "2026-05-19T15:49:15.5582756Z"
+        },
+        {
+          "EntityType": "Accounts",
+          "SourceIdentifier": "LOAN PAYABLE MARVIN",
+          "Success": false,
+          "QBXMLRequest": "<?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<?qbxml version=\"15.0\"?>\r\n<QBXML>\r\n  <QBXMLMsgsRq onError=\"continueOnError\">\r\n    <AccountAddRq>\r\n  <AccountAdd>\r\n    <Name>LOAN PAYABLE MARVIN</Name>\r\n    <IsActive>true</IsActive>\r\n    <AccountType>OtherCurrentLiability</AccountType>\r\n  </AccountAdd>\r\n</AccountAddRq>\r\n\r\n  </QBXMLMsgsRq>\r\n</QBXML>",
+          "QBXMLResponse": "<?xml version=\"1.0\" ?>\n<QBXML>\n<QBXMLMsgsRs>\n<AccountAddRs statusCode=\"3100\" statusSeverity=\"Error\" statusMessage=\"The name &quot;LOAN PAYABLE MARVIN&quot; of the list element is already in use.\" />\n</QBXMLMsgsRs>\n</QBXML>\n",
+          "Timestamp": "2026-05-19T15:49:15.6048098Z"
+        },
+        {
+          "EntityType": "Accounts",
+          "SourceIdentifier": "Loans from friends",
+          "Success": false,
+          "QBXMLRequest": "<?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<?qbxml version=\"15.0\"?>\r\n<QBXML>\r\n  <QBXMLMsgsRq onError=\"continueOnError\">\r\n    <AccountAddRq>\r\n  <AccountAdd>\r\n    <Name>Loans from friends</Name>\r\n    <IsActive>true</IsActive>\r\n    <AccountType>OtherCurrentLiability</AccountType>\r\n  </AccountAdd>\r\n</AccountAddRq>\r\n\r\n  </QBXMLMsgsRq>\r\n</QBXML>",
+          "QBXMLResponse": "<?xml version=\"1.0\" ?>\n<QBXML>\n<QBXMLMsgsRs>\n<AccountAddRs statusCode=\"3100\" statusSeverity=\"Error\" statusMessage=\"The name &quot;Loans from friends&quot; of the list element is already in use.\" />\n</QBXMLMsgsRs>\n</QBXML>\n",
+          "Timestamp": "2026-05-19T15:49:15.65095Z"
+        },
+        {
+          "EntityType": "Accounts",
+          "SourceIdentifier": "Loans from friends:Brian Aagey Loan",
+          "Success": false,
+          "QBXMLRequest": "<?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<?qbxml version=\"15.0\"?>\r\n<QBXML>\r\n  <QBXMLMsgsRq onError=\"continueOnError\">\r\n    <AccountAddRq>\r\n  <AccountAdd>\r\n    <Name>Loans from friends:Brian Aagey Loan</Name>\r\n    <IsActive>true</IsActive>\r\n    <ParentRef>\r\n      <FullName>Loans from friends</FullName>\r\n    </ParentRef>\r\n    <AccountType>OtherCurrentLiability</AccountType>\r\n  </AccountAdd>\r\n</AccountAddRq>\r\n\r\n  </QBXMLMsgsRq>\r\n</QBXML>",
+          "QBXMLResponse": "<?xml version=\"1.0\" ?>\n<QBXML>\n<QBXMLMsgsRs>\n<AccountAddRs statusCode=\"3070\" statusSeverity=\"Error\" statusMessage=\"The string &quot;Loans from friends:Brian Aagey Loan&quot; in the field &quot;Name&quot; is too long.\" />\n</QBXMLMsgsRs>\n</QBXML>\n",
+          "Timestamp": "2026-05-19T15:49:15.6963422Z"
+        },
+        {
+          "EntityType": "Accounts",
+          "SourceIdentifier": "Loans from friends:Marvin Loans",
+          "Success": false,
+          "QBXMLRequest": "<?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<?qbxml version=\"15.0\"?>\r\n<QBXML>\r\n  <QBXMLMsgsRq onError=\"continueOnError\">\r\n    <AccountAddRq>\r\n  <AccountAdd>\r\n    <Name>Loans from friends:Marvin Loans</Name>\r\n    <IsActive>true</IsActive>\r\n    <ParentRef>\r\n      <FullName>Loans from friends</FullName>\r\n    </ParentRef>\r\n    <AccountType>OtherCurrentLiability</AccountType>\r\n  </AccountAdd>\r\n</AccountAddRq>\r\n\r\n  </QBXMLMsgsRq>\r\n</QBXML>",
+          "QBXMLResponse": "<?xml version=\"1.0\" ?>\n<QBXML>\n<QBXMLMsgsRs>\n<AccountAddRs statusCode=\"3090\" statusSeverity=\"Error\" statusMessage=\"There was an error when storing &quot;Loans from friends:Marvin Loans&quot; in the &quot;account name&quot; field.  QuickBooks error message: Names in this list cannot contain a colon. The colon is a special character used to indicate a parent/child relationship.\" />\n</QBXMLMsgsRs>\n</QBXML>\n",
+          "Timestamp": "2026-05-19T15:49:15.7411243Z"
+        },
+        {
+          "EntityType": "Accounts",
+          "SourceIdentifier": "PAYROLL LIAB PMTS WENT OD",
+          "Success": false,
+          "QBXMLRequest": "<?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<?qbxml version=\"15.0\"?>\r\n<QBXML>\r\n  <QBXMLMsgsRq onError=\"continueOnError\">\r\n    <AccountAddRq>\r\n  <AccountAdd>\r\n    <Name>PAYROLL LIAB PMTS WENT OD</Name>\r\n    <IsActive>true</IsActive>\r\n    <AccountType>OtherCurrentLiability</AccountType>\r\n  </AccountAdd>\r\n</AccountAddRq>\r\n\r\n  </QBXMLMsgsRq>\r\n</QBXML>",
+          "QBXMLResponse": "<?xml version=\"1.0\" ?>\n<QBXML>\n<QBXMLMsgsRs>\n<AccountAddRs statusCode=\"3100\" statusSeverity=\"Error\" statusMessage=\"The name &quot;PAYROLL LIAB PMTS WENT OD&quot; of the list element is already in use.\" />\n</QBXMLMsgsRs>\n</QBXML>\n",
+          "Timestamp": "2026-05-19T15:49:15.7861147Z"
+        },
+        {
+          "EntityType": "Accounts",
+          "SourceIdentifier": "PPP ADJ ACCT",
+          "Success": false,
+          "QBXMLRequest": "<?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<?qbxml version=\"15.0\"?>\r\n<QBXML>\r\n  <QBXMLMsgsRq onError=\"continueOnError\">\r\n    <AccountAddRq>\r\n  <AccountAdd>\r\n    <Name>PPP ADJ ACCT</Name>\r\n    <IsActive>true</IsActive>\r\n    <AccountType>OtherCurrentLiability</AccountType>\r\n  </AccountAdd>\r\n</AccountAddRq>\r\n\r\n  </QBXMLMsgsRq>\r\n</QBXML>",
+          "QBXMLResponse": "<?xml version=\"1.0\" ?>\n<QBXML>\n<QBXMLMsgsRs>\n<AccountAddRs statusCode=\"3100\" statusSeverity=\"Error\" statusMessage=\"The name &quot;PPP ADJ ACCT&quot; of the list element is already in use.\" />\n</QBXMLMsgsRs>\n</QBXML>\n",
+          "Timestamp": "2026-05-19T15:49:15.8368735Z"
+        },
+        {
+          "EntityType": "Accounts",
+          "SourceIdentifier": "PPP LOAN",
+          "Success": false,
+          "QBXMLRequest": "<?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<?qbxml version=\"15.0\"?>\r\n<QBXML>\r\n  <QBXMLMsgsRq onError=\"continueOnError\">\r\n    <AccountAddRq>\r\n  <AccountAdd>\r\n    <Name>PPP LOAN</Name>\r\n    <IsActive>true</IsActive>\r\n    <AccountType>OtherCurrentLiability</AccountType>\r\n  </AccountAdd>\r\n</AccountAddRq>\r\n\r\n  </QBXMLMsgsRq>\r\n</QBXML>",
+          "QBXMLResponse": "<?xml version=\"1.0\" ?>\n<QBXML>\n<QBXMLMsgsRs>\n<AccountAddRs statusCode=\"3100\" statusSeverity=\"Error\" statusMessage=\"The name &quot;PPP LOAN&quot; of the list element is already in use.\" />\n</QBXMLMsgsRs>\n</QBXML>\n",
+          "Timestamp": "2026-05-19T15:49:15.8929064Z"
+        },
+        {
+          "EntityType": "Accounts",
+          "SourceIdentifier": "Sales Tax Payable",
+          "Success": false,
+          "QBXMLRequest": "<?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<?qbxml version=\"15.0\"?>\r\n<QBXML>\r\n  <QBXMLMsgsRq onError=\"continueOnError\">\r\n    <AccountAddRq>\r\n  <AccountAdd>\r\n    <Name>Sales Tax Payable</Name>\r\n    <IsActive>true</IsActive>\r\n    <AccountType>OtherCurrentLiability</AccountType>\r\n    <AccountNumber>2-3000</AccountNumber>\r\n  </AccountAdd>\r\n</AccountAddRq>\r\n\r\n  </QBXMLMsgsRq>\r\n</QBXML>",
+          "QBXMLResponse": "<?xml version=\"1.0\" ?>\n<QBXML>\n<QBXMLMsgsRs>\n<AccountAddRs statusCode=\"3180\" statusSeverity=\"Error\" statusMessage=\"There was an error when saving a Accounts list, element &quot;Sales Tax Payable&quot;.  QuickBooks error message: The account number is already in use.\" />\n</QBXMLMsgsRs>\n</QBXML>\n",
+          "Timestamp": "2026-05-19T15:49:15.9395763Z"
+        },
+        {
+          "EntityType": "Accounts",
+          "SourceIdentifier": "SBA Loan",
+          "Success": false,
+          "QBXMLRequest": "<?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<?qbxml version=\"15.0\"?>\r\n<QBXML>\r\n  <QBXMLMsgsRq onError=\"continueOnError\">\r\n    <AccountAddRq>\r\n  <AccountAdd>\r\n    <Name>SBA Loan</Name>\r\n    <IsActive>true</IsActive>\r\n    <AccountType>OtherCurrentLiability</AccountType>\r\n  </AccountAdd>\r\n</AccountAddRq>\r\n\r\n  </QBXMLMsgsRq>\r\n</QBXML>",
+          "QBXMLResponse": "<?xml version=\"1.0\" ?>\n<QBXML>\n<QBXMLMsgsRs>\n<AccountAddRs statusCode=\"3100\" statusSeverity=\"Error\" statusMessage=\"The name &quot;SBA Loan&quot; of the list element is already in use.\" />\n</QBXMLMsgsRs>\n</QBXML>\n",
+          "Timestamp": "2026-05-19T15:49:15.9824788Z"
+        },
+        {
+          "EntityType": "Accounts",
+          "SourceIdentifier": "SH AUTO REIMB PAYABLE",
+          "Success": false,
+          "QBXMLRequest": "<?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<?qbxml version=\"15.0\"?>\r\n<QBXML>\r\n  <QBXMLMsgsRq onError=\"continueOnError\">\r\n    <AccountAddRq>\r\n  <AccountAdd>\r\n    <Name>SH AUTO REIMB PAYABLE</Name>\r\n    <IsActive>true</IsActive>\r\n    <AccountType>OtherCurrentLiability</AccountType>\r\n  </AccountAdd>\r\n</AccountAddRq>\r\n\r\n  </QBXMLMsgsRq>\r\n</QBXML>",
+          "QBXMLResponse": "<?xml version=\"1.0\" ?>\n<QBXML>\n<QBXMLMsgsRs>\n<AccountAddRs statusCode=\"3100\" statusSeverity=\"Error\" statusMessage=\"The name &quot;SH AUTO REIMB PAYABLE&quot; of the list element is already in use.\" />\n</QBXMLMsgsRs>\n</QBXML>\n",
+          "Timestamp": "2026-05-19T15:49:16.0267912Z"
+        },
+        {
+          "EntityType": "Accounts",
+          "SourceIdentifier": "SH Loan Payable",
+          "Success": false,
+          "QBXMLRequest": "<?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<?qbxml version=\"15.0\"?>\r\n<QBXML>\r\n  <QBXMLMsgsRq onError=\"continueOnError\">\r\n    <AccountAddRq>\r\n  <AccountAdd>\r\n    <Name>SH Loan Payable</Name>\r\n    <IsActive>true</IsActive>\r\n    <AccountType>OtherCurrentLiability</AccountType>\r\n    <AccountNumber>2-5300</AccountNumber>\r\n  </AccountAdd>\r\n</AccountAddRq>\r\n\r\n  </QBXMLMsgsRq>\r\n</QBXML>",
+          "QBXMLResponse": "<?xml version=\"1.0\" ?>\n<QBXML>\n<QBXMLMsgsRs>\n<AccountAddRs statusCode=\"3180\" statusSeverity=\"Error\" statusMessage=\"There was an error when saving a Accounts list, element &quot;SH Loan Payable&quot;.  QuickBooks error message: The account number is already in use.\" />\n</QBXMLMsgsRs>\n</QBXML>\n",
+          "Timestamp": "2026-05-19T15:49:16.0723499Z"
+        },
+        {
+          "EntityType": "Accounts",
+          "SourceIdentifier": "Loan Payable Rod For Pur of bus",
+          "Success": false,
+          "QBXMLRequest": "<?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<?qbxml version=\"15.0\"?>\r\n<QBXML>\r\n  <QBXMLMsgsRq onError=\"continueOnError\">\r\n    <AccountAddRq>\r\n  <AccountAdd>\r\n    <Name>Loan Payable Rod For Pur of bus</Name>\r\n    <IsActive>true</IsActive>\r\n    <AccountType>LongTermLiability</AccountType>\r\n    <AccountNumber>2-5100</AccountNumber>\r\n  </AccountAdd>\r\n</AccountAddRq>\r\n\r\n  </QBXMLMsgsRq>\r\n</QBXML>",
+          "QBXMLResponse": "<?xml version=\"1.0\" ?>\n<QBXML>\n<QBXMLMsgsRs>\n<AccountAddRs statusCode=\"3180\" statusSeverity=\"Error\" statusMessage=\"There was an error when saving a Accounts list, element &quot;Loan Payable Rod For Pur of bus&quot;.  QuickBooks error message: The account number is already in use.\" />\n</QBXMLMsgsRs>\n</QBXML>\n",
+          "Timestamp": "2026-05-19T15:49:16.1182707Z"
+        },
+        {
+          "EntityType": "Accounts",
+          "SourceIdentifier": "SH LOAN",
+          "Success": false,
+          "QBXMLRequest": "<?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<?qbxml version=\"15.0\"?>\r\n<QBXML>\r\n  <QBXMLMsgsRq onError=\"continueOnError\">\r\n    <AccountAddRq>\r\n  <AccountAdd>\r\n    <Name>SH LOAN</Name>\r\n    <IsActive>true</IsActive>\r\n    <AccountType>LongTermLiability</AccountType>\r\n  </AccountAdd>\r\n</AccountAddRq>\r\n\r\n  </QBXMLMsgsRq>\r\n</QBXML>",
+          "QBXMLResponse": "<?xml version=\"1.0\" ?>\n<QBXML>\n<QBXMLMsgsRs>\n<AccountAddRs statusCode=\"3100\" statusSeverity=\"Error\" statusMessage=\"The name &quot;SH LOAN&quot; of the list element is already in use.\" />\n</QBXMLMsgsRs>\n</QBXML>\n",
+          "Timestamp": "2026-05-19T15:49:16.1660773Z"
+        },
+        {
+          "EntityType": "Accounts",
+          "SourceIdentifier": "Retained Earnings",
+          "Success": false,
+          "QBXMLRequest": "<?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<?qbxml version=\"15.0\"?>\r\n<QBXML>\r\n  <QBXMLMsgsRq onError=\"continueOnError\">\r\n    <AccountAddRq>\r\n  <AccountAdd>\r\n    <Name>Retained Earnings</Name>\r\n    <IsActive>true</IsActive>\r\n    <AccountType>Equity</AccountType>\r\n    <AccountNumber>3-1000</AccountNumber>\r\n  </AccountAdd>\r\n</AccountAddRq>\r\n\r\n  </QBXMLMsgsRq>\r\n</QBXML>",
+          "QBXMLResponse": "<?xml version=\"1.0\" ?>\n<QBXML>\n<QBXMLMsgsRs>\n<AccountAddRs statusCode=\"3180\" statusSeverity=\"Error\" statusMessage=\"There was an error when saving a Accounts list, element &quot;Retained Earnings&quot;.  QuickBooks error message: The account number is already in use.\" />\n</QBXMLMsgsRs>\n</QBXML>\n",
+          "Timestamp": "2026-05-19T15:49:16.2187956Z"
+        },
+        {
+          "EntityType": "Accounts",
+          "SourceIdentifier": "PERSONAL TRANS",
+          "Success": false,
+          "QBXMLRequest": "<?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<?qbxml version=\"15.0\"?>\r\n<QBXML>\r\n  <QBXMLMsgsRq onError=\"continueOnError\">\r\n    <AccountAddRq>\r\n  <AccountAdd>\r\n    <Name>PERSONAL TRANS</Name>\r\n    <IsActive>true</IsActive>\r\n    <AccountType>Equity</AccountType>\r\n    <AccountNumber>3-5350</AccountNumber>\r\n  </AccountAdd>\r\n</AccountAddRq>\r\n\r\n  </QBXMLMsgsRq>\r\n</QBXML>",
+          "QBXMLResponse": "<?xml version=\"1.0\" ?>\n<QBXML>\n<QBXMLMsgsRs>\n<AccountAddRs statusCode=\"3180\" statusSeverity=\"Error\" statusMessage=\"There was an error when saving a Accounts list, element &quot;PERSONAL TRANS&quot;.  QuickBooks error message: The account number is already in use.\" />\n</QBXMLMsgsRs>\n</QBXML>\n",
+          "Timestamp": "2026-05-19T15:49:16.2652749Z"
+        },
+        {
+          "EntityType": "Accounts",
+          "SourceIdentifier": "Capital Stock",
+          "Success": false,
+          "QBXMLRequest": "<?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<?qbxml version=\"15.0\"?>\r\n<QBXML>\r\n  <QBXMLMsgsRq onError=\"continueOnError\">\r\n    <AccountAddRq>\r\n  <AccountAdd>\r\n    <Name>Capital Stock</Name>\r\n    <IsActive>true</IsActive>\r\n    <AccountType>Equity</AccountType>\r\n    <AccountNumber>3-1100</AccountNumber>\r\n  </AccountAdd>\r\n</AccountAddRq>\r\n\r\n  </QBXMLMsgsRq>\r\n</QBXML>",
+          "QBXMLResponse": "<?xml version=\"1.0\" ?>\n<QBXML>\n<QBXMLMsgsRs>\n<AccountAddRs statusCode=\"3180\" statusSeverity=\"Error\" statusMessage=\"There was an error when saving a Accounts list, element &quot;Capital Stock&quot;.  QuickBooks error message: The account number is already in use.\" />\n</QBXMLMsgsRs>\n</QBXML>\n",
+          "Timestamp": "2026-05-19T15:49:16.3096199Z"
+        },
+        {
+          "EntityType": "Accounts",
+          "SourceIdentifier": "Opening Balance Equity",
+          "Success": false,
+          "QBXMLRequest": "<?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<?qbxml version=\"15.0\"?>\r\n<QBXML>\r\n  <QBXMLMsgsRq onError=\"continueOnError\">\r\n    <AccountAddRq>\r\n  <AccountAdd>\r\n    <Name>Opening Balance Equity</Name>\r\n    <IsActive>true</IsActive>\r\n    <AccountType>Equity</AccountType>\r\n    <AccountNumber>3-9999</AccountNumber>\r\n  </AccountAdd>\r\n</AccountAddRq>\r\n\r\n  </QBXMLMsgsRq>\r\n</QBXML>",
+          "QBXMLResponse": "<?xml version=\"1.0\" ?>\n<QBXML>\n<QBXMLMsgsRs>\n<AccountAddRs statusCode=\"3180\" statusSeverity=\"Error\" statusMessage=\"There was an error when saving a Accounts list, element &quot;Opening Balance Equity&quot;.  QuickBooks error message: The account number is already in use.\" />\n</QBXMLMsgsRs>\n</QBXML>\n",
+          "Timestamp": "2026-05-19T15:49:16.3565901Z"
+        },
+        {
+          "EntityType": "Accounts",
+          "SourceIdentifier": "Uncategorized Income",
+          "Success": false,
+          "QBXMLRequest": "<?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<?qbxml version=\"15.0\"?>\r\n<QBXML>\r\n  <QBXMLMsgsRq onError=\"continueOnError\">\r\n    <AccountAddRq>\r\n  <AccountAdd>\r\n    <Name>Uncategorized Income</Name>\r\n    <IsActive>true</IsActive>\r\n    <AccountType>Income</AccountType>\r\n    <AccountNumber>4-9900</AccountNumber>\r\n  </AccountAdd>\r\n</AccountAddRq>\r\n\r\n  </QBXMLMsgsRq>\r\n</QBXML>",
+          "QBXMLResponse": "<?xml version=\"1.0\" ?>\n<QBXML>\n<QBXMLMsgsRs>\n<AccountAddRs statusCode=\"3180\" statusSeverity=\"Error\" statusMessage=\"There was an error when saving a Accounts list, element &quot;Uncategorized Income&quot;.  QuickBooks error message: The account number is already in use.\" />\n</QBXMLMsgsRs>\n</QBXML>\n",
+          "Timestamp": "2026-05-19T15:49:16.4034589Z"
+        },
+        {
+          "EntityType": "Accounts",
+          "SourceIdentifier": "Interest Income",
+          "Success": false,
+          "QBXMLRequest": "<?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<?qbxml version=\"15.0\"?>\r\n<QBXML>\r\n  <QBXMLMsgsRq onError=\"continueOnError\">\r\n    <AccountAddRq>\r\n  <AccountAdd>\r\n    <Name>Interest Income</Name>\r\n    <IsActive>true</IsActive>\r\n    <AccountType>Income</AccountType>\r\n    <AccountNumber>4-4300</AccountNumber>\r\n  </AccountAdd>\r\n</AccountAddRq>\r\n\r\n  </QBXMLMsgsRq>\r\n</QBXML>",
+          "QBXMLResponse": "<?xml version=\"1.0\" ?>\n<QBXML>\n<QBXMLMsgsRs>\n<AccountAddRs statusCode=\"3180\" statusSeverity=\"Error\" statusMessage=\"There was an error when saving a Accounts list, element &quot;Interest Income&quot;.  QuickBooks error message: The account number is already in use.\" />\n</QBXMLMsgsRs>\n</QBXML>\n",
+          "Timestamp": "2026-05-19T15:49:16.4491707Z"
+        },
+        {
+          "EntityType": "Accounts",
+          "SourceIdentifier": "TAX DISCOUNTS",
+          "Success": false,
+          "QBXMLRequest": "<?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<?qbxml version=\"15.0\"?>\r\n<QBXML>\r\n  <QBXMLMsgsRq onError=\"continueOnError\">\r\n    <AccountAddRq>\r\n  <AccountAdd>\r\n    <Name>TAX DISCOUNTS</Name>\r\n    <IsActive>true</IsActive>\r\n    <AccountType>Income</AccountType>\r\n    <AccountNumber>4-4005</AccountNumber>\r\n  </AccountAdd>\r\n</AccountAddRq>\r\n\r\n  </QBXMLMsgsRq>\r\n</QBXML>",
+          "QBXMLResponse": "<?xml version=\"1.0\" ?>\n<QBXML>\n<QBXMLMsgsRs>\n<AccountAddRs statusCode=\"3180\" statusSeverity=\"Error\" statusMessage=\"There was an error when saving a Accounts list, element &quot;TAX DISCOUNTS&quot;.  QuickBooks error message: The account number is already in use.\" />\n</QBXMLMsgsRs>\n</QBXML>\n",
+          "Timestamp": "2026-05-19T15:49:16.4974422Z"
+        },
+        {
+          "EntityType": "Accounts",
+          "SourceIdentifier": "Food Sales",
+          "Success": false,
+          "QBXMLRequest": "<?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<?qbxml version=\"15.0\"?>\r\n<QBXML>\r\n  <QBXMLMsgsRq onError=\"continueOnError\">\r\n    <AccountAddRq>\r\n  <AccountAdd>\r\n    <Name>Food Sales</Name>\r\n    <IsActive>true</IsActive>\r\n    <AccountType>Income</AccountType>\r\n    <AccountNumber>4-4010</AccountNumber>\r\n  </AccountAdd>\r\n</AccountAddRq>\r\n\r\n  </QBXMLMsgsRq>\r\n</QBXML>",
+          "QBXMLResponse": "<?xml version=\"1.0\" ?>\n<QBXML>\n<QBXMLMsgsRs>\n<AccountAddRs statusCode=\"3180\" statusSeverity=\"Error\" statusMessage=\"There was an error when saving a Accounts list, element &quot;Food Sales&quot;.  QuickBooks error message: The account number is already in use.\" />\n</QBXMLMsgsRs>\n</QBXML>\n",
+          "Timestamp": "2026-05-19T15:49:16.5443524Z"
+        },
+        {
+          "EntityType": "Accounts",
+          "SourceIdentifier": "3rd Party Sales",
+          "Success": false,
+          "QBXMLRequest": "<?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<?qbxml version=\"15.0\"?>\r\n<QBXML>\r\n  <QBXMLMsgsRq onError=\"continueOnError\">\r\n    <AccountAddRq>\r\n  <AccountAdd>\r\n    <Name>3rd Party Sales</Name>\r\n    <IsActive>true</IsActive>\r\n    <AccountType>Income</AccountType>\r\n    <AccountNumber>4-4060</AccountNumber>\r\n    <BankNumber>No Sales/Expo tax</BankNumber>\r\n  </AccountAdd>\r\n</AccountAddRq>\r\n\r\n  </QBXMLMsgsRq>\r\n</QBXML>",
+          "QBXMLResponse": "<?xml version=\"1.0\" ?>\n<QBXML>\n<QBXMLMsgsRs>\n<AccountAddRs statusCode=\"3180\" statusSeverity=\"Error\" statusMessage=\"There was an error when saving a Accounts list, element &quot;3rd Party Sales&quot;.  QuickBooks error message: The account number is already in use.\" />\n</QBXMLMsgsRs>\n</QBXML>\n",
+          "Timestamp": "2026-05-19T15:49:16.5926349Z"
+        },
+        {
+          "EntityType": "Accounts",
+          "SourceIdentifier": "1Services",
+          "Success": false,
+          "QBXMLRequest": "<?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<?qbxml version=\"15.0\"?>\r\n<QBXML>\r\n  <QBXMLMsgsRq onError=\"continueOnError\">\r\n    <AccountAddRq>\r\n  <AccountAdd>\r\n    <Name>1Services</Name>\r\n    <IsActive>true</IsActive>\r\n    <AccountType>Income</AccountType>\r\n    <AccountNumber>4070</AccountNumber>\r\n  </AccountAdd>\r\n</AccountAddRq>\r\n\r\n  </QBXMLMsgsRq>\r\n</QBXML>",
+          "QBXMLResponse": "<?xml version=\"1.0\" ?>\n<QBXML>\n<QBXMLMsgsRs>\n<AccountAddRs statusCode=\"3180\" statusSeverity=\"Error\" statusMessage=\"There was an error when saving a Accounts list, element &quot;1Services&quot;.  QuickBooks error message: The account number is already in use.\" />\n</QBXMLMsgsRs>\n</QBXML>\n",
+          "Timestamp": "2026-05-19T15:49:16.6401707Z"
+        },
+        {
+          "EntityType": "Accounts",
+          "SourceIdentifier": "Fees",
+          "Success": false,
+          "QBXMLRequest": "<?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<?qbxml version=\"15.0\"?>\r\n<QBXML>\r\n  <QBXMLMsgsRq onError=\"continueOnError\">\r\n    <AccountAddRq>\r\n  <AccountAdd>\r\n    <Name>Fees</Name>\r\n    <IsActive>true</IsActive>\r\n    <AccountType>Income</AccountType>\r\n    <AccountNumber>4-4100</AccountNumber>\r\n  </AccountAdd>\r\n</AccountAddRq>\r\n\r\n  </QBXMLMsgsRq>\r\n</QBXML>",
+          "QBXMLResponse": "<?xml version=\"1.0\" ?>\n<QBXML>\n<QBXMLMsgsRs>\n<AccountAddRs statusCode=\"3180\" statusSeverity=\"Error\" statusMessage=\"There was an error when saving a Accounts list, element &quot;Fees&quot;.  QuickBooks error message: The account number is already in use.\" />\n</QBXMLMsgsRs>\n</QBXML>\n",
+          "Timestamp": "2026-05-19T15:49:16.6886831Z"
+        },
+        {
+          "EntityType": "Accounts",
+          "SourceIdentifier": "Reimbursed Expenses",
+          "Success": false,
+          "QBXMLRequest": "<?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<?qbxml version=\"15.0\"?>\r\n<QBXML>\r\n  <QBXMLMsgsRq onError=\"continueOnError\">\r\n    <AccountAddRq>\r\n  <AccountAdd>\r\n    <Name>Reimbursed Expenses</Name>\r\n    <IsActive>true</IsActive>\r\n    <AccountType>Income</AccountType>\r\n    <AccountNumber>4-4030</AccountNumber>\r\n  </AccountAdd>\r\n</AccountAddRq>\r\n\r\n  </QBXMLMsgsRq>\r\n</QBXML>",
+          "QBXMLResponse": "<?xml version=\"1.0\" ?>\n<QBXML>\n<QBXMLMsgsRs>\n<AccountAddRs statusCode=\"3180\" statusSeverity=\"Error\" statusMessage=\"There was an error when saving a Accounts list, element &quot;Reimbursed Expenses&quot;.  QuickBooks error message: The account number is already in use.\" />\n</QBXMLMsgsRs>\n</QBXML>\n",
+          "Timestamp": "2026-05-19T15:49:16.73465Z"
+        },
+        {
+          "EntityType": "Accounts",
+          "SourceIdentifier": "Sales",
+          "Success": false,
+          "QBXMLRequest": "<?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<?qbxml version=\"15.0\"?>\r\n<QBXML>\r\n  <QBXMLMsgsRq onError=\"continueOnError\">\r\n    <AccountAddRq>\r\n  <AccountAdd>\r\n    <Name>Sales</Name>\r\n    <IsActive>true</IsActive>\r\n    <AccountType>Income</AccountType>\r\n    <AccountNumber>4-4050</AccountNumber>\r\n  </AccountAdd>\r\n</AccountAddRq>\r\n\r\n  </QBXMLMsgsRq>\r\n</QBXML>",
+          "QBXMLResponse": "<?xml version=\"1.0\" ?>\n<QBXML>\n<QBXMLMsgsRs>\n<AccountAddRs statusCode=\"3180\" statusSeverity=\"Error\" statusMessage=\"There was an error when saving a Accounts list, element &quot;Sales&quot;.  QuickBooks error message: The account number is already in use.\" />\n</QBXMLMsgsRs>\n</QBXML>\n",
+          "Timestamp": "2026-05-19T15:49:16.7845532Z"
+        },
+        {
+          "EntityType": "Accounts",
+          "SourceIdentifier": "Sales Tax Discount",
+          "Success": false,
+          "QBXMLRequest": "<?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<?qbxml version=\"15.0\"?>\r\n<QBXML>\r\n  <QBXMLMsgsRq onError=\"continueOnError\">\r\n    <AccountAddRq>\r\n  <AccountAdd>\r\n    <Name>Sales Tax Discount</Name>\r\n    <IsActive>true</IsActive>\r\n    <AccountType>Income</AccountType>\r\n    <AccountNumber>4-4200</AccountNumber>\r\n  </AccountAdd>\r\n</AccountAddRq>\r\n\r\n  </QBXMLMsgsRq>\r\n</QBXML>",
+          "QBXMLResponse": "<?xml version=\"1.0\" ?>\n<QBXML>\n<QBXMLMsgsRs>\n<AccountAddRs statusCode=\"3180\" statusSeverity=\"Error\" statusMessage=\"There was an error when saving a Accounts list, element &quot;Sales Tax Discount&quot;.  QuickBooks error message: The account number is already in use.\" />\n</QBXMLMsgsRs>\n</QBXML>\n",
+          "Timestamp": "2026-05-19T15:49:16.834583Z"
+        },
+        {
+          "EntityType": "Accounts",
+          "SourceIdentifier": "Cost of sales",
+          "Success": false,
+          "QBXMLRequest": "<?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<?qbxml version=\"15.0\"?>\r\n<QBXML>\r\n  <QBXMLMsgsRq onError=\"continueOnError\">\r\n    <AccountAddRq>\r\n  <AccountAdd>\r\n    <Name>Cost of sales</Name>\r\n    <IsActive>true</IsActive>\r\n    <AccountType>CostOfGoodsSold</AccountType>\r\n    <AccountNumber>5-9991</AccountNumber>\r\n  </AccountAdd>\r\n</AccountAddRq>\r\n\r\n  </QBXMLMsgsRq>\r\n</QBXML>",
+          "QBXMLResponse": "<?xml version=\"1.0\" ?>\n<QBXML>\n<QBXMLMsgsRs>\n<AccountAddRs statusCode=\"3180\" statusSeverity=\"Error\" statusMessage=\"There was an error when saving a Accounts list, element &quot;Cost of sales&quot;.  QuickBooks error message: The account number is already in use.\" />\n</QBXMLMsgsRs>\n</QBXML>\n",
+          "Timestamp": "2026-05-19T15:49:16.8856843Z"
+        },
+        {
+          "EntityType": "Accounts",
+          "SourceIdentifier": "Beverage COG",
+          "Success": false,
+          "QBXMLRequest": "<?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<?qbxml version=\"15.0\"?>\r\n<QBXML>\r\n  <QBXMLMsgsRq onError=\"continueOnError\">\r\n    <AccountAddRq>\r\n  <AccountAdd>\r\n    <Name>Beverage COG</Name>\r\n    <IsActive>true</IsActive>\r\n    <AccountType>CostOfGoodsSold</AccountType>\r\n    <AccountNumber>5-1070</AccountNumber>\r\n  </AccountAdd>\r\n</AccountAddRq>\r\n\r\n  </QBXMLMsgsRq>\r\n</QBXML>",
+          "QBXMLResponse": "<?xml version=\"1.0\" ?>\n<QBXML>\n<QBXMLMsgsRs>\n<AccountAddRs statusCode=\"3180\" statusSeverity=\"Error\" statusMessage=\"There was an error when saving a Accounts list, element &quot;Beverage COG&quot;.  QuickBooks error message: The account number is already in use.\" />\n</QBXMLMsgsRs>\n</QBXML>\n",
+          "Timestamp": "2026-05-19T15:49:16.9298779Z"
+        },
+        {
+          "EntityType": "Accounts",
+          "SourceIdentifier": "Food COG",
+          "Success": false,
+          "QBXMLRequest": "<?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<?qbxml version=\"15.0\"?>\r\n<QBXML>\r\n  <QBXMLMsgsRq onError=\"continueOnError\">\r\n    <AccountAddRq>\r\n  <AccountAdd>\r\n    <Name>Food COG</Name>\r\n    <IsActive>true</IsActive>\r\n    <AccountType>CostOfGoodsSold</AccountType>\r\n    <AccountNumber>5-1060</AccountNumber>\r\n  </AccountAdd>\r\n</AccountAddRq>\r\n\r\n  </QBXMLMsgsRq>\r\n</QBXML>",
+          "QBXMLResponse": "<?xml version=\"1.0\" ?>\n<QBXML>\n<QBXMLMsgsRs>\n<AccountAddRs statusCode=\"3180\" statusSeverity=\"Error\" statusMessage=\"There was an error when saving a Accounts list, element &quot;Food COG&quot;.  QuickBooks error message: The account number is already in use.\" />\n</QBXMLMsgsRs>\n</QBXML>\n",
+          "Timestamp": "2026-05-19T15:49:16.9771171Z"
+        },
+        {
+          "EntityType": "Accounts",
+          "SourceIdentifier": "Purchases COG",
+          "Success": false,
+          "QBXMLRequest": "<?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<?qbxml version=\"15.0\"?>\r\n<QBXML>\r\n  <QBXMLMsgsRq onError=\"continueOnError\">\r\n    <AccountAddRq>\r\n  <AccountAdd>\r\n    <Name>Purchases COG</Name>\r\n    <IsActive>true</IsActive>\r\n    <AccountType>CostOfGoodsSold</AccountType>\r\n    <AccountNumber>5-1050</AccountNumber>\r\n  </AccountAdd>\r\n</AccountAddRq>\r\n\r\n  </QBXMLMsgsRq>\r\n</QBXML>",
+          "QBXMLResponse": "<?xml version=\"1.0\" ?>\n<QBXML>\n<QBXMLMsgsRs>\n<AccountAddRs statusCode=\"3180\" statusSeverity=\"Error\" statusMessage=\"There was an error when saving a Accounts list, element &quot;Purchases COG&quot;.  QuickBooks error message: The account number is already in use.\" />\n</QBXMLMsgsRs>\n</QBXML>\n",
+          "Timestamp": "2026-05-19T15:49:17.0272293Z"
+        },
+        {
+          "EntityType": "Accounts",
+          "SourceIdentifier": "Bread COG",
+          "Success": false,
+          "QBXMLRequest": "<?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<?qbxml version=\"15.0\"?>\r\n<QBXML>\r\n  <QBXMLMsgsRq onError=\"continueOnError\">\r\n    <AccountAddRq>\r\n  <AccountAdd>\r\n    <Name>Bread COG</Name>\r\n    <IsActive>true</IsActive>\r\n    <AccountType>CostOfGoodsSold</AccountType>\r\n    <AccountNumber>5-1040</AccountNumber>\r\n  </AccountAdd>\r\n</AccountAddRq>\r\n\r\n  </QBXMLMsgsRq>\r\n</QBXML>",
+          "QBXMLResponse": "<?xml version=\"1.0\" ?>\n<QBXML>\n<QBXMLMsgsRs>\n<AccountAddRs statusCode=\"3180\" statusSeverity=\"Error\" statusMessage=\"There was an error when saving a Accounts list, element &quot;Bread COG&quot;.  QuickBooks error message: The account number is already in use.\" />\n</QBXMLMsgsRs>\n</QBXML>\n",
+          "Timestamp": "2026-05-19T15:49:17.0812168Z"
+        },
+        {
+          "EntityType": "Accounts",
+          "SourceIdentifier": "Delivery Fees COG",
+          "Success": false,
+          "QBXMLRequest": "<?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<?qbxml version=\"15.0\"?>\r\n<QBXML>\r\n  <QBXMLMsgsRq onError=\"continueOnError\">\r\n    <AccountAddRq>\r\n  <AccountAdd>\r\n    <Name>Delivery Fees COG</Name>\r\n    <IsActive>true</IsActive>\r\n    <AccountType>CostOfGoodsSold</AccountType>\r\n    <AccountNumber>5-1030</AccountNumber>\r\n  </AccountAdd>\r\n</AccountAddRq>\r\n\r\n  </QBXMLMsgsRq>\r\n</QBXML>",
+          "QBXMLResponse": "<?xml version=\"1.0\" ?>\n<QBXML>\n<QBXMLMsgsRs>\n<AccountAddRs statusCode=\"3180\" statusSeverity=\"Error\" statusMessage=\"There was an error when saving a Accounts list, element &quot;Delivery Fees COG&quot;.  QuickBooks error message: The account number is already in use.\" />\n</QBXMLMsgsRs>\n</QBXML>\n",
+          "Timestamp": "2026-05-19T15:49:17.1300776Z"
+        },
+        {
+          "EntityType": "Accounts",
+          "SourceIdentifier": "Other Purchases COG",
+          "Success": false,
+          "QBXMLRequest": "<?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<?qbxml version=\"15.0\"?>\r\n<QBXML>\r\n  <QBXMLMsgsRq onError=\"continueOnError\">\r\n    <AccountAddRq>\r\n  <AccountAdd>\r\n    <Name>Other Purchases COG</Name>\r\n    <IsActive>true</IsActive>\r\n    <AccountType>CostOfGoodsSold</AccountType>\r\n    <AccountNumber>5-1020</AccountNumber>\r\n  </AccountAdd>\r\n</AccountAddRq>\r\n\r\n  </QBXMLMsgsRq>\r\n</QBXML>",
+          "QBXMLResponse": "<?xml version=\"1.0\" ?>\n<QBXML>\n<QBXMLMsgsRs>\n<AccountAddRs statusCode=\"3180\" statusSeverity=\"Error\" statusMessage=\"There was an error when saving a Accounts list, element &quot;Other Purchases COG&quot;.  QuickBooks error message: The account number is already in use.\" />\n</QBXMLMsgsRs>\n</QBXML>\n",
+          "Timestamp": "2026-05-19T15:49:17.1767922Z"
+        },
+        {
+          "EntityType": "Accounts",
+          "SourceIdentifier": "Produce COG",
+          "Success": false,
+          "QBXMLRequest": "<?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<?qbxml version=\"15.0\"?>\r\n<QBXML>\r\n  <QBXMLMsgsRq onError=\"continueOnError\">\r\n    <AccountAddRq>\r\n  <AccountAdd>\r\n    <Name>Produce COG</Name>\r\n    <IsActive>true</IsActive>\r\n    <AccountType>CostOfGoodsSold</AccountType>\r\n    <AccountNumber>5-1010</AccountNumber>\r\n  </AccountAdd>\r\n</AccountAddRq>\r\n\r\n  </QBXMLMsgsRq>\r\n</QBXML>",
+          "QBXMLResponse": "<?xml version=\"1.0\" ?>\n<QBXML>\n<QBXMLMsgsRs>\n<AccountAddRs statusCode=\"3180\" statusSeverity=\"Error\" statusMessage=\"There was an error when saving a Accounts list, element &quot;Produce COG&quot;.  QuickBooks error message: The account number is already in use.\" />\n</QBXMLMsgsRs>\n</QBXML>\n",
+          "Timestamp": "2026-05-19T15:49:17.2236249Z"
+        },
+        {
+          "EntityType": "Accounts",
+          "SourceIdentifier": "COMMESSIONS",
+          "Success": false,
+          "QBXMLRequest": "<?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<?qbxml version=\"15.0\"?>\r\n<QBXML>\r\n  <QBXMLMsgsRq onError=\"continueOnError\">\r\n    <AccountAddRq>\r\n  <AccountAdd>\r\n    <Name>COMMESSIONS</Name>\r\n    <IsActive>true</IsActive>\r\n    <AccountType>CostOfGoodsSold</AccountType>\r\n    <AccountNumber>5-1000</AccountNumber>\r\n  </AccountAdd>\r\n</AccountAddRq>\r\n\r\n  </QBXMLMsgsRq>\r\n</QBXML>",
+          "QBXMLResponse": "<?xml version=\"1.0\" ?>\n<QBXML>\n<QBXMLMsgsRs>\n<AccountAddRs statusCode=\"3180\" statusSeverity=\"Error\" statusMessage=\"There was an error when saving a Accounts list, element &quot;COMMESSIONS&quot;.  QuickBooks error message: The account number is already in use.\" />\n</QBXMLMsgsRs>\n</QBXML>\n",
+          "Timestamp": "2026-05-19T15:49:17.2704123Z"
+        },
+        {
+          "EntityType": "Accounts",
+          "SourceIdentifier": "Uncategorized Expenses",
+          "Success": false,
+          "QBXMLRequest": "<?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<?qbxml version=\"15.0\"?>\r\n<QBXML>\r\n  <QBXMLMsgsRq onError=\"continueOnError\">\r\n    <AccountAddRq>\r\n  <AccountAdd>\r\n    <Name>Uncategorized Expenses</Name>\r\n    <IsActive>true</IsActive>\r\n    <AccountType>Expense</AccountType>\r\n    <AccountNumber>69800</AccountNumber>\r\n  </AccountAdd>\r\n</AccountAddRq>\r\n\r\n  </QBXMLMsgsRq>\r\n</QBXML>",
+          "QBXMLResponse": "<?xml version=\"1.0\" ?>\n<QBXML>\n<QBXMLMsgsRs>\n<AccountAddRs statusCode=\"3180\" statusSeverity=\"Error\" statusMessage=\"There was an error when saving a Accounts list, element &quot;Uncategorized Expenses&quot;.  QuickBooks error message: The account number is already in use.\" />\n</QBXMLMsgsRs>\n</QBXML>\n",
+          "Timestamp": "2026-05-19T15:49:17.3178251Z"
+        },
+        {
+          "EntityType": "Accounts",
+          "SourceIdentifier": "Taxes Personal Property",
+          "Success": false,
+          "QBXMLRequest": "<?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<?qbxml version=\"15.0\"?>\r\n<QBXML>\r\n  <QBXMLMsgsRq onError=\"continueOnError\">\r\n    <AccountAddRq>\r\n  <AccountAdd>\r\n    <Name>Taxes Personal Property</Name>\r\n    <IsActive>true</IsActive>\r\n    <AccountType>Expense</AccountType>\r\n    <AccountNumber>6-6890</AccountNumber>\r\n  </AccountAdd>\r\n</AccountAddRq>\r\n\r\n  </QBXMLMsgsRq>\r\n</QBXML>",
+          "QBXMLResponse": "<?xml version=\"1.0\" ?>\n<QBXML>\n<QBXMLMsgsRs>\n<AccountAddRs statusCode=\"3180\" statusSeverity=\"Error\" statusMessage=\"There was an error when saving a Accounts list, element &quot;Taxes Personal Property&quot;.  QuickBooks error message: The account number is already in use.\" />\n</QBXMLMsgsRs>\n</QBXML>\n",
+          "Timestamp": "2026-05-19T15:49:17.3654078Z"
+        },
+        {
+          "EntityType": "Accounts",
+          "SourceIdentifier": "Repair Equipment",
+          "Success": false,
+          "QBXMLRequest": "<?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<?qbxml version=\"15.0\"?>\r\n<QBXML>\r\n  <QBXMLMsgsRq onError=\"continueOnError\">\r\n    <AccountAddRq>\r\n  <AccountAdd>\r\n    <Name>Repair Equipment</Name>\r\n    <IsActive>true</IsActive>\r\n    <AccountType>Expense</AccountType>\r\n    <AccountNumber>6-3085</AccountNumber>\r\n  </AccountAdd>\r\n</AccountAddRq>\r\n\r\n  </QBXMLMsgsRq>\r\n</QBXML>",
+          "QBXMLResponse": "<?xml version=\"1.0\" ?>\n<QBXML>\n<QBXMLMsgsRs>\n<AccountAddRs statusCode=\"3180\" statusSeverity=\"Error\" statusMessage=\"There was an error when saving a Accounts list, element &quot;Repair Equipment&quot;.  QuickBooks error message: The account number is already in use.\" />\n</QBXMLMsgsRs>\n</QBXML>\n",
+          "Timestamp": "2026-05-19T15:49:17.4128963Z"
+        },
+        {
+          "EntityType": "Accounts",
+          "SourceIdentifier": "QB Direct Dep Fees for PR",
+          "Success": false,
+          "QBXMLRequest": "<?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<?qbxml version=\"15.0\"?>\r\n<QBXML>\r\n  <QBXMLMsgsRq onError=\"continueOnError\">\r\n    <AccountAddRq>\r\n  <AccountAdd>\r\n    <Name>QB Direct Dep Fees for PR</Name>\r\n    <IsActive>true</IsActive>\r\n    <AccountType>Expense</AccountType>\r\n    <AccountNumber>6-6650</AccountNumber>\r\n  </AccountAdd>\r\n</AccountAddRq>\r\n\r\n  </QBXMLMsgsRq>\r\n</QBXML>",
+          "QBXMLResponse": "<?xml version=\"1.0\" ?>\n<QBXML>\n<QBXMLMsgsRs>\n<AccountAddRs statusCode=\"3180\" statusSeverity=\"Error\" statusMessage=\"There was an error when saving a Accounts list, element &quot;QB Direct Dep Fees for PR&quot;.  QuickBooks error message: The account number is already in use.\" />\n</QBXMLMsgsRs>\n</QBXML>\n",
+          "Timestamp": "2026-05-19T15:49:17.4614723Z"
+        },
+        {
+          "EntityType": "Accounts",
+          "SourceIdentifier": "Travel & Ent Meals",
+          "Success": false,
+          "QBXMLRequest": "<?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<?qbxml version=\"15.0\"?>\r\n<QBXML>\r\n  <QBXMLMsgsRq onError=\"continueOnError\">\r\n    <AccountAddRq>\r\n  <AccountAdd>\r\n    <Name>Travel &amp; Ent Meals</Name>\r\n    <IsActive>true</IsActive>\r\n    <AccountType>Expense</AccountType>\r\n    <AccountNumber>6-6370</AccountNumber>\r\n  </AccountAdd>\r\n</AccountAddRq>\r\n\r\n  </QBXMLMsgsRq>\r\n</QBXML>",
+          "QBXMLResponse": "<?xml version=\"1.0\" ?>\n<QBXML>\n<QBXMLMsgsRs>\n<AccountAddRs statusCode=\"3180\" statusSeverity=\"Error\" statusMessage=\"There was an error when saving a Accounts list, element &quot;Travel &amp; Ent Meals&quot;.  QuickBooks error message: The account number is already in use.\" />\n</QBXMLMsgsRs>\n</QBXML>\n",
+          "Timestamp": "2026-05-19T15:49:17.5096305Z"
+        },
+        {
+          "EntityType": "Accounts",
+          "SourceIdentifier": "Accounting & Tax Services",
+          "Success": false,
+          "QBXMLRequest": "<?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<?qbxml version=\"15.0\"?>\r\n<QBXML>\r\n  <QBXMLMsgsRq onError=\"continueOnError\">\r\n    <AccountAddRq>\r\n  <AccountAdd>\r\n    <Name>Accounting &amp; Tax Services</Name>\r\n    <IsActive>true</IsActive>\r\n    <AccountType>Expense</AccountType>\r\n    <AccountNumber>6-6275</AccountNumber>\r\n  </AccountAdd>\r\n</AccountAddRq>\r\n\r\n  </QBXMLMsgsRq>\r\n</QBXML>",
+          "QBXMLResponse": "<?xml version=\"1.0\" ?>\n<QBXML>\n<QBXMLMsgsRs>\n<AccountAddRs statusCode=\"3180\" statusSeverity=\"Error\" statusMessage=\"There was an error when saving a Accounts list, element &quot;Accounting &amp; Tax Services&quot;.  QuickBooks error message: The account number is already in use.\" />\n</QBXMLMsgsRs>\n</QBXML>\n",
+          "Timestamp": "2026-05-19T15:49:17.555636Z"
+        },
+        {
+          "EntityType": "Accounts",
+          "SourceIdentifier": "Legal Fees",
+          "Success": false,
+          "QBXMLRequest": "<?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<?qbxml version=\"15.0\"?>\r\n<QBXML>\r\n  <QBXMLMsgsRq onError=\"continueOnError\">\r\n    <AccountAddRq>\r\n  <AccountAdd>\r\n    <Name>Legal Fees</Name>\r\n    <IsActive>true</IsActive>\r\n    <AccountType>Expense</AccountType>\r\n    <AccountNumber>6-6280</AccountNumber>\r\n  </AccountAdd>\r\n</AccountAddRq>\r\n\r\n  </QBXMLMsgsRq>\r\n</QBXML>",
+          "QBXMLResponse": "<?xml version=\"1.0\" ?>\n<QBXML>\n<QBXMLMsgsRs>\n<AccountAddRs statusCode=\"3180\" statusSeverity=\"Error\" statusMessage=\"There was an error when saving a Accounts list, element &quot;Legal Fees&quot;.  QuickBooks error message: The account number is already in use.\" />\n</QBXMLMsgsRs>\n</QBXML>\n",
+          "Timestamp": "2026-05-19T15:49:17.6039896Z"
+        },
+        {
+          "EntityType": "Accounts",
+          "SourceIdentifier": "Interest Exp Rod  Bus Pur",
+          "Success": false,
+          "QBXMLRequest": "<?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<?qbxml version=\"15.0\"?>\r\n<QBXML>\r\n  <QBXMLMsgsRq onError=\"continueOnError\">\r\n    <AccountAddRq>\r\n  <AccountAdd>\r\n    <Name>Interest Exp Rod  Bus Pur</Name>\r\n    <IsActive>true</IsActive>\r\n    <AccountType>Expense</AccountType>\r\n    <AccountNumber>6-6220</AccountNumber>\r\n  </AccountAdd>\r\n</AccountAddRq>\r\n\r\n  </QBXMLMsgsRq>\r\n</QBXML>",
+          "QBXMLResponse": "<?xml version=\"1.0\" ?>\n<QBXML>\n<QBXMLMsgsRs>\n<AccountAddRs statusCode=\"3180\" statusSeverity=\"Error\" statusMessage=\"There was an error when saving a Accounts list, element &quot;Interest Exp Rod  Bus Pur&quot;.  QuickBooks error message: The account number is already in use.\" />\n</QBXMLMsgsRs>\n</QBXML>\n",
+          "Timestamp": "2026-05-19T15:49:17.6475169Z"
+        },
+        {
+          "EntityType": "Accounts",
+          "SourceIdentifier": "Taxes ST Corp Bal Due",
+          "Success": false,
+          "QBXMLRequest": "<?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<?qbxml version=\"15.0\"?>\r\n<QBXML>\r\n  <QBXMLMsgsRq onError=\"continueOnError\">\r\n    <AccountAddRq>\r\n  <AccountAdd>\r\n    <Name>Taxes ST Corp Bal Due</Name>\r\n    <IsActive>true</IsActive>\r\n    <AccountType>Expense</AccountType>\r\n    <AccountNumber>6-6860</AccountNumber>\r\n  </AccountAdd>\r\n</AccountAddRq>\r\n\r\n  </QBXMLMsgsRq>\r\n</QBXML>",
+          "QBXMLResponse": "<?xml version=\"1.0\" ?>\n<QBXML>\n<QBXMLMsgsRs>\n<AccountAddRs statusCode=\"3180\" statusSeverity=\"Error\" statusMessage=\"There was an error when saving a Accounts list, element &quot;Taxes ST Corp Bal Due&quot;.  QuickBooks error message: The account number is already in use.\" />\n</QBXMLMsgsRs>\n</QBXML>\n",
+          "Timestamp": "2026-05-19T15:49:17.6929015Z"
+        },
+        {
+          "EntityType": "Accounts",
+          "SourceIdentifier": "Taxes Fed Corp Bal Due",
+          "Success": false,
+          "QBXMLRequest": "<?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<?qbxml version=\"15.0\"?>\r\n<QBXML>\r\n  <QBXMLMsgsRq onError=\"continueOnError\">\r\n    <AccountAddRq>\r\n  <AccountAdd>\r\n    <Name>Taxes Fed Corp Bal Due</Name>\r\n    <IsActive>true</IsActive>\r\n    <AccountType>Expense</AccountType>\r\n    <AccountNumber>6-6850</AccountNumber>\r\n  </AccountAdd>\r\n</AccountAddRq>\r\n\r\n  </QBXMLMsgsRq>\r\n</QBXML>",
+          "QBXMLResponse": "<?xml version=\"1.0\" ?>\n<QBXML>\n<QBXMLMsgsRs>\n<AccountAddRs statusCode=\"3180\" statusSeverity=\"Error\" statusMessage=\"There was an error when saving a Accounts list, element &quot;Taxes Fed Corp Bal Due&quot;.  QuickBooks error message: The account number is already in use.\" />\n</QBXMLMsgsRs>\n</QBXML>\n",
+          "Timestamp": "2026-05-19T15:49:17.7379596Z"
+        },
+        {
+          "EntityType": "Accounts",
+          "SourceIdentifier": "Taxes State Qu Est",
+          "Success": false,
+          "QBXMLRequest": "<?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<?qbxml version=\"15.0\"?>\r\n<QBXML>\r\n  <QBXMLMsgsRq onError=\"continueOnError\">\r\n    <AccountAddRq>\r\n  <AccountAdd>\r\n    <Name>Taxes State Qu Est</Name>\r\n    <IsActive>true</IsActive>\r\n    <AccountType>Expense</AccountType>\r\n    <AccountNumber>6-6840</AccountNumber>\r\n  </AccountAdd>\r\n</AccountAddRq>\r\n\r\n  </QBXMLMsgsRq>\r\n</QBXML>",
+          "QBXMLResponse": "<?xml version=\"1.0\" ?>\n<QBXML>\n<QBXMLMsgsRs>\n<AccountAddRs statusCode=\"3180\" statusSeverity=\"Error\" statusMessage=\"There was an error when saving a Accounts list, element &quot;Taxes State Qu Est&quot;.  QuickBooks error message: The account number is already in use.\" />\n</QBXMLMsgsRs>\n</QBXML>\n",
+          "Timestamp": "2026-05-19T15:49:17.7823193Z"
+        },
+        {
+          "EntityType": "Accounts",
+          "SourceIdentifier": "Taxes Federal QU Est",
+          "Success": false,
+          "QBXMLRequest": "<?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<?qbxml version=\"15.0\"?>\r\n<QBXML>\r\n  <QBXMLMsgsRq onError=\"continueOnError\">\r\n    <AccountAddRq>\r\n  <AccountAdd>\r\n    <Name>Taxes Federal QU Est</Name>\r\n    <IsActive>true</IsActive>\r\n    <AccountType>Expense</AccountType>\r\n    <AccountNumber>6-6830</AccountNumber>\r\n  </AccountAdd>\r\n</AccountAddRq>\r\n\r\n  </QBXMLMsgsRq>\r\n</QBXML>",
+          "QBXMLResponse": "<?xml version=\"1.0\" ?>\n<QBXML>\n<QBXMLMsgsRs>\n<AccountAddRs statusCode=\"3180\" statusSeverity=\"Error\" statusMessage=\"There was an error when saving a Accounts list, element &quot;Taxes Federal QU Est&quot;.  QuickBooks error message: The account number is already in use.\" />\n</QBXMLMsgsRs>\n</QBXML>\n",
+          "Timestamp": "2026-05-19T15:49:17.8342483Z"
+        },
+        {
+          "EntityType": "Accounts",
+          "SourceIdentifier": "Taxes Federal QU Est:BACK TAX",
+          "Success": false,
+          "QBXMLRequest": "<?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<?qbxml version=\"15.0\"?>\r\n<QBXML>\r\n  <QBXMLMsgsRq onError=\"continueOnError\">\r\n    <AccountAddRq>\r\n  <AccountAdd>\r\n    <Name>Taxes Federal QU Est:BACK TAX</Name>\r\n    <IsActive>true</IsActive>\r\n    <ParentRef>\r\n      <FullName>Taxes Federal QU Est</FullName>\r\n    </ParentRef>\r\n    <AccountType>Expense</AccountType>\r\n  </AccountAdd>\r\n</AccountAddRq>\r\n\r\n  </QBXMLMsgsRq>\r\n</QBXML>",
+          "QBXMLResponse": "<?xml version=\"1.0\" ?>\n<QBXML>\n<QBXMLMsgsRs>\n<AccountAddRs statusCode=\"3090\" statusSeverity=\"Error\" statusMessage=\"There was an error when storing &quot;Taxes Federal QU Est:BACK TAX&quot; in the &quot;account name&quot; field.  QuickBooks error message: Names in this list cannot contain a colon. The colon is a special character used to indicate a parent/child relationship.\" />\n</QBXMLMsgsRs>\n</QBXML>\n",
+          "Timestamp": "2026-05-19T15:49:17.8835637Z"
+        },
+        {
+          "EntityType": "Accounts",
+          "SourceIdentifier": "Insurance Uncat",
+          "Success": false,
+          "QBXMLRequest": "<?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<?qbxml version=\"15.0\"?>\r\n<QBXML>\r\n  <QBXMLMsgsRq onError=\"continueOnError\">\r\n    <AccountAddRq>\r\n  <AccountAdd>\r\n    <Name>Insurance Uncat</Name>\r\n    <IsActive>true</IsActive>\r\n    <AccountType>Expense</AccountType>\r\n    <AccountNumber>6-6183</AccountNumber>\r\n  </AccountAdd>\r\n</AccountAddRq>\r\n\r\n  </QBXMLMsgsRq>\r\n</QBXML>",
+          "QBXMLResponse": "<?xml version=\"1.0\" ?>\n<QBXML>\n<QBXMLMsgsRs>\n<AccountAddRs statusCode=\"3180\" statusSeverity=\"Error\" statusMessage=\"There was an error when saving a Accounts list, element &quot;Insurance Uncat&quot;.  QuickBooks error message: The account number is already in use.\" />\n</QBXMLMsgsRs>\n</QBXML>\n",
+          "Timestamp": "2026-05-19T15:49:17.9287358Z"
+        },
+        {
+          "EntityType": "Accounts",
+          "SourceIdentifier": "Business Insurance",
+          "Success": false,
+          "QBXMLRequest": "<?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<?qbxml version=\"15.0\"?>\r\n<QBXML>\r\n  <QBXMLMsgsRq onError=\"continueOnError\">\r\n    <AccountAddRq>\r\n  <AccountAdd>\r\n    <Name>Business Insurance</Name>\r\n    <IsActive>true</IsActive>\r\n    <AccountType>Expense</AccountType>\r\n    <AccountNumber>6-6181</AccountNumber>\r\n  </AccountAdd>\r\n</AccountAddRq>\r\n\r\n  </QBXMLMsgsRq>\r\n</QBXML>",
+          "QBXMLResponse": "<?xml version=\"1.0\" ?>\n<QBXML>\n<QBXMLMsgsRs>\n<AccountAddRs statusCode=\"3180\" statusSeverity=\"Error\" statusMessage=\"There was an error when saving a Accounts list, element &quot;Business Insurance&quot;.  QuickBooks error message: The account number is already in use.\" />\n</QBXMLMsgsRs>\n</QBXML>\n",
+          "Timestamp": "2026-05-19T15:49:17.9764051Z"
+        },
+        {
+          "EntityType": "Accounts",
+          "SourceIdentifier": "Insurance Work Comp",
+          "Success": false,
+          "QBXMLRequest": "<?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<?qbxml version=\"15.0\"?>\r\n<QBXML>\r\n  <QBXMLMsgsRq onError=\"continueOnError\">\r\n    <AccountAddRq>\r\n  <AccountAdd>\r\n    <Name>Insurance Work Comp</Name>\r\n    <IsActive>true</IsActive>\r\n    <AccountType>Expense</AccountType>\r\n    <AccountNumber>6-6182</AccountNumber>\r\n  </AccountAdd>\r\n</AccountAddRq>\r\n\r\n  </QBXMLMsgsRq>\r\n</QBXML>",
+          "QBXMLResponse": "<?xml version=\"1.0\" ?>\n<QBXML>\n<QBXMLMsgsRs>\n<AccountAddRs statusCode=\"3180\" statusSeverity=\"Error\" statusMessage=\"There was an error when saving a Accounts list, element &quot;Insurance Work Comp&quot;.  QuickBooks error message: The account number is already in use.\" />\n</QBXMLMsgsRs>\n</QBXML>\n",
+          "Timestamp": "2026-05-19T15:49:18.0218265Z"
+        },
+        {
+          "EntityType": "Accounts",
+          "SourceIdentifier": "Auto Exp STD",
+          "Success": false,
+          "QBXMLRequest": "<?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<?qbxml version=\"15.0\"?>\r\n<QBXML>\r\n  <QBXMLMsgsRq onError=\"continueOnError\">\r\n    <AccountAddRq>\r\n  <AccountAdd>\r\n    <Name>Auto Exp STD</Name>\r\n    <IsActive>true</IsActive>\r\n    <AccountType>Expense</AccountType>\r\n    <AccountNumber>6-6111</AccountNumber>\r\n  </AccountAdd>\r\n</AccountAddRq>\r\n\r\n  </QBXMLMsgsRq>\r\n</QBXML>",
+          "QBXMLResponse": "<?xml version=\"1.0\" ?>\n<QBXML>\n<QBXMLMsgsRs>\n<AccountAddRs statusCode=\"3180\" statusSeverity=\"Error\" statusMessage=\"There was an error when saving a Accounts list, element &quot;Auto Exp STD&quot;.  QuickBooks error message: The account number is already in use.\" />\n</QBXMLMsgsRs>\n</QBXML>\n",
+          "Timestamp": "2026-05-19T15:49:18.0674629Z"
+        },
+        {
+          "EntityType": "Accounts",
+          "SourceIdentifier": "Auto Exp Actual",
+          "Success": false,
+          "QBXMLRequest": "<?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<?qbxml version=\"15.0\"?>\r\n<QBXML>\r\n  <QBXMLMsgsRq onError=\"continueOnError\">\r\n    <AccountAddRq>\r\n  <AccountAdd>\r\n    <Name>Auto Exp Actual</Name>\r\n    <IsActive>true</IsActive>\r\n    <AccountType>Expense</AccountType>\r\n    <AccountNumber>6-6110</AccountNumber>\r\n  </AccountAdd>\r\n</AccountAddRq>\r\n\r\n  </QBXMLMsgsRq>\r\n</QBXML>",
+          "QBXMLResponse": "<?xml version=\"1.0\" ?>\n<QBXML>\n<QBXMLMsgsRs>\n<AccountAddRs statusCode=\"3180\" statusSeverity=\"Error\" statusMessage=\"There was an error when saving a Accounts list, element &quot;Auto Exp Actual&quot;.  QuickBooks error message: The account number is already in use.\" />\n</QBXMLMsgsRs>\n</QBXML>\n",
+          "Timestamp": "2026-05-19T15:49:18.1159863Z"
+        },
+        {
+          "EntityType": "Accounts",
+          "SourceIdentifier": "Credit Card Trans Fees",
+          "Success": false,
+          "QBXMLRequest": "<?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<?qbxml version=\"15.0\"?>\r\n<QBXML>\r\n  <QBXMLMsgsRq onError=\"continueOnError\">\r\n    <AccountAddRq>\r\n  <AccountAdd>\r\n    <Name>Credit Card Trans Fees</Name>\r\n    <IsActive>true</IsActive>\r\n    <AccountType>Expense</AccountType>\r\n    <AccountNumber>6-6121</AccountNumber>\r\n  </AccountAdd>\r\n</AccountAddRq>\r\n\r\n  </QBXMLMsgsRq>\r\n</QBXML>",
+          "QBXMLResponse": "<?xml version=\"1.0\" ?>\n<QBXML>\n<QBXMLMsgsRs>\n<AccountAddRs statusCode=\"3180\" statusSeverity=\"Error\" statusMessage=\"There was an error when saving a Accounts list, element &quot;Credit Card Trans Fees&quot;.  QuickBooks error message: The account number is already in use.\" />\n</QBXMLMsgsRs>\n</QBXML>\n",
+          "Timestamp": "2026-05-19T15:49:18.1639487Z"
+        },
+        {
+          "EntityType": "Accounts",
+          "SourceIdentifier": "Advertising",
+          "Success": false,
+          "QBXMLRequest": "<?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<?qbxml version=\"15.0\"?>\r\n<QBXML>\r\n  <QBXMLMsgsRq onError=\"continueOnError\">\r\n    <AccountAddRq>\r\n  <AccountAdd>\r\n    <Name>Advertising</Name>\r\n    <IsActive>true</IsActive>\r\n    <AccountType>Expense</AccountType>\r\n    <AccountNumber>6-1000</AccountNumber>\r\n  </AccountAdd>\r\n</AccountAddRq>\r\n\r\n  </QBXMLMsgsRq>\r\n</QBXML>",
+          "QBXMLResponse": "<?xml version=\"1.0\" ?>\n<QBXML>\n<QBXMLMsgsRs>\n<AccountAddRs statusCode=\"3180\" statusSeverity=\"Error\" statusMessage=\"There was an error when saving a Accounts list, element &quot;Advertising&quot;.  QuickBooks error message: The account number is already in use.\" />\n</QBXMLMsgsRs>\n</QBXML>\n",
+          "Timestamp": "2026-05-19T15:49:18.2101557Z"
+        },
+        {
+          "EntityType": "Accounts",
+          "SourceIdentifier": "Amortization Expense",
+          "Success": false,
+          "QBXMLRequest": "<?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<?qbxml version=\"15.0\"?>\r\n<QBXML>\r\n  <QBXMLMsgsRq onError=\"continueOnError\">\r\n    <AccountAddRq>\r\n  <AccountAdd>\r\n    <Name>Amortization Expense</Name>\r\n    <IsActive>true</IsActive>\r\n    <AccountType>Expense</AccountType>\r\n    <AccountNumber>6-6040</AccountNumber>\r\n  </AccountAdd>\r\n</AccountAddRq>\r\n\r\n  </QBXMLMsgsRq>\r\n</QBXML>",
+          "QBXMLResponse": "<?xml version=\"1.0\" ?>\n<QBXML>\n<QBXMLMsgsRs>\n<AccountAddRs statusCode=\"3180\" statusSeverity=\"Error\" statusMessage=\"There was an error when saving a Accounts list, element &quot;Amortization Expense&quot;.  QuickBooks error message: The account number is already in use.\" />\n</QBXMLMsgsRs>\n</QBXML>\n",
+          "Timestamp": "2026-05-19T15:49:18.2552153Z"
+        },
+        {
+          "EntityType": "Accounts",
+          "SourceIdentifier": "Automobile Expense",
+          "Success": false,
+          "QBXMLRequest": "<?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<?qbxml version=\"15.0\"?>\r\n<QBXML>\r\n  <QBXMLMsgsRq onError=\"continueOnError\">\r\n    <AccountAddRq>\r\n  <AccountAdd>\r\n    <Name>Automobile Expense</Name>\r\n    <IsActive>true</IsActive>\r\n    <AccountType>Expense</AccountType>\r\n    <AccountNumber>6-6112</AccountNumber>\r\n  </AccountAdd>\r\n</AccountAddRq>\r\n\r\n  </QBXMLMsgsRq>\r\n</QBXML>",
+          "QBXMLResponse": "<?xml version=\"1.0\" ?>\n<QBXML>\n<QBXMLMsgsRs>\n<AccountAddRs statusCode=\"3180\" statusSeverity=\"Error\" statusMessage=\"There was an error when saving a Accounts list, element &quot;Automobile Expense&quot;.  QuickBooks error message: The account number is already in use.\" />\n</QBXMLMsgsRs>\n</QBXML>\n",
+          "Timestamp": "2026-05-19T15:49:18.3022531Z"
+        },
+        {
+          "EntityType": "Accounts",
+          "SourceIdentifier": "2 Bank Service Charges",
+          "Success": false,
+          "QBXMLRequest": "<?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<?qbxml version=\"15.0\"?>\r\n<QBXML>\r\n  <QBXMLMsgsRq onError=\"continueOnError\">\r\n    <AccountAddRq>\r\n  <AccountAdd>\r\n    <Name>2 Bank Service Charges</Name>\r\n    <IsActive>true</IsActive>\r\n    <AccountType>Expense</AccountType>\r\n    <AccountNumber>6-6120</AccountNumber>\r\n  </AccountAdd>\r\n</AccountAddRq>\r\n\r\n  </QBXMLMsgsRq>\r\n</QBXML>",
+          "QBXMLResponse": "<?xml version=\"1.0\" ?>\n<QBXML>\n<QBXMLMsgsRs>\n<AccountAddRs statusCode=\"3180\" statusSeverity=\"Error\" statusMessage=\"There was an error when saving a Accounts list, element &quot;2 Bank Service Charges&quot;.  QuickBooks error message: The account number is already in use.\" />\n</QBXMLMsgsRs>\n</QBXML>\n",
+          "Timestamp": "2026-05-19T15:49:18.3490472Z"
+        },
+        {
+          "EntityType": "Accounts",
+          "SourceIdentifier": "Capital Purchase",
+          "Success": false,
+          "QBXMLRequest": "<?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<?qbxml version=\"15.0\"?>\r\n<QBXML>\r\n  <QBXMLMsgsRq onError=\"continueOnError\">\r\n    <AccountAddRq>\r\n  <AccountAdd>\r\n    <Name>Capital Purchase</Name>\r\n    <IsActive>true</IsActive>\r\n    <AccountType>Expense</AccountType>\r\n    <AccountNumber>6-6125</AccountNumber>\r\n  </AccountAdd>\r\n</AccountAddRq>\r\n\r\n  </QBXMLMsgsRq>\r\n</QBXML>",
+          "QBXMLResponse": "<?xml version=\"1.0\" ?>\n<QBXML>\n<QBXMLMsgsRs>\n<AccountAddRs statusCode=\"3180\" statusSeverity=\"Error\" statusMessage=\"There was an error when saving a Accounts list, element &quot;Capital Purchase&quot;.  QuickBooks error message: The account number is already in use.\" />\n</QBXMLMsgsRs>\n</QBXML>\n",
+          "Timestamp": "2026-05-19T15:49:18.395514Z"
+        },
+        {
+          "EntityType": "Accounts",
+          "SourceIdentifier": "Cell Phone",
+          "Success": false,
+          "QBXMLRequest": "<?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<?qbxml version=\"15.0\"?>\r\n<QBXML>\r\n  <QBXMLMsgsRq onError=\"continueOnError\">\r\n    <AccountAddRq>\r\n  <AccountAdd>\r\n    <Name>Cell Phone</Name>\r\n    <IsActive>true</IsActive>\r\n    <AccountType>Expense</AccountType>\r\n    <AccountNumber>6-6341</AccountNumber>\r\n  </AccountAdd>\r\n</AccountAddRq>\r\n\r\n  </QBXMLMsgsRq>\r\n</QBXML>",
+          "QBXMLResponse": "<?xml version=\"1.0\" ?>\n<QBXML>\n<QBXMLMsgsRs>\n<AccountAddRs statusCode=\"3180\" statusSeverity=\"Error\" statusMessage=\"There was an error when saving a Accounts list, element &quot;Cell Phone&quot;.  QuickBooks error message: The account number is already in use.\" />\n</QBXMLMsgsRs>\n</QBXML>\n",
+          "Timestamp": "2026-05-19T15:49:18.4433738Z"
+        },
+        {
+          "EntityType": "Accounts",
+          "SourceIdentifier": "Cleanning & Maint",
+          "Success": false,
+          "QBXMLRequest": "<?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<?qbxml version=\"15.0\"?>\r\n<QBXML>\r\n  <QBXMLMsgsRq onError=\"continueOnError\">\r\n    <AccountAddRq>\r\n  <AccountAdd>\r\n    <Name>Cleanning &amp; Maint</Name>\r\n    <IsActive>true</IsActive>\r\n    <AccountType>Expense</AccountType>\r\n    <AccountNumber>6-3040</AccountNumber>\r\n  </AccountAdd>\r\n</AccountAddRq>\r\n\r\n  </QBXMLMsgsRq>\r\n</QBXML>",
+          "QBXMLResponse": "<?xml version=\"1.0\" ?>\n<QBXML>\n<QBXMLMsgsRs>\n<AccountAddRs statusCode=\"3180\" statusSeverity=\"Error\" statusMessage=\"There was an error when saving a Accounts list, element &quot;Cleanning &amp; Maint&quot;.  QuickBooks error message: The account number is already in use.\" />\n</QBXMLMsgsRs>\n</QBXML>\n",
+          "Timestamp": "2026-05-19T15:49:18.488893Z"
+        },
+        {
+          "EntityType": "Accounts",
+          "SourceIdentifier": "Contributions",
+          "Success": false,
+          "QBXMLRequest": "<?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<?qbxml version=\"15.0\"?>\r\n<QBXML>\r\n  <QBXMLMsgsRq onError=\"continueOnError\">\r\n    <AccountAddRq>\r\n  <AccountAdd>\r\n    <Name>Contributions</Name>\r\n    <IsActive>true</IsActive>\r\n    <AccountType>Expense</AccountType>\r\n    <AccountNumber>6-6140</AccountNumber>\r\n  </AccountAdd>\r\n</AccountAddRq>\r\n\r\n  </QBXMLMsgsRq>\r\n</QBXML>",
+          "QBXMLResponse": "<?xml version=\"1.0\" ?>\n<QBXML>\n<QBXMLMsgsRs>\n<AccountAddRs statusCode=\"3180\" statusSeverity=\"Error\" statusMessage=\"There was an error when saving a Accounts list, element &quot;Contributions&quot;.  QuickBooks error message: The account number is already in use.\" />\n</QBXMLMsgsRs>\n</QBXML>\n",
+          "Timestamp": "2026-05-19T15:49:18.5359073Z"
+        },
+        {
+          "EntityType": "Accounts",
+          "SourceIdentifier": "Depreciation Expense",
+          "Success": false,
+          "QBXMLRequest": "<?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<?qbxml version=\"15.0\"?>\r\n<QBXML>\r\n  <QBXMLMsgsRq onError=\"continueOnError\">\r\n    <AccountAddRq>\r\n  <AccountAdd>\r\n    <Name>Depreciation Expense</Name>\r\n    <IsActive>true</IsActive>\r\n    <AccountType>Expense</AccountType>\r\n    <AccountNumber>6-6030</AccountNumber>\r\n  </AccountAdd>\r\n</AccountAddRq>\r\n\r\n  </QBXMLMsgsRq>\r\n</QBXML>",
+          "QBXMLResponse": "<?xml version=\"1.0\" ?>\n<QBXML>\n<QBXMLMsgsRs>\n<AccountAddRs statusCode=\"3180\" statusSeverity=\"Error\" statusMessage=\"There was an error when saving a Accounts list, element &quot;Depreciation Expense&quot;.  QuickBooks error message: The account number is already in use.\" />\n</QBXMLMsgsRs>\n</QBXML>\n",
+          "Timestamp": "2026-05-19T15:49:18.5796979Z"
+        },
+        {
+          "EntityType": "Accounts",
+          "SourceIdentifier": "Equipment Rental",
+          "Success": false,
+          "QBXMLRequest": "<?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<?qbxml version=\"15.0\"?>\r\n<QBXML>\r\n  <QBXMLMsgsRq onError=\"continueOnError\">\r\n    <AccountAddRq>\r\n  <AccountAdd>\r\n    <Name>Equipment Rental</Name>\r\n    <IsActive>true</IsActive>\r\n    <AccountType>Expense</AccountType>\r\n    <AccountNumber>6-6170</AccountNumber>\r\n  </AccountAdd>\r\n</AccountAddRq>\r\n\r\n  </QBXMLMsgsRq>\r\n</QBXML>",
+          "QBXMLResponse": "<?xml version=\"1.0\" ?>\n<QBXML>\n<QBXMLMsgsRs>\n<AccountAddRs statusCode=\"3180\" statusSeverity=\"Error\" statusMessage=\"There was an error when saving a Accounts list, element &quot;Equipment Rental&quot;.  QuickBooks error message: The account number is already in use.\" />\n</QBXMLMsgsRs>\n</QBXML>\n",
+          "Timestamp": "2026-05-19T15:49:18.6289606Z"
+        },
+        {
+          "EntityType": "Accounts",
+          "SourceIdentifier": "Insurance",
+          "Success": false,
+          "QBXMLRequest": "<?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<?qbxml version=\"15.0\"?>\r\n<QBXML>\r\n  <QBXMLMsgsRq onError=\"continueOnError\">\r\n    <AccountAddRq>\r\n  <AccountAdd>\r\n    <Name>Insurance</Name>\r\n    <IsActive>true</IsActive>\r\n    <AccountType>Expense</AccountType>\r\n    <AccountNumber>6-6180</AccountNumber>\r\n  </AccountAdd>\r\n</AccountAddRq>\r\n\r\n  </QBXMLMsgsRq>\r\n</QBXML>",
+          "QBXMLResponse": "<?xml version=\"1.0\" ?>\n<QBXML>\n<QBXMLMsgsRs>\n<AccountAddRs statusCode=\"3180\" statusSeverity=\"Error\" statusMessage=\"There was an error when saving a Accounts list, element &quot;Insurance&quot;.  QuickBooks error message: The account number is already in use.\" />\n</QBXMLMsgsRs>\n</QBXML>\n",
+          "Timestamp": "2026-05-19T15:49:18.677315Z"
+        },
+        {
+          "EntityType": "Accounts",
+          "SourceIdentifier": "Interest Expense",
+          "Success": false,
+          "QBXMLRequest": "<?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<?qbxml version=\"15.0\"?>\r\n<QBXML>\r\n  <QBXMLMsgsRq onError=\"continueOnError\">\r\n    <AccountAddRq>\r\n  <AccountAdd>\r\n    <Name>Interest Expense</Name>\r\n    <IsActive>true</IsActive>\r\n    <AccountType>Expense</AccountType>\r\n    <AccountNumber>6-6200</AccountNumber>\r\n  </AccountAdd>\r\n</AccountAddRq>\r\n\r\n  </QBXMLMsgsRq>\r\n</QBXML>",
+          "QBXMLResponse": "<?xml version=\"1.0\" ?>\n<QBXML>\n<QBXMLMsgsRs>\n<AccountAddRs statusCode=\"3180\" statusSeverity=\"Error\" statusMessage=\"There was an error when saving a Accounts list, element &quot;Interest Expense&quot;.  QuickBooks error message: The account number is already in use.\" />\n</QBXMLMsgsRs>\n</QBXML>\n",
+          "Timestamp": "2026-05-19T15:49:18.7244376Z"
+        },
+        {
+          "EntityType": "Accounts",
+          "SourceIdentifier": "Licenses and Permits",
+          "Success": false,
+          "QBXMLRequest": "<?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<?qbxml version=\"15.0\"?>\r\n<QBXML>\r\n  <QBXMLMsgsRq onError=\"continueOnError\">\r\n    <AccountAddRq>\r\n  <AccountAdd>\r\n    <Name>Licenses and Permits</Name>\r\n    <IsActive>true</IsActive>\r\n    <AccountType>Expense</AccountType>\r\n    <AccountNumber>6-6230</AccountNumber>\r\n  </AccountAdd>\r\n</AccountAddRq>\r\n\r\n  </QBXMLMsgsRq>\r\n</QBXML>",
+          "QBXMLResponse": "<?xml version=\"1.0\" ?>\n<QBXML>\n<QBXMLMsgsRs>\n<AccountAddRs statusCode=\"3180\" statusSeverity=\"Error\" statusMessage=\"There was an error when saving a Accounts list, element &quot;Licenses and Permits&quot;.  QuickBooks error message: The account number is already in use.\" />\n</QBXMLMsgsRs>\n</QBXML>\n",
+          "Timestamp": "2026-05-19T15:49:18.7710694Z"
+        },
+        {
+          "EntityType": "Accounts",
+          "SourceIdentifier": "Miscellaneous",
+          "Success": false,
+          "QBXMLRequest": "<?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<?qbxml version=\"15.0\"?>\r\n<QBXML>\r\n  <QBXMLMsgsRq onError=\"continueOnError\">\r\n    <AccountAddRq>\r\n  <AccountAdd>\r\n    <Name>Miscellaneous</Name>\r\n    <IsActive>true</IsActive>\r\n    <AccountType>Expense</AccountType>\r\n    <AccountNumber>6-6240</AccountNumber>\r\n  </AccountAdd>\r\n</AccountAddRq>\r\n\r\n  </QBXMLMsgsRq>\r\n</QBXML>",
+          "QBXMLResponse": "<?xml version=\"1.0\" ?>\n<QBXML>\n<QBXMLMsgsRs>\n<AccountAddRs statusCode=\"3180\" statusSeverity=\"Error\" statusMessage=\"There was an error when saving a Accounts list, element &quot;Miscellaneous&quot;.  QuickBooks error message: The account number is already in use.\" />\n</QBXMLMsgsRs>\n</QBXML>\n",
+          "Timestamp": "2026-05-19T15:49:18.8184907Z"
+        },
+        {
+          "EntityType": "Accounts",
+          "SourceIdentifier": "Office",
+          "Success": false,
+          "QBXMLRequest": "<?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<?qbxml version=\"15.0\"?>\r\n<QBXML>\r\n  <QBXMLMsgsRq onError=\"continueOnError\">\r\n    <AccountAddRq>\r\n  <AccountAdd>\r\n    <Name>Office</Name>\r\n    <IsActive>true</IsActive>\r\n    <AccountType>Expense</AccountType>\r\n    <AccountNumber>6-4000</AccountNumber>\r\n  </AccountAdd>\r\n</AccountAddRq>\r\n\r\n  </QBXMLMsgsRq>\r\n</QBXML>",
+          "QBXMLResponse": "<?xml version=\"1.0\" ?>\n<QBXML>\n<QBXMLMsgsRs>\n<AccountAddRs statusCode=\"3180\" statusSeverity=\"Error\" statusMessage=\"There was an error when saving a Accounts list, element &quot;Office&quot;.  QuickBooks error message: The account number is already in use.\" />\n</QBXMLMsgsRs>\n</QBXML>\n",
+          "Timestamp": "2026-05-19T15:49:18.8712182Z"
+        },
+        {
+          "EntityType": "Accounts",
+          "SourceIdentifier": "Office Supplies",
+          "Success": false,
+          "QBXMLRequest": "<?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<?qbxml version=\"15.0\"?>\r\n<QBXML>\r\n  <QBXMLMsgsRq onError=\"continueOnError\">\r\n    <AccountAddRq>\r\n  <AccountAdd>\r\n    <Name>Office Supplies</Name>\r\n    <IsActive>true</IsActive>\r\n    <AccountType>Expense</AccountType>\r\n    <AccountNumber>6-6550</AccountNumber>\r\n  </AccountAdd>\r\n</AccountAddRq>\r\n\r\n  </QBXMLMsgsRq>\r\n</QBXML>",
+          "QBXMLResponse": "<?xml version=\"1.0\" ?>\n<QBXML>\n<QBXMLMsgsRs>\n<AccountAddRs statusCode=\"3180\" statusSeverity=\"Error\" statusMessage=\"There was an error when saving a Accounts list, element &quot;Office Supplies&quot;.  QuickBooks error message: The account number is already in use.\" />\n</QBXMLMsgsRs>\n</QBXML>\n",
+          "Timestamp": "2026-05-19T15:49:18.9194231Z"
+        },
+        {
+          "EntityType": "Accounts",
+          "SourceIdentifier": "Outside Services",
+          "Success": false,
+          "QBXMLRequest": "<?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<?qbxml version=\"15.0\"?>\r\n<QBXML>\r\n  <QBXMLMsgsRq onError=\"continueOnError\">\r\n    <AccountAddRq>\r\n  <AccountAdd>\r\n    <Name>Outside Services</Name>\r\n    <IsActive>true</IsActive>\r\n    <AccountType>Expense</AccountType>\r\n    <AccountNumber>6-3060</AccountNumber>\r\n  </AccountAdd>\r\n</AccountAddRq>\r\n\r\n  </QBXMLMsgsRq>\r\n</QBXML>",
+          "QBXMLResponse": "<?xml version=\"1.0\" ?>\n<QBXML>\n<QBXMLMsgsRs>\n<AccountAddRs statusCode=\"3180\" statusSeverity=\"Error\" statusMessage=\"There was an error when saving a Accounts list, element &quot;Outside Services&quot;.  QuickBooks error message: The account number is already in use.\" />\n</QBXMLMsgsRs>\n</QBXML>\n",
+          "Timestamp": "2026-05-19T15:49:18.9648565Z"
+        },
+        {
+          "EntityType": "Accounts",
+          "SourceIdentifier": "*Payroll Expenses",
+          "Success": false,
+          "QBXMLRequest": "<?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<?qbxml version=\"15.0\"?>\r\n<QBXML>\r\n  <QBXMLMsgsRq onError=\"continueOnError\">\r\n    <AccountAddRq>\r\n  <AccountAdd>\r\n    <Name>*Payroll Expenses</Name>\r\n    <IsActive>true</IsActive>\r\n    <AccountType>Expense</AccountType>\r\n    <AccountNumber>6-6600</AccountNumber>\r\n  </AccountAdd>\r\n</AccountAddRq>\r\n\r\n  </QBXMLMsgsRq>\r\n</QBXML>",
+          "QBXMLResponse": "<?xml version=\"1.0\" ?>\n<QBXML>\n<QBXMLMsgsRs>\n<AccountAddRs statusCode=\"3180\" statusSeverity=\"Error\" statusMessage=\"There was an error when saving a Accounts list, element &quot;*Payroll Expenses&quot;.  QuickBooks error message: The account number is already in use.\" />\n</QBXMLMsgsRs>\n</QBXML>\n",
+          "Timestamp": "2026-05-19T15:49:19.0138478Z"
+        },
+        {
+          "EntityType": "Accounts",
+          "SourceIdentifier": "Postage and Delivery",
+          "Success": false,
+          "QBXMLRequest": "<?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<?qbxml version=\"15.0\"?>\r\n<QBXML>\r\n  <QBXMLMsgsRq onError=\"continueOnError\">\r\n    <AccountAddRq>\r\n  <AccountAdd>\r\n    <Name>Postage and Delivery</Name>\r\n    <IsActive>true</IsActive>\r\n    <AccountType>Expense</AccountType>\r\n    <AccountNumber>6-6250</AccountNumber>\r\n  </AccountAdd>\r\n</AccountAddRq>\r\n\r\n  </QBXMLMsgsRq>\r\n</QBXML>",
+          "QBXMLResponse": "<?xml version=\"1.0\" ?>\n<QBXML>\n<QBXMLMsgsRs>\n<AccountAddRs statusCode=\"3180\" statusSeverity=\"Error\" statusMessage=\"There was an error when saving a Accounts list, element &quot;Postage and Delivery&quot;.  QuickBooks error message: The account number is already in use.\" />\n</QBXMLMsgsRs>\n</QBXML>\n",
+          "Timestamp": "2026-05-19T15:49:19.059114Z"
+        },
+        {
+          "EntityType": "Accounts",
+          "SourceIdentifier": "Printing and Reproduction",
+          "Success": false,
+          "QBXMLRequest": "<?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<?qbxml version=\"15.0\"?>\r\n<QBXML>\r\n  <QBXMLMsgsRq onError=\"continueOnError\">\r\n    <AccountAddRq>\r\n  <AccountAdd>\r\n    <Name>Printing and Reproduction</Name>\r\n    <IsActive>true</IsActive>\r\n    <AccountType>Expense</AccountType>\r\n    <AccountNumber>6-6260</AccountNumber>\r\n  </AccountAdd>\r\n</AccountAddRq>\r\n\r\n  </QBXMLMsgsRq>\r\n</QBXML>",
+          "QBXMLResponse": "<?xml version=\"1.0\" ?>\n<QBXML>\n<QBXMLMsgsRs>\n<AccountAddRs statusCode=\"3180\" statusSeverity=\"Error\" statusMessage=\"There was an error when saving a Accounts list, element &quot;Printing and Reproduction&quot;.  QuickBooks error message: The account number is already in use.\" />\n</QBXMLMsgsRs>\n</QBXML>\n",
+          "Timestamp": "2026-05-19T15:49:19.104141Z"
+        },
+        {
+          "EntityType": "Accounts",
+          "SourceIdentifier": "Professional Fees",
+          "Success": false,
+          "QBXMLRequest": "<?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<?qbxml version=\"15.0\"?>\r\n<QBXML>\r\n  <QBXMLMsgsRq onError=\"continueOnError\">\r\n    <AccountAddRq>\r\n  <AccountAdd>\r\n    <Name>Professional Fees</Name>\r\n    <IsActive>true</IsActive>\r\n    <AccountType>Expense</AccountType>\r\n    <AccountNumber>6-6270</AccountNumber>\r\n  </AccountAdd>\r\n</AccountAddRq>\r\n\r\n  </QBXMLMsgsRq>\r\n</QBXML>",
+          "QBXMLResponse": "<?xml version=\"1.0\" ?>\n<QBXML>\n<QBXMLMsgsRs>\n<AccountAddRs statusCode=\"3180\" statusSeverity=\"Error\" statusMessage=\"There was an error when saving a Accounts list, element &quot;Professional Fees&quot;.  QuickBooks error message: The account number is already in use.\" />\n</QBXMLMsgsRs>\n</QBXML>\n",
+          "Timestamp": "2026-05-19T15:49:19.1581541Z"
+        },
+        {
+          "EntityType": "Accounts",
+          "SourceIdentifier": "Taxes Property",
+          "Success": false,
+          "QBXMLRequest": "<?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<?qbxml version=\"15.0\"?>\r\n<QBXML>\r\n  <QBXMLMsgsRq onError=\"continueOnError\">\r\n    <AccountAddRq>\r\n  <AccountAdd>\r\n    <Name>Taxes Property</Name>\r\n    <IsActive>true</IsActive>\r\n    <AccountType>Expense</AccountType>\r\n    <AccountNumber>6-6880</AccountNumber>\r\n  </AccountAdd>\r\n</AccountAddRq>\r\n\r\n  </QBXMLMsgsRq>\r\n</QBXML>",
+          "QBXMLResponse": "<?xml version=\"1.0\" ?>\n<QBXML>\n<QBXMLMsgsRs>\n<AccountAddRs statusCode=\"3180\" statusSeverity=\"Error\" statusMessage=\"There was an error when saving a Accounts list, element &quot;Taxes Property&quot;.  QuickBooks error message: The account number is already in use.\" />\n</QBXMLMsgsRs>\n</QBXML>\n",
+          "Timestamp": "2026-05-19T15:49:19.2067823Z"
+        },
+        {
+          "EntityType": "Accounts",
+          "SourceIdentifier": "Rent",
+          "Success": false,
+          "QBXMLRequest": "<?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<?qbxml version=\"15.0\"?>\r\n<QBXML>\r\n  <QBXMLMsgsRq onError=\"continueOnError\">\r\n    <AccountAddRq>\r\n  <AccountAdd>\r\n    <Name>Rent</Name>\r\n    <IsActive>true</IsActive>\r\n    <AccountType>Expense</AccountType>\r\n    <AccountNumber>6-6290</AccountNumber>\r\n  </AccountAdd>\r\n</AccountAddRq>\r\n\r\n  </QBXMLMsgsRq>\r\n</QBXML>",
+          "QBXMLResponse": "<?xml version=\"1.0\" ?>\n<QBXML>\n<QBXMLMsgsRs>\n<AccountAddRs statusCode=\"3180\" statusSeverity=\"Error\" statusMessage=\"There was an error when saving a Accounts list, element &quot;Rent&quot;.  QuickBooks error message: The account number is already in use.\" />\n</QBXMLMsgsRs>\n</QBXML>\n",
+          "Timestamp": "2026-05-19T15:49:19.2595365Z"
+        },
+        {
+          "EntityType": "Accounts",
+          "SourceIdentifier": "Repairs General",
+          "Success": false,
+          "QBXMLRequest": "<?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<?qbxml version=\"15.0\"?>\r\n<QBXML>\r\n  <QBXMLMsgsRq onError=\"continueOnError\">\r\n    <AccountAddRq>\r\n  <AccountAdd>\r\n    <Name>Repairs General</Name>\r\n    <IsActive>true</IsActive>\r\n    <AccountType>Expense</AccountType>\r\n    <AccountNumber>6-3080</AccountNumber>\r\n  </AccountAdd>\r\n</AccountAddRq>\r\n\r\n  </QBXMLMsgsRq>\r\n</QBXML>",
+          "QBXMLResponse": "<?xml version=\"1.0\" ?>\n<QBXML>\n<QBXMLMsgsRs>\n<AccountAddRs statusCode=\"3180\" statusSeverity=\"Error\" statusMessage=\"There was an error when saving a Accounts list, element &quot;Repairs General&quot;.  QuickBooks error message: The account number is already in use.\" />\n</QBXMLMsgsRs>\n</QBXML>\n",
+          "Timestamp": "2026-05-19T15:49:19.3044914Z"
+        },
+        {
+          "EntityType": "Accounts",
+          "SourceIdentifier": "Start up Exp",
+          "Success": false,
+          "QBXMLRequest": "<?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<?qbxml version=\"15.0\"?>\r\n<QBXML>\r\n  <QBXMLMsgsRq onError=\"continueOnError\">\r\n    <AccountAddRq>\r\n  <AccountAdd>\r\n    <Name>Start up Exp</Name>\r\n    <IsActive>true</IsActive>\r\n    <AccountType>Expense</AccountType>\r\n    <AccountNumber>6-7000</AccountNumber>\r\n  </AccountAdd>\r\n</AccountAddRq>\r\n\r\n  </QBXMLMsgsRq>\r\n</QBXML>",
+          "QBXMLResponse": "<?xml version=\"1.0\" ?>\n<QBXML>\n<QBXMLMsgsRs>\n<AccountAddRs statusCode=\"3180\" statusSeverity=\"Error\" statusMessage=\"There was an error when saving a Accounts list, element &quot;Start up Exp&quot;.  QuickBooks error message: The account number is already in use.\" />\n</QBXMLMsgsRs>\n</QBXML>\n",
+          "Timestamp": "2026-05-19T15:49:19.3496617Z"
+        },
+        {
+          "EntityType": "Accounts",
+          "SourceIdentifier": "Supplies",
+          "Success": false,
+          "QBXMLRequest": "<?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<?qbxml version=\"15.0\"?>\r\n<QBXML>\r\n  <QBXMLMsgsRq onError=\"continueOnError\">\r\n    <AccountAddRq>\r\n  <AccountAdd>\r\n    <Name>Supplies</Name>\r\n    <IsActive>true</IsActive>\r\n    <AccountType>Expense</AccountType>\r\n    <AccountNumber>6-6560</AccountNumber>\r\n  </AccountAdd>\r\n</AccountAddRq>\r\n\r\n  </QBXMLMsgsRq>\r\n</QBXML>",
+          "QBXMLResponse": "<?xml version=\"1.0\" ?>\n<QBXML>\n<QBXMLMsgsRs>\n<AccountAddRs statusCode=\"3180\" statusSeverity=\"Error\" statusMessage=\"There was an error when saving a Accounts list, element &quot;Supplies&quot;.  QuickBooks error message: The account number is already in use.\" />\n</QBXMLMsgsRs>\n</QBXML>\n",
+          "Timestamp": "2026-05-19T15:49:19.3972868Z"
+        },
+        {
+          "EntityType": "Accounts",
+          "SourceIdentifier": "Telephone & Internet",
+          "Success": false,
+          "QBXMLRequest": "<?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<?qbxml version=\"15.0\"?>\r\n<QBXML>\r\n  <QBXMLMsgsRq onError=\"continueOnError\">\r\n    <AccountAddRq>\r\n  <AccountAdd>\r\n    <Name>Telephone &amp; Internet</Name>\r\n    <IsActive>true</IsActive>\r\n    <AccountType>Expense</AccountType>\r\n    <AccountNumber>6-6340</AccountNumber>\r\n  </AccountAdd>\r\n</AccountAddRq>\r\n\r\n  </QBXMLMsgsRq>\r\n</QBXML>",
+          "QBXMLResponse": "<?xml version=\"1.0\" ?>\n<QBXML>\n<QBXMLMsgsRs>\n<AccountAddRs statusCode=\"3180\" statusSeverity=\"Error\" statusMessage=\"There was an error when saving a Accounts list, element &quot;Telephone &amp; Internet&quot;.  QuickBooks error message: The account number is already in use.\" />\n</QBXMLMsgsRs>\n</QBXML>\n",
+          "Timestamp": "2026-05-19T15:49:19.4439149Z"
+        },
+        {
+          "EntityType": "Accounts",
+          "SourceIdentifier": "Uncategorized Expense",
+          "Success": false,
+          "QBXMLRequest": "<?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<?qbxml version=\"15.0\"?>\r\n<QBXML>\r\n  <QBXMLMsgsRq onError=\"continueOnError\">\r\n    <AccountAddRq>\r\n  <AccountAdd>\r\n    <Name>Uncategorized Expense</Name>\r\n    <IsActive>true</IsActive>\r\n    <AccountType>Expense</AccountType>\r\n    <AccountNumber>6-7100</AccountNumber>\r\n  </AccountAdd>\r\n</AccountAddRq>\r\n\r\n  </QBXMLMsgsRq>\r\n</QBXML>",
+          "QBXMLResponse": "<?xml version=\"1.0\" ?>\n<QBXML>\n<QBXMLMsgsRs>\n<AccountAddRs statusCode=\"3180\" statusSeverity=\"Error\" statusMessage=\"There was an error when saving a Accounts list, element &quot;Uncategorized Expense&quot;.  QuickBooks error message: The account number is already in use.\" />\n</QBXMLMsgsRs>\n</QBXML>\n",
+          "Timestamp": "2026-05-19T15:49:19.4893406Z"
+        },
+        {
+          "EntityType": "Accounts",
+          "SourceIdentifier": "Uncategorized Expense:AUTO",
+          "Success": false,
+          "QBXMLRequest": "<?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<?qbxml version=\"15.0\"?>\r\n<QBXML>\r\n  <QBXMLMsgsRq onError=\"continueOnError\">\r\n    <AccountAddRq>\r\n  <AccountAdd>\r\n    <Name>Uncategorized Expense:AUTO</Name>\r\n    <IsActive>true</IsActive>\r\n    <ParentRef>\r\n      <FullName>Uncategorized Expense</FullName>\r\n    </ParentRef>\r\n    <AccountType>Expense</AccountType>\r\n  </AccountAdd>\r\n</AccountAddRq>\r\n\r\n  </QBXMLMsgsRq>\r\n</QBXML>",
+          "QBXMLResponse": "<?xml version=\"1.0\" ?>\n<QBXML>\n<QBXMLMsgsRs>\n<AccountAddRs statusCode=\"3090\" statusSeverity=\"Error\" statusMessage=\"There was an error when storing &quot;Uncategorized Expense:AUTO&quot; in the &quot;account name&quot; field.  QuickBooks error message: Names in this list cannot contain a colon. The colon is a special character used to indicate a parent/child relationship.\" />\n</QBXMLMsgsRs>\n</QBXML>\n",
+          "Timestamp": "2026-05-19T15:49:19.535965Z"
+        },
+        {
+          "EntityType": "Accounts",
+          "SourceIdentifier": "Utilities Gas & Electric",
+          "Success": false,
+          "QBXMLRequest": "<?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<?qbxml version=\"15.0\"?>\r\n<QBXML>\r\n  <QBXMLMsgsRq onError=\"continueOnError\">\r\n    <AccountAddRq>\r\n  <AccountAdd>\r\n    <Name>Utilities Gas &amp; Electric</Name>\r\n    <IsActive>true</IsActive>\r\n    <AccountType>Expense</AccountType>\r\n    <AccountNumber>6-6400</AccountNumber>\r\n  </AccountAdd>\r\n</AccountAddRq>\r\n\r\n  </QBXMLMsgsRq>\r\n</QBXML>",
+          "QBXMLResponse": "<?xml version=\"1.0\" ?>\n<QBXML>\n<QBXMLMsgsRs>\n<AccountAddRs statusCode=\"3180\" statusSeverity=\"Error\" statusMessage=\"There was an error when saving a Accounts list, element &quot;Utilities Gas &amp; Electric&quot;.  QuickBooks error message: The account number is already in use.\" />\n</QBXMLMsgsRs>\n</QBXML>\n",
+          "Timestamp": "2026-05-19T15:49:19.5804119Z"
+        },
+        {
+          "EntityType": "Accounts",
+          "SourceIdentifier": "Other Income",
+          "Success": false,
+          "QBXMLRequest": "<?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<?qbxml version=\"15.0\"?>\r\n<QBXML>\r\n  <QBXMLMsgsRq onError=\"continueOnError\">\r\n    <AccountAddRq>\r\n  <AccountAdd>\r\n    <Name>Other Income</Name>\r\n    <IsActive>true</IsActive>\r\n    <AccountType>OtherIncome</AccountType>\r\n    <AccountNumber>8-1000</AccountNumber>\r\n  </AccountAdd>\r\n</AccountAddRq>\r\n\r\n  </QBXMLMsgsRq>\r\n</QBXML>",
+          "QBXMLResponse": "<?xml version=\"1.0\" ?>\n<QBXML>\n<QBXMLMsgsRs>\n<AccountAddRs statusCode=\"3180\" statusSeverity=\"Error\" statusMessage=\"There was an error when saving a Accounts list, element &quot;Other Income&quot;.  QuickBooks error message: The account number is already in use.\" />\n</QBXMLMsgsRs>\n</QBXML>\n",
+          "Timestamp": "2026-05-19T15:49:19.6275466Z"
+        }
+      ]
+    },
+    "SalesTaxCodes": {
+      "EntityType": "SalesTaxCodes",
+      "TotalAttempted": 3,
+      "Succeeded": 0,
+      "Failed": 3,
+      "Skipped": 0,
+      "Duration": "00:00:00.1378104",
+      "FailedRecords": [
+        {
+          "EntityType": "SalesTaxCodes",
+          "SourceIdentifier": "Tax",
+          "Success": false,
+          "QBXMLRequest": "<?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<?qbxml version=\"15.0\"?>\r\n<QBXML>\r\n  <QBXMLMsgsRq onError=\"continueOnError\">\r\n    <SalesTaxCodeAddRq>\r\n  <SalesTaxCodeAdd>\r\n    <Name>Tax</Name>\r\n    <IsActive>true</IsActive>\r\n    <IsTaxable>true</IsTaxable>\r\n    <Desc>Taxable Sales</Desc>\r\n  </SalesTaxCodeAdd>\r\n</SalesTaxCodeAddRq>\r\n\r\n  </QBXMLMsgsRq>\r\n</QBXML>",
+          "QBXMLResponse": "<?xml version=\"1.0\" ?>\n<QBXML>\n<QBXMLMsgsRs>\n<SalesTaxCodeAddRs statusCode=\"3100\" statusSeverity=\"Error\" statusMessage=\"The name &quot;Tax&quot; of the list element is already in use.\" />\n</QBXMLMsgsRs>\n</QBXML>\n",
+          "Timestamp": "2026-05-19T15:49:19.6811145Z"
+        },
+        {
+          "EntityType": "SalesTaxCodes",
+          "SourceIdentifier": "COM",
+          "Success": false,
+          "QBXMLRequest": "<?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<?qbxml version=\"15.0\"?>\r\n<QBXML>\r\n  <QBXMLMsgsRq onError=\"continueOnError\">\r\n    <SalesTaxCodeAddRq>\r\n  <SalesTaxCodeAdd>\r\n    <Name>COM</Name>\r\n    <IsActive>true</IsActive>\r\n    <IsTaxable>false</IsTaxable>\r\n    <Desc>COMMISSION PD</Desc>\r\n  </SalesTaxCodeAdd>\r\n</SalesTaxCodeAddRq>\r\n\r\n  </QBXMLMsgsRq>\r\n</QBXML>",
+          "QBXMLResponse": "<?xml version=\"1.0\" ?>\n<QBXML>\n<QBXMLMsgsRs>\n<SalesTaxCodeAddRs statusCode=\"3100\" statusSeverity=\"Error\" statusMessage=\"The name &quot;COM&quot; of the list element is already in use.\" />\n</QBXMLMsgsRs>\n</QBXML>\n",
+          "Timestamp": "2026-05-19T15:49:19.7265207Z"
+        },
+        {
+          "EntityType": "SalesTaxCodes",
+          "SourceIdentifier": "Non",
+          "Success": false,
+          "QBXMLRequest": "<?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<?qbxml version=\"15.0\"?>\r\n<QBXML>\r\n  <QBXMLMsgsRq onError=\"continueOnError\">\r\n    <SalesTaxCodeAddRq>\r\n  <SalesTaxCodeAdd>\r\n    <Name>Non</Name>\r\n    <IsActive>true</IsActive>\r\n    <IsTaxable>false</IsTaxable>\r\n    <Desc>Non-Taxable Sales</Desc>\r\n  </SalesTaxCodeAdd>\r\n</SalesTaxCodeAddRq>\r\n\r\n  </QBXMLMsgsRq>\r\n</QBXML>",
+          "QBXMLResponse": "<?xml version=\"1.0\" ?>\n<QBXML>\n<QBXMLMsgsRs>\n<SalesTaxCodeAddRs statusCode=\"3100\" statusSeverity=\"Error\" statusMessage=\"The name &quot;Non&quot; of the list element is already in use.\" />\n</QBXMLMsgsRs>\n</QBXML>\n",
+          "Timestamp": "2026-05-19T15:49:19.7718948Z"
+        }
+      ]
+    },
+    "Terms": {
+      "EntityType": "Terms",
+      "TotalAttempted": 6,
+      "Succeeded": 0,
+      "Failed": 6,
+      "Skipped": 0,
+      "Duration": "00:00:00.2993219",
+      "FailedRecords": [
+        {
+          "EntityType": "Terms",
+          "SourceIdentifier": "1% 10 Net 30",
+          "Success": false,
+          "QBXMLRequest": "<?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<?qbxml version=\"15.0\"?>\r\n<QBXML>\r\n  <QBXMLMsgsRq onError=\"continueOnError\">\r\n    <StandardTermsAddRq>\r\n  <StandardTermsAdd>\r\n    <Name>1% 10 Net 30</Name>\r\n    <IsActive>true</IsActive>\r\n    <StdDueDays>30</StdDueDays>\r\n    <StdDiscountDays>10</StdDiscountDays>\r\n    <DiscountPct>1.00</DiscountPct>\r\n  </StandardTermsAdd>\r\n</StandardTermsAddRq>\r\n\r\n  </QBXMLMsgsRq>\r\n</QBXML>",
+          "QBXMLResponse": "<?xml version=\"1.0\" ?>\n<QBXML>\n<QBXMLMsgsRs>\n<StandardTermsAddRs statusCode=\"3100\" statusSeverity=\"Error\" statusMessage=\"The name &quot;1% 10 Net 30&quot; of the list element is already in use.\" />\n</QBXMLMsgsRs>\n</QBXML>\n",
+          "Timestamp": "2026-05-19T15:49:19.8290488Z"
+        },
+        {
+          "EntityType": "Terms",
+          "SourceIdentifier": "2% 10 Net 30",
+          "Success": false,
+          "QBXMLRequest": "<?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<?qbxml version=\"15.0\"?>\r\n<QBXML>\r\n  <QBXMLMsgsRq onError=\"continueOnError\">\r\n    <StandardTermsAddRq>\r\n  <StandardTermsAdd>\r\n    <Name>2% 10 Net 30</Name>\r\n    <IsActive>true</IsActive>\r\n    <StdDueDays>30</StdDueDays>\r\n    <StdDiscountDays>10</StdDiscountDays>\r\n    <DiscountPct>2.00</DiscountPct>\r\n  </StandardTermsAdd>\r\n</StandardTermsAddRq>\r\n\r\n  </QBXMLMsgsRq>\r\n</QBXML>",
+          "QBXMLResponse": "<?xml version=\"1.0\" ?>\n<QBXML>\n<QBXMLMsgsRs>\n<StandardTermsAddRs statusCode=\"3100\" statusSeverity=\"Error\" statusMessage=\"The name &quot;2% 10 Net 30&quot; of the list element is already in use.\" />\n</QBXMLMsgsRs>\n</QBXML>\n",
+          "Timestamp": "2026-05-19T15:49:19.8823898Z"
+        },
+        {
+          "EntityType": "Terms",
+          "SourceIdentifier": "Due on receipt",
+          "Success": false,
+          "QBXMLRequest": "<?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<?qbxml version=\"15.0\"?>\r\n<QBXML>\r\n  <QBXMLMsgsRq onError=\"continueOnError\">\r\n    <StandardTermsAddRq>\r\n  <StandardTermsAdd>\r\n    <Name>Due on receipt</Name>\r\n    <IsActive>true</IsActive>\r\n    <StdDueDays>0</StdDueDays>\r\n    <StdDiscountDays>0</StdDiscountDays>\r\n    <DiscountPct>0.00</DiscountPct>\r\n  </StandardTermsAdd>\r\n</StandardTermsAddRq>\r\n\r\n  </QBXMLMsgsRq>\r\n</QBXML>",
+          "QBXMLResponse": "<?xml version=\"1.0\" ?>\n<QBXML>\n<QBXMLMsgsRs>\n<StandardTermsAddRs statusCode=\"3100\" statusSeverity=\"Error\" statusMessage=\"The name &quot;Due on receipt&quot; of the list element is already in use.\" />\n</QBXMLMsgsRs>\n</QBXML>\n",
+          "Timestamp": "2026-05-19T15:49:19.9431124Z"
+        },
+        {
+          "EntityType": "Terms",
+          "SourceIdentifier": "Net 15",
+          "Success": false,
+          "QBXMLRequest": "<?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<?qbxml version=\"15.0\"?>\r\n<QBXML>\r\n  <QBXMLMsgsRq onError=\"continueOnError\">\r\n    <StandardTermsAddRq>\r\n  <StandardTermsAdd>\r\n    <Name>Net 15</Name>\r\n    <IsActive>true</IsActive>\r\n    <StdDueDays>15</StdDueDays>\r\n    <StdDiscountDays>0</StdDiscountDays>\r\n    <DiscountPct>0.00</DiscountPct>\r\n  </StandardTermsAdd>\r\n</StandardTermsAddRq>\r\n\r\n  </QBXMLMsgsRq>\r\n</QBXML>",
+          "QBXMLResponse": "<?xml version=\"1.0\" ?>\n<QBXML>\n<QBXMLMsgsRs>\n<StandardTermsAddRs statusCode=\"3100\" statusSeverity=\"Error\" statusMessage=\"The name &quot;Net 15&quot; of the list element is already in use.\" />\n</QBXMLMsgsRs>\n</QBXML>\n",
+          "Timestamp": "2026-05-19T15:49:19.9924178Z"
+        },
+        {
+          "EntityType": "Terms",
+          "SourceIdentifier": "Net 30",
+          "Success": false,
+          "QBXMLRequest": "<?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<?qbxml version=\"15.0\"?>\r\n<QBXML>\r\n  <QBXMLMsgsRq onError=\"continueOnError\">\r\n    <StandardTermsAddRq>\r\n  <StandardTermsAdd>\r\n    <Name>Net 30</Name>\r\n    <IsActive>true</IsActive>\r\n    <StdDueDays>30</StdDueDays>\r\n    <StdDiscountDays>0</StdDiscountDays>\r\n    <DiscountPct>0.00</DiscountPct>\r\n  </StandardTermsAdd>\r\n</StandardTermsAddRq>\r\n\r\n  </QBXMLMsgsRq>\r\n</QBXML>",
+          "QBXMLResponse": "<?xml version=\"1.0\" ?>\n<QBXML>\n<QBXMLMsgsRs>\n<StandardTermsAddRs statusCode=\"3100\" statusSeverity=\"Error\" statusMessage=\"The name &quot;Net 30&quot; of the list element is already in use.\" />\n</QBXMLMsgsRs>\n</QBXML>\n",
+          "Timestamp": "2026-05-19T15:49:20.038682Z"
+        },
+        {
+          "EntityType": "Terms",
+          "SourceIdentifier": "Net 60",
+          "Success": false,
+          "QBXMLRequest": "<?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<?qbxml version=\"15.0\"?>\r\n<QBXML>\r\n  <QBXMLMsgsRq onError=\"continueOnError\">\r\n    <StandardTermsAddRq>\r\n  <StandardTermsAdd>\r\n    <Name>Net 60</Name>\r\n    <IsActive>true</IsActive>\r\n    <StdDueDays>60</StdDueDays>\r\n    <StdDiscountDays>0</StdDiscountDays>\r\n    <DiscountPct>0.00</DiscountPct>\r\n  </StandardTermsAdd>\r\n</StandardTermsAddRq>\r\n\r\n  </QBXMLMsgsRq>\r\n</QBXML>",
+          "QBXMLResponse": "<?xml version=\"1.0\" ?>\n<QBXML>\n<QBXMLMsgsRs>\n<StandardTermsAddRs statusCode=\"3100\" statusSeverity=\"Error\" statusMessage=\"The name &quot;Net 60&quot; of the list element is already in use.\" />\n</QBXMLMsgsRs>\n</QBXML>\n",
+          "Timestamp": "2026-05-19T15:49:20.0833765Z"
+        }
+      ]
+    },
+    "PaymentMethods": {
+      "EntityType": "PaymentMethods",
+      "TotalAttempted": 7,
+      "Succeeded": 0,
+      "Failed": 7,
+      "Skipped": 0,
+      "Duration": "00:00:00.3264534",
+      "FailedRecords": [
+        {
+          "EntityType": "PaymentMethods",
+          "SourceIdentifier": "Cash",
+          "Success": false,
+          "QBXMLRequest": "<?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<?qbxml version=\"15.0\"?>\r\n<QBXML>\r\n  <QBXMLMsgsRq onError=\"continueOnError\">\r\n    <PaymentMethodAddRq>\r\n  <PaymentMethodAdd>\r\n    <Name>Cash</Name>\r\n    <IsActive>true</IsActive>\r\n    <PaymentMethodType>Cash</PaymentMethodType>\r\n  </PaymentMethodAdd>\r\n</PaymentMethodAddRq>\r\n\r\n  </QBXMLMsgsRq>\r\n</QBXML>",
+          "QBXMLResponse": "<?xml version=\"1.0\" ?>\n<QBXML>\n<QBXMLMsgsRs>\n<PaymentMethodAddRs statusCode=\"3100\" statusSeverity=\"Error\" statusMessage=\"The name &quot;Cash&quot; of the list element is already in use.\" />\n</QBXMLMsgsRs>\n</QBXML>\n",
+          "Timestamp": "2026-05-19T15:49:20.1354469Z"
+        },
+        {
+          "EntityType": "PaymentMethods",
+          "SourceIdentifier": "Check",
+          "Success": false,
+          "QBXMLRequest": "<?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<?qbxml version=\"15.0\"?>\r\n<QBXML>\r\n  <QBXMLMsgsRq onError=\"continueOnError\">\r\n    <PaymentMethodAddRq>\r\n  <PaymentMethodAdd>\r\n    <Name>Check</Name>\r\n    <IsActive>true</IsActive>\r\n    <PaymentMethodType>Check</PaymentMethodType>\r\n  </PaymentMethodAdd>\r\n</PaymentMethodAddRq>\r\n\r\n  </QBXMLMsgsRq>\r\n</QBXML>",
+          "QBXMLResponse": "<?xml version=\"1.0\" ?>\n<QBXML>\n<QBXMLMsgsRs>\n<PaymentMethodAddRs statusCode=\"3100\" statusSeverity=\"Error\" statusMessage=\"The name &quot;Check&quot; of the list element is already in use.\" />\n</QBXMLMsgsRs>\n</QBXML>\n",
+          "Timestamp": "2026-05-19T15:49:20.1825515Z"
+        },
+        {
+          "EntityType": "PaymentMethods",
+          "SourceIdentifier": "American Express",
+          "Success": false,
+          "QBXMLRequest": "<?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<?qbxml version=\"15.0\"?>\r\n<QBXML>\r\n  <QBXMLMsgsRq onError=\"continueOnError\">\r\n    <PaymentMethodAddRq>\r\n  <PaymentMethodAdd>\r\n    <Name>American Express</Name>\r\n    <IsActive>true</IsActive>\r\n    <PaymentMethodType>Other</PaymentMethodType>\r\n  </PaymentMethodAdd>\r\n</PaymentMethodAddRq>\r\n\r\n  </QBXMLMsgsRq>\r\n</QBXML>",
+          "QBXMLResponse": "<?xml version=\"1.0\" ?>\n<QBXML>\n<QBXMLMsgsRs>\n<PaymentMethodAddRs statusCode=\"3100\" statusSeverity=\"Error\" statusMessage=\"The name &quot;American Express&quot; of the list element is already in use.\" />\n</QBXMLMsgsRs>\n</QBXML>\n",
+          "Timestamp": "2026-05-19T15:49:20.2288757Z"
+        },
+        {
+          "EntityType": "PaymentMethods",
+          "SourceIdentifier": "Discover",
+          "Success": false,
+          "QBXMLRequest": "<?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<?qbxml version=\"15.0\"?>\r\n<QBXML>\r\n  <QBXMLMsgsRq onError=\"continueOnError\">\r\n    <PaymentMethodAddRq>\r\n  <PaymentMethodAdd>\r\n    <Name>Discover</Name>\r\n    <IsActive>true</IsActive>\r\n    <PaymentMethodType>Other</PaymentMethodType>\r\n  </PaymentMethodAdd>\r\n</PaymentMethodAddRq>\r\n\r\n  </QBXMLMsgsRq>\r\n</QBXML>",
+          "QBXMLResponse": "<?xml version=\"1.0\" ?>\n<QBXML>\n<QBXMLMsgsRs>\n<PaymentMethodAddRs statusCode=\"3100\" statusSeverity=\"Error\" statusMessage=\"The name &quot;Discover&quot; of the list element is already in use.\" />\n</QBXMLMsgsRs>\n</QBXML>\n",
+          "Timestamp": "2026-05-19T15:49:20.2762367Z"
+        },
+        {
+          "EntityType": "PaymentMethods",
+          "SourceIdentifier": "E-Check",
+          "Success": false,
+          "QBXMLRequest": "<?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<?qbxml version=\"15.0\"?>\r\n<QBXML>\r\n  <QBXMLMsgsRq onError=\"continueOnError\">\r\n    <PaymentMethodAddRq>\r\n  <PaymentMethodAdd>\r\n    <Name>E-Check</Name>\r\n    <IsActive>true</IsActive>\r\n    <PaymentMethodType>Other</PaymentMethodType>\r\n  </PaymentMethodAdd>\r\n</PaymentMethodAddRq>\r\n\r\n  </QBXMLMsgsRq>\r\n</QBXML>",
+          "QBXMLResponse": "<?xml version=\"1.0\" ?>\n<QBXML>\n<QBXMLMsgsRs>\n<PaymentMethodAddRs statusCode=\"3100\" statusSeverity=\"Error\" statusMessage=\"The name &quot;E-Check&quot; of the list element is already in use.\" />\n</QBXMLMsgsRs>\n</QBXML>\n",
+          "Timestamp": "2026-05-19T15:49:20.3221031Z"
+        },
+        {
+          "EntityType": "PaymentMethods",
+          "SourceIdentifier": "MasterCard",
+          "Success": false,
+          "QBXMLRequest": "<?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<?qbxml version=\"15.0\"?>\r\n<QBXML>\r\n  <QBXMLMsgsRq onError=\"continueOnError\">\r\n    <PaymentMethodAddRq>\r\n  <PaymentMethodAdd>\r\n    <Name>MasterCard</Name>\r\n    <IsActive>true</IsActive>\r\n    <PaymentMethodType>Other</PaymentMethodType>\r\n  </PaymentMethodAdd>\r\n</PaymentMethodAddRq>\r\n\r\n  </QBXMLMsgsRq>\r\n</QBXML>",
+          "QBXMLResponse": "<?xml version=\"1.0\" ?>\n<QBXML>\n<QBXMLMsgsRs>\n<PaymentMethodAddRs statusCode=\"3100\" statusSeverity=\"Error\" statusMessage=\"The name &quot;MasterCard&quot; of the list element is already in use.\" />\n</QBXMLMsgsRs>\n</QBXML>\n",
+          "Timestamp": "2026-05-19T15:49:20.3689083Z"
+        },
+        {
+          "EntityType": "PaymentMethods",
+          "SourceIdentifier": "Visa",
+          "Success": false,
+          "QBXMLRequest": "<?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<?qbxml version=\"15.0\"?>\r\n<QBXML>\r\n  <QBXMLMsgsRq onError=\"continueOnError\">\r\n    <PaymentMethodAddRq>\r\n  <PaymentMethodAdd>\r\n    <Name>Visa</Name>\r\n    <IsActive>true</IsActive>\r\n    <PaymentMethodType>Other</PaymentMethodType>\r\n  </PaymentMethodAdd>\r\n</PaymentMethodAddRq>\r\n\r\n  </QBXMLMsgsRq>\r\n</QBXML>",
+          "QBXMLResponse": "<?xml version=\"1.0\" ?>\n<QBXML>\n<QBXMLMsgsRs>\n<PaymentMethodAddRs statusCode=\"3100\" statusSeverity=\"Error\" statusMessage=\"The name &quot;Visa&quot; of the list element is already in use.\" />\n</QBXMLMsgsRs>\n</QBXML>\n",
+          "Timestamp": "2026-05-19T15:49:20.4150082Z"
+        }
+      ]
+    },
+    "VendorTypes": {
+      "EntityType": "VendorTypes",
+      "TotalAttempted": 3,
+      "Succeeded": 0,
+      "Failed": 3,
+      "Skipped": 0,
+      "Duration": "00:00:00.1241216",
+      "FailedRecords": [
+        {
+          "EntityType": "VendorTypes",
+          "SourceIdentifier": "Consultant",
+          "Success": false,
+          "ErrorMessage": "QBXML request failed (QB2021-Import): QuickBooks found an error when parsing the provided XML text stream.",
+          "QBXMLRequest": "<?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<?qbxml version=\"15.0\"?>\r\n<QBXML>\r\n  <QBXMLMsgsRq onError=\"continueOnError\">\r\n    <VendorTypeAddRq>\r\n  <VendorTypeAdd>\r\n    <Name>Consultant</Name>\r\n    <IsActive>true</IsActive>\r\n    <Sublevel>0</Sublevel>\r\n  </VendorTypeAdd>\r\n</VendorTypeAddRq>\r\n\r\n  </QBXMLMsgsRq>\r\n</QBXML>",
+          "Timestamp": "2026-05-19T15:49:20.4698036Z"
+        },
+        {
+          "EntityType": "VendorTypes",
+          "SourceIdentifier": "Supplies",
+          "Success": false,
+          "ErrorMessage": "QBXML request failed (QB2021-Import): QuickBooks found an error when parsing the provided XML text stream.",
+          "QBXMLRequest": "<?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<?qbxml version=\"15.0\"?>\r\n<QBXML>\r\n  <QBXMLMsgsRq onError=\"continueOnError\">\r\n    <VendorTypeAddRq>\r\n  <VendorTypeAdd>\r\n    <Name>Supplies</Name>\r\n    <IsActive>true</IsActive>\r\n    <Sublevel>0</Sublevel>\r\n  </VendorTypeAdd>\r\n</VendorTypeAddRq>\r\n\r\n  </QBXMLMsgsRq>\r\n</QBXML>",
+          "Timestamp": "2026-05-19T15:49:20.5085051Z"
+        },
+        {
+          "EntityType": "VendorTypes",
+          "SourceIdentifier": "Tax agency",
+          "Success": false,
+          "ErrorMessage": "QBXML request failed (QB2021-Import): QuickBooks found an error when parsing the provided XML text stream.",
+          "QBXMLRequest": "<?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<?qbxml version=\"15.0\"?>\r\n<QBXML>\r\n  <QBXMLMsgsRq onError=\"continueOnError\">\r\n    <VendorTypeAddRq>\r\n  <VendorTypeAdd>\r\n    <Name>Tax agency</Name>\r\n    <IsActive>true</IsActive>\r\n    <Sublevel>0</Sublevel>\r\n  </VendorTypeAdd>\r\n</VendorTypeAddRq>\r\n\r\n  </QBXMLMsgsRq>\r\n</QBXML>",
+          "Timestamp": "2026-05-19T15:49:20.54952Z"
+        }
+      ]
+    },
+    "Classes": {
+      "EntityType": "Classes",
+      "TotalAttempted": 5,
+      "Succeeded": 0,
+      "Failed": 5,
+      "Skipped": 0,
+      "Duration": "00:00:00.2105249",
+      "FailedRecords": [
+        {
+          "EntityType": "Classes",
+          "SourceIdentifier": "All Locations",
+          "Success": false,
+          "ErrorMessage": "QBXML request failed (QB2021-Import): QuickBooks found an error when parsing the provided XML text stream.",
+          "QBXMLRequest": "<?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<?qbxml version=\"15.0\"?>\r\n<QBXML>\r\n  <QBXMLMsgsRq onError=\"continueOnError\">\r\n    <ClassAddRq>\r\n  <ClassAdd>\r\n    <Name>All Locations</Name>\r\n    <IsActive>true</IsActive>\r\n    <Sublevel>0</Sublevel>\r\n  </ClassAdd>\r\n</ClassAddRq>\r\n\r\n  </QBXMLMsgsRq>\r\n</QBXML>",
+          "Timestamp": "2026-05-19T15:49:20.6009516Z"
+        },
+        {
+          "EntityType": "Classes",
+          "SourceIdentifier": "Location 1 - 27th",
+          "Success": false,
+          "ErrorMessage": "QBXML request failed (QB2021-Import): QuickBooks found an error when parsing the provided XML text stream.",
+          "QBXMLRequest": "<?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<?qbxml version=\"15.0\"?>\r\n<QBXML>\r\n  <QBXMLMsgsRq onError=\"continueOnError\">\r\n    <ClassAddRq>\r\n  <ClassAdd>\r\n    <Name>Location 1 - 27th</Name>\r\n    <IsActive>true</IsActive>\r\n    <Sublevel>0</Sublevel>\r\n  </ClassAdd>\r\n</ClassAddRq>\r\n\r\n  </QBXMLMsgsRq>\r\n</QBXML>",
+          "Timestamp": "2026-05-19T15:49:20.6410876Z"
+        },
+        {
+          "EntityType": "Classes",
+          "SourceIdentifier": "Location 2 - Burn",
+          "Success": false,
+          "ErrorMessage": "QBXML request failed (QB2021-Import): QuickBooks found an error when parsing the provided XML text stream.",
+          "QBXMLRequest": "<?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<?qbxml version=\"15.0\"?>\r\n<QBXML>\r\n  <QBXMLMsgsRq onError=\"continueOnError\">\r\n    <ClassAddRq>\r\n  <ClassAdd>\r\n    <Name>Location 2 - Burn</Name>\r\n    <IsActive>true</IsActive>\r\n    <Sublevel>0</Sublevel>\r\n  </ClassAdd>\r\n</ClassAddRq>\r\n\r\n  </QBXMLMsgsRq>\r\n</QBXML>",
+          "Timestamp": "2026-05-19T15:49:20.6836888Z"
+        },
+        {
+          "EntityType": "Classes",
+          "SourceIdentifier": "Location 3 - Chase",
+          "Success": false,
+          "ErrorMessage": "QBXML request failed (QB2021-Import): QuickBooks found an error when parsing the provided XML text stream.",
+          "QBXMLRequest": "<?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<?qbxml version=\"15.0\"?>\r\n<QBXML>\r\n  <QBXMLMsgsRq onError=\"continueOnError\">\r\n    <ClassAddRq>\r\n  <ClassAdd>\r\n    <Name>Location 3 - Chase</Name>\r\n    <IsActive>true</IsActive>\r\n    <Sublevel>0</Sublevel>\r\n  </ClassAdd>\r\n</ClassAddRq>\r\n\r\n  </QBXMLMsgsRq>\r\n</QBXML>",
+          "Timestamp": "2026-05-19T15:49:20.7256514Z"
+        },
+        {
+          "EntityType": "Classes",
+          "SourceIdentifier": "ncat",
+          "Success": false,
+          "ErrorMessage": "QBXML request failed (QB2021-Import): QuickBooks found an error when parsing the provided XML text stream.",
+          "QBXMLRequest": "<?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<?qbxml version=\"15.0\"?>\r\n<QBXML>\r\n  <QBXMLMsgsRq onError=\"continueOnError\">\r\n    <ClassAddRq>\r\n  <ClassAdd>\r\n    <Name>ncat</Name>\r\n    <IsActive>true</IsActive>\r\n    <Sublevel>0</Sublevel>\r\n  </ClassAdd>\r\n</ClassAddRq>\r\n\r\n  </QBXMLMsgsRq>\r\n</QBXML>",
+          "Timestamp": "2026-05-19T15:49:20.7677888Z"
+        }
+      ]
+    }
+  },
+  "TransformationReport": {
+    "GeneratedAt": "2026-05-19T15:49:12.0401105Z",
+    "ReactivatedEntitiesByType": {
+      "Accounts": 46,
+      "Vendors": 63,
+      "Employees": 28
+    },
+    "TotalReactivatedEntities": 137,
+    "ReactivatedEntityDetails": [
+      "[Accounts] Personal Bk Acct",
+      "[Accounts] zz old bank header:CASH ACCOUNT PAYROLL ADV",
+      "[Accounts] zz old bank header:PR CK ACCT - ROD PAY NOT TAKEN",
+      "[Accounts] zz old bank header:PR CK TURNAROUND EMPLOYEES",
+      "[Accounts] zz old bank header:TRI CITY MAIN BUS CK 4274",
+      "[Accounts] Accounts Receivable",
+      "[Accounts] Employee Advances",
+      "[Accounts] Inventory:1 Food",
+      "[Accounts] Inventory:Beverages",
+      "[Accounts] Inventory:Supplies",
+      "[Accounts] OTHER ADJ ACCOUNT & PRIOR ERROR",
+      "[Accounts] Accounts Payable",
+      "[Accounts] AMERICAN GENERAL FINANCE",
+      "[Accounts] BROTHER LOAN",
+      "[Accounts] CHILD SUPPORT",
+      "[Accounts] CURRENT YR ESTIMATE:FEDERAL",
+      "[Accounts] CURRENT YR ESTIMATE:STATE",
+      "[Accounts] Eq Loan",
+      "[Accounts] Gift certificates",
+      "[Accounts] GOVERNMENT LIAB PAST DUE",
+      "[Accounts] GOVERNMENT LIAB PAST DUE:FEDERAL",
+      "[Accounts] GOVERNMENT LIAB PAST DUE:FEDERAL:1120 CORP TAX",
+      "[Accounts] GOVERNMENT LIAB PAST DUE:FEDERAL:940",
+      "[Accounts] GOVERNMENT LIAB PAST DUE:FEDERAL:941",
+      "[Accounts] GOVERNMENT LIAB PAST DUE:WISCONSIN",
+      "[Accounts] GOVERNMENT LIAB PAST DUE:WISCONSIN:CORP TAX",
+      "[Accounts] GOVERNMENT LIAB PAST DUE:WISCONSIN:EXPO",
+      "[Accounts] GOVERNMENT LIAB PAST DUE:WISCONSIN:OTHER MUST ALLOCATE",
+      "[Accounts] GOVERNMENT LIAB PAST DUE:WISCONSIN:PAYROLL WT6",
+      "[Accounts] GOVERNMENT LIAB PAST DUE:WISCONSIN:PERSONAL 1040",
+      "[Accounts] GOVERNMENT LIAB PAST DUE:WISCONSIN:SALES TAX",
+      "[Accounts] GOVERNMENT LIAB PAST DUE:WISCONSIN:SUTA",
+      "[Accounts] LOAN PAYABLE MARVIN",
+      "[Accounts] Loans from friends",
+      "[Accounts] Loans from friends:Brian Aagey Loan",
+      "[Accounts] Loans from friends:Marvin Loans",
+      "[Accounts] PAYROLL LIAB PMTS WENT OD",
+      "[Accounts] PPP ADJ ACCT",
+      "[Accounts] PPP LOAN",
+      "[Accounts] SBA Loan",
+      "[Accounts] SH AUTO REIMB PAYABLE",
+      "[Accounts] SH LOAN",
+      "[Accounts] 1Services",
+      "[Accounts] Taxes Federal QU Est:BACK TAX",
+      "[Accounts] Cell Phone",
+      "[Accounts] Uncategorized Expense:AUTO",
+      "[Vendors] 27TH AND HOWARD LLC",
+      "[Vendors] ACUITY",
+      "[Vendors] AKRIT",
+      "[Vendors] AMERICAN FAMILY INS",
+      "[Vendors] AMERICAN GENERAL FINANCE",
+      "[Vendors] ANTHONY STASKINAS",
+      "[Vendors] ARCO",
+      "[Vendors] ARROW BOARDUP",
+      "[Vendors] Auto Zone",
+      "[Vendors] BATZNERS",
+      "[Vendors] BAUER SIGN",
+      "[Vendors] BEECHWOOD",
+      "[Vendors] BRAD KUMVERA - CONFIRM NAME SPELLING",
+      "[Vendors] BRIAN GUERIN AGENCY",
+      "[Vendors] BRINKS ELECT SECURITY",
+      "[Vendors] CARDMEMBER SERV ELECT",
+      "[Vendors] CARX",
+      "[Vendors] CASH PAY OUTS",
+      "[Vendors] CERMAK",
+      "[Vendors] CHARTER COMMUNICATIONS",
+      "[Vendors] CHECK RETAY SYSTEMS",
+      "[Vendors] CHOICE ONE COMMU",
+      "[Vendors] CHOICE ONE EAST",
+      "[Vendors] CINGULAR",
+      "[Vendors] CITI",
+      "[Vendors] CITY OF WEST ALLIS",
+      "[Vendors] CLERK/TREASURES OFFICE",
+      "[Vendors] CREDIT CARD",
+      "[Vendors] DELTA DENTAL",
+      "[Vendors] EMPLOYEE",
+      "[Vendors] JAMES STOWELL",
+      "[Vendors] JEFF KRAMER",
+      "[Vendors] JOHN PAUL BUICK",
+      "[Vendors] JOHN SCHNEPF",
+      "[Vendors] KENWAY",
+      "[Vendors] KILRYE PARK KIM",
+      "[Vendors] KOHN LAW FIRM",
+      "[Vendors] LOCKBOX COMMON GROUND",
+      "[Vendors] MAGNARDS AUTO",
+      "[Vendors] MARCO & PALIMIRO ZOCOTTI",
+      "[Vendors] MARCUS THEATERS",
+      "[Vendors] MARVIN WATERS",
+      "[Vendors] OUTSIDE DOWN",
+      "[Vendors] P.S. SEASONING",
+      "[Vendors] PAUL DAVIS RESTRATION",
+      "[Vendors] PS SEASONING",
+      "[Vendors] RESTAURANT DEPOT",
+      "[Vendors] RICHARDSONS",
+      "[Vendors] ROBERT MADALENA",
+      "[Vendors] ROBERT PARKS",
+      "[Vendors] SIGNTASTIC",
+      "[Vendors] SUEZETT",
+      "[Vendors] TDSTELECOMM CORP",
+      "[Vendors] THE CHIMNEY EXPERTS",
+      "[Vendors] THE GUTTER COMPANY",
+      "[Vendors] THOMAS MADALENA",
+      "[Vendors] THOMAS MANDATENA",
+      "[Vendors] TOM'S HEATING SERVICE",
+      "[Vendors] TOM MANDELA",
+      "[Vendors] VANS CHUSE - CK SPELLING",
+      "[Vendors] VERNS CHEESE",
+      "[Vendors] ZEIN PLUMBING",
+      "[Vendors] ZIEN INC",
+      "[Employees] ACEVEDO, KAYLA M",
+      "[Employees] ACEVEDO, KIANA",
+      "[Employees] BAUTISTA, REYNA S",
+      "[Employees] BECKLEY, DRESHA S",
+      "[Employees] Bobot, Sheraden M",
+      "[Employees] BONGEY, DEBRA L",
+      "[Employees] BRANDT, KELLY A",
+      "[Employees] DAVIS, JOALIS",
+      "[Employees] FRY, ISABELLE",
+      "[Employees] GILL, TERESA",
+      "[Employees] HOWARD, JESSICA L",
+      "[Employees] Johnson, Mycayla",
+      "[Employees] JONES, LINDSEY",
+      "[Employees] Keller, Brooklynn",
+      "[Employees] KONNER, BAUER",
+      "[Employees] MALKA, ARIANA",
+      "[Employees] Marek, Annabelle J",
+      "[Employees] MCVEY, NICHOLAS J",
+      "[Employees] MOLKENTIN, AUTUMN R",
+      "[Employees] OSTOVICH, MARIA",
+      "[Employees] PAVLINEC, ROMI K",
+      "[Employees] PITTERLE, DIANE J",
+      "[Employees] Rivera, Maximus",
+      "[Employees] Siskoy, Lyndsey",
+      "[Employees] SJOLUND, HALEY",
+      "[Employees] STRANDE, TAMARA L",
+      "[Employees] SZYMANSKI, NATALIE R",
+      "[Employees] WATERS, RODNEY"
+    ],
+    "ClassTracking": {
+      "TotalClassesInSource": 5,
+      "TotalClassesInTarget": 5,
+      "ClassesCreatedInTarget": 0,
+      "ClassesAlreadyExisting": 5,
+      "SourceClasses": [
+        "All Locations",
+        "Location 1 - 27th",
+        "Location 2 - Burn",
+        "Location 3 - Chase",
+        "ncat"
+      ],
+      "CreatedClasses": [],
+      "MissingClasses": [],
+      "ClassUsageByTransactionType": {
+        "SalesReceipts": 30
+      },
+      "ClassUsageByClassName": {
+        "All Locations": 30
+      }
+    },
+    "SourceAccountingMethod": "",
+    "TargetAccountingMethod": "",
+    "AccountingMethodMatched": false,
+    "TotalEntitiesTransformed": 2074,
+    "TotalFieldsMapped": 2505,
+    "TotalFieldsSkipped": 1575,
+    "TotalFieldsTruncated": 0,
+    "FormatStats": {
+      "DateFieldsProcessed": 131,
+      "DateFormatsPreserved": 131,
+      "DateTimezonesStripped": 0,
+      "DateFormatIssues": 0,
+      "CurrencyFieldsProcessed": 0,
+      "CurrencyFormatsPreserved": 0,
+      "PhoneFieldsProcessed": 2,
+      "PhoneFormatsPreserved": 2,
+      "PostalCodeFieldsProcessed": 50,
+      "PostalCodeFormatsPreserved": 50,
+      "MemoFieldsProcessed": 13,
+      "FormatAwareTruncations": 0,
+      "EncodingPreserved": 13,
+      "FormatIssues": [],
+      "DateFormatBreakdown": {
+        "yyyy-MM-dd": 131
+      }
+    },
+    "Summary": "Transformed 2074 entities | Mapped 2505 fields | Reactivated 137 inactive entities | Preserved 5 classes | Dates preserved: 131/131"
+  },
+  "TotalRecordsAttempted": 166,
+  "TotalRecordsSucceeded": 0,
+  "TotalRecordsFailed": 166
+}

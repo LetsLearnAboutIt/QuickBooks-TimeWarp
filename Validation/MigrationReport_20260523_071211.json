@@ -1,0 +1,694 @@
+{
+  "StartTime": "2026-05-23T12:08:32.4085614Z",
+  "EndTime": "2026-05-23T12:12:11.0827985Z",
+  "TotalDuration": "00:03:38.6742371",
+  "SourceCompanyFile": "QB 2023",
+  "TargetCompanyFile": "QB 2021",
+  "OverallStatus": "Completed",
+  "EntitySummaries": {
+    "Accounts": {
+      "EntityType": "Accounts",
+      "TotalAttempted": 142,
+      "Succeeded": 142,
+      "Failed": 0,
+      "Skipped": 0,
+      "Duration": "00:00:14.9230161",
+      "FailedRecords": []
+    },
+    "SalesTaxCodes": {
+      "EntityType": "SalesTaxCodes",
+      "TotalAttempted": 3,
+      "Succeeded": 3,
+      "Failed": 0,
+      "Skipped": 0,
+      "Duration": "00:00:00.2994542",
+      "FailedRecords": []
+    },
+    "ItemSalesTax": {
+      "EntityType": "ItemSalesTax",
+      "TotalAttempted": 6,
+      "Succeeded": 6,
+      "Failed": 0,
+      "Skipped": 0,
+      "Duration": "00:00:00.5901174",
+      "FailedRecords": []
+    },
+    "Terms": {
+      "EntityType": "Terms",
+      "TotalAttempted": 6,
+      "Succeeded": 6,
+      "Failed": 0,
+      "Skipped": 0,
+      "Duration": "00:00:00.6422511",
+      "FailedRecords": []
+    },
+    "PaymentMethods": {
+      "EntityType": "PaymentMethods",
+      "TotalAttempted": 7,
+      "Succeeded": 7,
+      "Failed": 0,
+      "Skipped": 0,
+      "Duration": "00:00:00.7176778",
+      "FailedRecords": []
+    },
+    "VendorTypes": {
+      "EntityType": "VendorTypes",
+      "TotalAttempted": 3,
+      "Succeeded": 3,
+      "Failed": 0,
+      "Skipped": 0,
+      "Duration": "00:00:00.3258848",
+      "FailedRecords": []
+    },
+    "Classes": {
+      "EntityType": "Classes",
+      "TotalAttempted": 5,
+      "Succeeded": 5,
+      "Failed": 0,
+      "Skipped": 0,
+      "Duration": "00:00:00.4908326",
+      "FailedRecords": []
+    },
+    "Customers": {
+      "EntityType": "Customers",
+      "TotalAttempted": 2,
+      "Succeeded": 2,
+      "Failed": 0,
+      "Skipped": 0,
+      "Duration": "00:00:00.2242667",
+      "FailedRecords": []
+    },
+    "Vendors": {
+      "EntityType": "Vendors",
+      "TotalAttempted": 249,
+      "Succeeded": 249,
+      "Failed": 0,
+      "Skipped": 0,
+      "Duration": "00:00:27.7271274",
+      "FailedRecords": []
+    },
+    "Employees": {
+      "EntityType": "Employees",
+      "TotalAttempted": 32,
+      "Succeeded": 22,
+      "Failed": 10,
+      "Skipped": 0,
+      "Duration": "00:00:03.0675254",
+      "FailedRecords": [
+        {
+          "EntityType": "Employees",
+          "SourceIdentifier": "ACEVEDO, KAYLA M",
+          "Success": false,
+          "ErrorMessage": "QBXML request failed (QB2021-Import): QuickBooks found an error when parsing the provided XML text stream.",
+          "QBXMLRequest": "<?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<?qbxml version=\"15.0\"?>\r\n<QBXML>\r\n  <QBXMLMsgsRq onError=\"continueOnError\">\r\n    <EmployeeAddRq>\r\n  <EmployeeAdd>\r\n    <IsActive>true</IsActive>\r\n    <FirstName>KAYLA</FirstName>\r\n    <MiddleName>M</MiddleName>\r\n    <LastName>ACEVEDO</LastName>\r\n    <EmployeeAddress>\r\n      <Addr1>4233 W LAYTON AVE</Addr1>\r\n      <City>GREENFIELD</City>\r\n      <State>WI</State>\r\n      <PostalCode>53221</PostalCode>\r\n    </EmployeeAddress>\r\n    <Email>victoria-waters@att.net</Email>\r\n    <SSN>392-19-0300</SSN>\r\n    <HiredDate>2023-10-30</HiredDate>\r\n    <Notes>RAISES AND PROMOTIONS HISTORY\r\nFROM EMPLOYEE ORGANIZER\r\n==========================\r\nJob Title\t\t\t: Current\r\nEffective Date\t\t: 02/06/2019\r\nEnd Date\t\t\t: \r\nCompensation Amount\t: 9.00\r\nTarget Bonus\t\t: \r\nPayroll Item\t\t: HOURLY\r\n--------------------------------------------------------\r\nJob Title\t\t\t: Current\r\nEffective Date\t\t: 02/06/2019\r\nEnd Date\t\t\t: \r\nCompensation Amount\t: 13.50\r\nTarget Bonus\t\t: \r\nPayroll Item\t\t: OVERTIME\r\n--------------------------------------------------------</Notes>\r\n  </EmployeeAdd>\r\n</EmployeeAddRq>\r\n\r\n  </QBXMLMsgsRq>\r\n</QBXML>",
+          "Timestamp": "2026-05-23T12:09:18.6345061Z"
+        },
+        {
+          "EntityType": "Employees",
+          "SourceIdentifier": "BIZUB, JOSHUA J",
+          "Success": false,
+          "ErrorMessage": "QBXML request failed (QB2021-Import): QuickBooks found an error when parsing the provided XML text stream.",
+          "QBXMLRequest": "<?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<?qbxml version=\"15.0\"?>\r\n<QBXML>\r\n  <QBXMLMsgsRq onError=\"continueOnError\">\r\n    <EmployeeAddRq>\r\n  <EmployeeAdd>\r\n    <IsActive>true</IsActive>\r\n    <FirstName>JOSHUA</FirstName>\r\n    <MiddleName>J</MiddleName>\r\n    <LastName>BIZUB</LastName>\r\n    <EmployeeAddress>\r\n      <Addr1>5465 HONEY CREEK DR</Addr1>\r\n      <City>GREENFIELD</City>\r\n      <State>WI</State>\r\n      <PostalCode>53221</PostalCode>\r\n    </EmployeeAddress>\r\n    <Email>acdcguitar2004@yahoo.com</Email>\r\n    <SSN>392-25-1288</SSN>\r\n    <HiredDate>2023-10-30</HiredDate>\r\n    <BirthDate>1990-01-01</BirthDate>\r\n    <Notes>RAISES AND PROMOTIONS HISTORY\r\nFROM EMPLOYEE ORGANIZER\r\n==========================\r\nJob Title\t\t\t: Current\r\nEffective Date\t\t: 04/16/2019\r\nEnd Date\t\t\t: \r\nCompensation Amount\t: 8.00\r\nTarget Bonus\t\t: \r\nPayroll Item\t\t: HOURLY\r\n--------------------------------------------------------\r\nJob Title\t\t\t: Current\r\nEffective Date\t\t: 04/16/2019\r\nEnd Date\t\t\t: \r\nCompensation Amount\t: 12.00\r\nTarget Bonus\t\t: \r\nPayroll Item\t\t: OVERTIME\r\n--------------------------------------------------------</Notes>\r\n  </EmployeeAdd>\r\n</EmployeeAddRq>\r\n\r\n  </QBXMLMsgsRq>\r\n</QBXML>",
+          "Timestamp": "2026-05-23T12:09:19.0560568Z"
+        },
+        {
+          "EntityType": "Employees",
+          "SourceIdentifier": "BONGEY, DEBRA L",
+          "Success": false,
+          "ErrorMessage": "QBXML request failed (QB2021-Import): QuickBooks found an error when parsing the provided XML text stream.",
+          "QBXMLRequest": "<?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<?qbxml version=\"15.0\"?>\r\n<QBXML>\r\n  <QBXMLMsgsRq onError=\"continueOnError\">\r\n    <EmployeeAddRq>\r\n  <EmployeeAdd>\r\n    <IsActive>true</IsActive>\r\n    <FirstName>DEBRA</FirstName>\r\n    <MiddleName>L</MiddleName>\r\n    <LastName>BONGEY</LastName>\r\n    <EmployeeAddress>\r\n      <Addr1>1534 N HUMBOLDT AVE, APT 7</Addr1>\r\n      <City>MILWAUKEE</City>\r\n      <State>WI</State>\r\n      <PostalCode>53202</PostalCode>\r\n    </EmployeeAddress>\r\n    <Email>victoria-waters@att.net</Email>\r\n    <SSN>393-90-7025</SSN>\r\n    <HiredDate>2023-10-30</HiredDate>\r\n  </EmployeeAdd>\r\n</EmployeeAddRq>\r\n\r\n  </QBXMLMsgsRq>\r\n</QBXML>",
+          "Timestamp": "2026-05-23T12:09:19.4503503Z"
+        },
+        {
+          "EntityType": "Employees",
+          "SourceIdentifier": "HOWARD, JESSICA L",
+          "Success": false,
+          "ErrorMessage": "QBXML request failed (QB2021-Import): QuickBooks found an error when parsing the provided XML text stream.",
+          "QBXMLRequest": "<?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<?qbxml version=\"15.0\"?>\r\n<QBXML>\r\n  <QBXMLMsgsRq onError=\"continueOnError\">\r\n    <EmployeeAddRq>\r\n  <EmployeeAdd>\r\n    <IsActive>true</IsActive>\r\n    <FirstName>JESSICA</FirstName>\r\n    <MiddleName>L</MiddleName>\r\n    <LastName>HOWARD</LastName>\r\n    <EmployeeAddress>\r\n      <Addr1>1755 S 60th Street</Addr1>\r\n      <City>West Allis</City>\r\n      <State>WI</State>\r\n      <PostalCode>53214</PostalCode>\r\n    </EmployeeAddress>\r\n    <Email>victoria-waters@att.net</Email>\r\n    <SSN>390-84-2821</SSN>\r\n    <HiredDate>2023-10-30</HiredDate>\r\n    <Notes>RAISES AND PROMOTIONS HISTORY\r\nFROM EMPLOYEE ORGANIZER\r\n==========================\r\nJob Title\t\t\t: Current\r\nEffective Date\t\t: 10/30/2017\r\nEnd Date\t\t\t: \r\nCompensation Amount\t: 8.00\r\nTarget Bonus\t\t: \r\nPayroll Item\t\t: HOURLY\r\n--------------------------------------------------------\r\nJob Title\t\t\t: Current\r\nEffective Date\t\t: 10/30/2017\r\nEnd Date\t\t\t: \r\nCompensation Amount\t: 10.00\r\nTarget Bonus\t\t: \r\nPayroll Item\t\t: OVERTIME\r\n--------------------------------------------------------</Notes>\r\n  </EmployeeAdd>\r\n</EmployeeAddRq>\r\n\r\n  </QBXMLMsgsRq>\r\n</QBXML>",
+          "Timestamp": "2026-05-23T12:09:19.9551144Z"
+        },
+        {
+          "EntityType": "Employees",
+          "SourceIdentifier": "Keller, Brooklynn",
+          "Success": false,
+          "ErrorMessage": "QBXML request failed (QB2021-Import): QuickBooks found an error when parsing the provided XML text stream.",
+          "QBXMLRequest": "<?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<?qbxml version=\"15.0\"?>\r\n<QBXML>\r\n  <QBXMLMsgsRq onError=\"continueOnError\">\r\n    <EmployeeAddRq>\r\n  <EmployeeAdd>\r\n    <IsActive>true</IsActive>\r\n    <FirstName>Brooklynn</FirstName>\r\n    <LastName>Keller</LastName>\r\n    <EmployeeAddress>\r\n      <Addr1>3830 S 43RD, APT 1</Addr1>\r\n      <City>MILWAUKEE</City>\r\n      <State>WI</State>\r\n      <PostalCode>53220</PostalCode>\r\n    </EmployeeAddress>\r\n    <Email>brooklynnmkeller@icloud.com</Email>\r\n    <SSN>387-25-3806</SSN>\r\n    <HiredDate>2023-10-30</HiredDate>\r\n    <Notes>RAISES AND PROMOTIONS HISTORY\r\nFROM EMPLOYEE ORGANIZER\r\n==========================\r\nJob Title\t\t\t: Current\r\nEffective Date\t\t: 01/09/2021\r\nEnd Date\t\t\t: \r\nCompensation Amount\t: 9.00\r\nTarget Bonus\t\t: \r\nPayroll Item\t\t: HOURLY\r\n--------------------------------------------------------\r\nJob Title\t\t\t: Current\r\nEffective Date\t\t: 01/09/2021\r\nEnd Date\t\t\t: \r\nCompensation Amount\t: 13.50\r\nTarget Bonus\t\t: \r\nPayroll Item\t\t: OVERTIME\r\n--------------------------------------------------------\r\nJob Title\t\t\t: \r\nEffective Date\t\t: 09/22/2020\r\nEnd Date\t\t\t: 01/08/2021\r\nCompensation Amount\t: 8.00\r\nTarget Bonus\t\t: \r\nPayroll Item\t\t: HOURLY\r\n--------------------------------------------------------\r\nJob Title\t\t\t: \r\nEffective Date\t\t: 09/22/2020\r\nEnd Date\t\t\t: 01/08/2021\r\nCompensation Amount\t: 12.00\r\nTarget Bonus\t\t: \r\nPayroll Item\t\t: OVERTIME\r\n--------------------------------------------------------</Notes>\r\n  </EmployeeAdd>\r\n</EmployeeAddRq>\r\n\r\n  </QBXMLMsgsRq>\r\n</QBXML>",
+          "Timestamp": "2026-05-23T12:09:20.2724864Z"
+        },
+        {
+          "EntityType": "Employees",
+          "SourceIdentifier": "OSTOVICH, MARIA",
+          "Success": false,
+          "ErrorMessage": "QBXML request failed (QB2021-Import): QuickBooks found an error when parsing the provided XML text stream.",
+          "QBXMLRequest": "<?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<?qbxml version=\"15.0\"?>\r\n<QBXML>\r\n  <QBXMLMsgsRq onError=\"continueOnError\">\r\n    <EmployeeAddRq>\r\n  <EmployeeAdd>\r\n    <IsActive>true</IsActive>\r\n    <FirstName>MARIA</FirstName>\r\n    <LastName>OSTOVICH</LastName>\r\n    <EmployeeAddress>\r\n      <Addr1>4212 S Taylor Ave</Addr1>\r\n      <City>Milwaukee</City>\r\n      <State>WI</State>\r\n      <PostalCode>53207</PostalCode>\r\n    </EmployeeAddress>\r\n    <Email>victoria-waters@att.net</Email>\r\n    <SSN>396-08-6128</SSN>\r\n    <HiredDate>2023-10-30</HiredDate>\r\n  </EmployeeAdd>\r\n</EmployeeAddRq>\r\n\r\n  </QBXMLMsgsRq>\r\n</QBXML>",
+          "Timestamp": "2026-05-23T12:09:20.9804693Z"
+        },
+        {
+          "EntityType": "Employees",
+          "SourceIdentifier": "PITTERLE, DIANE J",
+          "Success": false,
+          "ErrorMessage": "QBXML request failed (QB2021-Import): QuickBooks found an error when parsing the provided XML text stream.",
+          "QBXMLRequest": "<?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<?qbxml version=\"15.0\"?>\r\n<QBXML>\r\n  <QBXMLMsgsRq onError=\"continueOnError\">\r\n    <EmployeeAddRq>\r\n  <EmployeeAdd>\r\n    <IsActive>true</IsActive>\r\n    <FirstName>DIANE</FirstName>\r\n    <MiddleName>J</MiddleName>\r\n    <LastName>PITTERLE</LastName>\r\n    <EmployeeAddress>\r\n      <Addr1>6010 W Mitchell St</Addr1>\r\n      <City>West Allis</City>\r\n      <State>WI</State>\r\n      <PostalCode>53214</PostalCode>\r\n    </EmployeeAddress>\r\n    <Email>djpitterle@yahoo.com</Email>\r\n    <SSN>390-84-7797</SSN>\r\n    <HiredDate>2023-10-30</HiredDate>\r\n  </EmployeeAdd>\r\n</EmployeeAddRq>\r\n\r\n  </QBXMLMsgsRq>\r\n</QBXML>",
+          "Timestamp": "2026-05-23T12:09:21.1600382Z"
+        },
+        {
+          "EntityType": "Employees",
+          "SourceIdentifier": "Rivera, Maximus",
+          "Success": false,
+          "ErrorMessage": "QBXML request failed (QB2021-Import): QuickBooks found an error when parsing the provided XML text stream.",
+          "QBXMLRequest": "<?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<?qbxml version=\"15.0\"?>\r\n<QBXML>\r\n  <QBXMLMsgsRq onError=\"continueOnError\">\r\n    <EmployeeAddRq>\r\n  <EmployeeAdd>\r\n    <IsActive>true</IsActive>\r\n    <FirstName>Maximus</FirstName>\r\n    <LastName>Rivera</LastName>\r\n    <EmployeeAddress>\r\n      <Addr1>1806 S 59th Street</Addr1>\r\n      <City>West Allis</City>\r\n      <State>WI</State>\r\n      <PostalCode>53214</PostalCode>\r\n    </EmployeeAddress>\r\n    <Email>rivera4503@yahoo.com</Email>\r\n    <SSN>395-23-6254</SSN>\r\n    <HiredDate>2023-10-30</HiredDate>\r\n    <Notes>RAISES AND PROMOTIONS HISTORY\r\nFROM EMPLOYEE ORGANIZER\r\n==========================\r\nJob Title\t\t\t: Current\r\nEffective Date\t\t: 10/20/2020\r\nEnd Date\t\t\t: \r\nCompensation Amount\t: 9.00\r\nTarget Bonus\t\t: \r\nPayroll Item\t\t: HOURLY\r\n--------------------------------------------------------\r\nJob Title\t\t\t: Current\r\nEffective Date\t\t: 10/20/2020\r\nEnd Date\t\t\t: \r\nCompensation Amount\t: 12.00\r\nTarget Bonus\t\t: \r\nPayroll Item\t\t: OVERTIME\r\n--------------------------------------------------------\r\nJob Title\t\t\t: \r\nEffective Date\t\t: 07/28/2020\r\nEnd Date\t\t\t: 10/19/2020\r\nCompensation Amount\t: 8.00\r\nTarget Bonus\t\t: \r\nPayroll Item\t\t: HOURLY\r\n--------------------------------------------------------\r\nJob Title\t\t\t: \r\nEffective Date\t\t: 07/28/2020\r\nEnd Date\t\t\t: 10/19/2020\r\nCompensation Amount\t: 12.00\r\nTarget Bonus\t\t: \r\nPayroll Item\t\t: OVERTIME\r\n--------------------------------------------------------</Notes>\r\n  </EmployeeAdd>\r\n</EmployeeAddRq>\r\n\r\n  </QBXMLMsgsRq>\r\n</QBXML>",
+          "Timestamp": "2026-05-23T12:09:21.219671Z"
+        },
+        {
+          "EntityType": "Employees",
+          "SourceIdentifier": "SJOLUND, HALEY",
+          "Success": false,
+          "ErrorMessage": "QBXML request failed (QB2021-Import): QuickBooks found an error when parsing the provided XML text stream.",
+          "QBXMLRequest": "<?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<?qbxml version=\"15.0\"?>\r\n<QBXML>\r\n  <QBXMLMsgsRq onError=\"continueOnError\">\r\n    <EmployeeAddRq>\r\n  <EmployeeAdd>\r\n    <IsActive>true</IsActive>\r\n    <FirstName>HALEY</FirstName>\r\n    <LastName>SJOLUND</LastName>\r\n    <EmployeeAddress>\r\n      <Addr1>3406 S 17th Street</Addr1>\r\n      <City>Milwaukee</City>\r\n      <State>WI</State>\r\n      <PostalCode>53215</PostalCode>\r\n    </EmployeeAddress>\r\n    <Email>sjolundhaley@gmail.com</Email>\r\n    <SSN>390-25-4977</SSN>\r\n    <HiredDate>2023-10-30</HiredDate>\r\n    <Notes>RAISES AND PROMOTIONS HISTORY\r\nFROM EMPLOYEE ORGANIZER\r\n==========================\r\nJob Title\t\t\t: Current\r\nEffective Date\t\t: 01/09/2021\r\nEnd Date\t\t\t: \r\nCompensation Amount\t: 10.00\r\nTarget Bonus\t\t: \r\nPayroll Item\t\t: HOURLY\r\n--------------------------------------------------------\r\nJob Title\t\t\t: Current\r\nEffective Date\t\t: 01/09/2021\r\nEnd Date\t\t\t: \r\nCompensation Amount\t: 15.00\r\nTarget Bonus\t\t: \r\nPayroll Item\t\t: OVERTIME\r\n--------------------------------------------------------\r\nJob Title\t\t\t: \r\nEffective Date\t\t: 06/02/2020\r\nEnd Date\t\t\t: 01/08/2021\r\nCompensation Amount\t: 9.00\r\nTarget Bonus\t\t: \r\nPayroll Item\t\t: HOURLY\r\n--------------------------------------------------------\r\nJob Title\t\t\t: \r\nEffective Date\t\t: 06/02/2020\r\nEnd Date\t\t\t: 01/08/2021\r\nCompensation Amount\t: 13.50\r\nTarget Bonus\t\t: \r\nPayroll Item\t\t: OVERTIME\r\n--------------------------------------------------------\r\nJob Title\t\t\t: \r\nEffective Date\t\t: 03/17/2020\r\nEnd Date\t\t\t: 06/01/2020\r\nCompensation Amount\t: 8.00\r\nTarget Bonus\t\t: \r\nPayroll Item\t\t: HOURLY\r\n--------------------------------------------------------\r\nJob Title\t\t\t: \r\nEffective Date\t\t: 03/17/2020\r\nEnd Date\t\t\t: 06/01/2020\r\nCompensation Amount\t: 12.00\r\nTarget Bonus\t\t: \r\nPayroll Item\t\t: OVERTIME\r\n--------------------------------------------------------</Notes>\r\n  </EmployeeAdd>\r\n</EmployeeAddRq>\r\n\r\n  </QBXMLMsgsRq>\r\n</QBXML>",
+          "Timestamp": "2026-05-23T12:09:21.3920338Z"
+        },
+        {
+          "EntityType": "Employees",
+          "SourceIdentifier": "WATERS, RODNEY",
+          "Success": false,
+          "ErrorMessage": "QBXML request failed (QB2021-Import): QuickBooks found an error when parsing the provided XML text stream.",
+          "QBXMLRequest": "<?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<?qbxml version=\"15.0\"?>\r\n<QBXML>\r\n  <QBXMLMsgsRq onError=\"continueOnError\">\r\n    <EmployeeAddRq>\r\n  <EmployeeAdd>\r\n    <IsActive>true</IsActive>\r\n    <FirstName>RODNEY</FirstName>\r\n    <LastName>WATERS</LastName>\r\n    <EmployeeAddress>\r\n      <Addr1>1831 S 59TH STREET</Addr1>\r\n      <City>WEST ALLIS</City>\r\n      <State>WI</State>\r\n      <PostalCode>53214</PostalCode>\r\n    </EmployeeAddress>\r\n    <Email>rwaters176@gmail.com</Email>\r\n    <SSN>394-50-4009</SSN>\r\n    <HiredDate>2023-11-01</HiredDate>\r\n    <BirthDate>1948-10-25</BirthDate>\r\n    <Notes>RAISES AND PROMOTIONS HISTORY\r\nFROM EMPLOYEE ORGANIZER\r\n==========================\r\nJob Title\t\t\t: Current\r\nEffective Date\t\t: 04/30/2018\r\nEnd Date\t\t\t: \r\nCompensation Amount\t: \r\nTarget Bonus\t\t: \r\nPayroll Item\t\t: HOURLY\r\n--------------------------------------------------------\r\nJob Title\t\t\t: Current\r\nEffective Date\t\t: 04/30/2018\r\nEnd Date\t\t\t: \r\nCompensation Amount\t: \r\nTarget Bonus\t\t: \r\nPayroll Item\t\t: OVERTIME\r\n--------------------------------------------------------\r\nJob Title\t\t\t: Current\r\nEffective Date\t\t: 04/30/2018\r\nEnd Date\t\t\t: \r\nCompensation Amount\t: 7,800.00\r\nTarget Bonus\t\t: \r\nPayroll Item\t\t: SALARY\r\n--------------------------------------------------------\r\nJob Title\t\t\t: \r\nEffective Date\t\t: 04/17/2018\r\nEnd Date\t\t\t: 04/29/2018\r\nCompensation Amount\t: \r\nTarget Bonus\t\t: \r\nPayroll Item\t\t: HOURLY\r\n--------------------------------------------------------\r\nJob Title\t\t\t: \r\nEffective Date\t\t: 04/17/2018\r\nEnd Date\t\t\t: 04/29/2018\r\nCompensation Amount\t: \r\nTarget Bonus\t\t: \r\nPayroll Item\t\t: OVERTIME\r\n--------------------------------------------------------\r\nJob Title\t\t\t: \r\nEffective Date\t\t: 04/17/2018\r\nEnd Date\t\t\t: 04/29/2018\r\nCompensation Amount\t: 9,100.00\r\nTarget Bonus\t\t: \r\nPayroll Item\t\t: SALARY\r\n--------------------------------------------------------</Notes>\r\n  </EmployeeAdd>\r\n</EmployeeAddRq>\r\n\r\n  </QBXMLMsgsRq>\r\n</QBXML>",
+          "Timestamp": "2026-05-23T12:09:21.656929Z"
+        }
+      ]
+    },
+    "SalesReceipts": {
+      "EntityType": "SalesReceipts",
+      "TotalAttempted": 30,
+      "Succeeded": 0,
+      "Failed": 30,
+      "Skipped": 0,
+      "Duration": "00:00:01.4678127",
+      "FailedRecords": [
+        {
+          "EntityType": "SalesReceipts",
+          "SourceIdentifier": "149-1701021677",
+          "Success": false,
+          "ErrorMessage": "QBXML request failed (QB2021-Import): QuickBooks found an error when parsing the provided XML text stream.",
+          "QBXMLRequest": "<?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<?qbxml version=\"15.0\"?>\r\n<QBXML>\r\n  <QBXMLMsgsRq onError=\"continueOnError\">\r\n    <SalesReceiptAddRq>\r\n  <SalesReceiptAdd>\r\n    <CustomerRef>\r\n      <FullName>CASH REGISTER</FullName>\r\n    </CustomerRef>\r\n    <TxnDate>2023-11-30</TxnDate>\r\n    <RefNumber>1</RefNumber>\r\n    <DepositToAccountRef>\r\n      <FullName>1 CASH REGISTER SALES</FullName>\r\n    </DepositToAccountRef>\r\n    <IsToBePrinted>false</IsToBePrinted>\r\n    <SalesReceiptLineAdd>\r\n      <ItemRef>\r\n        <FullName>FOOD</FullName>\r\n      </ItemRef>\r\n      <Desc>SALES PRE REGISTER - 20794.13/1.06</Desc>\r\n      <Rate>19617.10</Rate>\r\n      <ClassRef>\r\n        <FullName>All Locations</FullName>\r\n      </ClassRef>\r\n      <Amount>19617.10</Amount>\r\n      <SalesTaxCodeRef>\r\n        <FullName>Tax</FullName>\r\n      </SalesTaxCodeRef>\r\n    </SalesReceiptLineAdd>\r\n    <SalesReceiptLineAdd>\r\n      <Desc>STARTING JAN 1.64</Desc>\r\n      <ClassRef>\r\n        <FullName>All Locations</FullName>\r\n      </ClassRef>\r\n    </SalesReceiptLineAdd>\r\n    <SalesReceiptLineAdd>\r\n      <Desc>Starting JAN NEW RATE FOR SALES TAX MILW CO 5.5 TO 5.9 PLUS EXPO .5 THEREFORE, NEW RATE TOTAL 6.4</Desc>\r\n    </SalesReceiptLineAdd>\r\n  </SalesReceiptAdd>\r\n</SalesReceiptAddRq>\r\n\r\n  </QBXMLMsgsRq>\r\n</QBXML>",
+          "Timestamp": "2026-05-23T12:09:21.7028633Z"
+        },
+        {
+          "EntityType": "SalesReceipts",
+          "SourceIdentifier": "230-1701890732",
+          "Success": false,
+          "ErrorMessage": "QBXML request failed (QB2021-Import): QuickBooks found an error when parsing the provided XML text stream.",
+          "QBXMLRequest": "<?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<?qbxml version=\"15.0\"?>\r\n<QBXML>\r\n  <QBXMLMsgsRq onError=\"continueOnError\">\r\n    <SalesReceiptAddRq>\r\n  <SalesReceiptAdd>\r\n    <CustomerRef>\r\n      <FullName>CASH REGISTER</FullName>\r\n    </CustomerRef>\r\n    <TxnDate>2023-12-31</TxnDate>\r\n    <RefNumber>2</RefNumber>\r\n    <DepositToAccountRef>\r\n      <FullName>1 CASH REGISTER SALES</FullName>\r\n    </DepositToAccountRef>\r\n    <IsToBePrinted>false</IsToBePrinted>\r\n    <SalesReceiptLineAdd>\r\n      <ItemRef>\r\n        <FullName>FOOD</FullName>\r\n      </ItemRef>\r\n      <Desc>SALES PRE REGISTER - 25249.56/1.06</Desc>\r\n      <Rate>23820.34</Rate>\r\n      <ClassRef>\r\n        <FullName>All Locations</FullName>\r\n      </ClassRef>\r\n      <Amount>23820.34</Amount>\r\n      <SalesTaxCodeRef>\r\n        <FullName>Tax</FullName>\r\n      </SalesTaxCodeRef>\r\n    </SalesReceiptLineAdd>\r\n    <SalesReceiptLineAdd>\r\n      <Desc>STARTING JAN 1.64</Desc>\r\n      <ClassRef>\r\n        <FullName>All Locations</FullName>\r\n      </ClassRef>\r\n    </SalesReceiptLineAdd>\r\n    <SalesReceiptLineAdd>\r\n      <Desc>Starting JAN NEW RATE FOR SALES TAX MILW CO 5.5 TO 5.9 PLUS EXPO .5 THEREFORE, NEW RATE TOTAL 6.4</Desc>\r\n      <ClassRef>\r\n        <FullName>All Locations</FullName>\r\n      </ClassRef>\r\n    </SalesReceiptLineAdd>\r\n    <SalesReceiptLineAdd>\r\n      <Desc>NEW RATE XXXX/1.06</Desc>\r\n    </SalesReceiptLineAdd>\r\n  </SalesReceiptAdd>\r\n</SalesReceiptAddRq>\r\n\r\n  </QBXMLMsgsRq>\r\n</QBXML>",
+          "Timestamp": "2026-05-23T12:09:21.7494904Z"
+        },
+        {
+          "EntityType": "SalesReceipts",
+          "SourceIdentifier": "244-1701890934",
+          "Success": false,
+          "ErrorMessage": "QBXML request failed (QB2021-Import): QuickBooks found an error when parsing the provided XML text stream.",
+          "QBXMLRequest": "<?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<?qbxml version=\"15.0\"?>\r\n<QBXML>\r\n  <QBXMLMsgsRq onError=\"continueOnError\">\r\n    <SalesReceiptAddRq>\r\n  <SalesReceiptAdd>\r\n    <CustomerRef>\r\n      <FullName>CASH REGISTER</FullName>\r\n    </CustomerRef>\r\n    <TxnDate>2024-01-31</TxnDate>\r\n    <RefNumber>3</RefNumber>\r\n    <DepositToAccountRef>\r\n      <FullName>1 CASH REGISTER SALES</FullName>\r\n    </DepositToAccountRef>\r\n    <IsToBePrinted>false</IsToBePrinted>\r\n    <SalesReceiptLineAdd>\r\n      <ItemRef>\r\n        <FullName>FOOD</FullName>\r\n      </ItemRef>\r\n      <Desc>SALES PRE REGISTER - 22894.89/1.064</Desc>\r\n      <Rate>21517.75</Rate>\r\n      <ClassRef>\r\n        <FullName>All Locations</FullName>\r\n      </ClassRef>\r\n      <Amount>21517.75</Amount>\r\n      <SalesTaxCodeRef>\r\n        <FullName>Tax</FullName>\r\n      </SalesTaxCodeRef>\r\n    </SalesReceiptLineAdd>\r\n    <SalesReceiptLineAdd>\r\n      <Desc>STARTING JAN 1.64</Desc>\r\n      <ClassRef>\r\n        <FullName>All Locations</FullName>\r\n      </ClassRef>\r\n    </SalesReceiptLineAdd>\r\n    <SalesReceiptLineAdd>\r\n      <Desc>Starting JAN NEW RATE FOR SALES TAX MILW CO 5.5 TO 5.9 PLUS EXPO .5 THEREFORE, NEW RATE TOTAL 6.4</Desc>\r\n      <ClassRef>\r\n        <FullName>All Locations</FullName>\r\n      </ClassRef>\r\n    </SalesReceiptLineAdd>\r\n    <SalesReceiptLineAdd>\r\n      <Desc>5% wi, .9 milw co, .5 expo=6.4%</Desc>\r\n      <ClassRef>\r\n        <FullName>All Locations</FullName>\r\n      </ClassRef>\r\n    </SalesReceiptLineAdd>\r\n  </SalesReceiptAdd>\r\n</SalesReceiptAddRq>\r\n\r\n  </QBXMLMsgsRq>\r\n</QBXML>",
+          "Timestamp": "2026-05-23T12:09:21.7950273Z"
+        },
+        {
+          "EntityType": "SalesReceipts",
+          "SourceIdentifier": "93C-1709264004",
+          "Success": false,
+          "ErrorMessage": "QBXML request failed (QB2021-Import): QuickBooks found an error when parsing the provided XML text stream.",
+          "QBXMLRequest": "<?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<?qbxml version=\"15.0\"?>\r\n<QBXML>\r\n  <QBXMLMsgsRq onError=\"continueOnError\">\r\n    <SalesReceiptAddRq>\r\n  <SalesReceiptAdd>\r\n    <CustomerRef>\r\n      <FullName>CASH REGISTER</FullName>\r\n    </CustomerRef>\r\n    <TxnDate>2024-02-29</TxnDate>\r\n    <RefNumber>4</RefNumber>\r\n    <DepositToAccountRef>\r\n      <FullName>1 CASH REGISTER SALES</FullName>\r\n    </DepositToAccountRef>\r\n    <IsToBePrinted>false</IsToBePrinted>\r\n    <SalesReceiptLineAdd>\r\n      <ItemRef>\r\n        <FullName>FOOD</FullName>\r\n      </ItemRef>\r\n      <Desc>SALES PRE REGISTER - 34195.17/1.064</Desc>\r\n      <Rate>32138.32</Rate>\r\n      <ClassRef>\r\n        <FullName>All Locations</FullName>\r\n      </ClassRef>\r\n      <Amount>32138.32</Amount>\r\n      <SalesTaxCodeRef>\r\n        <FullName>Tax</FullName>\r\n      </SalesTaxCodeRef>\r\n    </SalesReceiptLineAdd>\r\n    <SalesReceiptLineAdd>\r\n      <Desc>STARTING JAN 1.64</Desc>\r\n      <ClassRef>\r\n        <FullName>All Locations</FullName>\r\n      </ClassRef>\r\n    </SalesReceiptLineAdd>\r\n    <SalesReceiptLineAdd>\r\n      <Desc>Starting JAN NEW RATE FOR SALES TAX MILW CO 5.5 TO 5.9 PLUS EXPO .5 THEREFORE, NEW RATE TOTAL 6.4</Desc>\r\n      <ClassRef>\r\n        <FullName>All Locations</FullName>\r\n      </ClassRef>\r\n    </SalesReceiptLineAdd>\r\n    <SalesReceiptLineAdd>\r\n      <Desc>NEW RATE XXXX/1.064</Desc>\r\n      <ClassRef>\r\n        <FullName>All Locations</FullName>\r\n      </ClassRef>\r\n    </SalesReceiptLineAdd>\r\n  </SalesReceiptAdd>\r\n</SalesReceiptAddRq>\r\n\r\n  </QBXMLMsgsRq>\r\n</QBXML>",
+          "Timestamp": "2026-05-23T12:09:21.8516954Z"
+        },
+        {
+          "EntityType": "SalesReceipts",
+          "SourceIdentifier": "96A-1709399673",
+          "Success": false,
+          "ErrorMessage": "QBXML request failed (QB2021-Import): QuickBooks found an error when parsing the provided XML text stream.",
+          "QBXMLRequest": "<?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<?qbxml version=\"15.0\"?>\r\n<QBXML>\r\n  <QBXMLMsgsRq onError=\"continueOnError\">\r\n    <SalesReceiptAddRq>\r\n  <SalesReceiptAdd>\r\n    <CustomerRef>\r\n      <FullName>CASH REGISTER</FullName>\r\n    </CustomerRef>\r\n    <TxnDate>2024-03-31</TxnDate>\r\n    <RefNumber>5</RefNumber>\r\n    <DepositToAccountRef>\r\n      <FullName>1 CASH REGISTER SALES</FullName>\r\n    </DepositToAccountRef>\r\n    <IsToBePrinted>false</IsToBePrinted>\r\n    <SalesReceiptLineAdd>\r\n      <ItemRef>\r\n        <FullName>FOOD</FullName>\r\n      </ItemRef>\r\n      <Desc>SALES PRE REGISTER - 31928.32/1.064</Desc>\r\n      <Rate>30007.82</Rate>\r\n      <ClassRef>\r\n        <FullName>All Locations</FullName>\r\n      </ClassRef>\r\n      <Amount>30007.82</Amount>\r\n      <SalesTaxCodeRef>\r\n        <FullName>Tax</FullName>\r\n      </SalesTaxCodeRef>\r\n    </SalesReceiptLineAdd>\r\n    <SalesReceiptLineAdd>\r\n      <Desc>STARTING JAN 1.64</Desc>\r\n      <ClassRef>\r\n        <FullName>All Locations</FullName>\r\n      </ClassRef>\r\n    </SalesReceiptLineAdd>\r\n    <SalesReceiptLineAdd>\r\n      <Desc>Starting JAN NEW RATE FOR SALES TAX MILW CO 5.5 TO 5.9 PLUS EXPO .5 THEREFORE, NEW RATE TOTAL 6.4</Desc>\r\n      <ClassRef>\r\n        <FullName>All Locations</FullName>\r\n      </ClassRef>\r\n    </SalesReceiptLineAdd>\r\n    <SalesReceiptLineAdd>\r\n      <ClassRef>\r\n        <FullName>All Locations</FullName>\r\n      </ClassRef>\r\n    </SalesReceiptLineAdd>\r\n  </SalesReceiptAdd>\r\n</SalesReceiptAddRq>\r\n\r\n  </QBXMLMsgsRq>\r\n</QBXML>",
+          "Timestamp": "2026-05-23T12:09:21.8995967Z"
+        },
+        {
+          "EntityType": "SalesReceipts",
+          "SourceIdentifier": "B3D-1713718176",
+          "Success": false,
+          "ErrorMessage": "QBXML request failed (QB2021-Import): QuickBooks found an error when parsing the provided XML text stream.",
+          "QBXMLRequest": "<?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<?qbxml version=\"15.0\"?>\r\n<QBXML>\r\n  <QBXMLMsgsRq onError=\"continueOnError\">\r\n    <SalesReceiptAddRq>\r\n  <SalesReceiptAdd>\r\n    <CustomerRef>\r\n      <FullName>CASH REGISTER</FullName>\r\n    </CustomerRef>\r\n    <TxnDate>2024-04-30</TxnDate>\r\n    <RefNumber>6</RefNumber>\r\n    <DepositToAccountRef>\r\n      <FullName>1 CASH REGISTER SALES</FullName>\r\n    </DepositToAccountRef>\r\n    <IsToBePrinted>false</IsToBePrinted>\r\n    <SalesReceiptLineAdd>\r\n      <ItemRef>\r\n        <FullName>FOOD</FullName>\r\n      </ItemRef>\r\n      <Desc>SALES PRE REGISTER - 29809.04/1.064</Desc>\r\n      <Rate>28016.02</Rate>\r\n      <ClassRef>\r\n        <FullName>All Locations</FullName>\r\n      </ClassRef>\r\n      <Amount>28016.02</Amount>\r\n      <SalesTaxCodeRef>\r\n        <FullName>Tax</FullName>\r\n      </SalesTaxCodeRef>\r\n    </SalesReceiptLineAdd>\r\n    <SalesReceiptLineAdd>\r\n      <Desc>STARTING JAN 1.64</Desc>\r\n      <ClassRef>\r\n        <FullName>All Locations</FullName>\r\n      </ClassRef>\r\n    </SalesReceiptLineAdd>\r\n    <SalesReceiptLineAdd>\r\n      <Desc>Starting JAN NEW RATE FOR SALES TAX MILW CO 5.5 TO 5.9 PLUS EXPO .5 THEREFORE, NEW RATE TOTAL 6.4</Desc>\r\n      <ClassRef>\r\n        <FullName>All Locations</FullName>\r\n      </ClassRef>\r\n    </SalesReceiptLineAdd>\r\n    <SalesReceiptLineAdd>\r\n      <ClassRef>\r\n        <FullName>All Locations</FullName>\r\n      </ClassRef>\r\n    </SalesReceiptLineAdd>\r\n  </SalesReceiptAdd>\r\n</SalesReceiptAddRq>\r\n\r\n  </QBXMLMsgsRq>\r\n</QBXML>",
+          "Timestamp": "2026-05-23T12:09:21.9455909Z"
+        },
+        {
+          "EntityType": "SalesReceipts",
+          "SourceIdentifier": "FE5-1716748761",
+          "Success": false,
+          "ErrorMessage": "QBXML request failed (QB2021-Import): QuickBooks found an error when parsing the provided XML text stream.",
+          "QBXMLRequest": "<?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<?qbxml version=\"15.0\"?>\r\n<QBXML>\r\n  <QBXMLMsgsRq onError=\"continueOnError\">\r\n    <SalesReceiptAddRq>\r\n  <SalesReceiptAdd>\r\n    <CustomerRef>\r\n      <FullName>CASH REGISTER</FullName>\r\n    </CustomerRef>\r\n    <TxnDate>2024-05-31</TxnDate>\r\n    <RefNumber>7</RefNumber>\r\n    <DepositToAccountRef>\r\n      <FullName>1 CASH REGISTER SALES</FullName>\r\n    </DepositToAccountRef>\r\n    <IsToBePrinted>false</IsToBePrinted>\r\n    <SalesReceiptLineAdd>\r\n      <ItemRef>\r\n        <FullName>FOOD</FullName>\r\n      </ItemRef>\r\n      <Desc>SALES PRE REGISTER - 34795.98/1.064</Desc>\r\n      <Rate>32702.99</Rate>\r\n      <ClassRef>\r\n        <FullName>All Locations</FullName>\r\n      </ClassRef>\r\n      <Amount>32702.99</Amount>\r\n      <SalesTaxCodeRef>\r\n        <FullName>Tax</FullName>\r\n      </SalesTaxCodeRef>\r\n    </SalesReceiptLineAdd>\r\n    <SalesReceiptLineAdd>\r\n      <Desc>STARTING JAN 1.64</Desc>\r\n      <ClassRef>\r\n        <FullName>All Locations</FullName>\r\n      </ClassRef>\r\n    </SalesReceiptLineAdd>\r\n    <SalesReceiptLineAdd>\r\n      <Desc>Starting JAN NEW RATE FOR SALES TAX MILW CO 5.5 TO 5.9 PLUS EXPO .5 THEREFORE, NEW RATE TOTAL 6.4</Desc>\r\n      <ClassRef>\r\n        <FullName>All Locations</FullName>\r\n      </ClassRef>\r\n    </SalesReceiptLineAdd>\r\n    <SalesReceiptLineAdd>\r\n      <ClassRef>\r\n        <FullName>All Locations</FullName>\r\n      </ClassRef>\r\n    </SalesReceiptLineAdd>\r\n  </SalesReceiptAdd>\r\n</SalesReceiptAddRq>\r\n\r\n  </QBXMLMsgsRq>\r\n</QBXML>",
+          "Timestamp": "2026-05-23T12:09:21.9938503Z"
+        },
+        {
+          "EntityType": "SalesReceipts",
+          "SourceIdentifier": "1226-1719244014",
+          "Success": false,
+          "ErrorMessage": "QBXML request failed (QB2021-Import): QuickBooks found an error when parsing the provided XML text stream.",
+          "QBXMLRequest": "<?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<?qbxml version=\"15.0\"?>\r\n<QBXML>\r\n  <QBXMLMsgsRq onError=\"continueOnError\">\r\n    <SalesReceiptAddRq>\r\n  <SalesReceiptAdd>\r\n    <CustomerRef>\r\n      <FullName>CASH REGISTER</FullName>\r\n    </CustomerRef>\r\n    <TxnDate>2024-06-30</TxnDate>\r\n    <RefNumber>8</RefNumber>\r\n    <DepositToAccountRef>\r\n      <FullName>1 CASH REGISTER SALES</FullName>\r\n    </DepositToAccountRef>\r\n    <IsToBePrinted>false</IsToBePrinted>\r\n    <SalesReceiptLineAdd>\r\n      <ItemRef>\r\n        <FullName>FOOD</FullName>\r\n      </ItemRef>\r\n      <Desc>SALES PRE REGISTER - 32228.25/1.064</Desc>\r\n      <Rate>30289.7</Rate>\r\n      <ClassRef>\r\n        <FullName>All Locations</FullName>\r\n      </ClassRef>\r\n      <Amount>30289.70</Amount>\r\n      <SalesTaxCodeRef>\r\n        <FullName>Tax</FullName>\r\n      </SalesTaxCodeRef>\r\n    </SalesReceiptLineAdd>\r\n    <SalesReceiptLineAdd>\r\n      <Desc>STARTING JAN 1.64</Desc>\r\n      <ClassRef>\r\n        <FullName>All Locations</FullName>\r\n      </ClassRef>\r\n    </SalesReceiptLineAdd>\r\n    <SalesReceiptLineAdd>\r\n      <Desc>Starting JAN NEW RATE FOR SALES TAX MILW CO 5.5 TO 5.9 PLUS EXPO .5 THEREFORE, NEW RATE TOTAL 6.4</Desc>\r\n      <ClassRef>\r\n        <FullName>All Locations</FullName>\r\n      </ClassRef>\r\n    </SalesReceiptLineAdd>\r\n    <SalesReceiptLineAdd>\r\n      <ClassRef>\r\n        <FullName>All Locations</FullName>\r\n      </ClassRef>\r\n    </SalesReceiptLineAdd>\r\n  </SalesReceiptAdd>\r\n</SalesReceiptAddRq>\r\n\r\n  </QBXMLMsgsRq>\r\n</QBXML>",
+          "Timestamp": "2026-05-23T12:09:22.0510864Z"
+        },
+        {
+          "EntityType": "SalesReceipts",
+          "SourceIdentifier": "146B-1722717557",
+          "Success": false,
+          "ErrorMessage": "QBXML request failed (QB2021-Import): QuickBooks found an error when parsing the provided XML text stream.",
+          "QBXMLRequest": "<?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<?qbxml version=\"15.0\"?>\r\n<QBXML>\r\n  <QBXMLMsgsRq onError=\"continueOnError\">\r\n    <SalesReceiptAddRq>\r\n  <SalesReceiptAdd>\r\n    <CustomerRef>\r\n      <FullName>CASH REGISTER</FullName>\r\n    </CustomerRef>\r\n    <TxnDate>2024-07-31</TxnDate>\r\n    <RefNumber>9</RefNumber>\r\n    <DepositToAccountRef>\r\n      <FullName>1 CASH REGISTER SALES</FullName>\r\n    </DepositToAccountRef>\r\n    <IsToBePrinted>false</IsToBePrinted>\r\n    <SalesReceiptLineAdd>\r\n      <ItemRef>\r\n        <FullName>FOOD</FullName>\r\n      </ItemRef>\r\n      <Desc>SALES PRE REGISTER - 29029.29/1.064</Desc>\r\n      <Rate>27283.16</Rate>\r\n      <ClassRef>\r\n        <FullName>All Locations</FullName>\r\n      </ClassRef>\r\n      <Amount>27283.16</Amount>\r\n      <SalesTaxCodeRef>\r\n        <FullName>Tax</FullName>\r\n      </SalesTaxCodeRef>\r\n    </SalesReceiptLineAdd>\r\n    <SalesReceiptLineAdd>\r\n      <Desc>STARTING JAN 1.64</Desc>\r\n      <ClassRef>\r\n        <FullName>All Locations</FullName>\r\n      </ClassRef>\r\n    </SalesReceiptLineAdd>\r\n    <SalesReceiptLineAdd>\r\n      <Desc>Starting JAN NEW RATE FOR SALES TAX MILW CO 5.5 TO 5.9 PLUS EXPO .5 THEREFORE, NEW RATE TOTAL 6.4</Desc>\r\n      <ClassRef>\r\n        <FullName>All Locations</FullName>\r\n      </ClassRef>\r\n    </SalesReceiptLineAdd>\r\n    <SalesReceiptLineAdd>\r\n      <ClassRef>\r\n        <FullName>All Locations</FullName>\r\n      </ClassRef>\r\n    </SalesReceiptLineAdd>\r\n  </SalesReceiptAdd>\r\n</SalesReceiptAddRq>\r\n\r\n  </QBXMLMsgsRq>\r\n</QBXML>",
+          "Timestamp": "2026-05-23T12:09:22.0960862Z"
+        },
+        {
+          "EntityType": "SalesReceipts",
+          "SourceIdentifier": "178E-1724870103",
+          "Success": false,
+          "ErrorMessage": "QBXML request failed (QB2021-Import): QuickBooks found an error when parsing the provided XML text stream.",
+          "QBXMLRequest": "<?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<?qbxml version=\"15.0\"?>\r\n<QBXML>\r\n  <QBXMLMsgsRq onError=\"continueOnError\">\r\n    <SalesReceiptAddRq>\r\n  <SalesReceiptAdd>\r\n    <CustomerRef>\r\n      <FullName>CASH REGISTER</FullName>\r\n    </CustomerRef>\r\n    <TxnDate>2024-08-31</TxnDate>\r\n    <RefNumber>10</RefNumber>\r\n    <DepositToAccountRef>\r\n      <FullName>1 CASH REGISTER SALES</FullName>\r\n    </DepositToAccountRef>\r\n    <IsToBePrinted>false</IsToBePrinted>\r\n    <SalesReceiptLineAdd>\r\n      <ItemRef>\r\n        <FullName>FOOD</FullName>\r\n      </ItemRef>\r\n      <Desc>SALES PRE REGISTER - 30752.79/1.064</Desc>\r\n      <Rate>28903</Rate>\r\n      <ClassRef>\r\n        <FullName>All Locations</FullName>\r\n      </ClassRef>\r\n      <Amount>28903.00</Amount>\r\n      <SalesTaxCodeRef>\r\n        <FullName>Tax</FullName>\r\n      </SalesTaxCodeRef>\r\n    </SalesReceiptLineAdd>\r\n    <SalesReceiptLineAdd>\r\n      <Desc>STARTING JAN 1.64</Desc>\r\n      <ClassRef>\r\n        <FullName>All Locations</FullName>\r\n      </ClassRef>\r\n    </SalesReceiptLineAdd>\r\n    <SalesReceiptLineAdd>\r\n      <Desc>Starting JAN NEW RATE FOR SALES TAX MILW CO 5.5 TO 5.9 PLUS EXPO .5 THEREFORE, NEW RATE TOTAL 6.4</Desc>\r\n      <ClassRef>\r\n        <FullName>All Locations</FullName>\r\n      </ClassRef>\r\n    </SalesReceiptLineAdd>\r\n    <SalesReceiptLineAdd>\r\n      <ClassRef>\r\n        <FullName>All Locations</FullName>\r\n      </ClassRef>\r\n    </SalesReceiptLineAdd>\r\n  </SalesReceiptAdd>\r\n</SalesReceiptAddRq>\r\n\r\n  </QBXMLMsgsRq>\r\n</QBXML>",
+          "Timestamp": "2026-05-23T12:09:22.1421557Z"
+        },
+        {
+          "EntityType": "SalesReceipts",
+          "SourceIdentifier": "19CE-1727216376",
+          "Success": false,
+          "ErrorMessage": "QBXML request failed (QB2021-Import): QuickBooks found an error when parsing the provided XML text stream.",
+          "QBXMLRequest": "<?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<?qbxml version=\"15.0\"?>\r\n<QBXML>\r\n  <QBXMLMsgsRq onError=\"continueOnError\">\r\n    <SalesReceiptAddRq>\r\n  <SalesReceiptAdd>\r\n    <CustomerRef>\r\n      <FullName>CASH REGISTER</FullName>\r\n    </CustomerRef>\r\n    <TxnDate>2024-09-30</TxnDate>\r\n    <RefNumber>11</RefNumber>\r\n    <DepositToAccountRef>\r\n      <FullName>1 CASH REGISTER SALES</FullName>\r\n    </DepositToAccountRef>\r\n    <IsToBePrinted>false</IsToBePrinted>\r\n    <SalesReceiptLineAdd>\r\n      <ItemRef>\r\n        <FullName>FOOD</FullName>\r\n      </ItemRef>\r\n      <Desc>SALES PRE REGISTER - 27865.28 - 675 = 27190.28/1.064 note non-taxable sales 675</Desc>\r\n      <Rate>25554.78</Rate>\r\n      <ClassRef>\r\n        <FullName>All Locations</FullName>\r\n      </ClassRef>\r\n      <Amount>25554.78</Amount>\r\n      <SalesTaxCodeRef>\r\n        <FullName>Tax</FullName>\r\n      </SalesTaxCodeRef>\r\n    </SalesReceiptLineAdd>\r\n    <SalesReceiptLineAdd>\r\n      <Desc>STARTING JAN 1.64</Desc>\r\n      <ClassRef>\r\n        <FullName>All Locations</FullName>\r\n      </ClassRef>\r\n    </SalesReceiptLineAdd>\r\n    <SalesReceiptLineAdd>\r\n      <Desc>Starting JAN NEW RATE FOR SALES TAX MILW CO 5.5 TO 5.9 PLUS EXPO .5 THEREFORE, NEW RATE TOTAL 6.4</Desc>\r\n      <ClassRef>\r\n        <FullName>All Locations</FullName>\r\n      </ClassRef>\r\n    </SalesReceiptLineAdd>\r\n    <SalesReceiptLineAdd>\r\n      <Desc>SALES TAX EXEMPT FIRE FIGHTERS 675</Desc>\r\n      <ClassRef>\r\n        <FullName>All Locations</FullName>\r\n      </ClassRef>\r\n    </SalesReceiptLineAdd>\r\n    <SalesReceiptLineAdd>\r\n      <ItemRef>\r\n        <FullName>FOOD</FullName>\r\n      </ItemRef>\r\n      <Desc>SALES PRE REGISTER EXEMPT SALES TO FIRE FIGHTER</Desc>\r\n      <Rate>675.00</Rate>\r\n      <ClassRef>\r\n        <FullName>All Locations</FullName>\r\n      </ClassRef>\r\n      <Amount>675.00</Amount>\r\n      <SalesTaxCodeRef>\r\n        <FullName>Non</FullName>\r\n      </SalesTaxCodeRef>\r\n    </SalesReceiptLineAdd>\r\n  </SalesReceiptAdd>\r\n</SalesReceiptAddRq>\r\n\r\n  </QBXMLMsgsRq>\r\n</QBXML>",
+          "Timestamp": "2026-05-23T12:09:22.1871725Z"
+        },
+        {
+          "EntityType": "SalesReceipts",
+          "SourceIdentifier": "1C2C-1729771979",
+          "Success": false,
+          "ErrorMessage": "QBXML request failed (QB2021-Import): QuickBooks found an error when parsing the provided XML text stream.",
+          "QBXMLRequest": "<?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<?qbxml version=\"15.0\"?>\r\n<QBXML>\r\n  <QBXMLMsgsRq onError=\"continueOnError\">\r\n    <SalesReceiptAddRq>\r\n  <SalesReceiptAdd>\r\n    <CustomerRef>\r\n      <FullName>CASH REGISTER</FullName>\r\n    </CustomerRef>\r\n    <TxnDate>2024-10-31</TxnDate>\r\n    <RefNumber>12</RefNumber>\r\n    <DepositToAccountRef>\r\n      <FullName>1 CASH REGISTER SALES</FullName>\r\n    </DepositToAccountRef>\r\n    <IsToBePrinted>false</IsToBePrinted>\r\n    <SalesReceiptLineAdd>\r\n      <ItemRef>\r\n        <FullName>FOOD</FullName>\r\n      </ItemRef>\r\n      <Desc>SALES PRE REGISTER - 30278.89/1.064</Desc>\r\n      <Rate>28457.61</Rate>\r\n      <ClassRef>\r\n        <FullName>All Locations</FullName>\r\n      </ClassRef>\r\n      <Amount>28457.61</Amount>\r\n      <SalesTaxCodeRef>\r\n        <FullName>Tax</FullName>\r\n      </SalesTaxCodeRef>\r\n    </SalesReceiptLineAdd>\r\n    <SalesReceiptLineAdd>\r\n      <Desc>STARTING JAN 1.64</Desc>\r\n      <ClassRef>\r\n        <FullName>All Locations</FullName>\r\n      </ClassRef>\r\n    </SalesReceiptLineAdd>\r\n    <SalesReceiptLineAdd>\r\n      <Desc>Starting JAN NEW RATE FOR SALES TAX MILW CO 5.5 TO 5.9 PLUS EXPO .5 THEREFORE, NEW RATE TOTAL 6.4</Desc>\r\n      <ClassRef>\r\n        <FullName>All Locations</FullName>\r\n      </ClassRef>\r\n    </SalesReceiptLineAdd>\r\n    <SalesReceiptLineAdd>\r\n      <ClassRef>\r\n        <FullName>All Locations</FullName>\r\n      </ClassRef>\r\n    </SalesReceiptLineAdd>\r\n  </SalesReceiptAdd>\r\n</SalesReceiptAddRq>\r\n\r\n  </QBXMLMsgsRq>\r\n</QBXML>",
+          "Timestamp": "2026-05-23T12:09:22.2341866Z"
+        },
+        {
+          "EntityType": "SalesReceipts",
+          "SourceIdentifier": "1E82-1732470781",
+          "Success": false,
+          "ErrorMessage": "QBXML request failed (QB2021-Import): QuickBooks found an error when parsing the provided XML text stream.",
+          "QBXMLRequest": "<?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<?qbxml version=\"15.0\"?>\r\n<QBXML>\r\n  <QBXMLMsgsRq onError=\"continueOnError\">\r\n    <SalesReceiptAddRq>\r\n  <SalesReceiptAdd>\r\n    <CustomerRef>\r\n      <FullName>CASH REGISTER</FullName>\r\n    </CustomerRef>\r\n    <TxnDate>2024-11-30</TxnDate>\r\n    <RefNumber>13</RefNumber>\r\n    <DepositToAccountRef>\r\n      <FullName>1 CASH REGISTER SALES</FullName>\r\n    </DepositToAccountRef>\r\n    <IsToBePrinted>false</IsToBePrinted>\r\n    <SalesReceiptLineAdd>\r\n      <ItemRef>\r\n        <FullName>FOOD</FullName>\r\n      </ItemRef>\r\n      <Desc>SALES PRE REGISTER - 26265.93/1.064</Desc>\r\n      <Rate>24686.03</Rate>\r\n      <ClassRef>\r\n        <FullName>All Locations</FullName>\r\n      </ClassRef>\r\n      <Amount>24686.03</Amount>\r\n      <SalesTaxCodeRef>\r\n        <FullName>Tax</FullName>\r\n      </SalesTaxCodeRef>\r\n    </SalesReceiptLineAdd>\r\n    <SalesReceiptLineAdd>\r\n      <Desc>STARTING JAN 1.64</Desc>\r\n      <ClassRef>\r\n        <FullName>All Locations</FullName>\r\n      </ClassRef>\r\n    </SalesReceiptLineAdd>\r\n    <SalesReceiptLineAdd>\r\n      <Desc>Starting JAN NEW RATE FOR SALES TAX MILW CO 5.5 TO 5.9 PLUS EXPO .5 THEREFORE, NEW RATE TOTAL 6.4</Desc>\r\n      <ClassRef>\r\n        <FullName>All Locations</FullName>\r\n      </ClassRef>\r\n    </SalesReceiptLineAdd>\r\n    <SalesReceiptLineAdd>\r\n      <ClassRef>\r\n        <FullName>All Locations</FullName>\r\n      </ClassRef>\r\n    </SalesReceiptLineAdd>\r\n  </SalesReceiptAdd>\r\n</SalesReceiptAddRq>\r\n\r\n  </QBXMLMsgsRq>\r\n</QBXML>",
+          "Timestamp": "2026-05-23T12:09:22.2836787Z"
+        },
+        {
+          "EntityType": "SalesReceipts",
+          "SourceIdentifier": "20D0-1734898617",
+          "Success": false,
+          "ErrorMessage": "QBXML request failed (QB2021-Import): QuickBooks found an error when parsing the provided XML text stream.",
+          "QBXMLRequest": "<?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<?qbxml version=\"15.0\"?>\r\n<QBXML>\r\n  <QBXMLMsgsRq onError=\"continueOnError\">\r\n    <SalesReceiptAddRq>\r\n  <SalesReceiptAdd>\r\n    <CustomerRef>\r\n      <FullName>CASH REGISTER</FullName>\r\n    </CustomerRef>\r\n    <TxnDate>2024-12-31</TxnDate>\r\n    <RefNumber>14</RefNumber>\r\n    <DepositToAccountRef>\r\n      <FullName>1 CASH REGISTER SALES</FullName>\r\n    </DepositToAccountRef>\r\n    <IsToBePrinted>false</IsToBePrinted>\r\n    <SalesReceiptLineAdd>\r\n      <ItemRef>\r\n        <FullName>FOOD</FullName>\r\n      </ItemRef>\r\n      <Desc>SALES PRE REGISTER - (24341.15 - 894.80) = 23446.35/1.064 reduced by 3rd party fee of 894.80</Desc>\r\n      <Rate>22036.05</Rate>\r\n      <ClassRef>\r\n        <FullName>All Locations</FullName>\r\n      </ClassRef>\r\n      <Amount>22036.05</Amount>\r\n      <SalesTaxCodeRef>\r\n        <FullName>Tax</FullName>\r\n      </SalesTaxCodeRef>\r\n    </SalesReceiptLineAdd>\r\n    <SalesReceiptLineAdd>\r\n      <Desc>STARTING JAN 1.64</Desc>\r\n      <ClassRef>\r\n        <FullName>All Locations</FullName>\r\n      </ClassRef>\r\n    </SalesReceiptLineAdd>\r\n    <SalesReceiptLineAdd>\r\n      <Desc>Starting JAN NEW RATE FOR SALES TAX MILW CO 5.5 TO 5.9 PLUS EXPO .5 THEREFORE, NEW RATE TOTAL 6.4</Desc>\r\n      <ClassRef>\r\n        <FullName>All Locations</FullName>\r\n      </ClassRef>\r\n    </SalesReceiptLineAdd>\r\n    <SalesReceiptLineAdd>\r\n      <ClassRef>\r\n        <FullName>All Locations</FullName>\r\n      </ClassRef>\r\n    </SalesReceiptLineAdd>\r\n    <SalesReceiptLineAdd>\r\n      <ItemRef>\r\n        <FullName>COMMISSIONS PD</FullName>\r\n      </ItemRef>\r\n      <Desc>UPCHARGE COMM PD</Desc>\r\n      <ClassRef>\r\n        <FullName>All Locations</FullName>\r\n      </ClassRef>\r\n      <SalesTaxCodeRef>\r\n        <FullName>Tax</FullName>\r\n      </SalesTaxCodeRef>\r\n    </SalesReceiptLineAdd>\r\n  </SalesReceiptAdd>\r\n</SalesReceiptAddRq>\r\n\r\n  </QBXMLMsgsRq>\r\n</QBXML>",
+          "Timestamp": "2026-05-23T12:09:22.3319967Z"
+        },
+        {
+          "EntityType": "SalesReceipts",
+          "SourceIdentifier": "2434-1738523722",
+          "Success": false,
+          "ErrorMessage": "QBXML request failed (QB2021-Import): QuickBooks found an error when parsing the provided XML text stream.",
+          "QBXMLRequest": "<?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<?qbxml version=\"15.0\"?>\r\n<QBXML>\r\n  <QBXMLMsgsRq onError=\"continueOnError\">\r\n    <SalesReceiptAddRq>\r\n  <SalesReceiptAdd>\r\n    <CustomerRef>\r\n      <FullName>CASH REGISTER</FullName>\r\n    </CustomerRef>\r\n    <TxnDate>2025-01-31</TxnDate>\r\n    <RefNumber>15</RefNumber>\r\n    <DepositToAccountRef>\r\n      <FullName>1 CASH REGISTER SALES</FullName>\r\n    </DepositToAccountRef>\r\n    <IsToBePrinted>false</IsToBePrinted>\r\n    <SalesReceiptLineAdd>\r\n      <ItemRef>\r\n        <FullName>FOOD</FullName>\r\n      </ItemRef>\r\n      <Desc>SALES PRE REGISTER - 26419.28/1.064 THIS AMT WILL NOT INCLUDE 3RD PARTY SALES BUT WILL INCLUDE SALES TAX CHARGED ON ALL SALES EXCEPT 3RD PARTY.</Desc>\r\n      <Rate>24830.15</Rate>\r\n      <ClassRef>\r\n        <FullName>All Locations</FullName>\r\n      </ClassRef>\r\n      <Amount>24830.15</Amount>\r\n      <SalesTaxCodeRef>\r\n        <FullName>Tax</FullName>\r\n      </SalesTaxCodeRef>\r\n    </SalesReceiptLineAdd>\r\n    <SalesReceiptLineAdd>\r\n      <ClassRef>\r\n        <FullName>All Locations</FullName>\r\n      </ClassRef>\r\n    </SalesReceiptLineAdd>\r\n    <SalesReceiptLineAdd>\r\n      <ItemRef>\r\n        <FullName>3rd Party Sales</FullName>\r\n      </ItemRef>\r\n      <Desc>Sales to 3rd party. They are responsible for sales and expo NO SALES TAX SHOULD BE COLLECT ON THIS SALE - THIS SALE ONLY REPRESENTS THE AMOUNT RECEIVED IT IS NOT IMPORTANT WHAT THE 3RD PARTY SOLD IT FOR</Desc>\r\n      <Rate>2683.27</Rate>\r\n      <ClassRef>\r\n        <FullName>All Locations</FullName>\r\n      </ClassRef>\r\n      <Amount>2683.27</Amount>\r\n      <SalesTaxCodeRef>\r\n        <FullName>Non</FullName>\r\n      </SalesTaxCodeRef>\r\n    </SalesReceiptLineAdd>\r\n  </SalesReceiptAdd>\r\n</SalesReceiptAddRq>\r\n\r\n  </QBXMLMsgsRq>\r\n</QBXML>",
+          "Timestamp": "2026-05-23T12:09:22.3798196Z"
+        },
+        {
+          "EntityType": "SalesReceipts",
+          "SourceIdentifier": "26A9-1740017774",
+          "Success": false,
+          "ErrorMessage": "QBXML request failed (QB2021-Import): QuickBooks found an error when parsing the provided XML text stream.",
+          "QBXMLRequest": "<?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<?qbxml version=\"15.0\"?>\r\n<QBXML>\r\n  <QBXMLMsgsRq onError=\"continueOnError\">\r\n    <SalesReceiptAddRq>\r\n  <SalesReceiptAdd>\r\n    <CustomerRef>\r\n      <FullName>CASH REGISTER</FullName>\r\n    </CustomerRef>\r\n    <TxnDate>2025-02-28</TxnDate>\r\n    <RefNumber>16</RefNumber>\r\n    <DepositToAccountRef>\r\n      <FullName>1 CASH REGISTER SALES</FullName>\r\n    </DepositToAccountRef>\r\n    <IsToBePrinted>false</IsToBePrinted>\r\n    <SalesReceiptLineAdd>\r\n      <ItemRef>\r\n        <FullName>FOOD</FullName>\r\n      </ItemRef>\r\n      <Desc>SALES PRE REGISTER - 26712.04/1.064 THIS AMT WILL NOT INCLUDE 3RD PARTY SALES BUT WILL INCLUDE SALES TAX CHARGED ON ALL SALES EXCEPT 3RD PARTY.</Desc>\r\n      <Rate>25105.3</Rate>\r\n      <ClassRef>\r\n        <FullName>All Locations</FullName>\r\n      </ClassRef>\r\n      <Amount>25105.30</Amount>\r\n      <SalesTaxCodeRef>\r\n        <FullName>Tax</FullName>\r\n      </SalesTaxCodeRef>\r\n    </SalesReceiptLineAdd>\r\n    <SalesReceiptLineAdd>\r\n      <ClassRef>\r\n        <FullName>All Locations</FullName>\r\n      </ClassRef>\r\n    </SalesReceiptLineAdd>\r\n    <SalesReceiptLineAdd>\r\n      <ItemRef>\r\n        <FullName>3rd Party Sales</FullName>\r\n      </ItemRef>\r\n      <Desc>Sales to 3rd party. They are responsible for sales and expo NO SALES TAX SHOULD BE COLLECT ON THIS SALE - THIS SALE ONLY REPRESENTS THE AMOUNT RECEIVED IT IS NOT IMPORTANT WHAT THE 3RD PARTY SOLD IT FOR</Desc>\r\n      <Rate>2480.51</Rate>\r\n      <ClassRef>\r\n        <FullName>All Locations</FullName>\r\n      </ClassRef>\r\n      <Amount>2480.51</Amount>\r\n      <SalesTaxCodeRef>\r\n        <FullName>Non</FullName>\r\n      </SalesTaxCodeRef>\r\n    </SalesReceiptLineAdd>\r\n  </SalesReceiptAdd>\r\n</SalesReceiptAddRq>\r\n\r\n  </QBXMLMsgsRq>\r\n</QBXML>",
+          "Timestamp": "2026-05-23T12:09:22.4305878Z"
+        },
+        {
+          "EntityType": "SalesReceipts",
+          "SourceIdentifier": "2821-1743296599",
+          "Success": false,
+          "ErrorMessage": "QBXML request failed (QB2021-Import): QuickBooks found an error when parsing the provided XML text stream.",
+          "QBXMLRequest": "<?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<?qbxml version=\"15.0\"?>\r\n<QBXML>\r\n  <QBXMLMsgsRq onError=\"continueOnError\">\r\n    <SalesReceiptAddRq>\r\n  <SalesReceiptAdd>\r\n    <CustomerRef>\r\n      <FullName>CASH REGISTER</FullName>\r\n    </CustomerRef>\r\n    <TxnDate>2025-03-31</TxnDate>\r\n    <RefNumber>17</RefNumber>\r\n    <DepositToAccountRef>\r\n      <FullName>1 CASH REGISTER SALES</FullName>\r\n    </DepositToAccountRef>\r\n    <IsToBePrinted>false</IsToBePrinted>\r\n    <SalesReceiptLineAdd>\r\n      <ItemRef>\r\n        <FullName>FOOD</FullName>\r\n      </ItemRef>\r\n      <Desc>SALES PRE REGISTER - (29622.58 - 2480.52) = 27142.06/1.064 THIS AMT WILL NOT INCLUDE 3RD PARTY SALES BUT WILL INCLUDE SALES TAX CHARGED ON ALL SALES EXCEPT 3RD PARTY.</Desc>\r\n      <Rate>25509.45</Rate>\r\n      <ClassRef>\r\n        <FullName>All Locations</FullName>\r\n      </ClassRef>\r\n      <Amount>25509.45</Amount>\r\n      <SalesTaxCodeRef>\r\n        <FullName>Tax</FullName>\r\n      </SalesTaxCodeRef>\r\n    </SalesReceiptLineAdd>\r\n    <SalesReceiptLineAdd>\r\n      <ClassRef>\r\n        <FullName>All Locations</FullName>\r\n      </ClassRef>\r\n    </SalesReceiptLineAdd>\r\n    <SalesReceiptLineAdd>\r\n      <ItemRef>\r\n        <FullName>3rd Party Sales</FullName>\r\n      </ItemRef>\r\n      <Desc>Sales to 3rd party. They are responsible for sales and expo NO SALES TAX SHOULD BE COLLECT ON THIS SALE - THIS SALE ONLY REPRESENTS THE AMOUNT RECEIVED IT IS NOT IMPORTANT WHAT THE 3RD PARTY SOLD IT FOR. GOLDCOAST GET 70% OF SALE TOTAL SALE 3543.60 @ 70% = 2480.52</Desc>\r\n      <Rate>2480.52</Rate>\r\n      <ClassRef>\r\n        <FullName>All Locations</FullName>\r\n      </ClassRef>\r\n      <Amount>2480.52</Amount>\r\n      <SalesTaxCodeRef>\r\n        <FullName>Non</FullName>\r\n      </SalesTaxCodeRef>\r\n    </SalesReceiptLineAdd>\r\n  </SalesReceiptAdd>\r\n</SalesReceiptAddRq>\r\n\r\n  </QBXMLMsgsRq>\r\n</QBXML>",
+          "Timestamp": "2026-05-23T12:09:22.4779931Z"
+        },
+        {
+          "EntityType": "SalesReceipts",
+          "SourceIdentifier": "2B3E-1745345961",
+          "Success": false,
+          "ErrorMessage": "QBXML request failed (QB2021-Import): QuickBooks found an error when parsing the provided XML text stream.",
+          "QBXMLRequest": "<?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<?qbxml version=\"15.0\"?>\r\n<QBXML>\r\n  <QBXMLMsgsRq onError=\"continueOnError\">\r\n    <SalesReceiptAddRq>\r\n  <SalesReceiptAdd>\r\n    <CustomerRef>\r\n      <FullName>CASH REGISTER</FullName>\r\n    </CustomerRef>\r\n    <TxnDate>2025-04-30</TxnDate>\r\n    <RefNumber>18</RefNumber>\r\n    <DepositToAccountRef>\r\n      <FullName>1 CASH REGISTER SALES</FullName>\r\n    </DepositToAccountRef>\r\n    <IsToBePrinted>false</IsToBePrinted>\r\n    <SalesReceiptLineAdd>\r\n      <ItemRef>\r\n        <FullName>FOOD</FullName>\r\n      </ItemRef>\r\n      <Desc>SALES PRE REGISTER - 29964.53/1.064 THIS AMT WILL NOT INCLUDE 3RD PARTY SALES BUT WILL INCLUDE SALES TAX CHARGED ON ALL SALES EXCEPT 3RD PARTY.</Desc>\r\n      <Rate>28162.15</Rate>\r\n      <ClassRef>\r\n        <FullName>All Locations</FullName>\r\n      </ClassRef>\r\n      <Amount>28162.15</Amount>\r\n      <SalesTaxCodeRef>\r\n        <FullName>Tax</FullName>\r\n      </SalesTaxCodeRef>\r\n    </SalesReceiptLineAdd>\r\n    <SalesReceiptLineAdd>\r\n      <ClassRef>\r\n        <FullName>All Locations</FullName>\r\n      </ClassRef>\r\n    </SalesReceiptLineAdd>\r\n    <SalesReceiptLineAdd>\r\n      <ItemRef>\r\n        <FullName>3rd Party Sales</FullName>\r\n      </ItemRef>\r\n      <Desc>Sales to 3rd party. They are responsible for sales and expo NO SALES TAX SHOULD BE COLLECT ON THIS SALE - THIS SALE ONLY REPRESENTS THE AMOUNT RECEIVED IT IS NOT IMPORTANT WHAT THE 3RD PARTY SOLD IT FOR</Desc>\r\n      <Rate>1857.13</Rate>\r\n      <ClassRef>\r\n        <FullName>All Locations</FullName>\r\n      </ClassRef>\r\n      <Amount>1857.13</Amount>\r\n      <SalesTaxCodeRef>\r\n        <FullName>Non</FullName>\r\n      </SalesTaxCodeRef>\r\n    </SalesReceiptLineAdd>\r\n    <SalesReceiptLineAdd>\r\n    </SalesReceiptLineAdd>\r\n    <SalesReceiptLineAdd>\r\n      <Desc>CROSS FT</Desc>\r\n    </SalesReceiptLineAdd>\r\n  </SalesReceiptAdd>\r\n</SalesReceiptAddRq>\r\n\r\n  </QBXMLMsgsRq>\r\n</QBXML>",
+          "Timestamp": "2026-05-23T12:09:22.526509Z"
+        },
+        {
+          "EntityType": "SalesReceipts",
+          "SourceIdentifier": "2CB0-1748199432",
+          "Success": false,
+          "ErrorMessage": "QBXML request failed (QB2021-Import): QuickBooks found an error when parsing the provided XML text stream.",
+          "QBXMLRequest": "<?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<?qbxml version=\"15.0\"?>\r\n<QBXML>\r\n  <QBXMLMsgsRq onError=\"continueOnError\">\r\n    <SalesReceiptAddRq>\r\n  <SalesReceiptAdd>\r\n    <CustomerRef>\r\n      <FullName>CASH REGISTER</FullName>\r\n    </CustomerRef>\r\n    <TxnDate>2025-05-31</TxnDate>\r\n    <RefNumber>19</RefNumber>\r\n    <DepositToAccountRef>\r\n      <FullName>1 CASH REGISTER SALES</FullName>\r\n    </DepositToAccountRef>\r\n    <IsToBePrinted>false</IsToBePrinted>\r\n    <SalesReceiptLineAdd>\r\n      <ItemRef>\r\n        <FullName>FOOD</FullName>\r\n      </ItemRef>\r\n      <Desc>SALES PRE REGISTER - 31610.06/1.064 THIS AMT WILL NOT INCLUDE 3RD PARTY SALES BUT WILL INCLUDE SALES TAX CHARGED ON ALL SALES EXCEPT 3RD PARTY.</Desc>\r\n      <Rate>29708.7</Rate>\r\n      <ClassRef>\r\n        <FullName>All Locations</FullName>\r\n      </ClassRef>\r\n      <Amount>29708.70</Amount>\r\n      <SalesTaxCodeRef>\r\n        <FullName>Tax</FullName>\r\n      </SalesTaxCodeRef>\r\n    </SalesReceiptLineAdd>\r\n    <SalesReceiptLineAdd>\r\n      <ClassRef>\r\n        <FullName>All Locations</FullName>\r\n      </ClassRef>\r\n    </SalesReceiptLineAdd>\r\n    <SalesReceiptLineAdd>\r\n      <ItemRef>\r\n        <FullName>3rd Party Sales</FullName>\r\n      </ItemRef>\r\n      <Desc>Sales to 3rd party and other exempt. They are responsible for sales and expo NO SALES TAX SHOULD BE COLLECT ON THIS SALE - THIS SALE ONLY REPRESENTS THE AMOUNT RECEIVED IT IS NOT IMPORTANT WHAT THE 3RD PARTY SOLD IT FOR</Desc>\r\n      <Rate>3186</Rate>\r\n      <ClassRef>\r\n        <FullName>All Locations</FullName>\r\n      </ClassRef>\r\n      <Amount>3186.00</Amount>\r\n      <SalesTaxCodeRef>\r\n        <FullName>Non</FullName>\r\n      </SalesTaxCodeRef>\r\n    </SalesReceiptLineAdd>\r\n  </SalesReceiptAdd>\r\n</SalesReceiptAddRq>\r\n\r\n  </QBXMLMsgsRq>\r\n</QBXML>",
+          "Timestamp": "2026-05-23T12:09:22.5754501Z"
+        },
+        {
+          "EntityType": "SalesReceipts",
+          "SourceIdentifier": "2F3D-1750552675",
+          "Success": false,
+          "ErrorMessage": "QBXML request failed (QB2021-Import): QuickBooks found an error when parsing the provided XML text stream.",
+          "QBXMLRequest": "<?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<?qbxml version=\"15.0\"?>\r\n<QBXML>\r\n  <QBXMLMsgsRq onError=\"continueOnError\">\r\n    <SalesReceiptAddRq>\r\n  <SalesReceiptAdd>\r\n    <CustomerRef>\r\n      <FullName>CASH REGISTER</FullName>\r\n    </CustomerRef>\r\n    <TxnDate>2025-06-30</TxnDate>\r\n    <RefNumber>20</RefNumber>\r\n    <DepositToAccountRef>\r\n      <FullName>1 CASH REGISTER SALES</FullName>\r\n    </DepositToAccountRef>\r\n    <IsToBePrinted>false</IsToBePrinted>\r\n    <SalesReceiptLineAdd>\r\n      <ItemRef>\r\n        <FullName>FOOD</FullName>\r\n      </ItemRef>\r\n      <Desc>SALES PRE REGISTER - 26871.16/1.064 THIS AMT WILL NOT INCLUDE 3RD PARTY SALES BUT WILL INCLUDE SALES TAX CHARGED ON ALL SALES EXCEPT 3RD PARTY.</Desc>\r\n      <Rate>25254.86</Rate>\r\n      <ClassRef>\r\n        <FullName>All Locations</FullName>\r\n      </ClassRef>\r\n      <Amount>25254.86</Amount>\r\n      <SalesTaxCodeRef>\r\n        <FullName>Tax</FullName>\r\n      </SalesTaxCodeRef>\r\n    </SalesReceiptLineAdd>\r\n    <SalesReceiptLineAdd>\r\n      <ClassRef>\r\n        <FullName>All Locations</FullName>\r\n      </ClassRef>\r\n    </SalesReceiptLineAdd>\r\n    <SalesReceiptLineAdd>\r\n      <ItemRef>\r\n        <FullName>3rd Party Sales</FullName>\r\n      </ItemRef>\r\n      <Desc>Sales to 3rd party. They are responsible for sales and expo NO SALES TAX SHOULD BE COLLECT ON THIS SALE - THIS SALE ONLY REPRESENTS THE AMOUNT RECEIVED IT IS NOT IMPORTANT WHAT THE 3RD PARTY SOLD IT FOR</Desc>\r\n      <Rate>2331.45</Rate>\r\n      <ClassRef>\r\n        <FullName>All Locations</FullName>\r\n      </ClassRef>\r\n      <Amount>2331.45</Amount>\r\n      <SalesTaxCodeRef>\r\n        <FullName>Non</FullName>\r\n      </SalesTaxCodeRef>\r\n    </SalesReceiptLineAdd>\r\n  </SalesReceiptAdd>\r\n</SalesReceiptAddRq>\r\n\r\n  </QBXMLMsgsRq>\r\n</QBXML>",
+          "Timestamp": "2026-05-23T12:09:22.6233653Z"
+        },
+        {
+          "EntityType": "SalesReceipts",
+          "SourceIdentifier": "3228-1753306329",
+          "Success": false,
+          "ErrorMessage": "QBXML request failed (QB2021-Import): QuickBooks found an error when parsing the provided XML text stream.",
+          "QBXMLRequest": "<?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<?qbxml version=\"15.0\"?>\r\n<QBXML>\r\n  <QBXMLMsgsRq onError=\"continueOnError\">\r\n    <SalesReceiptAddRq>\r\n  <SalesReceiptAdd>\r\n    <CustomerRef>\r\n      <FullName>CASH REGISTER</FullName>\r\n    </CustomerRef>\r\n    <TxnDate>2025-07-31</TxnDate>\r\n    <RefNumber>21</RefNumber>\r\n    <DepositToAccountRef>\r\n      <FullName>1 CASH REGISTER SALES</FullName>\r\n    </DepositToAccountRef>\r\n    <IsToBePrinted>false</IsToBePrinted>\r\n    <SalesReceiptLineAdd>\r\n      <ItemRef>\r\n        <FullName>FOOD</FullName>\r\n      </ItemRef>\r\n      <Desc>SALES PRE REGISTER - 28060.49/1.064 THIS AMT WILL NOT INCLUDE 3RD PARTY SALES BUT WILL INCLUDE SALES TAX CHARGED ON ALL SALES EXCEPT 3RD PARTY.</Desc>\r\n      <Rate>26372.65</Rate>\r\n      <ClassRef>\r\n        <FullName>All Locations</FullName>\r\n      </ClassRef>\r\n      <Amount>26372.65</Amount>\r\n      <SalesTaxCodeRef>\r\n        <FullName>Tax</FullName>\r\n      </SalesTaxCodeRef>\r\n    </SalesReceiptLineAdd>\r\n    <SalesReceiptLineAdd>\r\n      <ClassRef>\r\n        <FullName>All Locations</FullName>\r\n      </ClassRef>\r\n    </SalesReceiptLineAdd>\r\n    <SalesReceiptLineAdd>\r\n      <ItemRef>\r\n        <FullName>3rd Party Sales</FullName>\r\n      </ItemRef>\r\n      <Desc>Sales to 3rd party. They are responsible for sales and expo NO SALES TAX SHOULD BE COLLECT ON THIS SALE - THIS SALE ONLY REPRESENTS THE AMOUNT RECEIVED IT IS NOT IMPORTANT WHAT THE 3RD PARTY SOLD IT FOR</Desc>\r\n      <Rate>2826.94</Rate>\r\n      <ClassRef>\r\n        <FullName>All Locations</FullName>\r\n      </ClassRef>\r\n      <Amount>2826.94</Amount>\r\n      <SalesTaxCodeRef>\r\n        <FullName>Non</FullName>\r\n      </SalesTaxCodeRef>\r\n    </SalesReceiptLineAdd>\r\n  </SalesReceiptAdd>\r\n</SalesReceiptAddRq>\r\n\r\n  </QBXMLMsgsRq>\r\n</QBXML>",
+          "Timestamp": "2026-05-23T12:09:22.6719323Z"
+        },
+        {
+          "EntityType": "SalesReceipts",
+          "SourceIdentifier": "3451-1756827747",
+          "Success": false,
+          "ErrorMessage": "QBXML request failed (QB2021-Import): QuickBooks found an error when parsing the provided XML text stream.",
+          "QBXMLRequest": "<?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<?qbxml version=\"15.0\"?>\r\n<QBXML>\r\n  <QBXMLMsgsRq onError=\"continueOnError\">\r\n    <SalesReceiptAddRq>\r\n  <SalesReceiptAdd>\r\n    <CustomerRef>\r\n      <FullName>CASH REGISTER</FullName>\r\n    </CustomerRef>\r\n    <TxnDate>2025-08-31</TxnDate>\r\n    <RefNumber>22</RefNumber>\r\n    <DepositToAccountRef>\r\n      <FullName>1 CASH REGISTER SALES</FullName>\r\n    </DepositToAccountRef>\r\n    <IsToBePrinted>false</IsToBePrinted>\r\n    <SalesReceiptLineAdd>\r\n      <ItemRef>\r\n        <FullName>FOOD</FullName>\r\n      </ItemRef>\r\n      <Desc>SALES PRE REGISTER - 30956.33/1.064 THIS AMT WILL NOT INCLUDE 3RD PARTY SALES BUT WILL INCLUDE SALES TAX CHARGED ON ALL SALES EXCEPT 3RD PARTY.</Desc>\r\n      <Rate>29094.30</Rate>\r\n      <ClassRef>\r\n        <FullName>All Locations</FullName>\r\n      </ClassRef>\r\n      <Amount>29094.30</Amount>\r\n      <SalesTaxCodeRef>\r\n        <FullName>Tax</FullName>\r\n      </SalesTaxCodeRef>\r\n    </SalesReceiptLineAdd>\r\n    <SalesReceiptLineAdd>\r\n      <ClassRef>\r\n        <FullName>All Locations</FullName>\r\n      </ClassRef>\r\n    </SalesReceiptLineAdd>\r\n    <SalesReceiptLineAdd>\r\n      <ItemRef>\r\n        <FullName>3rd Party Sales</FullName>\r\n      </ItemRef>\r\n      <Desc>Sales to 3rd party. They are responsible for sales and expo NO SALES TAX SHOULD BE COLLECT ON THIS SALE - THIS SALE ONLY REPRESENTS THE AMOUNT RECEIVED IT IS NOT IMPORTANT WHAT THE 3RD PARTY SOLD IT FOR</Desc>\r\n      <Rate>2440.92</Rate>\r\n      <ClassRef>\r\n        <FullName>All Locations</FullName>\r\n      </ClassRef>\r\n      <Amount>2440.92</Amount>\r\n      <SalesTaxCodeRef>\r\n        <FullName>Non</FullName>\r\n      </SalesTaxCodeRef>\r\n    </SalesReceiptLineAdd>\r\n  </SalesReceiptAdd>\r\n</SalesReceiptAddRq>\r\n\r\n  </QBXMLMsgsRq>\r\n</QBXML>",
+          "Timestamp": "2026-05-23T12:09:22.7206958Z"
+        },
+        {
+          "EntityType": "SalesReceipts",
+          "SourceIdentifier": "3680-1759080646",
+          "Success": false,
+          "ErrorMessage": "QBXML request failed (QB2021-Import): QuickBooks found an error when parsing the provided XML text stream.",
+          "QBXMLRequest": "<?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<?qbxml version=\"15.0\"?>\r\n<QBXML>\r\n  <QBXMLMsgsRq onError=\"continueOnError\">\r\n    <SalesReceiptAddRq>\r\n  <SalesReceiptAdd>\r\n    <CustomerRef>\r\n      <FullName>CASH REGISTER</FullName>\r\n    </CustomerRef>\r\n    <TxnDate>2025-09-30</TxnDate>\r\n    <RefNumber>23</RefNumber>\r\n    <DepositToAccountRef>\r\n      <FullName>1 CASH REGISTER SALES</FullName>\r\n    </DepositToAccountRef>\r\n    <IsToBePrinted>false</IsToBePrinted>\r\n    <SalesReceiptLineAdd>\r\n      <ItemRef>\r\n        <FullName>FOOD</FullName>\r\n      </ItemRef>\r\n      <Desc>SALES PRE REGISTER - 25298.84/1.064 THIS AMT WILL NOT INCLUDE 3RD PARTY SALES BUT WILL INCLUDE SALES TAX CHARGED ON ALL SALES EXCEPT 3RD PARTY.</Desc>\r\n      <Rate>23777.10</Rate>\r\n      <ClassRef>\r\n        <FullName>All Locations</FullName>\r\n      </ClassRef>\r\n      <Amount>23777.10</Amount>\r\n      <SalesTaxCodeRef>\r\n        <FullName>Tax</FullName>\r\n      </SalesTaxCodeRef>\r\n    </SalesReceiptLineAdd>\r\n    <SalesReceiptLineAdd>\r\n      <ClassRef>\r\n        <FullName>All Locations</FullName>\r\n      </ClassRef>\r\n    </SalesReceiptLineAdd>\r\n    <SalesReceiptLineAdd>\r\n      <ItemRef>\r\n        <FullName>3rd Party Sales</FullName>\r\n      </ItemRef>\r\n      <Desc>Sales to 3rd party. They are responsible for sales and expo NO SALES TAX SHOULD BE COLLECT ON THIS SALE - THIS SALE ONLY REPRESENTS THE AMOUNT RECEIVED IT IS NOT IMPORTANT WHAT THE 3RD PARTY SOLD IT FOR</Desc>\r\n      <Rate>1964.06</Rate>\r\n      <ClassRef>\r\n        <FullName>All Locations</FullName>\r\n      </ClassRef>\r\n      <Amount>1964.06</Amount>\r\n      <SalesTaxCodeRef>\r\n        <FullName>Non</FullName>\r\n      </SalesTaxCodeRef>\r\n    </SalesReceiptLineAdd>\r\n  </SalesReceiptAdd>\r\n</SalesReceiptAddRq>\r\n\r\n  </QBXMLMsgsRq>\r\n</QBXML>",
+          "Timestamp": "2026-05-23T12:09:22.7705008Z"
+        },
+        {
+          "EntityType": "SalesReceipts",
+          "SourceIdentifier": "38E9-1761521439",
+          "Success": false,
+          "ErrorMessage": "QBXML request failed (QB2021-Import): QuickBooks found an error when parsing the provided XML text stream.",
+          "QBXMLRequest": "<?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<?qbxml version=\"15.0\"?>\r\n<QBXML>\r\n  <QBXMLMsgsRq onError=\"continueOnError\">\r\n    <SalesReceiptAddRq>\r\n  <SalesReceiptAdd>\r\n    <CustomerRef>\r\n      <FullName>CASH REGISTER</FullName>\r\n    </CustomerRef>\r\n    <TxnDate>2025-10-31</TxnDate>\r\n    <RefNumber>24</RefNumber>\r\n    <DepositToAccountRef>\r\n      <FullName>1 CASH REGISTER SALES</FullName>\r\n    </DepositToAccountRef>\r\n    <IsToBePrinted>false</IsToBePrinted>\r\n    <SalesReceiptLineAdd>\r\n      <ItemRef>\r\n        <FullName>FOOD</FullName>\r\n      </ItemRef>\r\n      <Desc>SALES PRE REGISTER - XXXXXX/1.064 THIS AMT WILL NOT INCLUDE 3RD PARTY SALES BUT WILL INCLUDE SALES TAX CHARGED ON ALL SALES EXCEPT 3RD PARTY.</Desc>\r\n      <Rate>26330.14</Rate>\r\n      <ClassRef>\r\n        <FullName>All Locations</FullName>\r\n      </ClassRef>\r\n      <Amount>26330.14</Amount>\r\n      <SalesTaxCodeRef>\r\n        <FullName>Tax</FullName>\r\n      </SalesTaxCodeRef>\r\n    </SalesReceiptLineAdd>\r\n    <SalesReceiptLineAdd>\r\n      <ClassRef>\r\n        <FullName>All Locations</FullName>\r\n      </ClassRef>\r\n    </SalesReceiptLineAdd>\r\n    <SalesReceiptLineAdd>\r\n      <ItemRef>\r\n        <FullName>3rd Party Sales</FullName>\r\n      </ItemRef>\r\n      <Desc>Sales to 3rd party. They are responsible for sales and expo NO SALES TAX SHOULD BE COLLECT ON THIS SALE - THIS SALE ONLY REPRESENTS THE AMOUNT RECEIVED IT IS NOT IMPORTANT WHAT THE 3RD PARTY SOLD IT FOR</Desc>\r\n      <Rate>1847.09</Rate>\r\n      <ClassRef>\r\n        <FullName>All Locations</FullName>\r\n      </ClassRef>\r\n      <Amount>1847.09</Amount>\r\n      <SalesTaxCodeRef>\r\n        <FullName>Non</FullName>\r\n      </SalesTaxCodeRef>\r\n    </SalesReceiptLineAdd>\r\n  </SalesReceiptAdd>\r\n</SalesReceiptAddRq>\r\n\r\n  </QBXMLMsgsRq>\r\n</QBXML>",
+          "Timestamp": "2026-05-23T12:09:22.8135093Z"
+        },
+        {
+          "EntityType": "SalesReceipts",
+          "SourceIdentifier": "3B06-1763912887",
+          "Success": false,
+          "ErrorMessage": "QBXML request failed (QB2021-Import): QuickBooks found an error when parsing the provided XML text stream.",
+          "QBXMLRequest": "<?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<?qbxml version=\"15.0\"?>\r\n<QBXML>\r\n  <QBXMLMsgsRq onError=\"continueOnError\">\r\n    <SalesReceiptAddRq>\r\n  <SalesReceiptAdd>\r\n    <CustomerRef>\r\n      <FullName>CASH REGISTER</FullName>\r\n    </CustomerRef>\r\n    <TxnDate>2025-11-30</TxnDate>\r\n    <RefNumber>25</RefNumber>\r\n    <DepositToAccountRef>\r\n      <FullName>1 CASH REGISTER SALES</FullName>\r\n    </DepositToAccountRef>\r\n    <IsToBePrinted>false</IsToBePrinted>\r\n    <SalesReceiptLineAdd>\r\n      <ItemRef>\r\n        <FullName>FOOD</FullName>\r\n      </ItemRef>\r\n      <Desc>SALES PRE REGISTER - 18807.16/1.064 THIS AMT WILL NOT INCLUDE 3RD PARTY SALES BUT WILL INCLUDE SALES TAX CHARGED ON ALL SALES EXCEPT 3RD PARTY.</Desc>\r\n      <Rate>17675.9</Rate>\r\n      <ClassRef>\r\n        <FullName>All Locations</FullName>\r\n      </ClassRef>\r\n      <Amount>17675.90</Amount>\r\n      <SalesTaxCodeRef>\r\n        <FullName>Tax</FullName>\r\n      </SalesTaxCodeRef>\r\n    </SalesReceiptLineAdd>\r\n    <SalesReceiptLineAdd>\r\n      <ClassRef>\r\n        <FullName>All Locations</FullName>\r\n      </ClassRef>\r\n    </SalesReceiptLineAdd>\r\n    <SalesReceiptLineAdd>\r\n      <ItemRef>\r\n        <FullName>3rd Party Sales</FullName>\r\n      </ItemRef>\r\n      <Desc>Sales to 3rd party. They are responsible for sales and expo NO SALES TAX SHOULD BE COLLECT ON THIS SALE - THIS SALE ONLY REPRESENTS THE AMOUNT RECEIVED IT IS NOT IMPORTANT WHAT THE 3RD PARTY SOLD IT FOR</Desc>\r\n      <Rate>2062.65</Rate>\r\n      <ClassRef>\r\n        <FullName>All Locations</FullName>\r\n      </ClassRef>\r\n      <Amount>2062.65</Amount>\r\n      <SalesTaxCodeRef>\r\n        <FullName>Non</FullName>\r\n      </SalesTaxCodeRef>\r\n    </SalesReceiptLineAdd>\r\n  </SalesReceiptAdd>\r\n</SalesReceiptAddRq>\r\n\r\n  </QBXMLMsgsRq>\r\n</QBXML>",
+          "Timestamp": "2026-05-23T12:09:22.8609821Z"
+        },
+        {
+          "EntityType": "SalesReceipts",
+          "SourceIdentifier": "3CDE-1766501787",
+          "Success": false,
+          "ErrorMessage": "QBXML request failed (QB2021-Import): QuickBooks found an error when parsing the provided XML text stream.",
+          "QBXMLRequest": "<?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<?qbxml version=\"15.0\"?>\r\n<QBXML>\r\n  <QBXMLMsgsRq onError=\"continueOnError\">\r\n    <SalesReceiptAddRq>\r\n  <SalesReceiptAdd>\r\n    <CustomerRef>\r\n      <FullName>CASH REGISTER</FullName>\r\n    </CustomerRef>\r\n    <TxnDate>2025-12-31</TxnDate>\r\n    <RefNumber>26</RefNumber>\r\n    <DepositToAccountRef>\r\n      <FullName>1 CASH REGISTER SALES</FullName>\r\n    </DepositToAccountRef>\r\n    <IsToBePrinted>false</IsToBePrinted>\r\n    <SalesReceiptLineAdd>\r\n      <ItemRef>\r\n        <FullName>FOOD</FullName>\r\n      </ItemRef>\r\n      <Desc>SALES PRE REGISTER - 19761.06/1.064 THIS AMT WILL NOT INCLUDE 3RD PARTY SALES BUT WILL INCLUDE SALES TAX CHARGED ON ALL SALES EXCEPT 3RD PARTY.</Desc>\r\n      <Rate>18572.43</Rate>\r\n      <ClassRef>\r\n        <FullName>All Locations</FullName>\r\n      </ClassRef>\r\n      <Amount>18572.43</Amount>\r\n      <SalesTaxCodeRef>\r\n        <FullName>Tax</FullName>\r\n      </SalesTaxCodeRef>\r\n    </SalesReceiptLineAdd>\r\n    <SalesReceiptLineAdd>\r\n      <ClassRef>\r\n        <FullName>All Locations</FullName>\r\n      </ClassRef>\r\n    </SalesReceiptLineAdd>\r\n    <SalesReceiptLineAdd>\r\n      <ItemRef>\r\n        <FullName>3rd Party Sales</FullName>\r\n      </ItemRef>\r\n      <Desc>Sales to 3rd party. They are responsible for sales and expo NO SALES TAX SHOULD BE COLLECT ON THIS SALE - THIS SALE ONLY REPRESENTS THE AMOUNT RECEIVED IT IS NOT IMPORTANT WHAT THE 3RD PARTY SOLD IT FOR</Desc>\r\n      <Rate>1266.86</Rate>\r\n      <ClassRef>\r\n        <FullName>All Locations</FullName>\r\n      </ClassRef>\r\n      <Amount>1266.86</Amount>\r\n      <SalesTaxCodeRef>\r\n        <FullName>Non</FullName>\r\n      </SalesTaxCodeRef>\r\n    </SalesReceiptLineAdd>\r\n  </SalesReceiptAdd>\r\n</SalesReceiptAddRq>\r\n\r\n  </QBXMLMsgsRq>\r\n</QBXML>",
+          "Timestamp": "2026-05-23T12:09:22.9129482Z"
+        },
+        {
+          "EntityType": "SalesReceipts",
+          "SourceIdentifier": "3FDB-1769661511",
+          "Success": false,
+          "ErrorMessage": "QBXML request failed (QB2021-Import): QuickBooks found an error when parsing the provided XML text stream.",
+          "QBXMLRequest": "<?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<?qbxml version=\"15.0\"?>\r\n<QBXML>\r\n  <QBXMLMsgsRq onError=\"continueOnError\">\r\n    <SalesReceiptAddRq>\r\n  <SalesReceiptAdd>\r\n    <CustomerRef>\r\n      <FullName>CASH REGISTER</FullName>\r\n    </CustomerRef>\r\n    <TxnDate>2026-01-31</TxnDate>\r\n    <RefNumber>27</RefNumber>\r\n    <DepositToAccountRef>\r\n      <FullName>1 CASH REGISTER SALES</FullName>\r\n    </DepositToAccountRef>\r\n    <IsToBePrinted>false</IsToBePrinted>\r\n    <SalesReceiptLineAdd>\r\n      <ItemRef>\r\n        <FullName>FOOD</FullName>\r\n      </ItemRef>\r\n      <Desc>SALES PRE REGISTER -22520.97/1.064 THIS AMT WILL NOT INCLUDE 3RD PARTY SALES BUT WILL INCLUDE SALES TAX CHARGED ON ALL SALES EXCEPT 3RD PARTY.</Desc>\r\n      <Rate>21166.32</Rate>\r\n      <ClassRef>\r\n        <FullName>All Locations</FullName>\r\n      </ClassRef>\r\n      <Amount>21166.32</Amount>\r\n      <SalesTaxCodeRef>\r\n        <FullName>Tax</FullName>\r\n      </SalesTaxCodeRef>\r\n    </SalesReceiptLineAdd>\r\n    <SalesReceiptLineAdd>\r\n      <ClassRef>\r\n        <FullName>All Locations</FullName>\r\n      </ClassRef>\r\n    </SalesReceiptLineAdd>\r\n    <SalesReceiptLineAdd>\r\n      <ItemRef>\r\n        <FullName>3rd Party Sales</FullName>\r\n      </ItemRef>\r\n      <Desc>Sales to 3rd party. They are responsible for sales and expo NO SALES TAX SHOULD BE COLLECT ON THIS SALE - THIS SALE ONLY REPRESENTS THE AMOUNT RECEIVED IT IS NOT IMPORTANT WHAT THE 3RD PARTY SOLD IT FOR</Desc>\r\n      <Rate>966.99</Rate>\r\n      <ClassRef>\r\n        <FullName>All Locations</FullName>\r\n      </ClassRef>\r\n      <Amount>966.99</Amount>\r\n      <SalesTaxCodeRef>\r\n        <FullName>Non</FullName>\r\n      </SalesTaxCodeRef>\r\n    </SalesReceiptLineAdd>\r\n  </SalesReceiptAdd>\r\n</SalesReceiptAddRq>\r\n\r\n  </QBXMLMsgsRq>\r\n</QBXML>",
+          "Timestamp": "2026-05-23T12:09:22.972536Z"
+        },
+        {
+          "EntityType": "SalesReceipts",
+          "SourceIdentifier": "4126-1772427183",
+          "Success": false,
+          "ErrorMessage": "QBXML request failed (QB2021-Import): QuickBooks found an error when parsing the provided XML text stream.",
+          "QBXMLRequest": "<?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<?qbxml version=\"15.0\"?>\r\n<QBXML>\r\n  <QBXMLMsgsRq onError=\"continueOnError\">\r\n    <SalesReceiptAddRq>\r\n  <SalesReceiptAdd>\r\n    <CustomerRef>\r\n      <FullName>CASH REGISTER</FullName>\r\n    </CustomerRef>\r\n    <TxnDate>2026-02-28</TxnDate>\r\n    <RefNumber>28</RefNumber>\r\n    <DepositToAccountRef>\r\n      <FullName>1 CASH REGISTER SALES</FullName>\r\n    </DepositToAccountRef>\r\n    <IsToBePrinted>false</IsToBePrinted>\r\n    <SalesReceiptLineAdd>\r\n      <ItemRef>\r\n        <FullName>FOOD</FullName>\r\n      </ItemRef>\r\n      <Desc>SALES PRE REGISTER - 26279.14/1.064 THIS AMT WILL NOT INCLUDE 3RD PARTY SALES BUT WILL INCLUDE SALES TAX CHARGED ON ALL SALES EXCEPT 3RD PARTY.</Desc>\r\n      <Rate>24698.44</Rate>\r\n      <ClassRef>\r\n        <FullName>All Locations</FullName>\r\n      </ClassRef>\r\n      <Amount>24698.44</Amount>\r\n      <SalesTaxCodeRef>\r\n        <FullName>Tax</FullName>\r\n      </SalesTaxCodeRef>\r\n    </SalesReceiptLineAdd>\r\n    <SalesReceiptLineAdd>\r\n      <ClassRef>\r\n        <FullName>All Locations</FullName>\r\n      </ClassRef>\r\n    </SalesReceiptLineAdd>\r\n    <SalesReceiptLineAdd>\r\n      <ItemRef>\r\n        <FullName>3rd Party Sales</FullName>\r\n      </ItemRef>\r\n      <Desc>Sales to 3rd party. They are responsible for sales and expo NO SALES TAX SHOULD BE COLLECT ON THIS SALE - THIS SALE ONLY REPRESENTS THE AMOUNT RECEIVED IT IS NOT IMPORTANT WHAT THE 3RD PARTY SOLD IT FOR</Desc>\r\n      <Rate>2231.44</Rate>\r\n      <ClassRef>\r\n        <FullName>All Locations</FullName>\r\n      </ClassRef>\r\n      <Amount>2231.44</Amount>\r\n      <SalesTaxCodeRef>\r\n        <FullName>Non</FullName>\r\n      </SalesTaxCodeRef>\r\n    </SalesReceiptLineAdd>\r\n  </SalesReceiptAdd>\r\n</SalesReceiptAddRq>\r\n\r\n  </QBXMLMsgsRq>\r\n</QBXML>",
+          "Timestamp": "2026-05-23T12:09:23.025638Z"
+        },
+        {
+          "EntityType": "SalesReceipts",
+          "SourceIdentifier": "4356-1774896409",
+          "Success": false,
+          "ErrorMessage": "QBXML request failed (QB2021-Import): QuickBooks found an error when parsing the provided XML text stream.",
+          "QBXMLRequest": "<?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<?qbxml version=\"15.0\"?>\r\n<QBXML>\r\n  <QBXMLMsgsRq onError=\"continueOnError\">\r\n    <SalesReceiptAddRq>\r\n  <SalesReceiptAdd>\r\n    <CustomerRef>\r\n      <FullName>CASH REGISTER</FullName>\r\n    </CustomerRef>\r\n    <TxnDate>2026-03-31</TxnDate>\r\n    <RefNumber>29</RefNumber>\r\n    <DepositToAccountRef>\r\n      <FullName>1 CASH REGISTER SALES</FullName>\r\n    </DepositToAccountRef>\r\n    <IsToBePrinted>false</IsToBePrinted>\r\n    <SalesReceiptLineAdd>\r\n      <ItemRef>\r\n        <FullName>FOOD</FullName>\r\n      </ItemRef>\r\n      <Desc>SALES PRE REGISTER - 23860.86/1.064 THIS AMT WILL NOT INCLUDE 3RD PARTY SALES BUT WILL INCLUDE SALES TAX CHARGED ON ALL SALES EXCEPT 3RD PARTY.</Desc>\r\n      <Rate>22425.62</Rate>\r\n      <ClassRef>\r\n        <FullName>All Locations</FullName>\r\n      </ClassRef>\r\n      <Amount>22425.62</Amount>\r\n      <SalesTaxCodeRef>\r\n        <FullName>Tax</FullName>\r\n      </SalesTaxCodeRef>\r\n    </SalesReceiptLineAdd>\r\n    <SalesReceiptLineAdd>\r\n      <ClassRef>\r\n        <FullName>All Locations</FullName>\r\n      </ClassRef>\r\n    </SalesReceiptLineAdd>\r\n    <SalesReceiptLineAdd>\r\n      <ItemRef>\r\n        <FullName>3rd Party Sales</FullName>\r\n      </ItemRef>\r\n      <Desc>Sales to 3rd party. They are responsible for sales and expo NO SALES TAX SHOULD BE COLLECT ON THIS SALE - THIS SALE ONLY REPRESENTS THE AMOUNT RECEIVED IT IS NOT IMPORTANT WHAT THE 3RD PARTY SOLD IT FOR</Desc>\r\n      <Rate>2153.63</Rate>\r\n      <ClassRef>\r\n        <FullName>All Locations</FullName>\r\n      </ClassRef>\r\n      <Amount>2153.63</Amount>\r\n      <SalesTaxCodeRef>\r\n        <FullName>Non</FullName>\r\n      </SalesTaxCodeRef>\r\n    </SalesReceiptLineAdd>\r\n  </SalesReceiptAdd>\r\n</SalesReceiptAddRq>\r\n\r\n  </QBXMLMsgsRq>\r\n</QBXML>",
+          "Timestamp": "2026-05-23T12:09:23.0773488Z"
+        },
+        {
+          "EntityType": "SalesReceipts",
+          "SourceIdentifier": "4538-1777221410",
+          "Success": false,
+          "ErrorMessage": "QBXML request failed (QB2021-Import): QuickBooks found an error when parsing the provided XML text stream.",
+          "QBXMLRequest": "<?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<?qbxml version=\"15.0\"?>\r\n<QBXML>\r\n  <QBXMLMsgsRq onError=\"continueOnError\">\r\n    <SalesReceiptAddRq>\r\n  <SalesReceiptAdd>\r\n    <CustomerRef>\r\n      <FullName>CASH REGISTER</FullName>\r\n    </CustomerRef>\r\n    <TxnDate>2026-04-30</TxnDate>\r\n    <RefNumber>30</RefNumber>\r\n    <DepositToAccountRef>\r\n      <FullName>1 CASH REGISTER SALES</FullName>\r\n    </DepositToAccountRef>\r\n    <IsToBePrinted>false</IsToBePrinted>\r\n    <SalesReceiptLineAdd>\r\n      <ItemRef>\r\n        <FullName>FOOD</FullName>\r\n      </ItemRef>\r\n      <Desc>SALES PRE REGISTER - XXXXXX/1.064 THIS AMT WILL NOT INCLUDE 3RD PARTY SALES BUT WILL INCLUDE SALES TAX CHARGED ON ALL SALES EXCEPT 3RD PARTY.</Desc>\r\n      <ClassRef>\r\n        <FullName>All Locations</FullName>\r\n      </ClassRef>\r\n      <Amount>0.00</Amount>\r\n      <SalesTaxCodeRef>\r\n        <FullName>Tax</FullName>\r\n      </SalesTaxCodeRef>\r\n    </SalesReceiptLineAdd>\r\n    <SalesReceiptLineAdd>\r\n      <ClassRef>\r\n        <FullName>All Locations</FullName>\r\n      </ClassRef>\r\n    </SalesReceiptLineAdd>\r\n    <SalesReceiptLineAdd>\r\n      <ItemRef>\r\n        <FullName>3rd Party Sales</FullName>\r\n      </ItemRef>\r\n      <Desc>Sales to 3rd party. They are responsible for sales and expo NO SALES TAX SHOULD BE COLLECT ON THIS SALE - THIS SALE ONLY REPRESENTS THE AMOUNT RECEIVED IT IS NOT IMPORTANT WHAT THE 3RD PARTY SOLD IT FOR</Desc>\r\n      <ClassRef>\r\n        <FullName>All Locations</FullName>\r\n      </ClassRef>\r\n      <Amount>0.00</Amount>\r\n      <SalesTaxCodeRef>\r\n        <FullName>Non</FullName>\r\n      </SalesTaxCodeRef>\r\n    </SalesReceiptLineAdd>\r\n  </SalesReceiptAdd>\r\n</SalesReceiptAddRq>\r\n\r\n  </QBXMLMsgsRq>\r\n</QBXML>",
+          "Timestamp": "2026-05-23T12:09:23.1243762Z"
+        }
+      ]
+    },
+    "JournalEntries": {
+      "EntityType": "JournalEntries",
+      "TotalAttempted": 58,
+      "Succeeded": 58,
+      "Failed": 0,
+      "Skipped": 0,
+      "Duration": "00:00:04.4446814",
+      "FailedRecords": []
+    },
+    "Deposits": {
+      "EntityType": "Deposits",
+      "TotalAttempted": 225,
+      "Succeeded": 222,
+      "Failed": 3,
+      "Skipped": 0,
+      "Duration": "00:00:16.6521822",
+      "FailedRecords": [
+        {
+          "EntityType": "Deposits",
+          "SourceIdentifier": "B3A-1713214094",
+          "Success": false,
+          "ErrorMessage": "QBXML request failed (QB2021-Import): QuickBooks found an error when parsing the provided XML text stream.",
+          "QBXMLRequest": "<?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<?qbxml version=\"15.0\"?>\r\n<QBXML>\r\n  <QBXMLMsgsRq onError=\"continueOnError\">\r\n    <DepositAddRq>\r\n  <DepositAdd>\r\n    <TxnDate>2024-04-30</TxnDate>\r\n    <DepositToAccountRef>\r\n      <FullName>Educators Credit Union</FullName>\r\n    </DepositToAccountRef>\r\n    <Memo>THIS IS AN ISSUE WITH SALES TAX????????</Memo>\r\n    <DepositLineAdd>\r\n      <EntityRef>\r\n        <FullName>WISCONSIN DEPT OF REV</FullName>\r\n      </EntityRef>\r\n      <AccountRef>\r\n        <FullName>1 CASH REGISTER SALES</FullName>\r\n      </AccountRef>\r\n      <Memo>CAN&apos;T FIND ON APRIL OR</Memo>\r\n      <Amount>13.28</Amount>\r\n    </DepositLineAdd>\r\n    <DepositLineAdd>\r\n      <EntityRef>\r\n        <FullName>WISCONSIN DEPT OF REV</FullName>\r\n      </EntityRef>\r\n      <Memo>MAY BK ST BUT IT CLEARED</Memo>\r\n    </DepositLineAdd>\r\n    <DepositLineAdd>\r\n      <EntityRef>\r\n        <FullName>WISCONSIN DEPT OF REV</FullName>\r\n      </EntityRef>\r\n      <Memo>WILL MOVE FROM UNCAT</Memo>\r\n    </DepositLineAdd>\r\n    <DepositLineAdd>\r\n      <EntityRef>\r\n        <FullName>WISCONSIN DEPT OF REV</FullName>\r\n      </EntityRef>\r\n      <Memo>CASH DEP FROM INCOME ALL READY RPOERTED</Memo>\r\n    </DepositLineAdd>\r\n  </DepositAdd>\r\n</DepositAddRq>\r\n\r\n  </QBXMLMsgsRq>\r\n</QBXML>",
+          "Timestamp": "2026-05-23T12:09:35.2809401Z"
+        },
+        {
+          "EntityType": "Deposits",
+          "SourceIdentifier": "1214-1718159011",
+          "Success": false,
+          "ErrorMessage": "QBXML request failed (QB2021-Import): QuickBooks found an error when parsing the provided XML text stream.",
+          "QBXMLRequest": "<?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<?qbxml version=\"15.0\"?>\r\n<QBXML>\r\n  <QBXMLMsgsRq onError=\"continueOnError\">\r\n    <DepositAddRq>\r\n  <DepositAdd>\r\n    <TxnDate>2024-05-10</TxnDate>\r\n    <DepositToAccountRef>\r\n      <FullName>Educators Credit Union</FullName>\r\n    </DepositToAccountRef>\r\n    <Memo>Deposit - POSS CASH CHANGE</Memo>\r\n    <DepositLineAdd>\r\n      <AccountRef>\r\n        <FullName>1 CASH REGISTER SALES</FullName>\r\n      </AccountRef>\r\n      <Memo>Deposit - POSS CASH CHANGE</Memo>\r\n      <Amount>114.00</Amount>\r\n    </DepositLineAdd>\r\n    <DepositLineAdd>\r\n      <Memo>CHANGE</Memo>\r\n    </DepositLineAdd>\r\n  </DepositAdd>\r\n</DepositAddRq>\r\n\r\n  </QBXMLMsgsRq>\r\n</QBXML>",
+          "Timestamp": "2026-05-23T12:09:35.5480994Z"
+        },
+        {
+          "EntityType": "Deposits",
+          "SourceIdentifier": "22DF-1736465626",
+          "Success": false,
+          "ErrorMessage": "QBXML request failed (QB2021-Import): QuickBooks found an error when parsing the provided XML text stream.",
+          "QBXMLRequest": "<?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<?qbxml version=\"15.0\"?>\r\n<QBXML>\r\n  <QBXMLMsgsRq onError=\"continueOnError\">\r\n    <DepositAddRq>\r\n  <DepositAdd>\r\n    <TxnDate>2024-12-16</TxnDate>\r\n    <DepositToAccountRef>\r\n      <FullName>ED SAVING ACCT</FullName>\r\n    </DepositToAccountRef>\r\n    <Memo>WERE DID THIS COME FROM</Memo>\r\n    <DepositLineAdd>\r\n      <AccountRef>\r\n        <FullName>Advertising</FullName>\r\n      </AccountRef>\r\n      <Memo>REFUND PARK NOT INCOME</Memo>\r\n      <Amount>147.12</Amount>\r\n    </DepositLineAdd>\r\n    <DepositLineAdd>\r\n      <Memo>HE PD MONEY FOR A PARK EVENT NEVER HAPPENED THIS IS THE REFUND</Memo>\r\n    </DepositLineAdd>\r\n  </DepositAdd>\r\n</DepositAddRq>\r\n\r\n  </QBXMLMsgsRq>\r\n</QBXML>",
+          "Timestamp": "2026-05-23T12:09:39.9155468Z"
+        }
+      ]
+    },
+    "Checks": {
+      "EntityType": "Checks",
+      "TotalAttempted": 1154,
+      "Succeeded": 1154,
+      "Failed": 0,
+      "Skipped": 0,
+      "Duration": "00:01:34.8922312",
+      "FailedRecords": []
+    },
+    "Transfers": {
+      "EntityType": "Transfers",
+      "TotalAttempted": 156,
+      "Succeeded": 156,
+      "Failed": 0,
+      "Skipped": 0,
+      "Duration": "00:00:09.9015489",
+      "FailedRecords": []
+    }
+  },
+  "TransformationReport": {
+    "GeneratedAt": "2026-05-23T12:08:15.0873946Z",
+    "ReactivatedEntitiesByType": {
+      "Accounts": 46,
+      "Vendors": 63,
+      "Employees": 28
+    },
+    "TotalReactivatedEntities": 137,
+    "ReactivatedEntityDetails": [
+      "[Accounts] Personal Bk Acct",
+      "[Accounts] zz old bank header:CASH ACCOUNT PAYROLL ADV",
+      "[Accounts] zz old bank header:PR CK ACCT - ROD PAY NOT TAKEN",
+      "[Accounts] zz old bank header:PR CK TURNAROUND EMPLOYEES",
+      "[Accounts] zz old bank header:TRI CITY MAIN BUS CK 4274",
+      "[Accounts] Accounts Receivable",
+      "[Accounts] Employee Advances",
+      "[Accounts] Inventory:1 Food",
+      "[Accounts] Inventory:Beverages",
+      "[Accounts] Inventory:Supplies",
+      "[Accounts] OTHER ADJ ACCOUNT & PRIOR ERROR",
+      "[Accounts] Accounts Payable",
+      "[Accounts] AMERICAN GENERAL FINANCE",
+      "[Accounts] BROTHER LOAN",
+      "[Accounts] CHILD SUPPORT",
+      "[Accounts] CURRENT YR ESTIMATE:FEDERAL",
+      "[Accounts] CURRENT YR ESTIMATE:STATE",
+      "[Accounts] Eq Loan",
+      "[Accounts] Gift certificates",
+      "[Accounts] GOVERNMENT LIAB PAST DUE",
+      "[Accounts] GOVERNMENT LIAB PAST DUE:FEDERAL",
+      "[Accounts] GOVERNMENT LIAB PAST DUE:FEDERAL:1120 CORP TAX",
+      "[Accounts] GOVERNMENT LIAB PAST DUE:FEDERAL:940",
+      "[Accounts] GOVERNMENT LIAB PAST DUE:FEDERAL:941",
+      "[Accounts] GOVERNMENT LIAB PAST DUE:WISCONSIN",
+      "[Accounts] GOVERNMENT LIAB PAST DUE:WISCONSIN:CORP TAX",
+      "[Accounts] GOVERNMENT LIAB PAST DUE:WISCONSIN:EXPO",
+      "[Accounts] GOVERNMENT LIAB PAST DUE:WISCONSIN:OTHER MUST ALLOCATE",
+      "[Accounts] GOVERNMENT LIAB PAST DUE:WISCONSIN:PAYROLL WT6",
+      "[Accounts] GOVERNMENT LIAB PAST DUE:WISCONSIN:PERSONAL 1040",
+      "[Accounts] GOVERNMENT LIAB PAST DUE:WISCONSIN:SALES TAX",
+      "[Accounts] GOVERNMENT LIAB PAST DUE:WISCONSIN:SUTA",
+      "[Accounts] LOAN PAYABLE MARVIN",
+      "[Accounts] Loans from friends",
+      "[Accounts] Loans from friends:Brian Aagey Loan",
+      "[Accounts] Loans from friends:Marvin Loans",
+      "[Accounts] PAYROLL LIAB PMTS WENT OD",
+      "[Accounts] PPP ADJ ACCT",
+      "[Accounts] PPP LOAN",
+      "[Accounts] SBA Loan",
+      "[Accounts] SH AUTO REIMB PAYABLE",
+      "[Accounts] SH LOAN",
+      "[Accounts] 1Services",
+      "[Accounts] Taxes Federal QU Est:BACK TAX",
+      "[Accounts] Cell Phone",
+      "[Accounts] Uncategorized Expense:AUTO",
+      "[Vendors] 27TH AND HOWARD LLC",
+      "[Vendors] ACUITY",
+      "[Vendors] AKRIT",
+      "[Vendors] AMERICAN FAMILY INS",
+      "[Vendors] AMERICAN GENERAL FINANCE",
+      "[Vendors] ANTHONY STASKINAS",
+      "[Vendors] ARCO",
+      "[Vendors] ARROW BOARDUP",
+      "[Vendors] Auto Zone",
+      "[Vendors] BATZNERS",
+      "[Vendors] BAUER SIGN",
+      "[Vendors] BEECHWOOD",
+      "[Vendors] BRAD KUMVERA - CONFIRM NAME SPELLING",
+      "[Vendors] BRIAN GUERIN AGENCY",
+      "[Vendors] BRINKS ELECT SECURITY",
+      "[Vendors] CARDMEMBER SERV ELECT",
+      "[Vendors] CARX",
+      "[Vendors] CASH PAY OUTS",
+      "[Vendors] CERMAK",
+      "[Vendors] CHARTER COMMUNICATIONS",
+      "[Vendors] CHECK RETAY SYSTEMS",
+      "[Vendors] CHOICE ONE COMMU",
+      "[Vendors] CHOICE ONE EAST",
+      "[Vendors] CINGULAR",
+      "[Vendors] CITI",
+      "[Vendors] CITY OF WEST ALLIS",
+      "[Vendors] CLERK/TREASURES OFFICE",
+      "[Vendors] CREDIT CARD",
+      "[Vendors] DELTA DENTAL",
+      "[Vendors] EMPLOYEE",
+      "[Vendors] JAMES STOWELL",
+      "[Vendors] JEFF KRAMER",
+      "[Vendors] JOHN PAUL BUICK",
+      "[Vendors] JOHN SCHNEPF",
+      "[Vendors] KENWAY",
+      "[Vendors] KILRYE PARK KIM",
+      "[Vendors] KOHN LAW FIRM",
+      "[Vendors] LOCKBOX COMMON GROUND",
+      "[Vendors] MAGNARDS AUTO",
+      "[Vendors] MARCO & PALIMIRO ZOCOTTI",
+      "[Vendors] MARCUS THEATERS",
+      "[Vendors] MARVIN WATERS",
+      "[Vendors] OUTSIDE DOWN",
+      "[Vendors] P.S. SEASONING",
+      "[Vendors] PAUL DAVIS RESTRATION",
+      "[Vendors] PS SEASONING",
+      "[Vendors] RESTAURANT DEPOT",
+      "[Vendors] RICHARDSONS",
+      "[Vendors] ROBERT MADALENA",
+      "[Vendors] ROBERT PARKS",
+      "[Vendors] SIGNTASTIC",
+      "[Vendors] SUEZETT",
+      "[Vendors] TDSTELECOMM CORP",
+      "[Vendors] THE CHIMNEY EXPERTS",
+      "[Vendors] THE GUTTER COMPANY",
+      "[Vendors] THOMAS MADALENA",
+      "[Vendors] THOMAS MANDATENA",
+      "[Vendors] TOM'S HEATING SERVICE",
+      "[Vendors] TOM MANDELA",
+      "[Vendors] VANS CHUSE - CK SPELLING",
+      "[Vendors] VERNS CHEESE",
+      "[Vendors] ZEIN PLUMBING",
+      "[Vendors] ZIEN INC",
+      "[Employees] ACEVEDO, KAYLA M",
+      "[Employees] ACEVEDO, KIANA",
+      "[Employees] BAUTISTA, REYNA S",
+      "[Employees] BECKLEY, DRESHA S",
+      "[Employees] Bobot, Sheraden M",
+      "[Employees] BONGEY, DEBRA L",
+      "[Employees] BRANDT, KELLY A",
+      "[Employees] DAVIS, JOALIS",
+      "[Employees] FRY, ISABELLE",
+      "[Employees] GILL, TERESA",
+      "[Employees] HOWARD, JESSICA L",
+      "[Employees] Johnson, Mycayla",
+      "[Employees] JONES, LINDSEY",
+      "[Employees] Keller, Brooklynn",
+      "[Employees] KONNER, BAUER",
+      "[Employees] MALKA, ARIANA",
+      "[Employees] Marek, Annabelle J",
+      "[Employees] MCVEY, NICHOLAS J",
+      "[Employees] MOLKENTIN, AUTUMN R",
+      "[Employees] OSTOVICH, MARIA",
+      "[Employees] PAVLINEC, ROMI K",
+      "[Employees] PITTERLE, DIANE J",
+      "[Employees] Rivera, Maximus",
+      "[Employees] Siskoy, Lyndsey",
+      "[Employees] SJOLUND, HALEY",
+      "[Employees] STRANDE, TAMARA L",
+      "[Employees] SZYMANSKI, NATALIE R",
+      "[Employees] WATERS, RODNEY"
+    ],
+    "ClassTracking": {
+      "TotalClassesInSource": 5,
+      "TotalClassesInTarget": 5,
+      "ClassesCreatedInTarget": 0,
+      "ClassesAlreadyExisting": 5,
+      "SourceClasses": [
+        "All Locations",
+        "Location 1 - 27th",
+        "Location 2 - Burn",
+        "Location 3 - Chase",
+        "ncat"
+      ],
+      "CreatedClasses": [],
+      "MissingClasses": [],
+      "ClassUsageByTransactionType": {
+        "JournalEntries:LineItems": 10,
+        "SalesReceipts": 30,
+        "SalesReceipts:LineItems": 103,
+        "Checks:LineItems": 540
+      },
+      "ClassUsageByClassName": {
+        "All Locations": 683
+      }
+    },
+    "SourceAccountingMethod": "",
+    "TargetAccountingMethod": "",
+    "AccountingMethodMatched": false,
+    "TotalEntitiesTransformed": 2080,
+    "TotalFieldsMapped": 2505,
+    "TotalFieldsSkipped": 1575,
+    "TotalFieldsTruncated": 0,
+    "FormatStats": {
+      "DateFieldsProcessed": 131,
+      "DateFormatsPreserved": 131,
+      "DateTimezonesStripped": 0,
+      "DateFormatIssues": 0,
+      "CurrencyFieldsProcessed": 0,
+      "CurrencyFormatsPreserved": 0,
+      "PhoneFieldsProcessed": 2,
+      "PhoneFormatsPreserved": 2,
+      "PostalCodeFieldsProcessed": 50,
+      "PostalCodeFormatsPreserved": 50,
+      "MemoFieldsProcessed": 13,
+      "FormatAwareTruncations": 0,
+      "EncodingPreserved": 13,
+      "FormatIssues": [],
+      "DateFormatBreakdown": {
+        "yyyy-MM-dd": 131
+      }
+    },
+    "Summary": "Transformed 2080 entities | Mapped 2505 fields | Reactivated 137 inactive entities | Preserved 5 classes | Dates preserved: 131/131"
+  },
+  "TotalRecordsAttempted": 2078,
+  "TotalRecordsSucceeded": 2035,
+  "TotalRecordsFailed": 43
+}
