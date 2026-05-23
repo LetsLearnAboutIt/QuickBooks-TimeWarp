@@ -2161,6 +2161,10 @@ namespace QB_TimeWarp.Services
             // conflicts with split <FirstName>/<MiddleName>/<LastName>.
             HashSet<string>? txnHeaderExcl = null;
             TransactionHeaderExcludedFields.TryGetValue(entityType, out txnHeaderExcl);
+            Log.Debug("  FIX #16 DEBUG: entityType='{EntityType}', txnHeaderExcl={HasExcl}, fields=[{Fields}]",
+                entityType,
+                txnHeaderExcl != null ? string.Join(",", txnHeaderExcl) : "NULL",
+                string.Join(",", sortedProperties.Select(p => p.Name)));
 
             foreach (var prop in sortedProperties)
             {
