@@ -306,6 +306,30 @@ namespace QB_TimeWarp.Services
             // ═══════════════════════════════════════════════════════════════════
 
             // ═══════════════════════════════════════════════════════════════════
+            // FIX #39: Accounts — exclude AccountNumber and BankNumber
+            // ═══════════════════════════════════════════════════════════════════
+            // ROOT CAUSE: Error 3180 "The account number is already in use"
+            // QB 2021 blank template already has accounts with certain numbers.
+            // When we try to create "Educators Credit Union" with a number that's
+            // taken, QB rejects it with Error 3180. The code treats this as
+            // "already exists" but it's NOT the right account! Result:
+            // - Migration thinks "Educators Credit Union" exists
+            // - But it doesn't — a DIFFERENT account has that number
+            // - All transactions referencing "Educators Credit Union" post to
+            //   the WRONG account (the one that stole the number)
+            // - This caused the $400K balance gap!
+            //
+            // SOLUTION: Strip AccountNumber and BankNumber from AccountAdd.
+            // Let QB 2021 auto-assign numbers based on account type. This
+            // ensures accounts are matched by NAME only, not number conflicts.
+            // ═══════════════════════════════════════════════════════════════════
+            ["Accounts"] = new(StringComparer.OrdinalIgnoreCase)
+            {
+                "AccountNumber",     // Causes Error 3180 conflicts — strip it
+                "BankNumber",        // Also can cause conflicts — strip it
+            },
+            
+            // ═══════════════════════════════════════════════════════════════════
             // FIX #16: Employee — exclude combined "Name" field
             // ═══════════════════════════════════════════════════════════════════
             // QB 2021 EmployeeAdd does NOT accept a combined <Name> field when
