@@ -314,8 +314,25 @@ namespace QB_TimeWarp.Services
             // Execute query
             var response = _connection.ProcessRequestWithRetry(qbxmlRequest);
 
-            // Parse response
-            var xmlEntities = QBConnectionManager.ParseResponseEntities(response, responseType);
+            // ════════════════════════════════════════════════════════════════
+            // FIX #21: ItemQuery returns multiple subtypes, not "ItemRet"
+            // ════════════════════════════════════════════════════════════════
+            // The QBXML ItemQueryRs response contains 0+ elements of various
+            // item subtypes (ItemServiceRet, ItemInventoryRet, ItemNonInventoryRet,
+            // ItemOtherChargeRet, ItemDiscountRet, ItemGroupRet, ItemSubtotalRet,
+            // ItemPaymentRet, ItemSalesTaxRet, ItemSalesTaxGroupRet,
+            // ItemInventoryAssemblyRet) — there is NO "ItemRet" element.
+            // We must parse each subtype individually.
+            // ════════════════════════════════════════════════════════════════
+            List<XElement> xmlEntities;
+            if (entityType == "Items")
+            {
+                xmlEntities = ParseItemQueryResponse(response);
+            }
+            else
+            {
+                xmlEntities = QBConnectionManager.ParseResponseEntities(response, responseType);
+            }
 
             // Convert XML entities to our model
             var entities = new List<QBEntity>();
@@ -323,7 +340,19 @@ namespace QB_TimeWarp.Services
             {
                 try
                 {
-                    var entity = ConvertXmlToEntity(xmlEntity, entityType, responseType);
+                    // FIX #21: For Items, store the actual subtype (e.g. "ItemService")
+                    // in entity.Fields["Type"] so BuildItemAddRequest can route correctly.
+                    var actualResponseType = xmlEntity.Name.LocalName; // e.g. "ItemServiceRet"
+                    var entity = ConvertXmlToEntity(xmlEntity, entityType, actualResponseType);
+
+                    // Ensure the "Type" field reflects the item subtype for import routing
+                    if (entityType == "Items" && actualResponseType.EndsWith("Ret"))
+                    {
+                        var subtype = actualResponseType[..^3]; // Strip "Ret" → "ItemService"
+                        entity.Fields["Type"] = subtype;
+                        Log.Debug("  FIX #21: Item '{Name}' is subtype {Subtype}", entity.Name, subtype);
+                    }
+
                     entities.Add(entity);
                 }
                 catch (Exception ex)
@@ -366,6 +395,75 @@ namespace QB_TimeWarp.Services
         /// <summary>
         /// Converts a QBXML response element to a QBEntity model with all fields as dynamic JSON.
         /// </summary>
+        // ════════════════════════════════════════════════════════════════
+        // FIX #21: All known Item subtype response elements from QBXML XSD.
+        // ItemQuery returns a mix of these — NOT "ItemRet".
+        // ════════════════════════════════════════════════════════════════
+        private static readonly string[] ItemSubtypeResponseElements = new[]
+        {
+            "ItemServiceRet",
+            "ItemNonInventoryRet",
+            "ItemOtherChargeRet",
+            "ItemInventoryRet",
+            "ItemInventoryAssemblyRet",
+            "ItemSubtotalRet",
+            "ItemDiscountRet",
+            "ItemPaymentRet",
+            "ItemSalesTaxRet",
+            "ItemSalesTaxGroupRet",
+            "ItemGroupRet",
+        };
+
+        /// <summary>
+        /// FIX #21: Parses the ItemQueryRs response which contains multiple
+        /// item subtype elements (ItemServiceRet, ItemInventoryRet, etc.)
+        /// instead of a single "ItemRet" element.
+        /// </summary>
+        private List<XElement> ParseItemQueryResponse(string qbxmlResponse)
+        {
+            var results = new List<XElement>();
+            try
+            {
+                var doc = XDocument.Parse(qbxmlResponse);
+
+                // Find the ItemQueryRs element
+                var queryRs = doc.Descendants("ItemQueryRs").FirstOrDefault();
+                if (queryRs == null)
+                {
+                    Log.Warning("  FIX #21: No ItemQueryRs element found in response");
+                    return results;
+                }
+
+                // Check status
+                var statusCode = queryRs.Attribute("statusCode")?.Value;
+                if (statusCode != "0" && statusCode != null)
+                {
+                    var msg = queryRs.Attribute("statusMessage")?.Value;
+                    Log.Warning("  FIX #21: ItemQueryRs status {Code}: {Message}", statusCode, msg);
+                    return results;
+                }
+
+                // Collect all item subtype elements
+                foreach (var subtypeElement in ItemSubtypeResponseElements)
+                {
+                    var items = queryRs.Elements(subtypeElement).ToList();
+                    if (items.Count > 0)
+                    {
+                        Log.Information("  FIX #21: Found {Count} {SubType} items", items.Count, subtypeElement);
+                        results.AddRange(items);
+                    }
+                }
+
+                Log.Information("  FIX #21: Total items from ItemQuery: {Total} across all subtypes", results.Count);
+            }
+            catch (Exception ex)
+            {
+                Log.Error(ex, "FIX #21: Error parsing ItemQuery response: {Message}", ex.Message);
+            }
+
+            return results;
+        }
+
         private QBEntity ConvertXmlToEntity(XElement xmlElement, string entityType, string responseType)
         {
             var entity = new QBEntity

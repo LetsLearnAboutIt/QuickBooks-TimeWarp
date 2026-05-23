@@ -97,15 +97,20 @@ namespace QB_TimeWarp.Services
         /// <summary>
         /// Item subtypes need specific Add request types.
         /// </summary>
+        // FIX #21: Added ItemSubtotal, ItemPayment, and ItemInventoryAssembly subtypes
         private static readonly Dictionary<string, (string AddReq, string AddElem, string RetType)> ItemSubTypeMap = new()
         {
-            ["ItemService"]      = ("ItemServiceAddRq",      "ItemServiceAdd",      "ItemServiceRet"),
-            ["ItemInventory"]    = ("ItemInventoryAddRq",    "ItemInventoryAdd",    "ItemInventoryRet"),
-            ["ItemNonInventory"] = ("ItemNonInventoryAddRq", "ItemNonInventoryAdd", "ItemNonInventoryRet"),
-            ["ItemOtherCharge"]  = ("ItemOtherChargeAddRq",  "ItemOtherChargeAdd",  "ItemOtherChargeRet"),
-            ["ItemDiscount"]     = ("ItemDiscountAddRq",     "ItemDiscountAdd",     "ItemDiscountRet"),
-            ["ItemGroup"]        = ("ItemGroupAddRq",        "ItemGroupAdd",        "ItemGroupRet"),
-            ["ItemSalesTax"]     = ("ItemSalesTaxAddRq",     "ItemSalesTaxAdd",     "ItemSalesTaxRet"),
+            ["ItemService"]           = ("ItemServiceAddRq",           "ItemServiceAdd",           "ItemServiceRet"),
+            ["ItemInventory"]         = ("ItemInventoryAddRq",         "ItemInventoryAdd",         "ItemInventoryRet"),
+            ["ItemInventoryAssembly"] = ("ItemInventoryAssemblyAddRq", "ItemInventoryAssemblyAdd", "ItemInventoryAssemblyRet"),
+            ["ItemNonInventory"]      = ("ItemNonInventoryAddRq",      "ItemNonInventoryAdd",      "ItemNonInventoryRet"),
+            ["ItemOtherCharge"]       = ("ItemOtherChargeAddRq",       "ItemOtherChargeAdd",       "ItemOtherChargeRet"),
+            ["ItemDiscount"]          = ("ItemDiscountAddRq",          "ItemDiscountAdd",          "ItemDiscountRet"),
+            ["ItemGroup"]             = ("ItemGroupAddRq",             "ItemGroupAdd",             "ItemGroupRet"),
+            ["ItemSubtotal"]          = ("ItemSubtotalAddRq",          "ItemSubtotalAdd",          "ItemSubtotalRet"),
+            ["ItemPayment"]           = ("ItemPaymentAddRq",           "ItemPaymentAdd",           "ItemPaymentRet"),
+            ["ItemSalesTax"]          = ("ItemSalesTaxAddRq",          "ItemSalesTaxAdd",          "ItemSalesTaxRet"),
+            ["ItemSalesTaxGroup"]     = ("ItemSalesTaxGroupAddRq",     "ItemSalesTaxGroupAdd",     "ItemSalesTaxGroupRet"),
         };
 
         /// <summary>
@@ -3006,11 +3011,12 @@ namespace QB_TimeWarp.Services
         /// These entities use colon-separated FullNames (e.g., "Parent:Child:GrandChild").
         /// When adding, we must split into leaf Name + ParentRef.
         /// </summary>
+        // FIX #21: Added ItemInventoryAssembly to hierarchical types
         private static readonly HashSet<string> HierarchicalEntityTypes = new(StringComparer.OrdinalIgnoreCase)
         {
             "Accounts", "Customers", "Vendors", "Items", "Classes",
-            "ItemService", "ItemInventory", "ItemNonInventory", "ItemOtherCharge",
-            "ItemDiscount", "ItemGroup", "ItemSalesTax"
+            "ItemService", "ItemInventory", "ItemInventoryAssembly", "ItemNonInventory",
+            "ItemOtherCharge", "ItemDiscount", "ItemGroup", "ItemSalesTax"
         };
 
         /// <summary>

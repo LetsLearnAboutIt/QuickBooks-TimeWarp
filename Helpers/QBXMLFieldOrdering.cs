@@ -413,6 +413,77 @@ namespace QB_TimeWarp.Helpers
             { "ItemGroupLine", 6 },
         };
 
+        /// <summary>
+        /// ItemSubtotalAdd element order per QBXML XSD schema.
+        /// Reference: qbxmlops20.xml — ItemSubtotalAddRq sequence.
+        /// </summary>
+        public static readonly Dictionary<string, int> ItemSubtotalAddOrder = new(StringComparer.OrdinalIgnoreCase)
+        {
+            { "Name", 0 },
+            { "BarCode", 1 },
+            { "IsActive", 2 },
+            { "ItemDesc", 3 },
+        };
+
+        /// <summary>
+        /// ItemPaymentAdd element order per QBXML XSD schema.
+        /// Reference: qbxmlops20.xml — ItemPaymentAddRq sequence.
+        /// </summary>
+        public static readonly Dictionary<string, int> ItemPaymentAddOrder = new(StringComparer.OrdinalIgnoreCase)
+        {
+            { "Name", 0 },
+            { "BarCode", 1 },
+            { "IsActive", 2 },
+            { "ItemDesc", 3 },
+            { "DepositToAccountRef", 4 },
+            { "PaymentMethodRef", 5 },
+        };
+
+        /// <summary>
+        /// ItemInventoryAssemblyAdd element order per QBXML XSD schema.
+        /// Reference: qbxmlops20.xml — ItemInventoryAssemblyAddRq sequence.
+        /// </summary>
+        public static readonly Dictionary<string, int> ItemInventoryAssemblyAddOrder = new(StringComparer.OrdinalIgnoreCase)
+        {
+            { "Name", 0 },
+            { "BarCode", 1 },
+            { "IsActive", 2 },
+            { "ClassRef", 3 },
+            { "ParentRef", 4 },
+            { "ManufacturerPartNumber", 5 },
+            { "UnitOfMeasureSetRef", 6 },
+            { "IsTaxIncluded", 7 },
+            { "SalesTaxCodeRef", 8 },
+            { "SalesDesc", 9 },
+            { "SalesPrice", 10 },
+            { "IncomeAccountRef", 11 },
+            { "PurchaseDesc", 12 },
+            { "PurchaseCost", 13 },
+            { "COGSAccountRef", 14 },
+            { "PrefVendorRef", 15 },
+            { "AssetAccountRef", 16 },
+            { "BuildPoint", 17 },
+            { "Max", 18 },
+            { "QuantityOnHand", 19 },
+            { "TotalValue", 20 },
+            { "InventoryDate", 21 },
+            { "ExternalGUID", 22 },
+            { "ItemInventoryAssemblyLine", 100 },
+        };
+
+        /// <summary>
+        /// ItemSalesTaxGroupAdd element order per QBXML XSD schema.
+        /// Reference: qbxmlops20.xml — ItemSalesTaxGroupAddRq sequence.
+        /// </summary>
+        public static readonly Dictionary<string, int> ItemSalesTaxGroupAddOrder = new(StringComparer.OrdinalIgnoreCase)
+        {
+            { "Name", 0 },
+            { "BarCode", 1 },
+            { "IsActive", 2 },
+            { "ItemDesc", 3 },
+            { "ItemSalesTaxRef", 4 },
+        };
+
         // =====================================================================
         // TRANSACTION ENTITY TYPES (Add operations)
         // =====================================================================
@@ -970,6 +1041,14 @@ namespace QB_TimeWarp.Helpers
             { "ItemSalesTaxAdd", ItemSalesTaxAddOrder },
             { "ItemGroup", ItemGroupAddOrder },
             { "ItemGroupAdd", ItemGroupAddOrder },
+            { "ItemSubtotal", ItemSubtotalAddOrder },
+            { "ItemSubtotalAdd", ItemSubtotalAddOrder },
+            { "ItemPayment", ItemPaymentAddOrder },
+            { "ItemPaymentAdd", ItemPaymentAddOrder },
+            { "ItemInventoryAssembly", ItemInventoryAssemblyAddOrder },
+            { "ItemInventoryAssemblyAdd", ItemInventoryAssemblyAddOrder },
+            { "ItemSalesTaxGroup", ItemSalesTaxGroupAddOrder },
+            { "ItemSalesTaxGroupAdd", ItemSalesTaxGroupAddOrder },
         };
 
         /// <summary>
