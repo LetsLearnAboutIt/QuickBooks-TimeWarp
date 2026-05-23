@@ -147,36 +147,45 @@ namespace QB_TimeWarp.Helpers
             { "CurrencyRef", 12 },
         };
 
-        /// <summary>
-        /// EmployeeAdd element order per QBXML XSD schema.
-        /// </summary>
+        // ═══════════════════════════════════════════════════════════════════
+        // FIX #16: EmployeeAdd element order per QBXML XSD schema.
+        // ═══════════════════════════════════════════════════════════════════
+        // REMOVED: "Name" (combined display name like "ACEVEDO, KAYLA M").
+        // QB 2021 EmployeeAdd requires ONLY the split name fields:
+        //   <FirstName>, <MiddleName>, <LastName>
+        // Including a combined <Name> alongside the split fields caused
+        // QBXML parse errors for 10 employees. QB 2021 auto-generates
+        // the list display name from the split components.
+        //
+        // The "Name" field is excluded from QBXML output via
+        // TransactionHeaderExcludedFields["Employees"] in DataImporter.cs.
+        // ═══════════════════════════════════════════════════════════════════
         public static readonly Dictionary<string, int> EmployeeAddOrder = new(StringComparer.OrdinalIgnoreCase)
         {
-            { "Name", 0 },
-            { "IsActive", 1 },
-            { "Salutation", 2 },
-            { "FirstName", 3 },
-            { "MiddleName", 4 },
-            { "LastName", 5 },
-            { "Suffix", 6 },
-            { "EmployeeAddress", 7 },
-            { "PrintAs", 8 },
-            { "Phone", 9 },
-            { "Mobile", 10 },
-            { "Pager", 11 },
-            { "AltPhone", 12 },
-            { "Fax", 13 },
-            { "Email", 14 },
-            { "SSN", 15 },
-            { "EmployeeType", 16 },
-            { "Gender", 17 },
-            { "HiredDate", 18 },
-            { "ReleasedDate", 19 },
-            { "BirthDate", 20 },
-            { "AccountNumber", 21 },
-            { "Notes", 22 },
-            { "BillingRateRef", 23 },
-            { "EmployeePayrollInfo", 24 },
+            { "IsActive", 0 },
+            { "Salutation", 1 },
+            { "FirstName", 2 },
+            { "MiddleName", 3 },
+            { "LastName", 4 },
+            { "Suffix", 5 },
+            { "EmployeeAddress", 6 },
+            { "PrintAs", 7 },
+            { "Phone", 8 },
+            { "Mobile", 9 },
+            { "Pager", 10 },
+            { "AltPhone", 11 },
+            { "Fax", 12 },
+            { "Email", 13 },
+            { "SSN", 14 },
+            { "EmployeeType", 15 },
+            { "Gender", 16 },
+            { "HiredDate", 17 },
+            { "ReleasedDate", 18 },
+            { "BirthDate", 19 },
+            { "AccountNumber", 20 },
+            { "Notes", 21 },
+            { "BillingRateRef", 22 },
+            { "EmployeePayrollInfo", 23 },
         };
 
         /// <summary>

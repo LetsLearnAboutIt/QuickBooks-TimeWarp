@@ -276,6 +276,23 @@ namespace QB_TimeWarp.Services
             {
                 "Name",
             },
+
+            // ═══════════════════════════════════════════════════════════════════
+            // FIX #16: Employee — exclude combined "Name" field
+            // ═══════════════════════════════════════════════════════════════════
+            // QB 2021 EmployeeAdd does NOT accept a combined <Name> field when
+            // separate <FirstName>, <MiddleName>, <LastName> are provided.
+            // Including both causes "error parsing the provided XML text stream"
+            // (0x80040400). The exported data already has the split fields, so
+            // we suppress the combined Name here and let QB 2021 auto-generate
+            // the list display name from the split components.
+            // Also suppress FullName (response-only) for safety.
+            // ═══════════════════════════════════════════════════════════════════
+            ["Employees"] = new(StringComparer.OrdinalIgnoreCase)
+            {
+                "Name",              // combined display name — not valid with split FirstName/LastName
+                "FullName",          // response-only (same as Name for non-hierarchical entities)
+            },
         };
 
         /// <summary>
@@ -2133,13 +2150,15 @@ namespace QB_TimeWarp.Services
             // ── FIX #2: Track whether we need to force IsActive ──────────
             bool isActiveEmitted = false;
 
-            // ── FIX #8: Look up per-transaction-type header exclusions ───
-            // For transaction entity types, certain fields returned in the *Ret
-            // response (Name, header Amount, computed totals, read-only balances)
-            // are NOT valid in the *Add request. We strip them here so the
-            // resulting QBXML conforms to the QB 2021 XSD schema. Without this,
-            // QuickBooks rejects the entire request with 0x80040400 — which is
-            // exactly what bit all 1,634 transactions in the prior run.
+            // ── FIX #8 / FIX #16: Look up per-entity-type header exclusions ──
+            // For transactions AND list entities (e.g., Employees), certain
+            // fields returned in the *Ret response (Name, header Amount,
+            // computed totals, read-only balances) are NOT valid in the *Add
+            // request. We strip them here so the resulting QBXML conforms to
+            // the QB 2021 XSD schema. Without this, QuickBooks rejects the
+            // entire request with 0x80040400.
+            // FIX #16 extended this to Employees: the combined <Name> field
+            // conflicts with split <FirstName>/<MiddleName>/<LastName>.
             HashSet<string>? txnHeaderExcl = null;
             TransactionHeaderExcludedFields.TryGetValue(entityType, out txnHeaderExcl);
 
