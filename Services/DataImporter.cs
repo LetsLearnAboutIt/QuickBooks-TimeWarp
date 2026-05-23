@@ -236,6 +236,10 @@ namespace QB_TimeWarp.Services
                 "Amount",            // belongs on <SalesReceiptLineAdd><Amount>
                 "TotalAmount",       // computed rollup
                 "AppliedAmount",     // computed rollup
+                // Fix #23: Remove tax fields — target QB may not have sales tax enabled
+                "SalesTaxCodeRef",
+                "IsTaxIncluded",
+                "ItemSalesTaxRef",
             },
             ["Transfers"] = new(StringComparer.OrdinalIgnoreCase)
             {
@@ -2687,6 +2691,16 @@ namespace QB_TimeWarp.Services
                     // valid in *Ret responses, not in *Add requests. Including
                     // them causes 0x80040400 XML parse errors.
                     if (LineItemExcludedFields.Contains(prop.Name))
+                    {
+                        _incompatibleFieldSkips++;
+                        continue;
+                    }
+
+                    // Fix #23: Remove tax fields from SalesReceipt line items —
+                    // target QB may not have sales tax enabled
+                    if (entityType == "SalesReceipts" &&
+                        (prop.Name.Equals("SalesTaxCodeRef", StringComparison.OrdinalIgnoreCase) ||
+                         prop.Name.Equals("IsTaxIncluded", StringComparison.OrdinalIgnoreCase)))
                     {
                         _incompatibleFieldSkips++;
                         continue;
