@@ -316,13 +316,13 @@ namespace QB_TimeWarp.Services
             string qbxmlRequest;
 
             // ════════════════════════════════════════════════════════════════
-            // FIX #44: PaycheckQuery requires OwnerID to return full payroll
-            // data. The all-zeros GUID is the "show everything" flag that
-            // forces QB to include earnings, deductions, taxes, and company
-            // contribution line items. Without it, QB returns only header
-            // fields (date, employee, net amount) with no detail.
-            // Combined with qbFileOpenDoNotCare session mode, this unlocks
-            // complete payroll data export even without payroll subscription.
+            // FIX #44: PaycheckQuery — custom query with TxnDateRangeFilter
+            // and IncludeLineItems. Valid PaycheckQueryRq elements are:
+            //   TxnID, TxnDateRangeFilter, EntityFilter, IncludeLineItems,
+            //   PayrollItemFilter
+            // OwnerID is NOT valid for PaycheckQueryRq (rejected silently).
+            // The qbFileOpenDoNotCare session mode (QBConnectionManager) is
+            // sufficient to unlock payroll data access.
             // ════════════════════════════════════════════════════════════════
             if (entityType == "Paychecks")
             {
@@ -330,7 +330,6 @@ namespace QB_TimeWarp.Services
                 var toDate = isTransaction ? _exportConfig.DateRangeEnd : null;
 
                 var paycheckQuery = "<PaycheckQueryRq>";
-                paycheckQuery += "<OwnerID>{00000000-0000-0000-0000-000000000000}</OwnerID>";
                 if (!string.IsNullOrEmpty(fromDate) || !string.IsNullOrEmpty(toDate))
                 {
                     paycheckQuery += "<TxnDateRangeFilter>";
@@ -345,7 +344,7 @@ namespace QB_TimeWarp.Services
 
                 qbxmlRequest = QBConnectionManager.BuildQBXMLRequest(paycheckQuery, _effectiveSDKVersion);
 
-                Log.Information("  FIX #44: Using PaycheckQuery with OwnerID={{00000000-...}} for full payroll data access");
+                Log.Information("  FIX #44: Using PaycheckQuery with TxnDateRangeFilter + IncludeLineItems (no OwnerID)");
             }
             else
             {
