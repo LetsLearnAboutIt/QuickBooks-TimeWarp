@@ -131,10 +131,15 @@ namespace QB_TimeWarp.Services
 
                 // Begin session with company file
                 // Parameters: companyFile (empty = currently open file), fileMode
-                // FileMode: doNotCare = 0, singleUser = 1, multiUser = 2
+                // FIX #44: qbFileOpenDoNotCare (0) is the "accountant override" mode —
+                // it grants access to payroll data (Paychecks, PayrollItems, etc.)
+                // even without an active payroll subscription on the target company.
+                // This is required to export the 282 paycheck records with full detail.
+                // Values: qbFileOpenDoNotCare = 0, singleUser = 1, multiUser = 2
+                const int qbFileOpenDoNotCare = 0;
                 _ticket = _requestProcessor.BeginSession(
                     _config.CompanyFilePath,      // Path to .QBW file (empty = current)
-                    0                             // doNotCare mode
+                    qbFileOpenDoNotCare           // accountant override — allows payroll access
                 );
 
                 _isConnected = true;
