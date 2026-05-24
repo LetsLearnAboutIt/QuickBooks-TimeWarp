@@ -13,6 +13,10 @@ namespace QB_TimeWarp.Services
     /// and QB SDK 15.0 compatibility filtering (removes fields not supported in QB 2021).
     /// 
     /// CHANGELOG:
+    /// - Fix #41: Add _lineType metadata to JournalEntry lines in ConvertCreditCardToJournalEntry()
+    ///   Sets proper XML wrapper type (JournalDebitLine vs JournalCreditLine) for each line item.
+    ///   Debit lines use JournalDebitLine wrapper, credit lines use JournalCreditLine wrapper.
+    ///   Fixes "error parsing XML text stream" for 378 converted CreditCard transactions.
     /// - Fix #38 (commit 3364594): Convert CreditCardCharge/CreditCardCredit to JournalEntry format
     ///   QB 2021 doesn't support CC transaction types. Convert during transformation to preserve
     ///   accounting integrity. "The journal is the truth" - Joseph. See ConvertCreditCardToJournalEntry()
@@ -771,16 +775,21 @@ namespace QB_TimeWarp.Services
         /// - TxnID preserved in Memo for reference tracking
         /// 
         /// ═══════════════════════════════════════════════════════════════════
-        /// Fix #38: Convert CreditCardCharge/CreditCardCredit to JournalEntry
+        /// Fix #38 & #41: Convert CreditCardCharge/CreditCardCredit to JournalEntry
         /// ═══════════════════════════════════════════════════════════════════
         /// PROBLEM: QB 2021 SDK 15.0 does not support CreditCardCharge or
         /// CreditCardCredit transaction types (confirmed via schema extraction).
         /// These types were added in later QB versions but don't exist in QB 2021.
         /// 
-        /// SOLUTION: Convert to JournalEntry format during transformation phase.
+        /// SOLUTION (Fix #38): Convert to JournalEntry format during transformation phase.
         /// As Joseph said: "the journal is the truth" - every transaction is
         /// ultimately debits and credits. This conversion preserves accounting
         /// integrity while maintaining QB 2021 compatibility.
+        /// 
+        /// FIX #41: Added _lineType metadata to each line item to ensure proper
+        /// XML wrapper generation. Debit lines use <JournalDebitLine>, credit lines
+        /// use <JournalCreditLine>. Without this metadata, all lines defaulted to
+        /// JournalDebitLine causing "error parsing XML text stream" (378 failures).
         /// 
         /// ACCOUNTING LOGIC (Double-Entry Bookkeeping):
         /// 
@@ -865,11 +874,15 @@ namespace QB_TimeWarp.Services
                 {
                     // Charge: expense lines are debits
                     journalLine["DebitAmount"] = line["Amount"]?.DeepClone();
+                    // FIX #41: Set _lineType metadata for proper XML wrapper generation
+                    journalLine["_lineType"] = "JournalDebitLine";
                 }
                 else
                 {
                     // Credit/refund: expense lines are credits
                     journalLine["CreditAmount"] = line["Amount"]?.DeepClone();
+                    // FIX #41: Set _lineType metadata for proper XML wrapper generation
+                    journalLine["_lineType"] = "JournalCreditLine";
                 }
 
                 // Copy account reference
@@ -900,11 +913,15 @@ namespace QB_TimeWarp.Services
             {
                 // Charge: CC account is credited (increases liability)
                 ccLine["CreditAmount"] = totalAmount.ToString("F2", System.Globalization.CultureInfo.InvariantCulture);
+                // FIX #41: Set _lineType metadata for proper XML wrapper generation
+                ccLine["_lineType"] = "JournalCreditLine";
             }
             else
             {
                 // Credit/refund: CC account is debited (reduces liability)
                 ccLine["DebitAmount"] = totalAmount.ToString("F2", System.Globalization.CultureInfo.InvariantCulture);
+                // FIX #41: Set _lineType metadata for proper XML wrapper generation
+                ccLine["_lineType"] = "JournalDebitLine";
             }
 
             journalEntry.LineItems.Add(ccLine);
