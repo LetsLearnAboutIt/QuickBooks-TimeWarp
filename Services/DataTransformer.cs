@@ -179,6 +179,64 @@ namespace QB_TimeWarp.Services
                 }
             }
 
+            // ═══════════════════════════════════════════════════════════════════
+            // FIX #40: Merge converted entities into their NEW EntityType key
+            // ═══════════════════════════════════════════════════════════════════
+            // FIX #38 converts CreditCardCharges/Credits → JournalEntries by setting
+            // ExportedEntitySet.EntityType = "JournalEntries", but the dictionary key
+            // remains the ORIGINAL type (e.g., "CreditCardCharges"). The DataImporter
+            // uses the dictionary KEY — not the EntityType property — to determine
+            // QBXML request type, causing "No Add request mapping" errors for 378+
+            // CreditCard transactions.
+            //
+            // SOLUTION: After all transformations, detect type mismatches (key ≠
+            // EntityType), merge those entities into the correct target key, and
+            // remove the now-empty original keys from the dictionary.
+            // ═══════════════════════════════════════════════════════════════════
+            var keysToRemove = new List<string>();
+            foreach (var (key, entitySet) in transformed)
+            {
+                // Check if the EntityType changed during transformation (e.g., CreditCardCharges → JournalEntries)
+                if (!string.IsNullOrEmpty(entitySet.EntityType) &&
+                    !key.Equals(entitySet.EntityType, StringComparison.OrdinalIgnoreCase))
+                {
+                    var targetKey = entitySet.EntityType;
+                    Log.Information("  ► FIX #40: Merging {Count} converted '{OriginalKey}' entities into '{TargetKey}' dictionary key",
+                        entitySet.Entities.Count, key, targetKey);
+
+                    if (transformed.ContainsKey(targetKey))
+                    {
+                        // Target key already exists — merge entities into it
+                        var existingSet = transformed[targetKey];
+                        existingSet.Entities.AddRange(entitySet.Entities);
+                        existingSet.TotalCount = existingSet.Entities.Count;
+                        existingSet.ActiveCount = existingSet.Entities.Count(e => e.IsActive);
+                        existingSet.InactiveCount = existingSet.Entities.Count(e => !e.IsActive);
+
+                        Log.Information("  ✓ FIX #40: Merged into existing '{TargetKey}' (now {Total} total records)",
+                            targetKey, existingSet.TotalCount);
+                    }
+                    else
+                    {
+                        // Target key doesn't exist yet — create it with the converted entities
+                        transformed[targetKey] = entitySet;
+
+                        Log.Information("  ✓ FIX #40: Created new '{TargetKey}' key with {Count} converted records",
+                            targetKey, entitySet.Entities.Count);
+                    }
+
+                    // Mark original key for removal (can't modify dictionary during iteration)
+                    keysToRemove.Add(key);
+                }
+            }
+
+            // Remove the original keys that have been merged into their target types
+            foreach (var key in keysToRemove)
+            {
+                transformed.Remove(key);
+                Log.Information("  ✓ FIX #40: Removed empty original key '{Key}' from dictionary", key);
+            }
+
             if (_unmappedFieldCount > 0)
             {
                 Log.Warning("Total unmapped fields encountered: {Count}", _unmappedFieldCount);
