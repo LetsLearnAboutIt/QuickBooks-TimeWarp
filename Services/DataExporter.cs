@@ -313,14 +313,51 @@ namespace QB_TimeWarp.Services
             // This caused 100% failure (0/1,467) on all 4 line-item transaction types.
             var hasLineItems = LineItemElements.ContainsKey(responseType);
 
-            var qbxmlRequest = QBConnectionManager.BuildQueryRequest(
-                queryType,
-                _effectiveSDKVersion,  // Use effective version (may be adjusted from configured)
-                includeInactive: includeInactive,
-                fromDate: isTransaction ? _exportConfig.DateRangeStart : null,
-                toDate: isTransaction ? _exportConfig.DateRangeEnd : null,
-                includeLineItems: hasLineItems
-            );
+            string qbxmlRequest;
+
+            // ════════════════════════════════════════════════════════════════
+            // FIX #44: PaycheckQuery requires OwnerID to return full payroll
+            // data. The all-zeros GUID is the "show everything" flag that
+            // forces QB to include earnings, deductions, taxes, and company
+            // contribution line items. Without it, QB returns only header
+            // fields (date, employee, net amount) with no detail.
+            // Combined with qbFileOpenDoNotCare session mode, this unlocks
+            // complete payroll data export even without payroll subscription.
+            // ════════════════════════════════════════════════════════════════
+            if (entityType == "Paychecks")
+            {
+                var fromDate = isTransaction ? _exportConfig.DateRangeStart : null;
+                var toDate = isTransaction ? _exportConfig.DateRangeEnd : null;
+
+                var paycheckQuery = "<PaycheckQueryRq>";
+                paycheckQuery += "<OwnerID>{00000000-0000-0000-0000-000000000000}</OwnerID>";
+                if (!string.IsNullOrEmpty(fromDate) || !string.IsNullOrEmpty(toDate))
+                {
+                    paycheckQuery += "<TxnDateRangeFilter>";
+                    if (!string.IsNullOrEmpty(fromDate))
+                        paycheckQuery += $"<FromTxnDate>{fromDate}</FromTxnDate>";
+                    if (!string.IsNullOrEmpty(toDate))
+                        paycheckQuery += $"<ToTxnDate>{toDate}</ToTxnDate>";
+                    paycheckQuery += "</TxnDateRangeFilter>";
+                }
+                paycheckQuery += "<IncludeLineItems>true</IncludeLineItems>";
+                paycheckQuery += "</PaycheckQueryRq>";
+
+                qbxmlRequest = QBConnectionManager.BuildQBXMLRequest(paycheckQuery, _effectiveSDKVersion);
+
+                Log.Information("  FIX #44: Using PaycheckQuery with OwnerID={{00000000-...}} for full payroll data access");
+            }
+            else
+            {
+                qbxmlRequest = QBConnectionManager.BuildQueryRequest(
+                    queryType,
+                    _effectiveSDKVersion,  // Use effective version (may be adjusted from configured)
+                    includeInactive: includeInactive,
+                    fromDate: isTransaction ? _exportConfig.DateRangeStart : null,
+                    toDate: isTransaction ? _exportConfig.DateRangeEnd : null,
+                    includeLineItems: hasLineItems
+                );
+            }
 
             if (includeInactive)
             {
