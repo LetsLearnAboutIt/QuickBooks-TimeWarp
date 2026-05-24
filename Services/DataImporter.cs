@@ -239,6 +239,13 @@ namespace QB_TimeWarp.Services
                 "TotalAmount",       // computed rollup
                 "DebitTotal",        // computed rollup
                 "CreditTotal",       // computed rollup
+                "Memo",              // FIX #42: Memo for converted CC→JE lives on each line, not header;
+                                     // header Memo from ConvertCreditCardToJournalEntry carries the
+                                     // "[From CreditCardCharge] TxnID:..." provenance tag and is set
+                                     // directly in Fields["Memo"] — but the JournalEntryAdd XSD puts
+                                     // Memo ONLY inside <JournalDebitLine>/<JournalCreditLine>, not at
+                                     // the top-level <JournalEntryAdd>. Emitting it at header level
+                                     // causes 0x80040400 for all 378 converted entries.
             },
             ["Deposits"] = new(StringComparer.OrdinalIgnoreCase)
             {
