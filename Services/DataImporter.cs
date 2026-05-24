@@ -1,5 +1,6 @@
 using System.Text;
 using System.Xml.Linq;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using QB_TimeWarp.Helpers;
 using QB_TimeWarp.Models;
@@ -30,6 +31,19 @@ namespace QB_TimeWarp.Services
         // FIX #30: Source TxnID → Target TxnID mapping for cross-transaction references
         // (e.g., BillPaymentCheckAdd.AppliedToTxnAdd.TxnID → the new TxnID of the imported Bill)
         private readonly Dictionary<string, string> _sourceTxnIdToTargetTxnId = new();
+
+        // ═══════════════════════════════════════════════════════════════════
+        // FIX #43: Diagnostic capture for bank transaction QBXML
+        // ═══════════════════════════════════════════════════════════════════
+        // Captures the first N request/response pairs for each bank
+        // transaction type to diagnose reversed bank-side postings.
+        private static readonly HashSet<string> BankDiagnosticTypes = new(StringComparer.OrdinalIgnoreCase)
+        {
+            "Checks", "Deposits", "Transfers", "SalesReceipts"
+        };
+        private const int MaxDiagnosticSamplesPerType = 5;
+        private readonly Dictionary<string, List<(string Request, string Response, string SourceId)>> _bankTxnDiagnostics = new(StringComparer.OrdinalIgnoreCase);
+        private readonly Dictionary<string, int> _bankTxnAmountWarnings = new(StringComparer.OrdinalIgnoreCase);
 
         /// <summary>
         /// Transaction entity types — these use TxnID instead of Name/FullName.
@@ -681,6 +695,26 @@ namespace QB_TimeWarp.Services
                             stage.StageNumber, stage.StageName);
                     }
                 }
+            }
+
+            // ── FIX #43: Post-Import Bank Transaction Diagnostics ──────
+            Log.Information("");
+            Log.Information("  ┌──────────────────────────────────────────────────────┐");
+            Log.Information("  │  FIX #43: Bank Transaction Diagnostic Capture         │");
+            Log.Information("  └──────────────────────────────────────────────────────┘");
+
+            try
+            {
+                VerifyBankAccountBalances();
+
+                var diagDir = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Diagnostics");
+                Directory.CreateDirectory(diagDir);
+                WriteBankDiagnosticReport(diagDir);
+                Log.Information("  ✓ FIX #43 diagnostics written to {DiagDir}", diagDir);
+            }
+            catch (Exception ex)
+            {
+                Log.Error(ex, "  ✗ FIX #43 diagnostic capture failed (non-fatal)");
             }
 
             summary.EndTime = DateTime.UtcNow;
@@ -1930,6 +1964,25 @@ namespace QB_TimeWarp.Services
                 }
 
                 result.QBXMLResponse = response;
+
+                // ═══════════════════════════════════════════════════════════════════
+                // FIX #43: Capture bank transaction QBXML diagnostics
+                // ═══════════════════════════════════════════════════════════════════
+                if (BankDiagnosticTypes.Contains(entityType))
+                {
+                    if (!_bankTxnDiagnostics.ContainsKey(entityType))
+                        _bankTxnDiagnostics[entityType] = new List<(string, string, string)>();
+
+                    if (_bankTxnDiagnostics[entityType].Count < MaxDiagnosticSamplesPerType)
+                    {
+                        _bankTxnDiagnostics[entityType].Add((requestXml, response, sourceId));
+                        Log.Information("  🔍 FIX #43: Captured diagnostic QBXML sample #{Num} for {Type} (source: {Id})",
+                            _bankTxnDiagnostics[entityType].Count, entityType, sourceId);
+                    }
+
+                    // Validate amounts in request — warn on missing/negative/zero amounts
+                    ValidateBankTransactionAmounts(entityType, entity, sourceId);
+                }
 
                 // Parse response for success/failure
                 // Look for the specific Add response element (e.g., AccountAddRs, CustomerAddRs)
@@ -3443,6 +3496,353 @@ namespace QB_TimeWarp.Services
                 .Replace(">", "&gt;")
                 .Replace("\"", "&quot;")
                 .Replace("'", "&apos;");
+        }
+
+        // ═══════════════════════════════════════════════════════════════════
+        // FIX #43: Bank Transaction Diagnostic Methods
+        // ═══════════════════════════════════════════════════════════════════
+        // These methods diagnose reversed bank-side postings on Checks,
+        // Deposits, Transfers, and SalesReceipts. The bug manifests as
+        // bank accounts 1-1010 and 1-1020 having their debit/credit sides
+        // flipped in QB 2021 vs QB 2023 (swing = exactly 2× net activity).
+        // ═══════════════════════════════════════════════════════════════════
+
+        /// <summary>
+        /// FIX #43: Validates amount fields on bank transactions.
+        /// Checks for missing, negative, or zero amounts on line items
+        /// and header-level fields. Logs warnings for anomalies.
+        /// </summary>
+        private void ValidateBankTransactionAmounts(string entityType, QBEntity entity, string sourceId)
+        {
+            if (!_bankTxnAmountWarnings.ContainsKey(entityType))
+                _bankTxnAmountWarnings[entityType] = 0;
+
+            // For Transfers, check header-level Amount
+            if (entityType.Equals("Transfers", StringComparison.OrdinalIgnoreCase))
+            {
+                var headerAmount = entity.Fields["Amount"]?.ToString();
+                if (string.IsNullOrEmpty(headerAmount))
+                {
+                    Log.Warning("  ⚠️ FIX #43: Transfer '{Id}' has MISSING header Amount!", sourceId);
+                    _bankTxnAmountWarnings[entityType]++;
+                }
+                else if (decimal.TryParse(headerAmount, System.Globalization.NumberStyles.Any,
+                    System.Globalization.CultureInfo.InvariantCulture, out var amt))
+                {
+                    if (amt < 0)
+                    {
+                        Log.Warning("  ⚠️ FIX #43: Transfer '{Id}' has NEGATIVE Amount: {Amt}",
+                            sourceId, headerAmount);
+                        _bankTxnAmountWarnings[entityType]++;
+                    }
+                    else if (amt == 0)
+                    {
+                        Log.Warning("  ⚠️ FIX #43: Transfer '{Id}' has ZERO Amount", sourceId);
+                        _bankTxnAmountWarnings[entityType]++;
+                    }
+                }
+
+                // Validate TransferFromAccountRef and TransferToAccountRef
+                var fromRef = entity.Fields["TransferFromAccountRef"]?["FullName"]?.ToString();
+                var toRef = entity.Fields["TransferToAccountRef"]?["FullName"]?.ToString();
+                Log.Debug("  🔍 FIX #43: Transfer '{Id}': From={From}, To={To}, Amount={Amt}",
+                    sourceId, fromRef ?? "MISSING", toRef ?? "MISSING", headerAmount ?? "MISSING");
+                return;
+            }
+
+            // For Checks/Deposits/SalesReceipts, check line item amounts
+            int missingAmounts = 0;
+            int negativeAmounts = 0;
+            int zeroAmounts = 0;
+            decimal totalLineAmount = 0;
+
+            foreach (var lineItem in entity.LineItems)
+            {
+                var amountStr = lineItem["Amount"]?.ToString();
+                if (string.IsNullOrEmpty(amountStr))
+                {
+                    missingAmounts++;
+                }
+                else if (decimal.TryParse(amountStr, System.Globalization.NumberStyles.Any,
+                    System.Globalization.CultureInfo.InvariantCulture, out var lineAmt))
+                {
+                    totalLineAmount += lineAmt;
+                    if (lineAmt < 0) negativeAmounts++;
+                    else if (lineAmt == 0) zeroAmounts++;
+                }
+            }
+
+            // Log the bank account reference for this transaction
+            string? bankAccountName = null;
+            if (entityType.Equals("Checks", StringComparison.OrdinalIgnoreCase))
+                bankAccountName = entity.Fields["AccountRef"]?["FullName"]?.ToString();
+            else if (entityType.Equals("Deposits", StringComparison.OrdinalIgnoreCase))
+                bankAccountName = entity.Fields["DepositToAccountRef"]?["FullName"]?.ToString();
+            else if (entityType.Equals("SalesReceipts", StringComparison.OrdinalIgnoreCase))
+                bankAccountName = entity.Fields["DepositToAccountRef"]?["FullName"]?.ToString();
+
+            if (missingAmounts > 0 || negativeAmounts > 0)
+            {
+                Log.Warning("  ⚠️ FIX #43: {Type} '{Id}' → Bank:{Bank} | Lines:{Total}, Missing:{Miss}, Negative:{Neg}, Zero:{Zero}, LineTotal:{Sum:F2}",
+                    entityType, sourceId, bankAccountName ?? "UNKNOWN",
+                    entity.LineItems.Count, missingAmounts, negativeAmounts, zeroAmounts, totalLineAmount);
+                _bankTxnAmountWarnings[entityType]++;
+            }
+            else
+            {
+                // Log first 5 with summary (non-warning)
+                Log.Debug("  🔍 FIX #43: {Type} '{Id}' → Bank:{Bank} | Lines:{Total}, LineTotal:{Sum:F2}",
+                    entityType, sourceId, bankAccountName ?? "UNKNOWN",
+                    entity.LineItems.Count, totalLineAmount);
+            }
+        }
+
+        /// <summary>
+        /// FIX #43: Queries QB 2021 for bank account balances and logs them.
+        /// Called after Stage 3 (Transactions) to verify bank-side postings.
+        /// Compares against expected balances if available.
+        /// </summary>
+        public void VerifyBankAccountBalances()
+        {
+            Log.Information("");
+            Log.Information("  ┌──────────────────────────────────────────────────────┐");
+            Log.Information("  │  FIX #43: Post-Import Bank Account Balance Check      │");
+            Log.Information("  └──────────────────────────────────────────────────────┘");
+
+            try
+            {
+                // Query ALL bank-type accounts from QB 2021
+                var queryXml = "<AccountQueryRq>" +
+                    "<AccountType>Bank</AccountType>" +
+                    "</AccountQueryRq>";
+                var fullRequest = QBConnectionManager.BuildQBXMLRequest(queryXml, _effectiveSDKVersion);
+                var response = _connection.ProcessRequest(fullRequest);
+
+                var accounts = QBConnectionManager.ParseResponseEntities(response, "AccountRet");
+
+                Log.Information("  Found {Count} Bank-type accounts in QB 2021:", accounts.Count());
+
+                foreach (var acct in accounts)
+                {
+                    var name = acct.Element("FullName")?.Value ?? acct.Element("Name")?.Value ?? "UNKNOWN";
+                    var acctNum = acct.Element("AccountNumber")?.Value ?? "";
+                    var balance = acct.Element("Balance")?.Value ?? "0.00";
+                    var totalBalance = acct.Element("TotalBalance")?.Value ?? balance;
+                    var acctType = acct.Element("AccountType")?.Value ?? "UNKNOWN";
+
+                    // Flag known problem accounts
+                    bool isProblem = name.Contains("CASH REGISTER", StringComparison.OrdinalIgnoreCase) ||
+                                   name.Contains("Educators", StringComparison.OrdinalIgnoreCase) ||
+                                   name.Contains("1-1010", StringComparison.OrdinalIgnoreCase) ||
+                                   name.Contains("1-1020", StringComparison.OrdinalIgnoreCase);
+
+                    if (isProblem)
+                    {
+                        Log.Warning("  🏦 {Marker} {AcctNum} {Name}: Balance={Bal}, TotalBalance={Total}, Type={Type}",
+                            "⚠️", acctNum, name, balance, totalBalance, acctType);
+                    }
+                    else
+                    {
+                        Log.Information("  🏦 {AcctNum} {Name}: Balance={Bal}, TotalBalance={Total}, Type={Type}",
+                            acctNum, name, balance, totalBalance, acctType);
+                    }
+                }
+
+                // Also query CreditCard-type accounts for comparison
+                var ccQueryXml = "<AccountQueryRq>" +
+                    "<AccountType>CreditCard</AccountType>" +
+                    "</AccountQueryRq>";
+                var ccRequest = QBConnectionManager.BuildQBXMLRequest(ccQueryXml, _effectiveSDKVersion);
+                var ccResponse = _connection.ProcessRequest(ccRequest);
+                var ccAccounts = QBConnectionManager.ParseResponseEntities(ccResponse, "AccountRet");
+
+                if (ccAccounts.Any())
+                {
+                    Log.Information("");
+                    Log.Information("  Found {Count} CreditCard-type accounts in QB 2021:", ccAccounts.Count());
+                    foreach (var acct in ccAccounts)
+                    {
+                        var name = acct.Element("FullName")?.Value ?? "UNKNOWN";
+                        var balance = acct.Element("Balance")?.Value ?? "0.00";
+                        Log.Information("  💳 {Name}: Balance={Bal}", name, balance);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Log.Error("  ❌ FIX #43: Failed to query bank account balances: {Error}", ex.Message);
+            }
+        }
+
+        /// <summary>
+        /// FIX #43: Writes all captured QBXML diagnostics to a JSON file.
+        /// Contains the first N request/response pairs for each bank
+        /// transaction type, plus amount validation summaries.
+        /// </summary>
+        public void WriteBankDiagnosticReport(string outputDirectory)
+        {
+            Log.Information("");
+            Log.Information("  ┌──────────────────────────────────────────────────────┐");
+            Log.Information("  │  FIX #43: Writing Bank Transaction Diagnostic Report   │");
+            Log.Information("  └──────────────────────────────────────────────────────┘");
+
+            var report = new JObject
+            {
+                ["GeneratedAt"] = DateTime.UtcNow.ToString("o"),
+                ["Purpose"] = "FIX #43: Diagnose reversed bank-side postings in Checks/Deposits/Transfers",
+                ["Description"] = "Contains QBXML request/response samples for bank transactions. " +
+                    "Compare the AccountRef in requests with the actual posting in QB 2021 responses. " +
+                    "The CheckRet/DepositRet/TransferRet in the response shows what QB 2021 actually created.",
+            };
+
+            // Amount validation summary
+            var amountSummary = new JObject();
+            foreach (var kvp in _bankTxnAmountWarnings)
+            {
+                amountSummary[kvp.Key] = $"{kvp.Value} warnings";
+            }
+            report["AmountWarnings"] = amountSummary;
+
+            // QBXML samples
+            var samples = new JObject();
+            foreach (var kvp in _bankTxnDiagnostics)
+            {
+                var typeSamples = new JArray();
+                foreach (var (request, response, sourceId) in kvp.Value)
+                {
+                    var sample = new JObject
+                    {
+                        ["SourceIdentifier"] = sourceId,
+                        ["QBXMLRequest"] = request,
+                        ["QBXMLResponse"] = response,
+                    };
+
+                    // Parse the response to extract key fields
+                    try
+                    {
+                        var doc = XDocument.Parse(response);
+                        var retElement = doc.Descendants()
+                            .FirstOrDefault(e => e.Name.LocalName.EndsWith("Ret") &&
+                                               e.Name.LocalName != "QBXMLMsgsRs");
+
+                        if (retElement != null)
+                        {
+                            var responseDetails = new JObject
+                            {
+                                ["RetElementType"] = retElement.Name.LocalName,
+                                ["TxnID"] = retElement.Element("TxnID")?.Value,
+                                ["TxnDate"] = retElement.Element("TxnDate")?.Value,
+                                ["Amount"] = retElement.Element("Amount")?.Value,
+                            };
+
+                            // Extract account references from response
+                            var accountRef = retElement.Element("AccountRef");
+                            if (accountRef != null)
+                            {
+                                responseDetails["AccountRef_FullName"] = accountRef.Element("FullName")?.Value;
+                                responseDetails["AccountRef_ListID"] = accountRef.Element("ListID")?.Value;
+                            }
+
+                            var depositToRef = retElement.Element("DepositToAccountRef");
+                            if (depositToRef != null)
+                            {
+                                responseDetails["DepositToAccountRef_FullName"] = depositToRef.Element("FullName")?.Value;
+                                responseDetails["DepositToAccountRef_ListID"] = depositToRef.Element("ListID")?.Value;
+                            }
+
+                            var fromRef = retElement.Element("TransferFromAccountRef");
+                            if (fromRef != null)
+                            {
+                                responseDetails["TransferFromAccountRef_FullName"] = fromRef.Element("FullName")?.Value;
+                            }
+
+                            var toRef = retElement.Element("TransferToAccountRef");
+                            if (toRef != null)
+                            {
+                                responseDetails["TransferToAccountRef_FullName"] = toRef.Element("FullName")?.Value;
+                            }
+
+                            // Extract expense line details from response (for Checks)
+                            var expenseLines = retElement.Elements()
+                                .Where(e => e.Name.LocalName.StartsWith("ExpenseLine") ||
+                                           e.Name.LocalName.StartsWith("DepositLine"))
+                                .Select(e => new JObject
+                                {
+                                    ["LineType"] = e.Name.LocalName,
+                                    ["AccountRef"] = e.Element("AccountRef")?.Element("FullName")?.Value,
+                                    ["Amount"] = e.Element("Amount")?.Value,
+                                    ["Memo"] = e.Element("Memo")?.Value
+                                })
+                                .ToList();
+
+                            if (expenseLines.Any())
+                            {
+                                responseDetails["LineItems"] = new JArray(expenseLines);
+                            }
+
+                            sample["ParsedResponse"] = responseDetails;
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        sample["ResponseParseError"] = ex.Message;
+                    }
+
+                    typeSamples.Add(sample);
+                }
+                samples[kvp.Key] = typeSamples;
+            }
+            report["QBXMLSamples"] = samples;
+
+            // Write the report
+            try
+            {
+                var diagnosticsDir = Path.Combine(outputDirectory, "Diagnostics");
+                Directory.CreateDirectory(diagnosticsDir);
+
+                var filePath = Path.Combine(diagnosticsDir,
+                    $"FIX43_BankTxnDiagnostic_{DateTime.Now:yyyyMMdd_HHmmss}.json");
+                var json = JsonConvert.SerializeObject(report, Formatting.Indented);
+                File.WriteAllText(filePath, json);
+
+                Log.Information("  ✓ FIX #43: Diagnostic report written to: {Path}", filePath);
+                Log.Information("  Contains {Types} transaction types with {Total} samples",
+                    _bankTxnDiagnostics.Count,
+                    _bankTxnDiagnostics.Values.Sum(v => v.Count));
+
+                foreach (var kvp in _bankTxnAmountWarnings)
+                {
+                    if (kvp.Value > 0)
+                    {
+                        Log.Warning("  ⚠️ FIX #43: {Type} had {Count} amount anomalies (missing/negative/zero)",
+                            kvp.Key, kvp.Value);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Log.Error("  ❌ FIX #43: Failed to write diagnostic report: {Error}", ex.Message);
+            }
+        }
+
+        /// <summary>
+        /// FIX #43: Queries QB 2021 for a specific Check by TxnID to verify
+        /// the actual debit/credit posting. Returns the response XML.
+        /// </summary>
+        public string? QueryCheckByTxnID(string txnId)
+        {
+            try
+            {
+                var queryXml = $"<CheckQueryRq><TxnID>{EscapeXml(txnId)}</TxnID>" +
+                    "<IncludeLineItems>true</IncludeLineItems></CheckQueryRq>";
+                var fullRequest = QBConnectionManager.BuildQBXMLRequest(queryXml, _effectiveSDKVersion);
+                return _connection.ProcessRequest(fullRequest);
+            }
+            catch (Exception ex)
+            {
+                Log.Error("  FIX #43: Failed to query Check TxnID {Id}: {Error}", txnId, ex.Message);
+                return null;
+            }
         }
     }
 }
