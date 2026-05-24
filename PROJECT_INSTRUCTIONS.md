@@ -1,3 +1,21 @@
+# ⚠️ START HERE - Session Initialization
+
+## 1️⃣ READ OPERATIONS.MD FIRST!
+
+Before working on this project, read the complete operational guide:
+
+```bash
+cat /home/ubuntu/QB-TimeWarp/OPERATIONS.md
+```
+
+This document contains:
+- MCP memory access instructions
+- VM connection procedures
+- Migration restart scripts
+- All credentials and file locations
+
+---
+
 # QuickBooks TimeWarp® — Agent Briefing & Session Notes
 
 ## ⚠️ CURRENT STATE — READ THIS FIRST ⚠️

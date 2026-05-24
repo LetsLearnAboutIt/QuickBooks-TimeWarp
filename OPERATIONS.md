@@ -1,4 +1,22 @@
-# QB-TimeWarp — Operations Manual
+# QB-TimeWarp Operations Guide
+
+## 🔥 FIRST: Access Project Memory
+
+Before doing ANYTHING else, connect to MCP memory to load all project context:
+
+```bash
+# MCP memory is already configured - just reference it
+# All QB-TimeWarp credentials, paths, and history are stored in entity: QB-TimeWarp-Operations
+```
+
+The MCP memory contains:
+- VM credentials (RDP/SSH)
+- QuickBooks file locations and passwords
+- GitHub repo info and SSH keys
+- Complete migration history and bug fixes
+- All previous conversation context
+
+---
 
 > **Purpose**: Complete operational procedures for accessing the Windows VM, running migrations, and retrieving diagnostics. This document is the single source of truth for all VM access, restart, and troubleshooting procedures.
 >
@@ -108,9 +126,8 @@ git remote set-url origin git@github.com:LetsLearnAboutIt/QuickBooks-TimeWarp.gi
 # ── Step 3: Pull latest code ────────────────────────────────────
 git pull origin main
 
-# ── Step 4: Clean rebuild ───────────────────────────────────────
-rmdir /S /Q bin
-rmdir /S /Q obj
+# ── Step 4: Clean rebuild (safer version) ───────────────────────
+dotnet clean -c Release
 dotnet build -c Release
 
 # ── Step 5: Copy config to output ───────────────────────────────
