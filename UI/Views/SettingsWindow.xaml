@@ -1,0 +1,249 @@
+<Window x:Class="QB_TimeWarp.UI.Views.SettingsWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Settings — QuickBooks TimeWarp"
+        Width="640" Height="620"
+        WindowStartupLocation="CenterOwner"
+        Background="#1E1E2E"
+        Foreground="#E0E0E0"
+        ResizeMode="NoResize">
+
+    <Grid Margin="20">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <!-- Header -->
+        <TextBlock Grid.Row="0" Text="⚙ Settings" FontSize="20" FontWeight="Bold"
+                   Foreground="#E0E0E0" Margin="0,0,0,16" />
+
+        <!-- Settings tabs -->
+        <TabControl Grid.Row="1" Background="#252540" Foreground="#E0E0E0" BorderThickness="0">
+            <TabControl.Resources>
+                <Style TargetType="TabItem">
+                    <Setter Property="Background" Value="#333355" />
+                    <Setter Property="Foreground" Value="#AAAAAA" />
+                    <Setter Property="Padding" Value="14,8" />
+                    <Setter Property="Template">
+                        <Setter.Value>
+                            <ControlTemplate TargetType="TabItem">
+                                <Border x:Name="TabBorder" Background="#333355" CornerRadius="4,4,0,0"
+                                        Padding="{TemplateBinding Padding}" Margin="2,0,2,0">
+                                    <ContentPresenter ContentSource="Header" HorizontalAlignment="Center" />
+                                </Border>
+                                <ControlTemplate.Triggers>
+                                    <Trigger Property="IsSelected" Value="True">
+                                        <Setter TargetName="TabBorder" Property="Background" Value="#40C4FF" />
+                                    </Trigger>
+                                    <Trigger Property="IsMouseOver" Value="True">
+                                        <Setter TargetName="TabBorder" Property="Background" Value="#3A3A60" />
+                                    </Trigger>
+                                </ControlTemplate.Triggers>
+                            </ControlTemplate>
+                        </Setter.Value>
+                    </Setter>
+                </Style>
+            </TabControl.Resources>
+
+            <!-- Tab 1: Connection -->
+            <TabItem Header="Connection">
+                <ScrollViewer VerticalScrollBarVisibility="Auto" Padding="16">
+                    <StackPanel>
+                        <TextBlock Text="QuickBooks 2023 (Source)" FontWeight="SemiBold" FontSize="14"
+                                   Foreground="#40C4FF" Margin="0,8,0,8" />
+
+                        <TextBlock Text="Company File Path:" Foreground="#AAAAAA" Margin="0,0,0,4" />
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+                            <TextBox x:Name="QB2023Path" Background="#333355" Foreground="#E0E0E0"
+                                     BorderBrush="#555555" Padding="8,6" FontSize="12" />
+                            <Button Grid.Column="1" Content="Browse" Margin="6,0,0,0"
+                                    Click="BrowseQB2023_Click" Style="{StaticResource ToolbarButtonSecondary}" />
+                        </Grid>
+
+                        <TextBlock Text="SDK Version:" Foreground="#AAAAAA" Margin="0,12,0,4" />
+                        <TextBox x:Name="QB2023SDKVersion" Text="16.0" Background="#333355"
+                                 Foreground="#E0E0E0" BorderBrush="#555555" Padding="8,6" Width="100"
+                                 HorizontalAlignment="Left" />
+
+                        <TextBlock Text="Connection Timeout (seconds):" Foreground="#AAAAAA" Margin="0,12,0,4" />
+                        <TextBox x:Name="QB2023Timeout" Text="300" Background="#333355"
+                                 Foreground="#E0E0E0" BorderBrush="#555555" Padding="8,6" Width="100"
+                                 HorizontalAlignment="Left" />
+
+                        <Separator Background="#333355" Margin="0,16,0,8" />
+
+                        <TextBlock Text="QuickBooks 2021 (Target)" FontWeight="SemiBold" FontSize="14"
+                                   Foreground="#69F0AE" Margin="0,8,0,8" />
+
+                        <TextBlock Text="Company File Path:" Foreground="#AAAAAA" Margin="0,0,0,4" />
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+                            <TextBox x:Name="QB2021Path" Background="#333355" Foreground="#E0E0E0"
+                                     BorderBrush="#555555" Padding="8,6" FontSize="12" />
+                            <Button Grid.Column="1" Content="Browse" Margin="6,0,0,0"
+                                    Click="BrowseQB2021_Click" Style="{StaticResource ToolbarButtonSecondary}" />
+                        </Grid>
+
+                        <TextBlock Text="SDK Version:" Foreground="#AAAAAA" Margin="0,12,0,4" />
+                        <TextBox x:Name="QB2021SDKVersion" Text="15.0" Background="#333355"
+                                 Foreground="#E0E0E0" BorderBrush="#555555" Padding="8,6" Width="100"
+                                 HorizontalAlignment="Left" />
+
+                        <TextBlock Text="Max Retries:" Foreground="#AAAAAA" Margin="0,12,0,4" />
+                        <TextBox x:Name="MaxRetries" Text="3" Background="#333355"
+                                 Foreground="#E0E0E0" BorderBrush="#555555" Padding="8,6" Width="100"
+                                 HorizontalAlignment="Left" />
+                    </StackPanel>
+                </ScrollViewer>
+            </TabItem>
+
+            <!-- Tab 2: Export / Import -->
+            <TabItem Header="Export / Import">
+                <ScrollViewer VerticalScrollBarVisibility="Auto" Padding="16">
+                    <StackPanel>
+                        <TextBlock Text="Date Range Filter" FontWeight="SemiBold" FontSize="14"
+                                   Foreground="#40C4FF" Margin="0,8,0,8" />
+
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="16" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <StackPanel Grid.Column="0">
+                                <TextBlock Text="From Date:" Foreground="#AAAAAA" Margin="0,0,0,4" />
+                                <TextBox x:Name="DateFrom" Background="#333355" Foreground="#E0E0E0"
+                                         BorderBrush="#555555" Padding="8,6" />
+                            </StackPanel>
+                            <StackPanel Grid.Column="2">
+                                <TextBlock Text="To Date:" Foreground="#AAAAAA" Margin="0,0,0,4" />
+                                <TextBox x:Name="DateTo" Background="#333355" Foreground="#E0E0E0"
+                                         BorderBrush="#555555" Padding="8,6" />
+                            </StackPanel>
+                        </Grid>
+
+                        <Separator Background="#333355" Margin="0,16,0,8" />
+
+                        <TextBlock Text="Import Options" FontWeight="SemiBold" FontSize="14"
+                                   Foreground="#69F0AE" Margin="0,8,0,8" />
+
+                        <CheckBox x:Name="SkipOnError" Content="Skip on Error (continue importing)"
+                                  IsChecked="True" Foreground="#E0E0E0" Margin="0,4" />
+                        <CheckBox x:Name="UseStagedImport" Content="Use Staged Import (dependency-aware)"
+                                  IsChecked="True" Foreground="#E0E0E0" Margin="0,4" />
+                        <CheckBox x:Name="AutoCreateDeps" Content="Auto-create Missing Dependencies"
+                                  IsChecked="True" Foreground="#E0E0E0" Margin="0,4" />
+                        <CheckBox x:Name="DryRunMode" Content="Dry Run (no actual writes to QB 2021)"
+                                  IsChecked="False" Foreground="#E0E0E0" Margin="0,4" />
+
+                        <Separator Background="#333355" Margin="0,16,0,8" />
+
+                        <TextBlock Text="Transformation Rules" FontWeight="SemiBold" FontSize="14"
+                                   Foreground="#FFD740" Margin="0,8,0,8" />
+
+                        <CheckBox x:Name="ReactivateInactive" Content="Re-activate Inactive Entities"
+                                  IsChecked="True" Foreground="#E0E0E0" Margin="0,4" />
+                        <CheckBox x:Name="PreserveClasses" Content="Preserve Class Tracking"
+                                  IsChecked="True" Foreground="#E0E0E0" Margin="0,4" />
+                        <CheckBox x:Name="MatchAccounting" Content="Match Accounting Method"
+                                  IsChecked="True" Foreground="#E0E0E0" Margin="0,4" />
+                    </StackPanel>
+                </ScrollViewer>
+            </TabItem>
+
+            <!-- Tab 3: Paths -->
+            <TabItem Header="Paths">
+                <ScrollViewer VerticalScrollBarVisibility="Auto" Padding="16">
+                    <StackPanel>
+                        <TextBlock Text="Output Directories" FontWeight="SemiBold" FontSize="14"
+                                   Foreground="#40C4FF" Margin="0,8,0,8" />
+
+                        <TextBlock Text="Export Directory:" Foreground="#AAAAAA" Margin="0,4,0,4" />
+                        <TextBox x:Name="ExportDir" Text=".\ExportedData" Background="#333355"
+                                 Foreground="#E0E0E0" BorderBrush="#555555" Padding="8,6" />
+
+                        <TextBlock Text="Schema Directory:" Foreground="#AAAAAA" Margin="0,12,0,4" />
+                        <TextBox x:Name="SchemaDir" Text=".\Schemas" Background="#333355"
+                                 Foreground="#E0E0E0" BorderBrush="#555555" Padding="8,6" />
+
+                        <TextBlock Text="Log Directory:" Foreground="#AAAAAA" Margin="0,12,0,4" />
+                        <TextBox x:Name="LogDir" Text=".\Logs" Background="#333355"
+                                 Foreground="#E0E0E0" BorderBrush="#555555" Padding="8,6" />
+
+                        <TextBlock Text="Validation Report Directory:" Foreground="#AAAAAA" Margin="0,12,0,4" />
+                        <TextBox x:Name="ValidationDir" Text=".\Validation" Background="#333355"
+                                 Foreground="#E0E0E0" BorderBrush="#555555" Padding="8,6" />
+
+                        <Separator Background="#333355" Margin="0,16,0,8" />
+
+                        <TextBlock Text="Working Directories" FontWeight="SemiBold" FontSize="14"
+                                   Foreground="#69F0AE" Margin="0,8,0,8" />
+
+                        <TextBlock Text="Source Working Path:" Foreground="#AAAAAA" Margin="0,4,0,4" />
+                        <TextBox x:Name="SourceWorkingDir" Text="C:\QB-TimeWarp\Working\Source"
+                                 Background="#333355" Foreground="#E0E0E0" BorderBrush="#555555" Padding="8,6" />
+
+                        <TextBlock Text="Target Working Path:" Foreground="#AAAAAA" Margin="0,12,0,4" />
+                        <TextBox x:Name="TargetWorkingDir" Text="C:\QB-TimeWarp\Working\Target"
+                                 Background="#333355" Foreground="#E0E0E0" BorderBrush="#555555" Padding="8,6" />
+
+                        <CheckBox x:Name="PreserveOriginals" Content="Preserve Originals (safety)"
+                                  IsChecked="True" Foreground="#E0E0E0" Margin="0,12,0,4" IsEnabled="False" />
+                    </StackPanel>
+                </ScrollViewer>
+            </TabItem>
+
+            <!-- Tab 4: Logging -->
+            <TabItem Header="Logging">
+                <ScrollViewer VerticalScrollBarVisibility="Auto" Padding="16">
+                    <StackPanel>
+                        <TextBlock Text="Log Configuration" FontWeight="SemiBold" FontSize="14"
+                                   Foreground="#40C4FF" Margin="0,8,0,8" />
+
+                        <TextBlock Text="Minimum Log Level:" Foreground="#AAAAAA" Margin="0,4,0,4" />
+                        <ComboBox x:Name="LogLevel" Background="#333355" Foreground="#1E1E2E"
+                                  Padding="8,6" Width="200" HorizontalAlignment="Left"
+                                  SelectedIndex="1">
+                            <ComboBoxItem Content="Debug" />
+                            <ComboBoxItem Content="Information" />
+                            <ComboBoxItem Content="Warning" />
+                            <ComboBoxItem Content="Error" />
+                        </ComboBox>
+
+                        <CheckBox x:Name="EnableConsoleLog" Content="Enable Console Output"
+                                  IsChecked="True" Foreground="#E0E0E0" Margin="0,12,0,4" />
+                        <CheckBox x:Name="EnableFileLog" Content="Enable File Output"
+                                  IsChecked="True" Foreground="#E0E0E0" Margin="0,4" />
+
+                        <TextBlock Text="Max File Size (MB):" Foreground="#AAAAAA" Margin="0,12,0,4" />
+                        <TextBox x:Name="MaxLogSize" Text="100" Background="#333355"
+                                 Foreground="#E0E0E0" BorderBrush="#555555" Padding="8,6" Width="100"
+                                 HorizontalAlignment="Left" />
+
+                        <TextBlock Text="Retained File Count:" Foreground="#AAAAAA" Margin="0,12,0,4" />
+                        <TextBox x:Name="RetainedFiles" Text="10" Background="#333355"
+                                 Foreground="#E0E0E0" BorderBrush="#555555" Padding="8,6" Width="100"
+                                 HorizontalAlignment="Left" />
+                    </StackPanel>
+                </ScrollViewer>
+            </TabItem>
+        </TabControl>
+
+        <!-- Bottom buttons -->
+        <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,16,0,0">
+            <Button Content="Save Settings" Click="SaveSettings_Click"
+                    Style="{StaticResource PrimaryButton}" Margin="0,0,8,0" />
+            <Button Content="Cancel" Click="Cancel_Click"
+                    Style="{StaticResource ToolbarButtonSecondary}" />
+        </StackPanel>
+    </Grid>
+</Window>

@@ -15,6 +15,11 @@ namespace QB_TimeWarp
     /// This program migrates all data from a QuickBooks Desktop 2023 company file
     /// to a QuickBooks Desktop 2021 company file via the QBXML SDK.
     /// 
+    /// Supports two modes:
+    ///   --gui     : Launch WPF graphical interface (default when double-clicked)
+    ///   --console : Run in console mode (legacy, default when args present)
+    ///   (no args) : Launches GUI mode
+    /// 
     /// Prerequisites:
     ///   1. QuickBooks Desktop 2023 and 2021 installed on this machine
     ///   2. QuickBooks SDK (QBXMLRP2.RequestProcessor COM object) registered
@@ -24,7 +29,7 @@ namespace QB_TimeWarp
     ///   5. appsettings.json configured with correct company file paths
     ///   6. FieldMappings.json reviewed and customized for your data
     /// 
-    /// Execution flow:
+    /// Execution flow (console):
     ///   Step 1: Extract schema from QB 2021 (document target capabilities)
     ///   Step 2: Export all data from QB 2023
     ///   Step 3: Transform data using field mappings
@@ -37,8 +42,19 @@ namespace QB_TimeWarp
         private static AppConfiguration _config = null!;
         private static WorkingDirectoryManager? _workingDirManager;
 
+        [STAThread]
         static int Main(string[] args)
         {
+            // ─── GUI mode: --gui flag or no arguments (double-click launch) ───
+            if (args.Length == 0 || args.Any(a => a.Equals("--gui", StringComparison.OrdinalIgnoreCase)))
+            {
+                var app = new QB_TimeWarp.UI.App();
+                app.InitializeComponent();
+                app.Run();
+                return 0;
+            }
+
+            // ─── Console mode: all other flags (--export, --import, --full, etc.) ───
             try
             {
                 // ─── Handle --certify BEFORE anything else (no config/working-copy needed) ───
@@ -993,6 +1009,7 @@ namespace QB_TimeWarp
 
             return modeArg.ToLowerInvariant() switch
             {
+                "--full" or "--console" or "-f" => RunMode.Full,
                 "--export" or "-e" => RunMode.ExportOnly,
                 "--import" or "-i" => RunMode.ImportOnly,
                 "--validate" or "-v" => RunMode.ValidateOnly,
@@ -1008,7 +1025,9 @@ namespace QB_TimeWarp
   Usage: QB-TimeWarp [mode] [options]
 
   Modes:
-    (no args)     Full migration (export → transform → import → validate)
+    (no args)     Launch GUI (WPF graphical interface)
+    --gui         Launch GUI explicitly
+    --full        Full migration in console mode (export → transform → import → validate)
     --export, -e  Export data from QB 2023 only
     --import, -i  Import previously exported data into QB 2021
     --validate, -v Validate QB 2021 data against QB 2023

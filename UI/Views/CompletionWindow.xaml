@@ -1,0 +1,110 @@
+<Window x:Class="QB_TimeWarp.UI.Views.CompletionWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Conversion Complete"
+        Width="620" Height="520"
+        WindowStartupLocation="CenterOwner"
+        Background="#1E1E2E"
+        Foreground="#E0E0E0"
+        ResizeMode="NoResize">
+
+    <Grid Margin="24">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />   <!-- Success header -->
+            <RowDefinition Height="Auto" />   <!-- Stats summary -->
+            <RowDefinition Height="Auto" />   <!-- Save location -->
+            <RowDefinition Height="*" />      <!-- File list -->
+            <RowDefinition Height="Auto" />   <!-- Copy All button -->
+            <RowDefinition Height="Auto" />   <!-- Close button -->
+        </Grid.RowDefinitions>
+
+        <!-- Success header -->
+        <StackPanel Grid.Row="0" HorizontalAlignment="Center" Margin="0,0,0,16">
+            <TextBlock Text="✓" FontSize="48" Foreground="#00E676" HorizontalAlignment="Center" />
+            <TextBlock Text="Conversion Complete" FontSize="24" FontWeight="Bold"
+                       Foreground="#00E676" HorizontalAlignment="Center" />
+            <TextBlock x:Name="FileNameLabel" FontSize="13" Foreground="#AAAAAA"
+                       HorizontalAlignment="Center" Margin="0,4,0,0" />
+        </StackPanel>
+
+        <!-- Stats summary -->
+        <Border Grid.Row="1" Background="#252540" CornerRadius="6" Padding="16,10" Margin="0,0,0,12">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+
+                <StackPanel Grid.Column="0" HorizontalAlignment="Center">
+                    <TextBlock x:Name="ExportedLabel" FontSize="18" FontWeight="Bold"
+                               Foreground="#40C4FF" HorizontalAlignment="Center" />
+                    <TextBlock Text="Exported" FontSize="10" Foreground="#888888" HorizontalAlignment="Center" />
+                </StackPanel>
+                <StackPanel Grid.Column="1" HorizontalAlignment="Center">
+                    <TextBlock x:Name="TransformedLabel" FontSize="18" FontWeight="Bold"
+                               Foreground="#FFD740" HorizontalAlignment="Center" />
+                    <TextBlock Text="Transformed" FontSize="10" Foreground="#888888" HorizontalAlignment="Center" />
+                </StackPanel>
+                <StackPanel Grid.Column="2" HorizontalAlignment="Center">
+                    <TextBlock x:Name="ImportedLabel" FontSize="18" FontWeight="Bold"
+                               Foreground="#69F0AE" HorizontalAlignment="Center" />
+                    <TextBlock Text="Imported" FontSize="10" Foreground="#888888" HorizontalAlignment="Center" />
+                </StackPanel>
+                <StackPanel Grid.Column="3" HorizontalAlignment="Center">
+                    <TextBlock x:Name="FailedLabel" FontSize="18" FontWeight="Bold"
+                               Foreground="#FF5252" HorizontalAlignment="Center" />
+                    <TextBlock Text="Failed" FontSize="10" Foreground="#888888" HorizontalAlignment="Center" />
+                </StackPanel>
+            </Grid>
+        </Border>
+
+        <!-- Save location hint -->
+        <TextBlock Grid.Row="2" x:Name="SaveLocationLabel" FontSize="12"
+                   Foreground="#40C4FF" Margin="0,0,0,12" TextWrapping="Wrap" />
+
+        <!-- File list with buttons -->
+        <Border Grid.Row="3" Background="#252540" CornerRadius="6" Padding="4">
+            <ListView x:Name="OutputFilesList" Background="Transparent"
+                      BorderThickness="0" Foreground="#E0E0E0"
+                      ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+                <ListView.ItemTemplate>
+                    <DataTemplate>
+                        <Grid Margin="4,6">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+
+                            <TextBlock Grid.Column="0" Text="{Binding Icon}" FontSize="16"
+                                       VerticalAlignment="Center" Margin="4,0,8,0" />
+                            <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                                <TextBlock Text="{Binding Label}" FontSize="13" Foreground="#E0E0E0" />
+                                <TextBlock Text="{Binding SubLabel}" FontSize="10" Foreground="#777777" />
+                            </StackPanel>
+                            <Button Grid.Column="2" Content="Copy to Downloads"
+                                    Tag="{Binding FilePath}" Click="CopyToDownloads_Click"
+                                    Margin="4,0" Style="{StaticResource CyanSmallButton}" />
+                            <Button Grid.Column="3" Content="Show in Folder"
+                                    Tag="{Binding FilePath}" Click="ShowInFolder_Click"
+                                    Style="{StaticResource SmallButton}" />
+                        </Grid>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
+        </Border>
+
+        <!-- Copy All -->
+        <Button Grid.Row="4" Content="📋 Copy ALL to Downloads" Click="CopyAllToDownloads_Click"
+                HorizontalAlignment="Stretch" Margin="0,12,0,0"
+                Style="{StaticResource CyanWideButton}" />
+
+        <!-- Close -->
+        <Button Grid.Row="5" Content="Close" Click="Close_Click"
+                HorizontalAlignment="Right" Margin="0,12,0,0"
+                Style="{StaticResource ToolbarButtonSecondary}" />
+    </Grid>
+</Window>
