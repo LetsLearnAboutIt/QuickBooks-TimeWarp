@@ -249,7 +249,7 @@ namespace QB_TimeWarp.Services
             ["JournalEntries"] = new(StringComparer.OrdinalIgnoreCase)
             {
                 "Name",              // not in JournalEntryAdd schema
-                "Amount",            // belongs on each JournalDebitLine/JournalCreditLine
+                "Amount",            // belongs on each JournalLine (FIX #45: signed amount)
                 "TotalAmount",       // computed rollup
                 "DebitTotal",        // computed rollup
                 "CreditTotal",       // computed rollup
@@ -257,9 +257,9 @@ namespace QB_TimeWarp.Services
                                      // header Memo from ConvertCreditCardToJournalEntry carries the
                                      // "[From CreditCardCharge] TxnID:..." provenance tag and is set
                                      // directly in Fields["Memo"] — but the JournalEntryAdd XSD puts
-                                     // Memo ONLY inside <JournalDebitLine>/<JournalCreditLine>, not at
-                                     // the top-level <JournalEntryAdd>. Emitting it at header level
-                                     // causes 0x80040400 for all 378 converted entries.
+                                     // Memo ONLY inside <JournalLine>, not at the top-level
+                                     // <JournalEntryAdd>. Emitting it at header level
+                                     // causes 0x80040400 for all converted entries.
             },
             ["Deposits"] = new(StringComparer.OrdinalIgnoreCase)
             {
@@ -2953,34 +2953,30 @@ namespace QB_TimeWarp.Services
                 var lineType = lineItem["_lineType"]?.ToString() ?? lineAddType;
 
                 // ========================================================================
-                // FIX #8: JournalEntry line-element naming
+                // FIX #45: JournalEntry line-element naming
                 // ========================================================================
-                // For most line-bearing transactions the QBXML *Add request uses
-                // <FooLineAdd> (e.g. <ExpenseLineAdd>, <DepositLineAdd>, <SalesReceiptLineAdd>).
+                // QB 2021 SDK 15.0 uses a GENERIC <JournalLine> wrapper element with
+                // a SIGNED <Amount> value:
+                //   - Positive Amount = debit
+                //   - Negative Amount = credit
                 //
-                // BUT JournalEntryAdd is special — its child elements are literally
-                //   <JournalDebitLine> ... </JournalDebitLine>
-                //   <JournalCreditLine> ... </JournalCreditLine>
-                // with NO "Add" suffix. The existing logic of
-                //   lineType.Replace("Ret","Add")
-                // would emit <JournalDebitLineAdd>, which QuickBooks rejects with
-                //   "QuickBooks found an error when parsing the provided XML text stream"
-                //   (0x80040400).
+                // Previous code (FIX #8) used <JournalDebitLine>/<JournalCreditLine>
+                // wrappers, which caused two problems:
+                //   1. <DebitAmount>/<CreditAmount> field names don't exist in the XSD —
+                //      the schema defines only <Amount> inside both line types.
+                //   2. The _lineType metadata was sometimes not propagated correctly,
+                //      causing credit lines to be wrapped in <JournalDebitLine>,
+                //      which QB 2021 rejects with 0x80040400.
                 //
-                // Special-case these two element names so JournalEntryAdd posts cleanly.
-                // GetLineItemFieldOrder("JournalDebitLine") still works because it
-                // strips Add/Ret then matches Contains("JournalDebit").
+                // The fix: Use <JournalLine> for ALL journal lines. The sign of Amount
+                // determines debit (positive) vs credit (negative).
                 // ========================================================================
+                bool isJournalLine = lineType.Contains("Journal", StringComparison.OrdinalIgnoreCase);
+
                 string addLineType;
-                if (lineType.Equals("JournalDebitLineRet", StringComparison.OrdinalIgnoreCase) ||
-                    lineType.Equals("JournalDebitLine", StringComparison.OrdinalIgnoreCase))
+                if (isJournalLine)
                 {
-                    addLineType = "JournalDebitLine"; // no "Add" suffix per QBXML schema
-                }
-                else if (lineType.Equals("JournalCreditLineRet", StringComparison.OrdinalIgnoreCase) ||
-                         lineType.Equals("JournalCreditLine", StringComparison.OrdinalIgnoreCase))
-                {
-                    addLineType = "JournalCreditLine"; // no "Add" suffix per QBXML schema
+                    addLineType = "JournalLine"; // FIX #45: generic wrapper with signed Amount
                 }
                 else
                 {
@@ -2993,8 +2989,44 @@ namespace QB_TimeWarp.Services
                 // Get XSD field ordering for this line item type
                 var lineFieldOrder = QBXMLFieldOrdering.GetLineItemFieldOrder(addLineType);
 
+                // ════════════════════════════════════════════════════════════
+                // FIX #45: For journal lines, compute signed Amount from
+                // the _lineType metadata. Credit lines get negative Amount.
+                // Also normalize DebitAmount/CreditAmount → Amount.
+                // ════════════════════════════════════════════════════════════
+                JObject effectiveLineItem = lineItem;
+                if (isJournalLine)
+                {
+                    effectiveLineItem = new JObject(lineItem); // clone to avoid mutating original
+
+                    // Determine if this is a credit line from _lineType metadata
+                    bool isCreditLine = lineType.Contains("Credit", StringComparison.OrdinalIgnoreCase);
+
+                    // Resolve the amount from whichever field is present
+                    string? rawAmount = effectiveLineItem["Amount"]?.ToString()
+                                     ?? effectiveLineItem["DebitAmount"]?.ToString()
+                                     ?? effectiveLineItem["CreditAmount"]?.ToString();
+
+                    if (!string.IsNullOrEmpty(rawAmount) &&
+                        decimal.TryParse(rawAmount, System.Globalization.NumberStyles.Any,
+                            System.Globalization.CultureInfo.InvariantCulture, out decimal parsedAmount))
+                    {
+                        // Ensure absolute value, then apply sign
+                        parsedAmount = Math.Abs(parsedAmount);
+                        decimal signedAmount = isCreditLine ? -parsedAmount : parsedAmount;
+
+                        // Set the canonical Amount field with signed value
+                        effectiveLineItem["Amount"] = signedAmount.ToString("F2",
+                            System.Globalization.CultureInfo.InvariantCulture);
+                    }
+
+                    // Remove legacy field names that don't exist in the XSD
+                    effectiveLineItem.Remove("DebitAmount");
+                    effectiveLineItem.Remove("CreditAmount");
+                }
+
                 // Sort line item properties by XSD sequence order
-                var sortedLineProps = lineItem.Properties()
+                var sortedLineProps = effectiveLineItem.Properties()
                     .OrderBy(p => QBXMLFieldOrdering.GetFieldIndex(lineFieldOrder, p.Name))
                     .ThenBy(p => p.Name, StringComparer.OrdinalIgnoreCase)
                     .ToList();
@@ -3097,7 +3129,7 @@ namespace QB_TimeWarp.Services
                 "Checks" => "ExpenseLineAdd",
                 "VendorCredits" => "ExpenseLineAdd",
                 "Deposits" => "DepositLineAdd",
-                "JournalEntries" => "JournalDebitLine", // FIX #8: no "Add" suffix per QBXML schema
+                "JournalEntries" => "JournalLine", // FIX #45: generic wrapper with signed Amount (replaces FIX #8)
                 _ => "LineAdd"
             };
         }

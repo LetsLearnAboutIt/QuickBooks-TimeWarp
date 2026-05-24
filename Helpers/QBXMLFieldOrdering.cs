@@ -687,8 +687,10 @@ namespace QB_TimeWarp.Helpers
             { "ExchangeRate", 5 },
             { "ExternalGUID", 6 },
             // Line items handled separately
-            { "JournalDebitLine", 100 },
-            { "JournalCreditLine", 101 },
+            // FIX #45: Use generic JournalLine wrapper (replaces JournalDebitLine/JournalCreditLine)
+            { "JournalLine", 100 },
+            { "JournalDebitLine", 100 },  // kept for backward compat in ordering lookup
+            { "JournalCreditLine", 101 }, // kept for backward compat in ordering lookup
         };
 
         /// <summary>
@@ -1001,7 +1003,8 @@ namespace QB_TimeWarp.Helpers
         };
 
         /// <summary>
-        /// JournalDebitLine / JournalCreditLine sub-element order.
+        /// JournalLine sub-element order (FIX #45: replaces separate JournalDebitLine/JournalCreditLine).
+        /// QB SDK 15.0 uses signed Amount: positive = debit, negative = credit.
         /// </summary>
         public static readonly Dictionary<string, int> JournalLineFieldOrder = new(StringComparer.OrdinalIgnoreCase)
         {
@@ -1226,7 +1229,9 @@ namespace QB_TimeWarp.Helpers
                 normalized.Contains("PurchaseOrderLine", StringComparison.OrdinalIgnoreCase))
                 return ItemLineAddFieldOrder;
 
-            if (normalized.Contains("JournalDebit", StringComparison.OrdinalIgnoreCase) ||
+            // FIX #45: Match "JournalLine" (new generic wrapper) as well as legacy names
+            if (normalized.Contains("JournalLine", StringComparison.OrdinalIgnoreCase) ||
+                normalized.Contains("JournalDebit", StringComparison.OrdinalIgnoreCase) ||
                 normalized.Contains("JournalCredit", StringComparison.OrdinalIgnoreCase))
                 return JournalLineFieldOrder;
 
