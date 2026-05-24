@@ -687,10 +687,9 @@ namespace QB_TimeWarp.Helpers
             { "ExchangeRate", 5 },
             { "ExternalGUID", 6 },
             // Line items handled separately
-            // FIX #45: Use generic JournalLine wrapper (replaces JournalDebitLine/JournalCreditLine)
-            { "JournalLine", 100 },
-            { "JournalDebitLine", 100 },  // kept for backward compat in ordering lookup
-            { "JournalCreditLine", 101 }, // kept for backward compat in ordering lookup
+            // FIX #45: JournalDebitLine/JournalCreditLine — no "Add" suffix per QBXML schema
+            { "JournalDebitLine", 100 },
+            { "JournalCreditLine", 101 },
         };
 
         /// <summary>
@@ -1003,8 +1002,8 @@ namespace QB_TimeWarp.Helpers
         };
 
         /// <summary>
-        /// JournalLine sub-element order (FIX #45: replaces separate JournalDebitLine/JournalCreditLine).
-        /// QB SDK 15.0 uses signed Amount: positive = debit, negative = credit.
+        /// JournalDebitLine / JournalCreditLine sub-element order.
+        /// FIX #45: Amount is always positive; wrapper element determines debit vs credit.
         /// </summary>
         public static readonly Dictionary<string, int> JournalLineFieldOrder = new(StringComparer.OrdinalIgnoreCase)
         {
@@ -1229,9 +1228,8 @@ namespace QB_TimeWarp.Helpers
                 normalized.Contains("PurchaseOrderLine", StringComparison.OrdinalIgnoreCase))
                 return ItemLineAddFieldOrder;
 
-            // FIX #45: Match "JournalLine" (new generic wrapper) as well as legacy names
-            if (normalized.Contains("JournalLine", StringComparison.OrdinalIgnoreCase) ||
-                normalized.Contains("JournalDebit", StringComparison.OrdinalIgnoreCase) ||
+            // FIX #45: JournalDebitLine / JournalCreditLine field ordering
+            if (normalized.Contains("JournalDebit", StringComparison.OrdinalIgnoreCase) ||
                 normalized.Contains("JournalCredit", StringComparison.OrdinalIgnoreCase))
                 return JournalLineFieldOrder;
 
