@@ -74,6 +74,11 @@ namespace QB_TimeWarp.Services
             ["InventoryAdjustments"] = ("InventoryAdjustmentQuery", "InventoryAdjustmentRet"),
             ["Transfers"]       = ("TransferQuery",        "TransferRet"),
 
+            // FIX #44: Paychecks — exported from QB23 (which has payroll subscription),
+            // converted to JournalEntries by DataTransformer for QB21 import
+            // (QB 2021 cannot use PaycheckAdd without payroll subscription).
+            ["Paychecks"]       = ("PaycheckQuery",        "PaycheckRet"),
+
             // Settings
             ["Preferences"]     = ("PreferencesQuery",     "PreferencesRet"),
             ["CompanyInfo"]     = ("CompanyQuery",         "CompanyRet"),
@@ -87,7 +92,8 @@ namespace QB_TimeWarp.Services
             "Invoices", "Bills", "Payments", "SalesReceipts", "PurchaseOrders",
             "JournalEntries", "CreditMemos", "Estimates", "Deposits", "Checks",
             "CreditCardCharges", "CreditCardCredits",  // FIX #38: Export for conversion to JournalEntry
-            "VendorCredits", "InventoryAdjustments", "Transfers"
+            "VendorCredits", "InventoryAdjustments", "Transfers",
+            "Paychecks"  // FIX #44: Export for conversion to JournalEntry
         };
 
         /// <summary>
@@ -112,6 +118,15 @@ namespace QB_TimeWarp.Services
             // We must check for BOTH to ensure line items are captured regardless of QB version.
             ["JournalEntryRet"]  = new[] { "JournalDebitLineRet", "JournalCreditLineRet",
                                            "JournalDebitLine", "JournalCreditLine" },
+            // FIX #44: PaycheckRet contains earnings/deduction/company contribution
+            // detail lines. These are nested inside PayrollItemDetail elements.
+            // We extract them as line items for conversion to JournalEntry.
+            ["PaycheckRet"]      = new[] { "PayrollItemLineRet", "PaycheckEarningsLineRet",
+                                           "PaycheckDeductionLineRet", "PaycheckCompanyContribLineRet",
+                                           "PaycheckTaxLineRet",
+                                           // QB also uses non-Ret suffixed forms in some versions
+                                           "PayrollItemLine", "EarningsLine", "DeductionLine",
+                                           "CompanyContribLine", "TaxLine" },
         };
 
         public DataExporter(QBConnectionManager connection, ExportConfig exportConfig,

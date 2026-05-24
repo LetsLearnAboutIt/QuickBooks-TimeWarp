@@ -373,6 +373,48 @@ namespace QB_TimeWarp.Services
                     convertedEntities.Count, entityType);
             }
 
+            // FIX #44: Convert Paychecks to JournalEntry
+            // QB 2021 cannot use PaycheckAdd without a payroll subscription.
+            // Convert to journal entries to preserve payroll expenses in the trial balance.
+            if (entityType.Equals("Paychecks", StringComparison.OrdinalIgnoreCase))
+            {
+                Log.Information("  ► [FIX #44] Converting {Count} Paychecks to JournalEntry format (QB 2021: no payroll subscription)",
+                    transformedEntities.Count);
+
+                var convertedEntities = new List<QBEntity>();
+                int convertedCount = 0;
+                int errorCount = 0;
+                int skippedCount = 0;
+
+                foreach (var entity in transformedEntities)
+                {
+                    try
+                    {
+                        var journalEntry = ConvertPaycheckToJournalEntry(entity);
+                        if (journalEntry.LineItems.Count > 0)
+                        {
+                            convertedEntities.Add(journalEntry);
+                            convertedCount++;
+                        }
+                        else
+                        {
+                            skippedCount++;
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        errorCount++;
+                        Log.Error(ex, "  ✗ [FIX #44] Error converting Paycheck TxnID {TxnID} to JournalEntry: {Message}",
+                            entity.TxnID, ex.Message);
+                    }
+                }
+
+                transformedEntities = convertedEntities;
+                outputEntityType = "JournalEntries";
+                Log.Information("  ✓ [FIX #44] Paycheck conversion complete: {Converted} converted, {Skipped} skipped, {Errors} errors",
+                    convertedCount, skippedCount, errorCount);
+            }
+
             return new ExportedEntitySet
             {
                 EntityType = outputEntityType,  // Changed to JournalEntries if converted
@@ -928,6 +970,287 @@ namespace QB_TimeWarp.Services
 
             Log.Debug("  Converted {Type} (TxnID={TxnID}, Amount={Amount}) to JournalEntry with {Lines} lines",
                 originalType, creditCardTxn.TxnID ?? "N/A", totalAmount, journalEntry.LineItems.Count);
+
+            return journalEntry;
+        }
+
+        // ═══════════════════════════════════════════════════════════════════
+        // FIX #44: Convert Paycheck transactions to JournalEntry format
+        // ═══════════════════════════════════════════════════════════════════
+        // QB 2021 cannot use PaycheckAdd without an active payroll
+        // subscription. To preserve the $280K+ of payroll expenses in the
+        // trial balance, we convert each Paycheck to a JournalEntry with:
+        //
+        //   DR  Payroll Expense accounts   (gross wages + employer taxes)
+        //   CR  Payroll Liabilities        (employee taxes/deductions)
+        //   CR  Bank account               (net pay)
+        //
+        // The employee name is preserved via EntityRef on each line and in
+        // the Memo field for audit trail. The _lineType metadata is set so
+        // DataImporter generates proper <JournalDebitLine>/<JournalCreditLine>.
+        //
+        // PaycheckRet structure from QB23:
+        //   Header: TxnID, TxnDate, RefNumber, EmployeeRef, PayPeriod,
+        //           Amount (net check amount), AccountRef (bank acct)
+        //   Line items vary by QB version — may include:
+        //     PayrollItemLineRet (generic) or specific subtypes:
+        //       EarningsLine / PaycheckEarningsLineRet
+        //       DeductionLine / PaycheckDeductionLineRet
+        //       CompanyContribLine / PaycheckCompanyContribLineRet
+        //       TaxLine / PaycheckTaxLineRet
+        //
+        // If line items are empty (PaycheckQuery didn't return detail),
+        // we fall back to a 2-line JE using the header Amount as net pay
+        // with a single "Payroll Expenses" debit and bank credit.
+        // ═══════════════════════════════════════════════════════════════════
+        private QBEntity ConvertPaycheckToJournalEntry(QBEntity paycheck)
+        {
+            string txnPrefix = "[From Paycheck]";
+
+            var journalEntry = new QBEntity
+            {
+                EntityType = "JournalEntry",
+                TxnID = paycheck.TxnID,
+                Name = paycheck.Name,
+                FullName = paycheck.FullName,
+                IsActive = true,
+                ExportedAt = paycheck.ExportedAt,
+                Fields = new JObject(),
+                LineItems = new List<JObject>()
+            };
+
+            // ── Copy header fields ─────────────────────────────────────
+            var headerFieldsToCopy = new[] { "TxnDate", "RefNumber", "IsAdjustment" };
+            foreach (var field in headerFieldsToCopy)
+            {
+                if (paycheck.Fields.ContainsKey(field))
+                {
+                    journalEntry.Fields[field] = paycheck.Fields[field]?.DeepClone();
+                }
+            }
+
+            // ── Build provenance Memo ──────────────────────────────────
+            var employeeName = paycheck.Fields["EmployeeRef"]?["FullName"]?.ToString()
+                            ?? paycheck.Fields["EmployeeRef"]?["ListID"]?.ToString()
+                            ?? paycheck.Name
+                            ?? "Unknown";
+            var refNumber = paycheck.Fields["RefNumber"]?.ToString() ?? "";
+            var originalMemo = paycheck.Fields["Memo"]?.ToString()?.Trim();
+            var txnIdNote = !string.IsNullOrEmpty(paycheck.TxnID) ? $" TxnID:{paycheck.TxnID}" : "";
+
+            string newMemo;
+            if (!string.IsNullOrWhiteSpace(originalMemo))
+            {
+                newMemo = $"Paycheck {refNumber} - {employeeName} {txnPrefix}{txnIdNote} {originalMemo}";
+            }
+            else
+            {
+                newMemo = $"Paycheck {refNumber} - {employeeName} {txnPrefix}{txnIdNote}";
+            }
+            journalEntry.Fields["Memo"] = newMemo.Length > 4095 ? newMemo.Substring(0, 4095) : newMemo;
+
+            // ── Extract employee EntityRef for journal lines ───────────
+            var employeeRef = paycheck.Fields["EmployeeRef"]?.DeepClone() as JObject;
+
+            // ── Extract bank account from header ───────────────────────
+            var bankAccountRef = paycheck.Fields["AccountRef"]?.DeepClone() as JObject;
+            var bankAccountName = bankAccountRef?["FullName"]?.ToString() ?? "Checking";
+
+            // ── Parse amounts from header ──────────────────────────────
+            // PaycheckRet.Amount = net check amount (what employee receives)
+            var netAmount = decimal.Zero;
+            if (paycheck.Fields["Amount"] != null)
+            {
+                decimal.TryParse(paycheck.Fields["Amount"]?.ToString(),
+                    System.Globalization.NumberStyles.Any,
+                    System.Globalization.CultureInfo.InvariantCulture,
+                    out netAmount);
+            }
+            // Make sure net amount is positive for journal entry
+            netAmount = Math.Abs(netAmount);
+
+            // ── Categorize line items by type ──────────────────────────
+            decimal totalEarnings = 0m;
+            decimal totalDeductions = 0m;
+            decimal totalCompanyContribs = 0m;
+            decimal totalTaxes = 0m;
+            var earningsLines = new List<JObject>();
+            var deductionLines = new List<JObject>();
+            var taxLines = new List<JObject>();
+            var companyContribLines = new List<JObject>();
+
+            foreach (var line in paycheck.LineItems)
+            {
+                var lineType = line["_lineType"]?.ToString() ?? "";
+                var amountStr = line["Amount"]?.ToString()
+                             ?? line["Rate"]?.ToString()
+                             ?? line["YTDAmount"]?.ToString();
+                decimal amount = 0m;
+                if (!string.IsNullOrEmpty(amountStr))
+                {
+                    decimal.TryParse(amountStr, System.Globalization.NumberStyles.Any,
+                        System.Globalization.CultureInfo.InvariantCulture, out amount);
+                }
+                amount = Math.Abs(amount);
+
+                // Classify based on _lineType name from export
+                if (lineType.Contains("Earnings", StringComparison.OrdinalIgnoreCase) ||
+                    lineType.Contains("PayrollItemLine", StringComparison.OrdinalIgnoreCase))
+                {
+                    // Treat generic PayrollItemLine as earnings (wages)
+                    totalEarnings += amount;
+                    earningsLines.Add(line);
+                }
+                else if (lineType.Contains("Deduction", StringComparison.OrdinalIgnoreCase))
+                {
+                    totalDeductions += amount;
+                    deductionLines.Add(line);
+                }
+                else if (lineType.Contains("CompanyContrib", StringComparison.OrdinalIgnoreCase))
+                {
+                    totalCompanyContribs += amount;
+                    companyContribLines.Add(line);
+                }
+                else if (lineType.Contains("Tax", StringComparison.OrdinalIgnoreCase))
+                {
+                    totalTaxes += amount;
+                    taxLines.Add(line);
+                }
+                else
+                {
+                    // Unknown line type — treat as earnings
+                    totalEarnings += amount;
+                    earningsLines.Add(line);
+                    Log.Debug("  [FIX #44] Unknown paycheck line type '{LineType}' treated as earnings", lineType);
+                }
+            }
+
+            bool hasDetailLines = paycheck.LineItems.Count > 0 &&
+                                  (totalEarnings > 0 || totalDeductions > 0 || totalTaxes > 0);
+
+            if (hasDetailLines)
+            {
+                // ═══════════════════════════════════════════════════════
+                // DETAILED MODE: Create journal lines from paycheck detail
+                // ═══════════════════════════════════════════════════════
+
+                // ── DR: Earnings (wages) → Payroll Expenses ────────────
+                if (totalEarnings > 0)
+                {
+                    var earningsJournalLine = new JObject
+                    {
+                        ["Amount"] = totalEarnings.ToString("F2", System.Globalization.CultureInfo.InvariantCulture),
+                        ["AccountRef"] = new JObject { ["FullName"] = "Payroll Expenses" },
+                        ["Memo"] = $"Gross wages - {employeeName}",
+                        ["_lineType"] = "JournalDebitLine"
+                    };
+                    if (employeeRef != null)
+                        earningsJournalLine["EntityRef"] = employeeRef.DeepClone();
+                    journalEntry.LineItems.Add(earningsJournalLine);
+                }
+
+                // ── DR: Employer taxes/contributions → Payroll Expenses ─
+                if (totalCompanyContribs > 0)
+                {
+                    var contribJournalLine = new JObject
+                    {
+                        ["Amount"] = totalCompanyContribs.ToString("F2", System.Globalization.CultureInfo.InvariantCulture),
+                        ["AccountRef"] = new JObject { ["FullName"] = "Payroll Expenses" },
+                        ["Memo"] = $"Employer contributions - {employeeName}",
+                        ["_lineType"] = "JournalDebitLine"
+                    };
+                    if (employeeRef != null)
+                        contribJournalLine["EntityRef"] = employeeRef.DeepClone();
+                    journalEntry.LineItems.Add(contribJournalLine);
+                }
+
+                // ── CR: Employee taxes + deductions → Payroll Liabilities ─
+                decimal totalLiabilities = totalTaxes + totalDeductions + totalCompanyContribs;
+                if (totalLiabilities > 0)
+                {
+                    var liabilitiesJournalLine = new JObject
+                    {
+                        ["Amount"] = totalLiabilities.ToString("F2", System.Globalization.CultureInfo.InvariantCulture),
+                        ["AccountRef"] = new JObject { ["FullName"] = "Payroll Liabilities" },
+                        ["Memo"] = $"Payroll taxes & deductions - {employeeName}",
+                        ["_lineType"] = "JournalCreditLine"
+                    };
+                    if (employeeRef != null)
+                        liabilitiesJournalLine["EntityRef"] = employeeRef.DeepClone();
+                    journalEntry.LineItems.Add(liabilitiesJournalLine);
+                }
+
+                // ── CR: Net pay → Bank account ─────────────────────────
+                // Net = Earnings - Taxes - Deductions (or use header Amount)
+                decimal computedNet = totalEarnings - totalTaxes - totalDeductions;
+                decimal bankCreditAmount = computedNet > 0 ? computedNet : netAmount;
+                if (bankCreditAmount <= 0 && netAmount > 0)
+                    bankCreditAmount = netAmount;
+
+                if (bankCreditAmount > 0)
+                {
+                    var bankJournalLine = new JObject
+                    {
+                        ["Amount"] = bankCreditAmount.ToString("F2", System.Globalization.CultureInfo.InvariantCulture),
+                        ["AccountRef"] = bankAccountRef ?? new JObject { ["FullName"] = bankAccountName },
+                        ["Memo"] = $"Net paycheck - {employeeName}",
+                        ["_lineType"] = "JournalCreditLine"
+                    };
+                    if (employeeRef != null)
+                        bankJournalLine["EntityRef"] = employeeRef.DeepClone();
+                    journalEntry.LineItems.Add(bankJournalLine);
+                }
+
+                Log.Debug("  [FIX #44] Converted Paycheck (TxnID={TxnID}) DETAILED: " +
+                    "Earnings={Earnings:F2}, Taxes={Taxes:F2}, Deductions={Ded:F2}, " +
+                    "CompanyContrib={Contrib:F2}, Net={Net:F2}, Lines={Lines}",
+                    paycheck.TxnID ?? "N/A", totalEarnings, totalTaxes, totalDeductions,
+                    totalCompanyContribs, bankCreditAmount, journalEntry.LineItems.Count);
+            }
+            else
+            {
+                // ═══════════════════════════════════════════════════════
+                // FALLBACK MODE: No detail lines — use header Amount only
+                // Creates a simple 2-line JE: DR Payroll Expenses / CR Bank
+                // ═══════════════════════════════════════════════════════
+                if (netAmount > 0)
+                {
+                    // DR: Payroll Expenses
+                    var expenseLine = new JObject
+                    {
+                        ["Amount"] = netAmount.ToString("F2", System.Globalization.CultureInfo.InvariantCulture),
+                        ["AccountRef"] = new JObject { ["FullName"] = "Payroll Expenses" },
+                        ["Memo"] = $"Paycheck (summary) - {employeeName}",
+                        ["_lineType"] = "JournalDebitLine"
+                    };
+                    if (employeeRef != null)
+                        expenseLine["EntityRef"] = employeeRef.DeepClone();
+                    journalEntry.LineItems.Add(expenseLine);
+
+                    // CR: Bank account
+                    var bankLine = new JObject
+                    {
+                        ["Amount"] = netAmount.ToString("F2", System.Globalization.CultureInfo.InvariantCulture),
+                        ["AccountRef"] = bankAccountRef ?? new JObject { ["FullName"] = bankAccountName },
+                        ["Memo"] = $"Net paycheck - {employeeName}",
+                        ["_lineType"] = "JournalCreditLine"
+                    };
+                    if (employeeRef != null)
+                        bankLine["EntityRef"] = employeeRef.DeepClone();
+                    journalEntry.LineItems.Add(bankLine);
+
+                    Log.Warning("  [FIX #44] Converted Paycheck (TxnID={TxnID}) FALLBACK: " +
+                        "No detail lines available, used header Amount={Amount:F2} for 2-line JE. " +
+                        "Payroll taxes/deductions NOT broken out.",
+                        paycheck.TxnID ?? "N/A", netAmount);
+                }
+                else
+                {
+                    Log.Warning("  [FIX #44] Paycheck (TxnID={TxnID}) has no Amount and no detail lines. " +
+                        "Skipping — this paycheck cannot be converted to a meaningful JournalEntry.",
+                        paycheck.TxnID ?? "N/A");
+                }
+            }
 
             return journalEntry;
         }
