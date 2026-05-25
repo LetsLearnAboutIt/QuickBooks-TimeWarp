@@ -22,6 +22,13 @@ namespace QB_TimeWarp.UI.Views
         private void NavReports_Click(object sender, RoutedEventArgs e) => SwitchPage("Reports");
         private void NavLog_Click(object sender, RoutedEventArgs e) => SwitchPage("Log");
 
+        private void NavAbout_Click(object sender, RoutedEventArgs e)
+        {
+            var aboutWindow = new AboutWindow();
+            aboutWindow.Owner = this;
+            aboutWindow.ShowDialog();
+        }
+
         private void SwitchPage(string page)
         {
             // Hide all pages

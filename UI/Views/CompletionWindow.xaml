@@ -6,7 +6,8 @@
         WindowStartupLocation="CenterOwner"
         Background="#151B28"
         Foreground="#E8ECF1"
-        ResizeMode="NoResize">
+        ResizeMode="NoResize"
+        Icon="/UI/Assets/osa-icon.png">
 
     <Grid>
         <Grid.RowDefinitions>

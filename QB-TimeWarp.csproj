@@ -31,6 +31,13 @@
     <PackageReference Include="Spectre.Console" Version="0.48.0" />
   </ItemGroup>
 
+  <!-- Branding assets — embedded as WPF resources for pack:// URI access -->
+  <ItemGroup>
+    <Resource Include="UI\Assets\osa-logo.png" />
+    <Resource Include="UI\Assets\osa-icon.png" />
+    <Resource Include="UI\Assets\lrs-icon.png" />
+  </ItemGroup>
+
   <!-- 
     QuickBooks SDK COM Reference:
     After installing the QuickBooks Desktop SDK from Intuit Developer site,

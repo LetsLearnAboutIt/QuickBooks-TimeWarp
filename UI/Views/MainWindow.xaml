@@ -11,7 +11,8 @@
         Foreground="{StaticResource TextPrimary}"
         AllowDrop="True"
         Drop="Window_Drop"
-        DragOver="Window_DragOver">
+        DragOver="Window_DragOver"
+        Icon="/UI/Assets/osa-icon.png">
 
     <Window.DataContext>
         <vm:MainViewModel />
@@ -38,18 +39,17 @@
                     <RowDefinition Height="Auto" />  <!-- Footer -->
                 </Grid.RowDefinitions>
 
-                <!-- Brand -->
-                <StackPanel Grid.Row="0" Margin="20,24,20,28">
-                    <StackPanel Orientation="Horizontal">
-                        <TextBlock Text="⏱" FontSize="26" Foreground="{StaticResource AccentBright}"
-                                   VerticalAlignment="Center" Margin="0,0,10,0" />
-                        <StackPanel VerticalAlignment="Center">
-                            <TextBlock Text="TimeWarp" FontSize="18" FontWeight="Bold"
-                                       Foreground="{StaticResource TextPrimary}" />
-                            <TextBlock Text="QuickBooks® Migration" FontSize="10"
-                                       Foreground="{StaticResource TextDim}" Margin="0,-2,0,0" />
-                        </StackPanel>
-                    </StackPanel>
+                <!-- Brand — OSA Logo -->
+                <StackPanel Grid.Row="0" Margin="14,20,14,20">
+                    <Image Source="/UI/Assets/osa-icon.png"
+                           Width="52" Height="52" Stretch="Uniform"
+                           HorizontalAlignment="Center" Margin="0,0,0,10"
+                           RenderOptions.BitmapScalingMode="HighQuality" />
+                    <TextBlock Text="TimeWarp" FontSize="17" FontWeight="Bold"
+                               Foreground="{StaticResource TextPrimary}" HorizontalAlignment="Center" />
+                    <TextBlock Text="QuickBooks® Migration" FontSize="10"
+                               Foreground="{StaticResource TextDim}" HorizontalAlignment="Center"
+                               Margin="0,-1,0,0" />
                 </StackPanel>
 
                 <!-- Navigation -->
@@ -69,13 +69,22 @@
                     <Button x:Name="NavLog" Content="📋   Activity Log"
                             Style="{StaticResource NavButton}"
                             Click="NavLog_Click" />
+
+                    <!-- Spacer + About -->
+                    <Separator Background="#2A3448" Margin="16,16,16,8" />
+                    <Button x:Name="NavAbout" Content="ℹ   About"
+                            Style="{StaticResource NavButton}"
+                            Click="NavAbout_Click" />
                 </StackPanel>
 
                 <!-- Sidebar footer -->
-                <StackPanel Grid.Row="2" Margin="20,0,20,16">
-                    <Separator Background="#2A3448" Margin="0,0,0,12" />
-                    <TextBlock Text="v1.0.0  •  QB 2023 → 2021" FontSize="10"
-                               Foreground="{StaticResource TextMuted}" />
+                <StackPanel Grid.Row="2" Margin="16,0,16,14">
+                    <Separator Background="#2A3448" Margin="0,0,0,10" />
+                    <TextBlock Text="v1.0.0" FontSize="10" Foreground="{StaticResource TextMuted}"
+                               HorizontalAlignment="Center" />
+                    <TextBlock Text="© 2010–2026 OSA / LRS" FontSize="9"
+                               Foreground="{StaticResource TextMuted}" HorizontalAlignment="Center"
+                               Margin="0,2,0,0" />
                 </StackPanel>
             </Grid>
         </Border>
@@ -117,9 +126,10 @@
                                             Margin="10,0,0,0" />
                                 </StackPanel>
                             </StackPanel>
-                            <TextBlock Grid.Column="1" Text="⏱" FontSize="72"
-                                       Foreground="#1A3A5C" VerticalAlignment="Center"
-                                       Margin="20,0,8,0" Opacity="0.6" />
+                            <Image Grid.Column="1" Source="/UI/Assets/osa-icon.png"
+                                   Width="72" Height="72" Stretch="Uniform" Opacity="0.35"
+                                   VerticalAlignment="Center" Margin="20,0,8,0"
+                                   RenderOptions.BitmapScalingMode="HighQuality" />
                         </Grid>
                     </Border>
 
