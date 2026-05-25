@@ -131,20 +131,30 @@
                                Margin="0,-1,0,0" />
                 </StackPanel>
 
-                <!-- Navigation -->
+                <!-- Navigation — Workflow Steps -->
                 <StackPanel Grid.Row="1">
                     <Button x:Name="NavHome" Content="🏠   Home"
                             Style="{StaticResource NavButtonActive}" Click="NavHome_Click" />
-                    <Button x:Name="NavMigration" Content="🔄   Migration"
+
+                    <!-- Workflow separator -->
+                    <TextBlock Text="WORKFLOW" FontSize="9" FontWeight="Bold" Foreground="{StaticResource TextMuted}"
+                               Margin="18,14,0,6" />
+                    <Button x:Name="NavSource" Content="📂   Source"
+                            Style="{StaticResource NavButton}" Click="NavSource_Click" />
+                    <Button x:Name="NavDestination" Content="📍   Destination"
+                            Style="{StaticResource NavButton}" Click="NavDestination_Click" />
+                    <Button x:Name="NavMigration" Content="▶   Run Migration"
                             Style="{StaticResource NavButton}" Click="NavMigration_Click" />
-                    <Button x:Name="NavSettings" Content="⚙   Settings"
-                            Style="{StaticResource NavButton}" Click="NavSettings_Click" />
+
+                    <Separator Background="#1A2E50" Margin="16,12,16,6" />
                     <Button x:Name="NavReports" Content="📊   Reports"
                             Style="{StaticResource NavButton}" Click="NavReports_Click" />
+                    <Button x:Name="NavSettings" Content="⚙   Settings"
+                            Style="{StaticResource NavButton}" Click="NavSettings_Click" />
                     <Button x:Name="NavLog" Content="📋   Activity Log"
                             Style="{StaticResource NavButton}" Click="NavLog_Click" />
 
-                    <Separator Background="#1A2E50" Margin="16,16,16,8" />
+                    <Separator Background="#1A2E50" Margin="16,12,16,6" />
                     <Button x:Name="NavAbout" Content="ℹ   About"
                             Style="{StaticResource NavButton}" Click="NavAbout_Click" />
                 </StackPanel>
@@ -209,7 +219,7 @@
                                                FontSize="14" Foreground="#90A8C4"
                                                TextWrapping="Wrap" Margin="0,0,0,18" MaxWidth="480" />
                                     <StackPanel Orientation="Horizontal">
-                                        <Button Content="🔄  Go to Migration Console" Click="NavMigration_Click"
+                                        <Button Content="📂  Start — Select Source" Click="NavSource_Click"
                                                 Style="{StaticResource SuccessButton}" />
                                         <!-- Intel-style status badge -->
                                         <Border Background="#0D3320" CornerRadius="10" Padding="10,4" Margin="12,0,0,0"
@@ -338,21 +348,18 @@
                 </StackPanel>
 
                 <!-- ╔══════════════════════════════════════════════════════╗ -->
-                <!-- ║              PAGE: MIGRATION CONSOLE                ║ -->
-                <!-- ║         3-Section Workflow (Source → Config → Run)   ║ -->
+                <!-- ║              PAGE: SOURCE (Step 1)                   ║ -->
+                <!-- ║       Select QuickBooks source files                 ║ -->
                 <!-- ╚══════════════════════════════════════════════════════╝ -->
-                <StackPanel x:Name="PageMigration" Visibility="Collapsed">
+                <StackPanel x:Name="PageSource" Visibility="Collapsed">
 
-                    <TextBlock Text="Migration Console" Style="{StaticResource HeaderText}" Margin="0,0,0,4" />
-                    <TextBlock Text="Configure and execute your QuickBooks data migration in three easy steps."
+                    <TextBlock Text="Source File Selection" Style="{StaticResource HeaderText}" Margin="0,0,0,4" />
+                    <TextBlock Text="Step 1 of 3 — Choose the QuickBooks company files you want to migrate."
                                Style="{StaticResource DimText}" Margin="0,0,0,20" />
 
-                    <!-- ══════════════════════════════════════════════════════
-                         SECTION 1: Source File Selection
-                    ══════════════════════════════════════════════════════ -->
                     <Border Style="{StaticResource Card}">
                         <StackPanel>
-                            <!-- Section 1 header with gradient -->
+                            <!-- Source header with gradient -->
                             <Border Background="{StaticResource SectionHeaderGradient}" CornerRadius="8"
                                     Padding="14,10" Margin="-6,-4,-6,16">
                                 <DockPanel>
@@ -365,7 +372,7 @@
                                             <TextBlock Text="1" Foreground="#061428" FontSize="16" FontWeight="Bold"
                                                        HorizontalAlignment="Center" VerticalAlignment="Center" />
                                         </Border>
-                                        <TextBlock Text="Source File Selection" Style="{StaticResource SectionTitle}" Margin="0"
+                                        <TextBlock Text="QuickBooks Company Files" Style="{StaticResource SectionTitle}" Margin="0"
                                                    VerticalAlignment="Center" />
                                     </StackPanel>
                                     <StackPanel DockPanel.Dock="Right" Orientation="Horizontal" HorizontalAlignment="Right">
@@ -402,7 +409,7 @@
                                 </StackPanel>
                             </Border>
 
-                            <!-- File List DataGrid (enhanced with more columns) -->
+                            <!-- File List DataGrid -->
                             <DataGrid ItemsSource="{Binding Files}"
                                       AutoGenerateColumns="False" IsReadOnly="True"
                                       HeadersVisibility="Column" GridLinesVisibility="None"
@@ -410,7 +417,7 @@
                                       BorderThickness="0" RowBackground="#141E38"
                                       AlternatingRowBackground="#182640"
                                       CanUserAddRows="False" SelectionMode="Single"
-                                      VerticalScrollBarVisibility="Auto" MinHeight="60" MaxHeight="220"
+                                      VerticalScrollBarVisibility="Auto" MinHeight="60" MaxHeight="300"
                                       ColumnHeaderStyle="{StaticResource DGColumnHeader}"
                                       CellStyle="{StaticResource DGCell}">
                                 <DataGrid.Columns>
@@ -454,12 +461,80 @@
                         </StackPanel>
                     </Border>
 
-                    <!-- ══════════════════════════════════════════════════════
-                         SECTION 2: Migration Configuration  (NEW)
-                    ══════════════════════════════════════════════════════ -->
+                    <!-- Estimates summary card -->
+                    <Border Style="{StaticResource Card}" Margin="0,0,0,0">
+                        <StackPanel>
+                            <TextBlock Text="SOURCE ESTIMATES" FontSize="12" FontWeight="Bold"
+                                       Foreground="{StaticResource Accent}" Margin="0,0,0,10" />
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+                                <Border Grid.Column="0" Style="{StaticResource StatCard}" Margin="0,0,6,0">
+                                    <StackPanel HorizontalAlignment="Center">
+                                        <TextBlock Text="{Binding SourceFileSizeText}" FontSize="22" FontWeight="Bold"
+                                                   Foreground="{StaticResource AccentBright}" HorizontalAlignment="Center" />
+                                        <TextBlock Text="Source Size" FontSize="11" Foreground="{StaticResource TextDim}" HorizontalAlignment="Center" />
+                                    </StackPanel>
+                                </Border>
+                                <Border Grid.Column="1" Style="{StaticResource StatCard}" Margin="3,0">
+                                    <StackPanel HorizontalAlignment="Center">
+                                        <TextBlock Text="{Binding EstimatedRecordCount}" FontSize="22" FontWeight="Bold"
+                                                   Foreground="{StaticResource TextPrimary}" HorizontalAlignment="Center" />
+                                        <TextBlock Text="Est. Records" FontSize="11" Foreground="{StaticResource TextDim}" HorizontalAlignment="Center" />
+                                    </StackPanel>
+                                </Border>
+                                <Border Grid.Column="2" Style="{StaticResource StatCard}" Margin="6,0,0,0">
+                                    <StackPanel HorizontalAlignment="Center">
+                                        <TextBlock Text="{Binding EstimatedTimeText}" FontSize="22" FontWeight="Bold"
+                                                   Foreground="{StaticResource Success}" HorizontalAlignment="Center" />
+                                        <TextBlock Text="Est. Time" FontSize="11" Foreground="{StaticResource TextDim}" HorizontalAlignment="Center" />
+                                    </StackPanel>
+                                </Border>
+                            </Grid>
+                        </StackPanel>
+                    </Border>
+
+                    <!-- Navigate to next step -->
+                    <Border CornerRadius="8" Padding="16,14" Margin="0,0,0,0"
+                            BorderBrush="#1A3A6C" BorderThickness="1">
+                        <Border.Background>
+                            <LinearGradientBrush StartPoint="0,0.5" EndPoint="1,0.5">
+                                <GradientStop Color="#0A1428" Offset="0" />
+                                <GradientStop Color="#0E1E3C" Offset="0.5" />
+                                <GradientStop Color="#0A1428" Offset="1" />
+                            </LinearGradientBrush>
+                        </Border.Background>
+                        <DockPanel>
+                            <StackPanel DockPanel.Dock="Left" VerticalAlignment="Center">
+                                <TextBlock Text="Files selected?" FontSize="15" FontWeight="Bold"
+                                           Foreground="{StaticResource TextPrimary}" />
+                                <TextBlock Text="Next, configure the destination and migration options."
+                                           FontSize="12" Foreground="{StaticResource TextDim}" />
+                            </StackPanel>
+                            <Button Content="Next → Destination" Click="GoToDestination_Click"
+                                    Style="{StaticResource PrimaryButton}" DockPanel.Dock="Right"
+                                    HorizontalAlignment="Right" VerticalAlignment="Center" />
+                        </DockPanel>
+                    </Border>
+                </StackPanel>
+
+
+                <!-- ╔══════════════════════════════════════════════════════╗ -->
+                <!-- ║           PAGE: DESTINATION (Step 2)                ║ -->
+                <!-- ║    Output path, date filters, entity types          ║ -->
+                <!-- ╚══════════════════════════════════════════════════════╝ -->
+                <StackPanel x:Name="PageDestination" Visibility="Collapsed">
+
+                    <TextBlock Text="Destination &amp; Configuration" Style="{StaticResource HeaderText}" Margin="0,0,0,4" />
+                    <TextBlock Text="Step 2 of 3 — Set your output location, date range, and select which entity types to migrate."
+                               Style="{StaticResource DimText}" Margin="0,0,0,20" />
+
                     <Border Style="{StaticResource Card}">
                         <StackPanel>
-                            <!-- Section 2 header with gradient -->
+                            <!-- Destination header -->
                             <Border Background="{StaticResource SectionHeaderGradient}" CornerRadius="8"
                                     Padding="14,10" Margin="-6,-4,-6,18">
                                 <StackPanel Orientation="Horizontal">
@@ -471,7 +546,7 @@
                                         <TextBlock Text="2" Foreground="#061428" FontSize="16" FontWeight="Bold"
                                                    HorizontalAlignment="Center" VerticalAlignment="Center" />
                                     </Border>
-                                    <TextBlock Text="Migration Configuration" Style="{StaticResource SectionTitle}" Margin="0"
+                                    <TextBlock Text="Output &amp; Migration Options" Style="{StaticResource SectionTitle}" Margin="0"
                                                VerticalAlignment="Center" />
                                 </StackPanel>
                             </Border>
@@ -638,7 +713,298 @@
                         </StackPanel>
                     </Border>
 
-                    <!-- ═════════════════════════ START MIGRATION BUTTON ═════════════════════════ -->
+                    <!-- Navigate to Run Migration -->
+                    <Border CornerRadius="8" Padding="16,14" Margin="0,0,0,0"
+                            BorderBrush="#1A3A6C" BorderThickness="1">
+                        <Border.Background>
+                            <LinearGradientBrush StartPoint="0,0.5" EndPoint="1,0.5">
+                                <GradientStop Color="#0A1428" Offset="0" />
+                                <GradientStop Color="#0E1E3C" Offset="0.5" />
+                                <GradientStop Color="#0A1428" Offset="1" />
+                            </LinearGradientBrush>
+                        </Border.Background>
+                        <DockPanel>
+                            <StackPanel DockPanel.Dock="Left" VerticalAlignment="Center">
+                                <TextBlock Text="Configuration complete?" FontSize="15" FontWeight="Bold"
+                                           Foreground="{StaticResource TextPrimary}" />
+                                <TextBlock Text="Proceed to the migration execution page to start the process."
+                                           FontSize="12" Foreground="{StaticResource TextDim}" />
+                            </StackPanel>
+                            <StackPanel DockPanel.Dock="Right" Orientation="Horizontal" HorizontalAlignment="Right">
+                                <Button Content="← Source" Click="GoToSource_Click"
+                                        Style="{StaticResource ToolbarButtonSecondary}" Margin="0,0,8,0"
+                                        VerticalAlignment="Center" />
+                                <Button Content="Next → Run Migration" Click="GoToMigration_Click"
+                                        Style="{StaticResource PrimaryButton}" VerticalAlignment="Center" />
+                            </StackPanel>
+                        </DockPanel>
+                    </Border>
+                </StackPanel>
+
+
+                <!-- ╔══════════════════════════════════════════════════════╗ -->
+                <!-- ║          PAGE: RUN MIGRATION (Step 3)               ║ -->
+                <!-- ║   Execution-only: pipeline, log, progress           ║ -->
+                <!-- ╚══════════════════════════════════════════════════════╝ -->
+                <StackPanel x:Name="PageMigration" Visibility="Collapsed">
+
+                    <TextBlock Text="Run Migration" Style="{StaticResource HeaderText}" Margin="0,0,0,4" />
+                    <TextBlock Text="Step 3 of 3 — Execute and monitor the migration in real time."
+                               Style="{StaticResource DimText}" Margin="0,0,0,20" />
+
+                    <!-- ═══════ 4-STAGE PIPELINE (always visible on this page) ═══════ -->
+                    <Border CornerRadius="10" Padding="20,22" Margin="0,0,0,16"
+                            BorderBrush="#152040" BorderThickness="1" ClipToBounds="True">
+                        <Border.Background>
+                            <LinearGradientBrush StartPoint="0.5,0" EndPoint="0.5,1">
+                                <GradientStop Color="#0A1225" Offset="0" />
+                                <GradientStop Color="#0C1830" Offset="0.5" />
+                                <GradientStop Color="#0A1225" Offset="1" />
+                            </LinearGradientBrush>
+                        </Border.Background>
+                        <Grid>
+                            <!-- Blue atmospheric overlay -->
+                            <Border Background="{StaticResource BlueSpotlight}" CornerRadius="10"
+                                    Margin="-20,-22" IsHitTestVisible="False" />
+
+                            <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                            </Grid.RowDefinitions>
+
+                            <!-- Pipeline: Circles + Connectors -->
+                            <Grid Grid.Row="0" Margin="12,0,12,0">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="2*" />
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="2*" />
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="2*" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+
+                                <!-- Stage 1: Export -->
+                                <Border Grid.Column="0" Width="52" Height="52" CornerRadius="26"
+                                        Background="{Binding ExportStepColor, Converter={StaticResource StrToBrush}}"
+                                        HorizontalAlignment="Center" VerticalAlignment="Center"
+                                        x:Name="Stage1Circle">
+                                    <Border.Effect>
+                                        <DropShadowEffect x:Name="Stage1Glow" ShadowDepth="0" BlurRadius="16" Opacity="0.55" Color="#00C8FF" />
+                                    </Border.Effect>
+                                    <TextBlock Text="📤" FontSize="22" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                    <Border.Triggers>
+                                        <EventTrigger RoutedEvent="Loaded">
+                                            <BeginStoryboard>
+                                                <Storyboard RepeatBehavior="Forever" AutoReverse="True">
+                                                    <DoubleAnimation Storyboard.TargetName="Stage1Glow"
+                                                                     Storyboard.TargetProperty="Opacity"
+                                                                     From="0.35" To="0.75" Duration="0:0:1.8" />
+                                                    <DoubleAnimation Storyboard.TargetName="Stage1Glow"
+                                                                     Storyboard.TargetProperty="BlurRadius"
+                                                                     From="12" To="24" Duration="0:0:1.8" />
+                                                </Storyboard>
+                                            </BeginStoryboard>
+                                        </EventTrigger>
+                                    </Border.Triggers>
+                                </Border>
+
+                                <!-- Connector 1→2 -->
+                                <Border Grid.Column="1" Height="4" VerticalAlignment="Center" CornerRadius="2"
+                                        Background="{Binding TransformStepColor, Converter={StaticResource StrToBrush}}">
+                                    <Border.Effect>
+                                        <DropShadowEffect ShadowDepth="0" BlurRadius="6" Opacity="0.4" Color="#0080C0" />
+                                    </Border.Effect>
+                                </Border>
+
+                                <!-- Stage 2: Transform -->
+                                <Border Grid.Column="2" Width="52" Height="52" CornerRadius="26"
+                                        Background="{Binding TransformStepColor, Converter={StaticResource StrToBrush}}"
+                                        HorizontalAlignment="Center" VerticalAlignment="Center"
+                                        x:Name="Stage2Circle">
+                                    <Border.Effect>
+                                        <DropShadowEffect x:Name="Stage2Glow" ShadowDepth="0" BlurRadius="16" Opacity="0.55" Color="#00C8FF" />
+                                    </Border.Effect>
+                                    <TextBlock Text="🔄" FontSize="22" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                    <Border.Triggers>
+                                        <EventTrigger RoutedEvent="Loaded">
+                                            <BeginStoryboard>
+                                                <Storyboard RepeatBehavior="Forever" AutoReverse="True">
+                                                    <DoubleAnimation Storyboard.TargetName="Stage2Glow"
+                                                                     Storyboard.TargetProperty="Opacity"
+                                                                     From="0.35" To="0.75" Duration="0:0:2.0" />
+                                                </Storyboard>
+                                            </BeginStoryboard>
+                                        </EventTrigger>
+                                    </Border.Triggers>
+                                </Border>
+
+                                <!-- Connector 2→3 -->
+                                <Border Grid.Column="3" Height="4" VerticalAlignment="Center" CornerRadius="2"
+                                        Background="{Binding ImportStepColor, Converter={StaticResource StrToBrush}}">
+                                    <Border.Effect>
+                                        <DropShadowEffect ShadowDepth="0" BlurRadius="6" Opacity="0.4" Color="#0080C0" />
+                                    </Border.Effect>
+                                </Border>
+
+                                <!-- Stage 3: Import -->
+                                <Border Grid.Column="4" Width="52" Height="52" CornerRadius="26"
+                                        Background="{Binding ImportStepColor, Converter={StaticResource StrToBrush}}"
+                                        HorizontalAlignment="Center" VerticalAlignment="Center"
+                                        x:Name="Stage3Circle">
+                                    <Border.Effect>
+                                        <DropShadowEffect x:Name="Stage3Glow" ShadowDepth="0" BlurRadius="16" Opacity="0.55" Color="#00C8FF" />
+                                    </Border.Effect>
+                                    <TextBlock Text="📥" FontSize="22" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                    <Border.Triggers>
+                                        <EventTrigger RoutedEvent="Loaded">
+                                            <BeginStoryboard>
+                                                <Storyboard RepeatBehavior="Forever" AutoReverse="True">
+                                                    <DoubleAnimation Storyboard.TargetName="Stage3Glow"
+                                                                     Storyboard.TargetProperty="Opacity"
+                                                                     From="0.35" To="0.75" Duration="0:0:2.2" />
+                                                </Storyboard>
+                                            </BeginStoryboard>
+                                        </EventTrigger>
+                                    </Border.Triggers>
+                                </Border>
+
+                                <!-- Connector 3→4 -->
+                                <Border Grid.Column="5" Height="4" VerticalAlignment="Center" CornerRadius="2"
+                                        Background="{Binding ValidateStepColor, Converter={StaticResource StrToBrush}}">
+                                    <Border.Effect>
+                                        <DropShadowEffect ShadowDepth="0" BlurRadius="6" Opacity="0.4" Color="#0080C0" />
+                                    </Border.Effect>
+                                </Border>
+
+                                <!-- Stage 4: Validate -->
+                                <Border Grid.Column="6" Width="52" Height="52" CornerRadius="26"
+                                        Background="{Binding ValidateStepColor, Converter={StaticResource StrToBrush}}"
+                                        HorizontalAlignment="Center" VerticalAlignment="Center"
+                                        x:Name="Stage4Circle">
+                                    <Border.Effect>
+                                        <DropShadowEffect x:Name="Stage4Glow" ShadowDepth="0" BlurRadius="16" Opacity="0.55" Color="#00C8FF" />
+                                    </Border.Effect>
+                                    <TextBlock Text="✓" FontSize="24" FontWeight="Bold" Foreground="White"
+                                               HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                    <Border.Triggers>
+                                        <EventTrigger RoutedEvent="Loaded">
+                                            <BeginStoryboard>
+                                                <Storyboard RepeatBehavior="Forever" AutoReverse="True">
+                                                    <DoubleAnimation Storyboard.TargetName="Stage4Glow"
+                                                                     Storyboard.TargetProperty="Opacity"
+                                                                     From="0.35" To="0.75" Duration="0:0:2.4" />
+                                                </Storyboard>
+                                            </BeginStoryboard>
+                                        </EventTrigger>
+                                    </Border.Triggers>
+                                </Border>
+                            </Grid>
+
+                            <!-- Labels Row -->
+                            <Grid Grid.Row="1" Margin="12,10,12,0">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="2*" />
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="2*" />
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="2*" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Grid.Column="0" Text="Export" Style="{StaticResource StageLabel}" />
+                                <TextBlock Grid.Column="2" Text="Transform" Style="{StaticResource StageLabel}" />
+                                <TextBlock Grid.Column="4" Text="Import" Style="{StaticResource StageLabel}" />
+                                <TextBlock Grid.Column="6" Text="Validate" Style="{StaticResource StageLabel}" />
+                            </Grid>
+
+                            <!-- Status Badge Row -->
+                            <Grid Grid.Row="2" Margin="12,6,12,0">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="2*" />
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="2*" />
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="2*" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+                                <Border Grid.Column="0" Background="#0D3320" CornerRadius="8" Padding="6,2" HorizontalAlignment="Center">
+                                    <TextBlock Text="✓" FontSize="10" FontWeight="Bold" Foreground="#4ADE80" HorizontalAlignment="Center" />
+                                </Border>
+                                <Border Grid.Column="2" Background="#0D3320" CornerRadius="8" Padding="6,2" HorizontalAlignment="Center">
+                                    <TextBlock Text="✓" FontSize="10" FontWeight="Bold" Foreground="#4ADE80" HorizontalAlignment="Center" />
+                                </Border>
+                                <Border Grid.Column="4" Background="#0D3320" CornerRadius="8" Padding="6,2" HorizontalAlignment="Center">
+                                    <TextBlock Text="✓" FontSize="10" FontWeight="Bold" Foreground="#4ADE80" HorizontalAlignment="Center" />
+                                </Border>
+                                <Border Grid.Column="6" Background="#0D3320" CornerRadius="8" Padding="6,2" HorizontalAlignment="Center">
+                                    <TextBlock Text="✓" FontSize="10" FontWeight="Bold" Foreground="#4ADE80" HorizontalAlignment="Center" />
+                                </Border>
+                            </Grid>
+                            </Grid>
+                        </Grid>
+                    </Border>
+
+                    <!-- Current phase + progress bar -->
+                    <Border Style="{StaticResource Card}" Margin="0,0,0,16">
+                        <StackPanel>
+                            <DockPanel Margin="0,0,0,8">
+                                <TextBlock Text="{Binding CurrentPhase, StringFormat='Phase: {0}'}"
+                                           Foreground="{StaticResource TextDim}" FontSize="14" FontWeight="SemiBold"
+                                           DockPanel.Dock="Left" VerticalAlignment="Center" />
+                                <TextBlock Text="{Binding ProgressText}" Foreground="{StaticResource AccentBright}"
+                                           FontSize="15" FontWeight="Bold" HorizontalAlignment="Right" DockPanel.Dock="Right" />
+                            </DockPanel>
+                            <ProgressBar Value="{Binding OverallProgress}" Minimum="0" Maximum="100"
+                                         Style="{StaticResource ModernProgress}" Height="12" />
+
+                            <!-- Live Stats Row -->
+                            <Grid Margin="0,14,0,0">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="8" />
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="8" />
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="8" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+                                <Border Grid.Column="0" Style="{StaticResource StatCard}">
+                                    <StackPanel HorizontalAlignment="Center">
+                                        <TextBlock Text="{Binding ExportedCount}" FontSize="26" FontWeight="Bold"
+                                                   Foreground="{StaticResource AccentBright}" HorizontalAlignment="Center" />
+                                        <TextBlock Text="Exported" FontSize="11" Foreground="{StaticResource TextDim}" HorizontalAlignment="Center" />
+                                    </StackPanel>
+                                </Border>
+                                <Border Grid.Column="2" Style="{StaticResource StatCard}">
+                                    <StackPanel HorizontalAlignment="Center">
+                                        <TextBlock Text="{Binding TransformedCount}" FontSize="26" FontWeight="Bold"
+                                                   Foreground="{StaticResource Warning}" HorizontalAlignment="Center" />
+                                        <TextBlock Text="Transformed" FontSize="11" Foreground="{StaticResource TextDim}" HorizontalAlignment="Center" />
+                                    </StackPanel>
+                                </Border>
+                                <Border Grid.Column="4" Style="{StaticResource StatCard}">
+                                    <StackPanel HorizontalAlignment="Center">
+                                        <TextBlock Text="{Binding ImportedCount}" FontSize="26" FontWeight="Bold"
+                                                   Foreground="{StaticResource Success}" HorizontalAlignment="Center" />
+                                        <TextBlock Text="Imported" FontSize="11" Foreground="{StaticResource TextDim}" HorizontalAlignment="Center" />
+                                    </StackPanel>
+                                </Border>
+                                <Border Grid.Column="6" Style="{StaticResource StatCard}">
+                                    <StackPanel HorizontalAlignment="Center">
+                                        <TextBlock Text="{Binding FailedCount}" FontSize="26" FontWeight="Bold"
+                                                   Foreground="{StaticResource Danger}" HorizontalAlignment="Center" />
+                                        <TextBlock Text="Failed" FontSize="11" Foreground="{StaticResource TextDim}" HorizontalAlignment="Center" />
+                                    </StackPanel>
+                                </Border>
+                            </Grid>
+                        </StackPanel>
+                    </Border>
+
+                    <!-- Start / Stop controls -->
                     <Border CornerRadius="8" Padding="20,16" Margin="0,0,0,12"
                             BorderBrush="#1A3A6C" BorderThickness="1"
                             Visibility="{Binding IsIdle, Converter={StaticResource BoolToVis}}">
@@ -679,315 +1045,30 @@
                         </DockPanel>
                     </Border>
 
-                    <!-- ══════════════════════════════════════════════════════
-                         SECTION 3: Migration Progress  (shows after Start)
-                    ══════════════════════════════════════════════════════ -->
-                    <Border Style="{StaticResource Card}"
-                            Visibility="{Binding ShowProgressSection, Converter={StaticResource BoolToVis}}">
-                        <StackPanel>
-                            <!-- ── Section 3 Header with gradient background ── -->
-                            <Border Background="{StaticResource SectionHeaderGradient}" CornerRadius="8"
-                                    Padding="16,12" Margin="-6,-4,-6,18">
-                                <DockPanel>
-                                    <StackPanel Orientation="Horizontal" DockPanel.Dock="Left" VerticalAlignment="Center">
-                                        <Border CornerRadius="16" Width="32" Height="32" Margin="0,0,12,0"
-                                                Background="{StaticResource AccentBright}">
-                                            <Border.Effect>
-                                                <DropShadowEffect ShadowDepth="0" BlurRadius="12" Opacity="0.5" Color="#00E5FF" />
-                                            </Border.Effect>
-                                            <TextBlock Text="3" Foreground="#061428" FontSize="16" FontWeight="Bold"
-                                                       HorizontalAlignment="Center" VerticalAlignment="Center" />
-                                        </Border>
-                                        <TextBlock Text="Migration Progress" Style="{StaticResource SectionTitle}" Margin="0"
-                                                   VerticalAlignment="Center" />
-                                    </StackPanel>
-                                    <TextBlock Text="{Binding CurrentPhase, StringFormat='Stage: {0}'}"
-                                               DockPanel.Dock="Right" HorizontalAlignment="Right"
-                                               Foreground="{StaticResource AccentBright}" FontSize="15" FontWeight="Bold"
-                                               VerticalAlignment="Center" />
-                                </DockPanel>
-                            </Border>
-
-                            <!-- ═══════ NORTON/McAFEE-STYLE STAGE PIPELINE (Vibrant Blue) ═══════ -->
-                            <Border CornerRadius="10" Padding="20,22" Margin="0,0,0,18"
-                                    BorderBrush="#152040" BorderThickness="1" ClipToBounds="True">
-                                <Border.Background>
-                                    <LinearGradientBrush StartPoint="0.5,0" EndPoint="0.5,1">
-                                        <GradientStop Color="#0A1225" Offset="0" />
-                                        <GradientStop Color="#0C1830" Offset="0.5" />
-                                        <GradientStop Color="#0A1225" Offset="1" />
-                                    </LinearGradientBrush>
-                                </Border.Background>
-                                <Grid>
-                                    <!-- Blue atmospheric overlay -->
-                                    <Border Background="{StaticResource BlueSpotlight}" CornerRadius="10"
-                                            Margin="-20,-22" IsHitTestVisible="False" />
-
-                                    <Grid>
-                                    <Grid.RowDefinitions>
-                                        <RowDefinition Height="Auto" />
-                                        <RowDefinition Height="Auto" />
-                                        <RowDefinition Height="Auto" />
-                                    </Grid.RowDefinitions>
-
-                                    <!-- Pipeline: Circles + Connectors -->
-                                    <Grid Grid.Row="0" Margin="12,0,12,0">
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="*" />
-                                            <ColumnDefinition Width="2*" />
-                                            <ColumnDefinition Width="*" />
-                                            <ColumnDefinition Width="2*" />
-                                            <ColumnDefinition Width="*" />
-                                            <ColumnDefinition Width="2*" />
-                                            <ColumnDefinition Width="*" />
-                                        </Grid.ColumnDefinitions>
-
-                                        <!-- Stage 1: Export (with pulse animation on glow) -->
-                                        <Border Grid.Column="0" Width="52" Height="52" CornerRadius="26"
-                                                Background="{Binding ExportStepColor, Converter={StaticResource StrToBrush}}"
-                                                HorizontalAlignment="Center" VerticalAlignment="Center"
-                                                x:Name="Stage1Circle">
-                                            <Border.Effect>
-                                                <DropShadowEffect x:Name="Stage1Glow" ShadowDepth="0" BlurRadius="16" Opacity="0.55" Color="#00C8FF" />
-                                            </Border.Effect>
-                                            <TextBlock Text="📤" FontSize="22" HorizontalAlignment="Center" VerticalAlignment="Center" />
-                                            <Border.Triggers>
-                                                <EventTrigger RoutedEvent="Loaded">
-                                                    <BeginStoryboard>
-                                                        <Storyboard RepeatBehavior="Forever" AutoReverse="True">
-                                                            <DoubleAnimation Storyboard.TargetName="Stage1Glow"
-                                                                             Storyboard.TargetProperty="Opacity"
-                                                                             From="0.35" To="0.75" Duration="0:0:1.8" />
-                                                            <DoubleAnimation Storyboard.TargetName="Stage1Glow"
-                                                                             Storyboard.TargetProperty="BlurRadius"
-                                                                             From="12" To="24" Duration="0:0:1.8" />
-                                                        </Storyboard>
-                                                    </BeginStoryboard>
-                                                </EventTrigger>
-                                            </Border.Triggers>
-                                        </Border>
-
-                                        <!-- Connector 1→2 (animated data flow line) -->
-                                        <Border Grid.Column="1" Height="4" VerticalAlignment="Center"
-                                                CornerRadius="2"
-                                                Background="{Binding TransformStepColor, Converter={StaticResource StrToBrush}}">
-                                            <Border.Effect>
-                                                <DropShadowEffect ShadowDepth="0" BlurRadius="6" Opacity="0.4" Color="#0080C0" />
-                                            </Border.Effect>
-                                        </Border>
-
-                                        <!-- Stage 2: Transform -->
-                                        <Border Grid.Column="2" Width="52" Height="52" CornerRadius="26"
-                                                Background="{Binding TransformStepColor, Converter={StaticResource StrToBrush}}"
-                                                HorizontalAlignment="Center" VerticalAlignment="Center"
-                                                x:Name="Stage2Circle">
-                                            <Border.Effect>
-                                                <DropShadowEffect x:Name="Stage2Glow" ShadowDepth="0" BlurRadius="16" Opacity="0.55" Color="#00C8FF" />
-                                            </Border.Effect>
-                                            <TextBlock Text="🔄" FontSize="22" HorizontalAlignment="Center" VerticalAlignment="Center" />
-                                            <Border.Triggers>
-                                                <EventTrigger RoutedEvent="Loaded">
-                                                    <BeginStoryboard>
-                                                        <Storyboard RepeatBehavior="Forever" AutoReverse="True">
-                                                            <DoubleAnimation Storyboard.TargetName="Stage2Glow"
-                                                                             Storyboard.TargetProperty="Opacity"
-                                                                             From="0.35" To="0.75" Duration="0:0:2.0" />
-                                                        </Storyboard>
-                                                    </BeginStoryboard>
-                                                </EventTrigger>
-                                            </Border.Triggers>
-                                        </Border>
-
-                                        <!-- Connector 2→3 -->
-                                        <Border Grid.Column="3" Height="4" VerticalAlignment="Center"
-                                                CornerRadius="2"
-                                                Background="{Binding ImportStepColor, Converter={StaticResource StrToBrush}}">
-                                            <Border.Effect>
-                                                <DropShadowEffect ShadowDepth="0" BlurRadius="6" Opacity="0.4" Color="#0080C0" />
-                                            </Border.Effect>
-                                        </Border>
-
-                                        <!-- Stage 3: Import -->
-                                        <Border Grid.Column="4" Width="52" Height="52" CornerRadius="26"
-                                                Background="{Binding ImportStepColor, Converter={StaticResource StrToBrush}}"
-                                                HorizontalAlignment="Center" VerticalAlignment="Center"
-                                                x:Name="Stage3Circle">
-                                            <Border.Effect>
-                                                <DropShadowEffect x:Name="Stage3Glow" ShadowDepth="0" BlurRadius="16" Opacity="0.55" Color="#00C8FF" />
-                                            </Border.Effect>
-                                            <TextBlock Text="📥" FontSize="22" HorizontalAlignment="Center" VerticalAlignment="Center" />
-                                            <Border.Triggers>
-                                                <EventTrigger RoutedEvent="Loaded">
-                                                    <BeginStoryboard>
-                                                        <Storyboard RepeatBehavior="Forever" AutoReverse="True">
-                                                            <DoubleAnimation Storyboard.TargetName="Stage3Glow"
-                                                                             Storyboard.TargetProperty="Opacity"
-                                                                             From="0.35" To="0.75" Duration="0:0:2.2" />
-                                                        </Storyboard>
-                                                    </BeginStoryboard>
-                                                </EventTrigger>
-                                            </Border.Triggers>
-                                        </Border>
-
-                                        <!-- Connector 3→4 -->
-                                        <Border Grid.Column="5" Height="4" VerticalAlignment="Center"
-                                                CornerRadius="2"
-                                                Background="{Binding ValidateStepColor, Converter={StaticResource StrToBrush}}">
-                                            <Border.Effect>
-                                                <DropShadowEffect ShadowDepth="0" BlurRadius="6" Opacity="0.4" Color="#0080C0" />
-                                            </Border.Effect>
-                                        </Border>
-
-                                        <!-- Stage 4: Validate -->
-                                        <Border Grid.Column="6" Width="52" Height="52" CornerRadius="26"
-                                                Background="{Binding ValidateStepColor, Converter={StaticResource StrToBrush}}"
-                                                HorizontalAlignment="Center" VerticalAlignment="Center"
-                                                x:Name="Stage4Circle">
-                                            <Border.Effect>
-                                                <DropShadowEffect x:Name="Stage4Glow" ShadowDepth="0" BlurRadius="16" Opacity="0.55" Color="#00C8FF" />
-                                            </Border.Effect>
-                                            <TextBlock Text="✓" FontSize="24" FontWeight="Bold" Foreground="White"
-                                                       HorizontalAlignment="Center" VerticalAlignment="Center" />
-                                            <Border.Triggers>
-                                                <EventTrigger RoutedEvent="Loaded">
-                                                    <BeginStoryboard>
-                                                        <Storyboard RepeatBehavior="Forever" AutoReverse="True">
-                                                            <DoubleAnimation Storyboard.TargetName="Stage4Glow"
-                                                                             Storyboard.TargetProperty="Opacity"
-                                                                             From="0.35" To="0.75" Duration="0:0:2.4" />
-                                                        </Storyboard>
-                                                    </BeginStoryboard>
-                                                </EventTrigger>
-                                            </Border.Triggers>
-                                        </Border>
-                                    </Grid>
-
-                                    <!-- Labels Row -->
-                                    <Grid Grid.Row="1" Margin="12,10,12,0">
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="*" />
-                                            <ColumnDefinition Width="2*" />
-                                            <ColumnDefinition Width="*" />
-                                            <ColumnDefinition Width="2*" />
-                                            <ColumnDefinition Width="*" />
-                                            <ColumnDefinition Width="2*" />
-                                            <ColumnDefinition Width="*" />
-                                        </Grid.ColumnDefinitions>
-                                        <TextBlock Grid.Column="0" Text="Export" Style="{StaticResource StageLabel}" />
-                                        <TextBlock Grid.Column="2" Text="Transform" Style="{StaticResource StageLabel}" />
-                                        <TextBlock Grid.Column="4" Text="Import" Style="{StaticResource StageLabel}" />
-                                        <TextBlock Grid.Column="6" Text="Validate" Style="{StaticResource StageLabel}" />
-                                    </Grid>
-
-                                    <!-- Status Badge Row (Intel-style ✓ pills) -->
-                                    <Grid Grid.Row="2" Margin="12,6,12,0">
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="*" />
-                                            <ColumnDefinition Width="2*" />
-                                            <ColumnDefinition Width="*" />
-                                            <ColumnDefinition Width="2*" />
-                                            <ColumnDefinition Width="*" />
-                                            <ColumnDefinition Width="2*" />
-                                            <ColumnDefinition Width="*" />
-                                        </Grid.ColumnDefinitions>
-                                        <Border Grid.Column="0" Background="#0D3320" CornerRadius="8" Padding="6,2" HorizontalAlignment="Center">
-                                            <TextBlock Text="✓" FontSize="10" FontWeight="Bold" Foreground="#4ADE80" HorizontalAlignment="Center" />
-                                        </Border>
-                                        <Border Grid.Column="2" Background="#0D3320" CornerRadius="8" Padding="6,2" HorizontalAlignment="Center">
-                                            <TextBlock Text="✓" FontSize="10" FontWeight="Bold" Foreground="#4ADE80" HorizontalAlignment="Center" />
-                                        </Border>
-                                        <Border Grid.Column="4" Background="#0D3320" CornerRadius="8" Padding="6,2" HorizontalAlignment="Center">
-                                            <TextBlock Text="✓" FontSize="10" FontWeight="Bold" Foreground="#4ADE80" HorizontalAlignment="Center" />
-                                        </Border>
-                                        <Border Grid.Column="6" Background="#0D3320" CornerRadius="8" Padding="6,2" HorizontalAlignment="Center">
-                                            <TextBlock Text="✓" FontSize="10" FontWeight="Bold" Foreground="#4ADE80" HorizontalAlignment="Center" />
-                                        </Border>
-                                    </Grid>
-                                    </Grid>
-                                </Grid>
-                            </Border>
-
-                            <!-- ── Progress bar (enhanced) ── -->
-                            <ProgressBar Value="{Binding OverallProgress}" Minimum="0" Maximum="100"
-                                         Style="{StaticResource ModernProgress}" Height="10" />
-                            <DockPanel Margin="0,10,0,0">
-                                <TextBlock Text="{Binding CurrentPhase, StringFormat='Phase: {0}'}"
-                                           Foreground="{StaticResource TextDim}" FontSize="13" DockPanel.Dock="Left" />
-                                <TextBlock Text="{Binding ProgressText}" Foreground="{StaticResource AccentBright}"
-                                           FontSize="14" FontWeight="Bold" HorizontalAlignment="Right" DockPanel.Dock="Right" />
-                            </DockPanel>
-
-                            <Separator Background="#1A2E50" Margin="0,16,0,16" />
-
-                            <!-- ── Live Stats (enlarged) ── -->
-                            <Grid Margin="0,0,0,16">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="*" />
-                                    <ColumnDefinition Width="12" />
-                                    <ColumnDefinition Width="*" />
-                                    <ColumnDefinition Width="12" />
-                                    <ColumnDefinition Width="*" />
-                                    <ColumnDefinition Width="12" />
-                                    <ColumnDefinition Width="*" />
-                                </Grid.ColumnDefinitions>
-                                <Border Grid.Column="0" Style="{StaticResource StatCard}">
-                                    <StackPanel HorizontalAlignment="Center">
-                                        <TextBlock Text="{Binding ExportedCount}" FontSize="28" FontWeight="Bold"
-                                                   Foreground="{StaticResource AccentBright}" HorizontalAlignment="Center" />
-                                        <TextBlock Text="Exported" FontSize="12" Foreground="{StaticResource TextDim}" HorizontalAlignment="Center" />
-                                    </StackPanel>
-                                </Border>
-                                <Border Grid.Column="2" Style="{StaticResource StatCard}">
-                                    <StackPanel HorizontalAlignment="Center">
-                                        <TextBlock Text="{Binding TransformedCount}" FontSize="28" FontWeight="Bold"
-                                                   Foreground="{StaticResource Warning}" HorizontalAlignment="Center" />
-                                        <TextBlock Text="Transformed" FontSize="12" Foreground="{StaticResource TextDim}" HorizontalAlignment="Center" />
-                                    </StackPanel>
-                                </Border>
-                                <Border Grid.Column="4" Style="{StaticResource StatCard}">
-                                    <StackPanel HorizontalAlignment="Center">
-                                        <TextBlock Text="{Binding ImportedCount}" FontSize="28" FontWeight="Bold"
-                                                   Foreground="{StaticResource Success}" HorizontalAlignment="Center" />
-                                        <TextBlock Text="Imported" FontSize="12" Foreground="{StaticResource TextDim}" HorizontalAlignment="Center" />
-                                    </StackPanel>
-                                </Border>
-                                <Border Grid.Column="6" Style="{StaticResource StatCard}">
-                                    <StackPanel HorizontalAlignment="Center">
-                                        <TextBlock Text="{Binding FailedCount}" FontSize="28" FontWeight="Bold"
-                                                   Foreground="{StaticResource Danger}" HorizontalAlignment="Center" />
-                                        <TextBlock Text="Failed" FontSize="12" Foreground="{StaticResource TextDim}" HorizontalAlignment="Center" />
-                                    </StackPanel>
-                                </Border>
-                            </Grid>
-
-                            <!-- ── Inline Activity Log ── -->
-                            <DockPanel Margin="0,0,0,8">
-                                <TextBlock Text="Activity Log" FontSize="13" FontWeight="SemiBold"
-                                           Foreground="{StaticResource TextDim}" DockPanel.Dock="Left" VerticalAlignment="Center" />
-                                <Button Content="Clear" Command="{Binding ClearLogCommand}"
-                                        Style="{StaticResource SmallButton}" DockPanel.Dock="Right"
-                                        HorizontalAlignment="Right" VerticalAlignment="Center" />
-                            </DockPanel>
-                            <Border Background="#0A1018" CornerRadius="8" Padding="0" MinHeight="180" MaxHeight="300"
-                                    BorderBrush="#152040" BorderThickness="1">
-                                <TextBox Text="{Binding ActivityLog, Mode=OneWay}"
-                                         IsReadOnly="True" TextWrapping="Wrap"
-                                         VerticalScrollBarVisibility="Auto"
-                                         HorizontalScrollBarVisibility="Disabled"
-                                         Background="Transparent" Foreground="{StaticResource TextBody}"
-                                         BorderThickness="0"
-                                         FontFamily="Cascadia Code, Consolas, Courier New"
-                                         FontSize="11" Padding="14,10"
-                                         x:Name="MigrationLogBox"
-                                         TextChanged="MigrationLogBox_TextChanged" />
-                            </Border>
-
-                            <!-- Reset button (after completion) -->
-                            <Button Content="🔄  Start New Migration" Command="{Binding ResetMigrationCommand}"
-                                    Style="{StaticResource PrimaryButton}" Margin="0,16,0,0"
-                                    HorizontalAlignment="Left"
+                    <!-- ── Real-time Activity Log (large — takes most of the page) ── -->
+                    <DockPanel Margin="0,0,0,8">
+                        <TextBlock Text="Activity Log" FontSize="14" FontWeight="SemiBold"
+                                   Foreground="{StaticResource TextDim}" DockPanel.Dock="Left" VerticalAlignment="Center" />
+                        <StackPanel DockPanel.Dock="Right" Orientation="Horizontal" HorizontalAlignment="Right">
+                            <Button Content="Clear" Command="{Binding ClearLogCommand}"
+                                    Style="{StaticResource SmallButton}" Margin="0,0,8,0" />
+                            <Button Content="🔄 Reset Migration" Command="{Binding ResetMigrationCommand}"
+                                    Style="{StaticResource SmallButton}"
                                     Visibility="{Binding IsIdle, Converter={StaticResource BoolToVis}}" />
                         </StackPanel>
+                    </DockPanel>
+                    <Border Background="#0A1018" CornerRadius="8" Padding="0" MinHeight="260" MaxHeight="500"
+                            BorderBrush="#152040" BorderThickness="1">
+                        <TextBox Text="{Binding ActivityLog, Mode=OneWay}"
+                                 IsReadOnly="True" TextWrapping="Wrap"
+                                 VerticalScrollBarVisibility="Auto"
+                                 HorizontalScrollBarVisibility="Disabled"
+                                 Background="Transparent" Foreground="{StaticResource TextBody}"
+                                 BorderThickness="0"
+                                 FontFamily="Cascadia Code, Consolas, Courier New"
+                                 FontSize="11" Padding="14,10"
+                                 x:Name="MigrationLogBox"
+                                 TextChanged="MigrationLogBox_TextChanged" />
                     </Border>
                 </StackPanel>
 
