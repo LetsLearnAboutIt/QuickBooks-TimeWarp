@@ -1,7 +1,7 @@
 <Window x:Class="QB_TimeWarp.UI.Views.CompletionWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="Migration Complete — QuickBooks TimeWarp"
+        Title="Migration Complete — QB-TimeWarp"
         Width="660" Height="560"
         WindowStartupLocation="CenterOwner"
         WindowStyle="None"

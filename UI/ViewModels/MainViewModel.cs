@@ -130,13 +130,15 @@ namespace QB_TimeWarp.UI.ViewModels
         private readonly Dispatcher _dispatcher;
         private CancellationTokenSource? _cts;
 
-        private string _windowTitle = "QuickBooks TimeWarp® — QB 2023 → QB 2021 Migration";
+        private string _windowTitle = "QB-TimeWarp® — QB 2023 → QB 2021 Migration";
         private bool _isMigrationRunning;
         private bool _isIdle = true;
         private bool _showProgressSection;
 
         // Section 2: Destination & Options
-        private string _destinationFolder = @"C:\QB-TimeWarp\Output";
+        private string _destinationFolder = System.IO.Path.Combine(
+            Environment.GetFolderPath(Environment.SpecialFolder.Desktop),
+            "TimeWarp-Output");
         private string _destinationFileName = string.Empty;
         private string _destinationPreview = string.Empty;
         private DateTime? _dateRangeFrom;
@@ -626,9 +628,9 @@ namespace QB_TimeWarp.UI.ViewModels
         {
             var dialog = new Microsoft.Win32.OpenFileDialog
             {
-                Filter = "QuickBooks Company Files (*.qbw)|*.qbw|All Files (*.*)|*.*",
+                Filter = "Company Files (*.qbw)|*.qbw|All Files (*.*)|*.*",
                 Multiselect = true,
-                Title = "Select QuickBooks Company Files"
+                Title = "Select Company Files (.QBW)"
             };
 
             if (dialog.ShowDialog() == true)

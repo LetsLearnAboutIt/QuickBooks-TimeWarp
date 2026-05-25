@@ -23,10 +23,10 @@
            Danger:       #F87171   (red — errors)
            DangerDim:    #EF4444   (red pressed)
            
-           TextPrimary:  #E8ECF1   (headings, primary text)
-           TextBody:     #B0BAC9   (body text)
-           TextDim:      #6B7A90   (labels, hints)
-           TextMuted:    #4A5568   (disabled, very dim)
+           TextPrimary:  #F0F4FA   (headings, primary text — bright)
+           TextBody:     #C8D2E0   (body text — enhanced readability)
+           TextDim:      #8898B0   (labels, hints — brighter)
+           TextMuted:    #607088   (disabled, section labels)
     ═══════════════════════════════════════════════════════════════ -->
 
     <!-- ── Color Brushes ───────────────────────────────────────────── -->
@@ -46,10 +46,10 @@
     <SolidColorBrush x:Key="Warning"      Color="#FBBF24" />
     <SolidColorBrush x:Key="Danger"       Color="#F87171" />
 
-    <SolidColorBrush x:Key="TextPrimary"  Color="#E8ECF1" />
-    <SolidColorBrush x:Key="TextBody"     Color="#B0BAC9" />
-    <SolidColorBrush x:Key="TextDim"      Color="#6B7A90" />
-    <SolidColorBrush x:Key="TextMuted"    Color="#4A5568" />
+    <SolidColorBrush x:Key="TextPrimary"  Color="#F0F4FA" />
+    <SolidColorBrush x:Key="TextBody"     Color="#C8D2E0" />
+    <SolidColorBrush x:Key="TextDim"      Color="#8898B0" />
+    <SolidColorBrush x:Key="TextMuted"    Color="#607088" />
 
     <!-- ═══ VIBRANT BLUE GRADIENT SYSTEM (Intel Pro Graphics Inspired) ═══ -->
 
@@ -135,29 +135,29 @@
 
     <!-- ── Text Styles ─────────────────────────────────────────────── -->
     <Style x:Key="HeaderText" TargetType="TextBlock">
-        <Setter Property="FontSize" Value="26" />
+        <Setter Property="FontSize" Value="30" />
         <Setter Property="FontWeight" Value="Bold" />
         <Setter Property="Foreground" Value="{StaticResource TextPrimary}" />
     </Style>
 
     <Style x:Key="SubheaderText" TargetType="TextBlock">
-        <Setter Property="FontSize" Value="16" />
+        <Setter Property="FontSize" Value="18" />
         <Setter Property="FontWeight" Value="Medium" />
         <Setter Property="Foreground" Value="{StaticResource TextPrimary}" />
     </Style>
 
     <Style x:Key="BodyText" TargetType="TextBlock">
-        <Setter Property="FontSize" Value="13.5" />
+        <Setter Property="FontSize" Value="14.5" />
         <Setter Property="Foreground" Value="{StaticResource TextBody}" />
     </Style>
 
     <Style x:Key="DimText" TargetType="TextBlock">
-        <Setter Property="FontSize" Value="12" />
+        <Setter Property="FontSize" Value="13" />
         <Setter Property="Foreground" Value="{StaticResource TextDim}" />
     </Style>
 
     <Style x:Key="SectionTitle" TargetType="TextBlock">
-        <Setter Property="FontSize" Value="19" />
+        <Setter Property="FontSize" Value="22" />
         <Setter Property="FontWeight" Value="Bold" />
         <Setter Property="Foreground" Value="{StaticResource TextPrimary}" />
         <Setter Property="Margin" Value="0,0,0,12" />
@@ -165,7 +165,7 @@
 
     <!-- Premium stage label (used in Norton-style pipeline) -->
     <Style x:Key="StageLabel" TargetType="TextBlock">
-        <Setter Property="FontSize" Value="12" />
+        <Setter Property="FontSize" Value="13" />
         <Setter Property="FontWeight" Value="SemiBold" />
         <Setter Property="Foreground" Value="{StaticResource TextBody}" />
         <Setter Property="HorizontalAlignment" Value="Center" />
@@ -212,9 +212,10 @@
     <!-- ── Sidebar Navigation Button ───────────────────────────────── -->
     <Style x:Key="NavButton" TargetType="Button">
         <Setter Property="Background" Value="Transparent" />
-        <Setter Property="Foreground" Value="{StaticResource TextDim}" />
-        <Setter Property="FontSize" Value="13" />
-        <Setter Property="Padding" Value="16,11" />
+        <Setter Property="Foreground" Value="{StaticResource TextBody}" />
+        <Setter Property="FontSize" Value="14" />
+        <Setter Property="FontWeight" Value="Medium" />
+        <Setter Property="Padding" Value="20,12" />
         <Setter Property="HorizontalContentAlignment" Value="Left" />
         <Setter Property="BorderThickness" Value="0" />
         <Setter Property="Cursor" Value="Hand" />
@@ -230,7 +231,7 @@
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsMouseOver" Value="True">
                             <Setter TargetName="Bd" Property="Background" Value="#151B28" />
-                            <Setter Property="Foreground" Value="{StaticResource TextBody}" />
+                            <Setter Property="Foreground" Value="{StaticResource TextPrimary}" />
                         </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>
@@ -240,6 +241,7 @@
 
     <Style x:Key="NavButtonActive" TargetType="Button" BasedOn="{StaticResource NavButton}">
         <Setter Property="Foreground" Value="{StaticResource AccentBright}" />
+        <Setter Property="FontWeight" Value="SemiBold" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="Button">
