@@ -1,3 +1,4 @@
+using System.IO;
 using System.Diagnostics;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
@@ -43,7 +44,7 @@ namespace QB_TimeWarp
         private static WorkingDirectoryManager? _workingDirManager;
 
         [STAThread]
-        static int Main(string[] args)
+        public static int Main(string[] args)
         {
             // ─── GUI mode: --gui flag or no arguments (double-click launch) ───
             if (args.Length == 0 || args.Any(a => a.Equals("--gui", StringComparison.OrdinalIgnoreCase)))
@@ -1244,3 +1245,4 @@ namespace QB_TimeWarp
         }
     }
 }
+

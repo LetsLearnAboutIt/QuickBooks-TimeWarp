@@ -1,0 +1,929 @@
+﻿
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:1951:2026-05-23 06:09:44.438 -05:00 [INF]   │  Stage 0: Verify 
+Account Types (FIX #3) │
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:1999:2026-05-23 06:09:44.890 -05:00 [INF]   │  Stage 1/4: 
+Foundation                        │
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:2002:2026-05-23 06:09:44.900 -05:00 [INF]   [1/11] Importing 
+Accounts (142 records)...
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:2011:2026-05-23 06:09:56.866 -05:00 [INF]     → 142 succeeded, 
+0 failed, 0 skipped (12.0s)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:2012:2026-05-23 06:09:56.871 -05:00 [INF]   [2/11] Importing 
+SalesTaxCodes (3 records)...
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:2017:2026-05-23 06:09:57.151 -05:00 [INF]     → 3 succeeded, 0 
+failed, 0 skipped (0.3s)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:2018:2026-05-23 06:09:57.156 -05:00 [INF]   [3/11] Importing 
+ItemSalesTax (6 records)...
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:2031:2026-05-23 06:09:57.552 -05:00 [INF]     → 0 succeeded, 6 
+failed, 0 skipped (0.4s)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:2032:2026-05-23 06:09:57.557 -05:00 [INF]   [4/11] Importing 
+Terms (6 records)...
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:2045:2026-05-23 06:09:58.199 -05:00 [INF]     → 6 succeeded, 0 
+failed, 0 skipped (0.6s)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:2046:2026-05-23 06:09:58.204 -05:00 [INF]   [5/11] Importing 
+PaymentMethods (7 records)...
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:2061:2026-05-23 06:09:58.962 -05:00 [INF]     → 7 succeeded, 0 
+failed, 0 skipped (0.8s)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:2062:2026-05-23 06:09:58.967 -05:00 [INF]   [7/11] Importing 
+VendorTypes (3 records)...
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:2069:2026-05-23 06:09:59.291 -05:00 [INF]     → 3 succeeded, 0 
+failed, 0 skipped (0.3s)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:2070:2026-05-23 06:09:59.297 -05:00 [INF]   [9/11] Importing 
+Classes (5 records)...
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:2081:2026-05-23 06:09:59.831 -05:00 [INF]     → 5 succeeded, 0 
+failed, 0 skipped (0.5s)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:2082:2026-05-23 06:09:59.837 -05:00 [WRN]   Stage 1: 6/172 
+records failed but stage continues.
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:2083:2026-05-23 06:09:59.842 -05:00 [INF]   Stage 1 Result: 
+166/172 succeeded, 6 failed (14.9s)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:2086:2026-05-23 06:09:59.854 -05:00 [INF]   │  Stage 2/4: 
+Entities                          │
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:2089:2026-05-23 06:09:59.864 -05:00 [INF]   [1/3] Importing 
+Customers (2 records)...
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:2090:2026-05-23 06:10:00.062 -05:00 [INF]     → 2 succeeded, 0 
+failed, 0 skipped (0.2s)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:2091:2026-05-23 06:10:00.067 -05:00 [INF]   [2/3] Importing 
+Vendors (249 records)...
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:2096:2026-05-23 06:10:17.961 -05:00 [INF]     → 249 succeeded, 
+0 failed, 0 skipped (17.9s)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:2097:2026-05-23 06:10:17.965 -05:00 [INF]   [3/3] Importing 
+Employees (32 records)...
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:2600:2026-05-23 06:10:20.508 -05:00 [INF]     → 0 succeeded, 32 
+failed, 0 skipped (2.5s)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:2601:2026-05-23 06:10:20.514 -05:00 [WRN]   Stage 2: 32/283 
+records failed but stage continues.
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:2602:2026-05-23 06:10:20.518 -05:00 [INF]   Stage 2 Result: 
+251/283 succeeded, 32 failed (20.6s)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:2605:2026-05-23 06:10:20.527 -05:00 [INF]   │  Stage 3/4: Items 
+                            │
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:2608:2026-05-23 06:10:20.535 -05:00 [INF]   Stage 3 Result: 0/0 
+succeeded, 0 failed (0.0s)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:2611:2026-05-23 06:10:20.544 -05:00 [INF]   │  Stage 4/4: 
+Transactions                      │
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:2614:2026-05-23 06:10:20.552 -05:00 [INF]   [4/13] Importing 
+SalesReceipts (30 records)...
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:4289:2026-05-23 06:10:22.279 -05:00 [INF]     → 0 succeeded, 30 
+failed, 0 skipped (1.7s)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:4290:2026-05-23 06:10:22.284 -05:00 [INF]   [6/13] Importing 
+JournalEntries (58 records)...
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:4292:2026-05-23 06:10:26.330 -05:00 [INF]     → 58 succeeded, 0 
+failed, 0 skipped (4.0s)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:4293:2026-05-23 06:10:26.335 -05:00 [INF]   [9/13] Importing 
+Deposits (225 records)...
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:4403:2026-05-23 06:10:42.676 -05:00 [INF]     → 222 succeeded, 
+3 failed, 0 skipped (16.3s)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:4404:2026-05-23 06:10:42.681 -05:00 [INF]   [10/13] Importing 
+Checks (1154 records)...
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:4428:2026-05-23 06:12:13.957 -05:00 [INF]     → 1154 succeeded, 
+0 failed, 0 skipped (91.3s)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:4429:2026-05-23 06:12:13.961 -05:00 [INF]   [13/13] Importing 
+Transfers (156 records)...
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:4433:2026-05-23 06:12:23.531 -05:00 [INF]     → 156 succeeded, 
+0 failed, 0 skipped (9.6s)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:4434:2026-05-23 06:12:23.536 -05:00 [WRN]   Stage 4: 33/1623 
+records failed but stage continues.
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:4435:2026-05-23 06:12:23.541 -05:00 [INF]   Stage 4 Result: 
+1590/1623 succeeded, 33 failed (123.0s)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:4441:2026-05-23 06:12:23.558 -05:00 [INF]   Total records: 
+2007/2078 succeeded
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:6575:2026-05-23 06:55:31.376 -05:00 [INF]   │  Stage 0: Verify 
+Account Types (FIX #3) │
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:6623:2026-05-23 06:55:31.808 -05:00 [INF]   │  Stage 1/4: 
+Foundation                        │
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:6626:2026-05-23 06:55:31.819 -05:00 [INF]   [1/11] Importing 
+Accounts (142 records)...
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:6635:2026-05-23 06:55:43.613 -05:00 [INF]     → 142 succeeded, 
+0 failed, 0 skipped (11.8s)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:6636:2026-05-23 06:55:43.619 -05:00 [INF]   [2/11] Importing 
+SalesTaxCodes (3 records)...
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:6641:2026-05-23 06:55:43.926 -05:00 [INF]     → 3 succeeded, 0 
+failed, 0 skipped (0.3s)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:6642:2026-05-23 06:55:43.931 -05:00 [INF]   [3/11] Importing 
+ItemSalesTax (6 records)...
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:6655:2026-05-23 06:55:44.346 -05:00 [INF]     → 0 succeeded, 6 
+failed, 0 skipped (0.4s)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:6656:2026-05-23 06:55:44.351 -05:00 [INF]   [4/11] Importing 
+Terms (6 records)...
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:6669:2026-05-23 06:55:45.147 -05:00 [INF]     → 6 succeeded, 0 
+failed, 0 skipped (0.8s)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:6670:2026-05-23 06:55:45.152 -05:00 [INF]   [5/11] Importing 
+PaymentMethods (7 records)...
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:6685:2026-05-23 06:55:45.970 -05:00 [INF]     → 7 succeeded, 0 
+failed, 0 skipped (0.8s)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:6686:2026-05-23 06:55:45.976 -05:00 [INF]   [7/11] Importing 
+VendorTypes (3 records)...
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:6693:2026-05-23 06:55:46.324 -05:00 [INF]     → 3 succeeded, 0 
+failed, 0 skipped (0.3s)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:6694:2026-05-23 06:55:46.329 -05:00 [INF]   [9/11] Importing 
+Classes (5 records)...
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:6705:2026-05-23 06:55:46.936 -05:00 [INF]     → 5 succeeded, 0 
+failed, 0 skipped (0.6s)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:6706:2026-05-23 06:55:46.941 -05:00 [WRN]   Stage 1: 6/172 
+records failed but stage continues.
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:6707:2026-05-23 06:55:46.945 -05:00 [INF]   Stage 1 Result: 
+166/172 succeeded, 6 failed (15.1s)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:6710:2026-05-23 06:55:46.955 -05:00 [INF]   │  Stage 2/4: 
+Entities                          │
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:6713:2026-05-23 06:55:46.962 -05:00 [INF]   [1/3] Importing 
+Customers (2 records)...
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:6714:2026-05-23 06:55:47.190 -05:00 [INF]     → 2 succeeded, 0 
+failed, 0 skipped (0.2s)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:6715:2026-05-23 06:55:47.195 -05:00 [INF]   [2/3] Importing 
+Vendors (249 records)...
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:6720:2026-05-23 06:56:05.430 -05:00 [INF]     → 249 succeeded, 
+0 failed, 0 skipped (18.2s)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:6721:2026-05-23 06:56:05.435 -05:00 [INF]   [3/3] Importing 
+Employees (32 records)...
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:7192:2026-05-23 06:56:07.988 -05:00 [INF]     → 22 succeeded, 
+10 failed, 0 skipped (2.5s)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:7193:2026-05-23 06:56:07.992 -05:00 [WRN]   Stage 2: 10/283 
+records failed but stage continues.
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:7194:2026-05-23 06:56:07.996 -05:00 [INF]   Stage 2 Result: 
+273/283 succeeded, 10 failed (21.0s)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:7197:2026-05-23 06:56:08.010 -05:00 [INF]   │  Stage 3/4: Items 
+                            │
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:7200:2026-05-23 06:56:08.020 -05:00 [INF]   Stage 3 Result: 0/0 
+succeeded, 0 failed (0.0s)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:7203:2026-05-23 06:56:08.029 -05:00 [INF]   │  Stage 4/4: 
+Transactions                      │
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:7206:2026-05-23 06:56:08.037 -05:00 [INF]   [4/13] Importing 
+SalesReceipts (30 records)...
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:8881:2026-05-23 06:56:09.792 -05:00 [INF]     → 0 succeeded, 30 
+failed, 0 skipped (1.8s)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:8882:2026-05-23 06:56:09.797 -05:00 [INF]   [6/13] Importing 
+JournalEntries (58 records)...
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:8884:2026-05-23 06:56:14.055 -05:00 [INF]     → 58 succeeded, 0 
+failed, 0 skipped (4.3s)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:8885:2026-05-23 06:56:14.061 -05:00 [INF]   [9/13] Importing 
+Deposits (225 records)...
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:8995:2026-05-23 06:56:31.152 -05:00 [INF]     → 222 succeeded, 
+3 failed, 0 skipped (17.1s)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:8996:2026-05-23 06:56:31.157 -05:00 [INF]   [10/13] Importing 
+Checks (1154 records)...
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:9020:2026-05-23 06:58:04.691 -05:00 [INF]     → 1154 succeeded, 
+0 failed, 0 skipped (93.5s)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:9021:2026-05-23 06:58:04.696 -05:00 [INF]   [13/13] Importing 
+Transfers (156 records)...
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:9025:2026-05-23 06:58:14.587 -05:00 [INF]     → 156 succeeded, 
+0 failed, 0 skipped (9.9s)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:9026:2026-05-23 06:58:14.592 -05:00 [WRN]   Stage 4: 33/1623 
+records failed but stage continues.
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:9027:2026-05-23 06:58:14.596 -05:00 [INF]   Stage 4 Result: 
+1590/1623 succeeded, 33 failed (126.6s)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:9033:2026-05-23 06:58:14.614 -05:00 [INF]   Total records: 
+2029/2078 succeeded
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:11162:2026-05-23 07:08:32.408 -05:00 [INF]   │  Stage 0: Verify 
+Account Types (FIX #3) │
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:11207:2026-05-23 07:08:32.689 -05:00 [INF]   │  Stage 1/4: 
+Foundation                        │
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:11210:2026-05-23 07:08:32.689 -05:00 [INF]   [1/11] Importing 
+Accounts (142 records)...
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:11639:2026-05-23 07:08:47.614 -05:00 [INF]     → 142 succeeded, 
+0 failed, 0 skipped (14.9s)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:11640:2026-05-23 07:08:47.614 -05:00 [INF]   [2/11] Importing 
+SalesTaxCodes (3 records)...
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:11650:2026-05-23 07:08:47.914 -05:00 [INF]     → 3 succeeded, 0 
+failed, 0 skipped (0.3s)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:11651:2026-05-23 07:08:47.914 -05:00 [INF]   [3/11] Importing 
+ItemSalesTax (6 records)...
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:11658:2026-05-23 07:08:48.504 -05:00 [INF]     → 6 succeeded, 0 
+failed, 0 skipped (0.6s)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:11659:2026-05-23 07:08:48.504 -05:00 [INF]   [4/11] Importing 
+Terms (6 records)...
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:11678:2026-05-23 07:08:49.146 -05:00 [INF]     → 6 succeeded, 0 
+failed, 0 skipped (0.6s)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:11679:2026-05-23 07:08:49.146 -05:00 [INF]   [5/11] Importing 
+PaymentMethods (7 records)...
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:11701:2026-05-23 07:08:49.864 -05:00 [INF]     → 7 succeeded, 0 
+failed, 0 skipped (0.7s)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:11702:2026-05-23 07:08:49.865 -05:00 [INF]   [7/11] Importing 
+VendorTypes (3 records)...
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:11712:2026-05-23 07:08:50.191 -05:00 [INF]     → 3 succeeded, 0 
+failed, 0 skipped (0.3s)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:11713:2026-05-23 07:08:50.191 -05:00 [INF]   [9/11] Importing 
+Classes (5 records)...
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:11729:2026-05-23 07:08:50.682 -05:00 [INF]     → 5 succeeded, 0 
+failed, 0 skipped (0.5s)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:11730:2026-05-23 07:08:50.682 -05:00 [INF]   Stage 1 Result: 
+172/172 succeeded, 0 failed (18.0s)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:11733:2026-05-23 07:08:50.682 -05:00 [INF]   │  Stage 2/4: 
+Entities                          │
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:11736:2026-05-23 07:08:50.682 -05:00 [INF]   [1/3] Importing 
+Customers (2 records)...
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:11743:2026-05-23 07:08:50.907 -05:00 [INF]     → 2 succeeded, 0 
+failed, 0 skipped (0.2s)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:11744:2026-05-23 07:08:50.907 -05:00 [INF]   [2/3] Importing 
+Vendors (249 records)...
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:12496:2026-05-23 07:09:18.634 -05:00 [INF]     → 249 succeeded, 
+0 failed, 0 skipped (27.7s)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:12497:2026-05-23 07:09:18.634 -05:00 [INF]   [3/3] Importing 
+Employees (32 records)...
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:13044:2026-05-23 07:09:21.702 -05:00 [INF]     → 22 succeeded, 
+10 failed, 0 skipped (3.1s)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:13045:2026-05-23 07:09:21.702 -05:00 [WRN]   Stage 2: 10/283 
+records failed but stage continues.
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:13046:2026-05-23 07:09:21.702 -05:00 [INF]   Stage 2 Result: 
+273/283 succeeded, 10 failed (31.0s)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:13049:2026-05-23 07:09:21.702 -05:00 [INF]   │  Stage 3/4: 
+Items                             │
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:13052:2026-05-23 07:09:21.702 -05:00 [INF]   Stage 3 Result: 
+0/0 succeeded, 0 failed (0.0s)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:13055:2026-05-23 07:09:21.702 -05:00 [INF]   │  Stage 4/4: 
+Transactions                      │
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:13058:2026-05-23 07:09:21.702 -05:00 [INF]   [4/13] Importing 
+SalesReceipts (30 records)...
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:14763:2026-05-23 07:09:23.170 -05:00 [INF]     → 0 succeeded, 
+30 failed, 0 skipped (1.5s)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:14764:2026-05-23 07:09:23.170 -05:00 [INF]   [6/13] Importing 
+JournalEntries (58 records)...
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:14824:2026-05-23 07:09:27.615 -05:00 [INF]     → 58 succeeded, 
+0 failed, 0 skipped (4.4s)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:14825:2026-05-23 07:09:27.616 -05:00 [INF]   [9/13] Importing 
+Deposits (225 records)...
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:15160:2026-05-23 07:09:44.269 -05:00 [INF]     → 222 succeeded, 
+3 failed, 0 skipped (16.7s)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:15161:2026-05-23 07:09:44.269 -05:00 [INF]   [10/13] Importing 
+Checks (1154 records)...
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:16339:2026-05-23 07:11:19.165 -05:00 [INF]     → 1154 
+succeeded, 0 failed, 0 skipped (94.9s)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:16340:2026-05-23 07:11:19.166 -05:00 [INF]   [13/13] Importing 
+Transfers (156 records)...
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:16500:2026-05-23 07:11:29.067 -05:00 [INF]     → 156 succeeded, 
+0 failed, 0 skipped (9.9s)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:16501:2026-05-23 07:11:29.067 -05:00 [WRN]   Stage 4: 33/1623 
+records failed but stage continues.
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:16502:2026-05-23 07:11:29.068 -05:00 [INF]   Stage 4 Result: 
+1590/1623 succeeded, 33 failed (127.4s)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:16508:2026-05-23 07:11:29.068 -05:00 [INF]   Total records: 
+2035/2078 succeeded
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:18642:2026-05-23 07:27:54.956 -05:00 [INF]   │  Stage 0: Verify 
+Account Types (FIX #3) │
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:18690:2026-05-23 07:27:55.389 -05:00 [INF]   │  Stage 1/4: 
+Foundation                        │
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:18693:2026-05-23 07:27:55.399 -05:00 [INF]   [1/11] Importing 
+Accounts (142 records)...
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:18844:2026-05-23 07:28:05.498 -05:00 [INF]     → 142 succeeded, 
+0 failed, 0 skipped (10.1s)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:18845:2026-05-23 07:28:05.503 -05:00 [INF]   [2/11] Importing 
+SalesTaxCodes (3 records)...
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:18853:2026-05-23 07:28:05.789 -05:00 [INF]     → 3 succeeded, 0 
+failed, 0 skipped (0.3s)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:18854:2026-05-23 07:28:05.794 -05:00 [INF]   [3/11] Importing 
+ItemSalesTax (6 records)...
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:18873:2026-05-23 07:28:06.225 -05:00 [INF]     → 0 succeeded, 6 
+failed, 0 skipped (0.4s)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:18874:2026-05-23 07:28:06.230 -05:00 [INF]   [4/11] Importing 
+Terms (6 records)...
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:18893:2026-05-23 07:28:06.925 -05:00 [INF]     → 6 succeeded, 0 
+failed, 0 skipped (0.7s)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:18894:2026-05-23 07:28:06.931 -05:00 [INF]   [5/11] Importing 
+PaymentMethods (7 records)...
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:18916:2026-05-23 07:28:07.737 -05:00 [INF]     → 7 succeeded, 0 
+failed, 0 skipped (0.8s)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:18917:2026-05-23 07:28:07.742 -05:00 [INF]   [7/11] Importing 
+VendorTypes (3 records)...
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:18927:2026-05-23 07:28:08.082 -05:00 [INF]     → 3 succeeded, 0 
+failed, 0 skipped (0.3s)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:18928:2026-05-23 07:28:08.087 -05:00 [INF]   [9/11] Importing 
+Classes (5 records)...
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:18944:2026-05-23 07:28:08.639 -05:00 [INF]     → 5 succeeded, 0 
+failed, 0 skipped (0.5s)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:18945:2026-05-23 07:28:08.645 -05:00 [WRN]   Stage 1: 6/172 
+records failed but stage continues.
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:18946:2026-05-23 07:28:08.649 -05:00 [INF]   Stage 1 Result: 
+166/172 succeeded, 6 failed (13.2s)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:18949:2026-05-23 07:28:08.659 -05:00 [INF]   │  Stage 2/4: 
+Entities                          │
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:18952:2026-05-23 07:28:08.668 -05:00 [INF]   [1/3] Importing 
+Customers (2 records)...
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:18955:2026-05-23 07:28:08.853 -05:00 [INF]     → 2 succeeded, 0 
+failed, 0 skipped (0.2s)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:18956:2026-05-23 07:28:08.858 -05:00 [INF]   [2/3] Importing 
+Vendors (249 records)...
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:19210:2026-05-23 07:28:27.974 -05:00 [INF]     → 249 succeeded, 
+0 failed, 0 skipped (19.1s)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:19211:2026-05-23 07:28:27.980 -05:00 [INF]   [3/3] Importing 
+Employees (32 records)...
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:19714:2026-05-23 07:28:30.580 -05:00 [INF]     → 22 succeeded, 
+10 failed, 0 skipped (2.6s)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:19715:2026-05-23 07:28:30.584 -05:00 [WRN]   Stage 2: 10/283 
+records failed but stage continues.
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:19716:2026-05-23 07:28:30.589 -05:00 [INF]   Stage 2 Result: 
+273/283 succeeded, 10 failed (21.9s)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:19719:2026-05-23 07:28:30.598 -05:00 [INF]   │  Stage 3/4: 
+Items                             │
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:19722:2026-05-23 07:28:30.607 -05:00 [INF]   Stage 3 Result: 
+0/0 succeeded, 0 failed (0.0s)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:19725:2026-05-23 07:28:30.617 -05:00 [INF]   │  Stage 4/4: 
+Transactions                      │
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:19728:2026-05-23 07:28:30.626 -05:00 [INF]   [4/13] Importing 
+SalesReceipts (30 records)...
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:21433:2026-05-23 07:28:32.536 -05:00 [INF]     → 0 succeeded, 
+30 failed, 0 skipped (1.9s)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:21434:2026-05-23 07:28:32.541 -05:00 [INF]   [6/13] Importing 
+JournalEntries (58 records)...
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:21494:2026-05-23 07:28:37.025 -05:00 [INF]     → 58 succeeded, 
+0 failed, 0 skipped (4.5s)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:21495:2026-05-23 07:28:37.031 -05:00 [INF]   [9/13] Importing 
+Deposits (225 records)...
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:21830:2026-05-23 07:28:54.960 -05:00 [INF]     → 222 succeeded, 
+3 failed, 0 skipped (17.9s)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:21831:2026-05-23 07:28:54.965 -05:00 [INF]   [10/13] Importing 
+Checks (1154 records)...
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:23009:2026-05-23 07:30:34.449 -05:00 [INF]     → 1154 
+succeeded, 0 failed, 0 skipped (99.5s)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:23010:2026-05-23 07:30:34.455 -05:00 [INF]   [13/13] Importing 
+Transfers (156 records)...
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:23170:2026-05-23 07:30:44.927 -05:00 [INF]     → 156 succeeded, 
+0 failed, 0 skipped (10.5s)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:23171:2026-05-23 07:30:44.932 -05:00 [WRN]   Stage 4: 33/1623 
+records failed but stage continues.
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:23172:2026-05-23 07:30:44.936 -05:00 [INF]   Stage 4 Result: 
+1590/1623 succeeded, 33 failed (134.3s)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:23178:2026-05-23 07:30:44.953 -05:00 [INF]   Total records: 
+2029/2078 succeeded
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:25326:2026-05-23 07:57:26.398 -05:00 [INF]   │  Stage 0: Verify 
+Account Types (FIX #3) │
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:25391:2026-05-23 07:57:26.748 -05:00 [INF]   │  Stage 1/3: 
+Foundation + Entities             │
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:25394:2026-05-23 07:57:26.749 -05:00 [INF]   [1/14] Importing 
+Accounts (142 records)...
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:25545:2026-05-23 07:57:36.383 -05:00 [INF]     → 142 succeeded, 
+0 failed, 0 skipped (9.6s)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:25546:2026-05-23 07:57:36.383 -05:00 [INF]   [2/14] Importing 
+Vendors (249 records)...
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:25800:2026-05-23 07:57:54.982 -05:00 [INF]     → 249 succeeded, 
+0 failed, 0 skipped (18.6s)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:25801:2026-05-23 07:57:54.982 -05:00 [INF]   [3/14] Importing 
+Customers (2 records)...
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:25804:2026-05-23 07:57:55.146 -05:00 [INF]     → 2 succeeded, 0 
+failed, 0 skipped (0.2s)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:25805:2026-05-23 07:57:55.146 -05:00 [INF]   [4/14] Importing 
+Employees (32 records)...
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:26105:2026-05-23 07:57:57.300 -05:00 [INF]     → 22 succeeded, 
+10 failed, 0 skipped (2.2s)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:26106:2026-05-23 07:57:57.300 -05:00 [INF]   [5/14] Importing 
+Classes (5 records)...
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:26122:2026-05-23 07:57:57.802 -05:00 [INF]     → 5 succeeded, 0 
+failed, 0 skipped (0.5s)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:26123:2026-05-23 07:57:57.803 -05:00 [INF]   [6/14] Importing 
+PaymentMethods (7 records)...
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:26145:2026-05-23 07:57:58.568 -05:00 [INF]     → 7 succeeded, 0 
+failed, 0 skipped (0.8s)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:26146:2026-05-23 07:57:58.568 -05:00 [INF]   [7/14] Importing 
+SalesTaxCodes (3 records)...
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:26154:2026-05-23 07:57:58.822 -05:00 [INF]     → 3 succeeded, 0 
+failed, 0 skipped (0.3s)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:26155:2026-05-23 07:57:58.822 -05:00 [INF]   [8/14] Importing 
+Terms (6 records)...
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:26174:2026-05-23 07:57:59.421 -05:00 [INF]     → 6 succeeded, 0 
+failed, 0 skipped (0.6s)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:26175:2026-05-23 07:57:59.422 -05:00 [INF]   [10/14] Importing 
+VendorTypes (3 records)...
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:26185:2026-05-23 07:57:59.723 -05:00 [INF]     → 3 succeeded, 0 
+failed, 0 skipped (0.3s)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:26186:2026-05-23 07:57:59.724 -05:00 [WRN]   Stage 1: 10/449 
+records failed but stage continues.
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:26187:2026-05-23 07:57:59.724 -05:00 [INF]   Stage 1 Result: 
+439/449 succeeded, 10 failed (33.0s)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:26190:2026-05-23 07:57:59.724 -05:00 [INF]   │  Stage 2/3: 
+Items & Tax Items                 │
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:26193:2026-05-23 07:57:59.724 -05:00 [INF]   [1/2] Importing 
+ItemSalesTax (6 records)...
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:26200:2026-05-23 07:58:00.195 -05:00 [INF]     → 6 succeeded, 0 
+failed, 0 skipped (0.5s)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:26201:2026-05-23 07:58:00.195 -05:00 [INF]   Stage 2 Result: 
+6/6 succeeded, 0 failed (0.5s)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:26204:2026-05-23 07:58:00.195 -05:00 [INF]   │  Stage 3/3: 
+Transactions                      │
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:26207:2026-05-23 07:58:00.195 -05:00 [INF]   [4/13] Importing 
+SalesReceipts (30 records)...
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:27912:2026-05-23 07:58:01.718 -05:00 [INF]     → 0 succeeded, 
+30 failed, 0 skipped (1.5s)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:27913:2026-05-23 07:58:01.719 -05:00 [INF]   [6/13] Importing 
+JournalEntries (58 records)...
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:27973:2026-05-23 07:58:05.923 -05:00 [INF]     → 58 succeeded, 
+0 failed, 0 skipped (4.2s)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:27974:2026-05-23 07:58:05.923 -05:00 [INF]   [9/13] Importing 
+Deposits (225 records)...
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:28309:2026-05-23 07:58:22.595 -05:00 [INF]     → 222 succeeded, 
+3 failed, 0 skipped (16.7s)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:28310:2026-05-23 07:58:22.595 -05:00 [INF]   [10/13] Importing 
+Checks (1154 records)...
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:29488:2026-05-23 07:59:56.913 -05:00 [INF]     → 1154 
+succeeded, 0 failed, 0 skipped (94.3s)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:29489:2026-05-23 07:59:56.913 -05:00 [INF]   [13/13] Importing 
+Transfers (156 records)...
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:29649:2026-05-23 08:00:07.071 -05:00 [INF]     → 156 succeeded, 
+0 failed, 0 skipped (10.2s)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:29650:2026-05-23 08:00:07.071 -05:00 [WRN]   Stage 3: 33/1623 
+records failed but stage continues.
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:29651:2026-05-23 08:00:07.071 -05:00 [INF]   Stage 3 Result: 
+1590/1623 succeeded, 33 failed (126.9s)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:29657:2026-05-23 08:00:07.072 -05:00 [INF]   Total records: 
+2035/2078 succeeded
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:31805:2026-05-23 08:46:21.051 -05:00 [INF]   │  Stage 0: Verify 
+Account Types (FIX #3) │
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:31870:2026-05-23 08:46:21.562 -05:00 [INF]   │  Stage 1/3: 
+Foundation + Entities             │
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:31873:2026-05-23 08:46:21.571 -05:00 [INF]   [1/14] Importing 
+Accounts (142 records)...
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:32024:2026-05-23 08:46:33.563 -05:00 [INF]     → 142 succeeded, 
+0 failed, 0 skipped (12.0s)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:32025:2026-05-23 08:46:33.568 -05:00 [INF]   [2/14] Importing 
+Vendors (249 records)...
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:32279:2026-05-23 08:46:52.987 -05:00 [INF]     → 249 succeeded, 
+0 failed, 0 skipped (19.4s)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:32280:2026-05-23 08:46:52.992 -05:00 [INF]   [3/14] Importing 
+Customers (2 records)...
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:32283:2026-05-23 08:46:53.170 -05:00 [INF]     → 2 succeeded, 0 
+failed, 0 skipped (0.2s)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:32284:2026-05-23 08:46:53.175 -05:00 [INF]   [4/14] Importing 
+Employees (32 records)...
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:32317:2026-05-23 08:46:55.670 -05:00 [INF]     → 32 succeeded, 
+0 failed, 0 skipped (2.5s)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:32318:2026-05-23 08:46:55.676 -05:00 [INF]   [5/14] Importing 
+Classes (5 records)...
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:32334:2026-05-23 08:46:56.273 -05:00 [INF]     → 5 succeeded, 0 
+failed, 0 skipped (0.6s)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:32335:2026-05-23 08:46:56.278 -05:00 [INF]   [6/14] Importing 
+PaymentMethods (7 records)...
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:32357:2026-05-23 08:46:57.096 -05:00 [INF]     → 7 succeeded, 0 
+failed, 0 skipped (0.8s)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:32358:2026-05-23 08:46:57.101 -05:00 [INF]   [7/14] Importing 
+SalesTaxCodes (3 records)...
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:32366:2026-05-23 08:46:57.395 -05:00 [INF]     → 3 succeeded, 0 
+failed, 0 skipped (0.3s)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:32367:2026-05-23 08:46:57.400 -05:00 [INF]   [8/14] Importing 
+Terms (6 records)...
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:32386:2026-05-23 08:46:58.099 -05:00 [INF]     → 6 succeeded, 0 
+failed, 0 skipped (0.7s)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:32387:2026-05-23 08:46:58.105 -05:00 [INF]   [10/14] Importing 
+VendorTypes (3 records)...
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:32397:2026-05-23 08:46:58.449 -05:00 [INF]     → 3 succeeded, 0 
+failed, 0 skipped (0.3s)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:32398:2026-05-23 08:46:58.455 -05:00 [INF]   Stage 1 Result: 
+449/449 succeeded, 0 failed (36.9s)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:32401:2026-05-23 08:46:58.464 -05:00 [INF]   │  Stage 2/3: 
+Items & Tax Items                 │
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:32404:2026-05-23 08:46:58.473 -05:00 [INF]   [1/2] Importing 
+ItemSalesTax (6 records)...
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:32411:2026-05-23 08:46:58.918 -05:00 [INF]     → 6 succeeded, 0 
+failed, 0 skipped (0.4s)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:32412:2026-05-23 08:46:58.924 -05:00 [INF]   Stage 2 Result: 
+6/6 succeeded, 0 failed (0.5s)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:32415:2026-05-23 08:46:58.933 -05:00 [INF]   │  Stage 3/3: 
+Transactions                      │
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:32418:2026-05-23 08:46:58.941 -05:00 [INF]   [4/13] Importing 
+SalesReceipts (30 records)...
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:32509:2026-05-23 08:47:01.009 -05:00 [INF]     → 0 succeeded, 
+30 failed, 0 skipped (2.1s)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:32510:2026-05-23 08:47:01.015 -05:00 [INF]   [6/13] Importing 
+JournalEntries (58 records)...
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:32570:2026-05-23 08:47:05.398 -05:00 [INF]     → 58 succeeded, 
+0 failed, 0 skipped (4.4s)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:32571:2026-05-23 08:47:05.403 -05:00 [INF]   [9/13] Importing 
+Deposits (225 records)...
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:32806:2026-05-23 08:47:23.708 -05:00 [INF]     → 225 succeeded, 
+0 failed, 0 skipped (18.3s)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:32807:2026-05-23 08:47:23.713 -05:00 [INF]   [10/13] Importing 
+Checks (1154 records)...
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:33985:2026-05-23 08:49:02.067 -05:00 [INF]     → 1154 
+succeeded, 0 failed, 0 skipped (98.3s)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:33986:2026-05-23 08:49:02.072 -05:00 [INF]   [13/13] Importing 
+Transfers (156 records)...
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:34146:2026-05-23 08:49:12.716 -05:00 [INF]     → 156 succeeded, 
+0 failed, 0 skipped (10.6s)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:34147:2026-05-23 08:49:12.721 -05:00 [WRN]   Stage 3: 30/1623 
+records failed but stage continues.
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:34148:2026-05-23 08:49:12.725 -05:00 [INF]   Stage 3 Result: 
+1593/1623 succeeded, 30 failed (133.8s)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:34154:2026-05-23 08:49:12.742 -05:00 [INF]   Total records: 
+2048/2078 succeeded
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:36307:2026-05-23 09:05:49.790 -05:00 [INF]   │  Stage 0: Verify 
+Account Types (FIX #3) │
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:36374:2026-05-23 09:05:50.413 -05:00 [INF]   │  Stage 1/3: 
+Foundation + Entities             │
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:36377:2026-05-23 09:05:50.422 -05:00 [INF]   [1/14] Importing 
+Accounts (142 records)...
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:36528:2026-05-23 09:06:00.779 -05:00 [INF]     → 142 succeeded, 
+0 failed, 0 skipped (10.4s)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:36529:2026-05-23 09:06:00.784 -05:00 [INF]   [2/14] Importing 
+Vendors (249 records)...
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:36783:2026-05-23 09:06:20.530 -05:00 [INF]     → 249 succeeded, 
+0 failed, 0 skipped (19.7s)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:36784:2026-05-23 09:06:20.534 -05:00 [INF]   [3/14] Importing 
+Customers (2 records)...
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:36787:2026-05-23 09:06:20.711 -05:00 [INF]     → 2 succeeded, 0 
+failed, 0 skipped (0.2s)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:36788:2026-05-23 09:06:20.716 -05:00 [INF]   [4/14] Importing 
+Employees (32 records)...
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:36821:2026-05-23 09:06:23.218 -05:00 [INF]     → 32 succeeded, 
+0 failed, 0 skipped (2.5s)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:36822:2026-05-23 09:06:23.224 -05:00 [INF]   [5/14] Importing 
+Classes (5 records)...
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:36838:2026-05-23 09:06:23.811 -05:00 [INF]     → 5 succeeded, 0 
+failed, 0 skipped (0.6s)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:36839:2026-05-23 09:06:23.817 -05:00 [INF]   [6/14] Importing 
+PaymentMethods (7 records)...
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:36861:2026-05-23 09:06:24.627 -05:00 [INF]     → 7 succeeded, 0 
+failed, 0 skipped (0.8s)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:36862:2026-05-23 09:06:24.632 -05:00 [INF]   [7/14] Importing 
+SalesTaxCodes (3 records)...
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:36872:2026-05-23 09:06:24.975 -05:00 [INF]     → 3 succeeded, 0 
+failed, 0 skipped (0.3s)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:36873:2026-05-23 09:06:24.980 -05:00 [INF]   [8/14] Importing 
+Terms (6 records)...
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:36892:2026-05-23 09:06:25.654 -05:00 [INF]     → 6 succeeded, 0 
+failed, 0 skipped (0.7s)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:36893:2026-05-23 09:06:25.659 -05:00 [INF]   [10/14] Importing 
+VendorTypes (3 records)...
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:36903:2026-05-23 09:06:26.010 -05:00 [INF]     → 3 succeeded, 0 
+failed, 0 skipped (0.3s)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:36904:2026-05-23 09:06:26.015 -05:00 [INF]   Stage 1 Result: 
+449/449 succeeded, 0 failed (35.6s)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:36907:2026-05-23 09:06:26.025 -05:00 [INF]   │  Stage 2/3: 
+Items & Tax Items                 │
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:36910:2026-05-23 09:06:26.034 -05:00 [INF]   [1/2] Importing 
+ItemSalesTax (6 records)...
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:36917:2026-05-23 09:06:26.477 -05:00 [INF]     → 6 succeeded, 0 
+failed, 0 skipped (0.4s)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:36918:2026-05-23 09:06:26.483 -05:00 [INF]   [2/2] Importing 
+Items (10 records)...
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:37014:2026-05-23 09:06:27.489 -05:00 [INF]     → 6 succeeded, 4 
+failed, 0 skipped (1.0s)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:37015:2026-05-23 09:06:27.494 -05:00 [WRN]   Stage 2: 4/16 
+records failed but stage continues.
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:37016:2026-05-23 09:06:27.499 -05:00 [INF]   Stage 2 Result: 
+12/16 succeeded, 4 failed (1.5s)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:37019:2026-05-23 09:06:27.508 -05:00 [INF]   │  Stage 3/3: 
+Transactions                      │
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:37022:2026-05-23 09:06:27.516 -05:00 [INF]   [4/13] Importing 
+SalesReceipts (30 records)...
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:37113:2026-05-23 09:06:29.534 -05:00 [INF]     → 0 succeeded, 
+30 failed, 0 skipped (2.0s)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:37114:2026-05-23 09:06:29.539 -05:00 [INF]   [6/13] Importing 
+JournalEntries (58 records)...
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:37174:2026-05-23 09:06:33.815 -05:00 [INF]     → 58 succeeded, 
+0 failed, 0 skipped (4.3s)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:37175:2026-05-23 09:06:33.820 -05:00 [INF]   [9/13] Importing 
+Deposits (225 records)...
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:37410:2026-05-23 09:06:51.505 -05:00 [INF]     → 225 succeeded, 
+0 failed, 0 skipped (17.7s)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:37411:2026-05-23 09:06:51.511 -05:00 [INF]   [10/13] Importing 
+Checks (1154 records)...
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:38589:2026-05-23 09:08:31.352 -05:00 [INF]     → 1154 
+succeeded, 0 failed, 0 skipped (99.8s)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:38590:2026-05-23 09:08:31.358 -05:00 [INF]   [13/13] Importing 
+Transfers (156 records)...
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:38750:2026-05-23 09:08:42.123 -05:00 [INF]     → 156 succeeded, 
+0 failed, 0 skipped (10.8s)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:38751:2026-05-23 09:08:42.128 -05:00 [WRN]   Stage 3: 30/1623 
+records failed but stage continues.
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:38752:2026-05-23 09:08:42.132 -05:00 [INF]   Stage 3 Result: 
+1593/1623 succeeded, 30 failed (134.6s)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:38758:2026-05-23 09:08:42.149 -05:00 [INF]   Total records: 
+2054/2088 succeeded
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:40914:2026-05-23 09:34:12.381 -05:00 [INF]   │  Stage 0: Verify 
+Account Types (FIX #3) │
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:40981:2026-05-23 09:34:12.956 -05:00 [INF]   │  Stage 1/3: 
+Foundation + Entities             │
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:40984:2026-05-23 09:34:12.965 -05:00 [INF]   [1/14] Importing 
+Accounts (142 records)...
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:41135:2026-05-23 09:34:22.986 -05:00 [INF]     → 142 succeeded, 
+0 failed, 0 skipped (10.0s)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:41136:2026-05-23 09:34:22.991 -05:00 [INF]   [2/14] Importing 
+Vendors (249 records)...
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:41390:2026-05-23 09:34:42.327 -05:00 [INF]     → 249 succeeded, 
+0 failed, 0 skipped (19.3s)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:41391:2026-05-23 09:34:42.333 -05:00 [INF]   [3/14] Importing 
+Customers (2 records)...
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:41394:2026-05-23 09:34:42.540 -05:00 [INF]     → 2 succeeded, 0 
+failed, 0 skipped (0.2s)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:41395:2026-05-23 09:34:42.546 -05:00 [INF]   [4/14] Importing 
+Employees (32 records)...
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:41428:2026-05-23 09:34:45.087 -05:00 [INF]     → 32 succeeded, 
+0 failed, 0 skipped (2.5s)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:41429:2026-05-23 09:34:45.092 -05:00 [INF]   [5/14] Importing 
+Classes (5 records)...
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:41445:2026-05-23 09:34:45.656 -05:00 [INF]     → 5 succeeded, 0 
+failed, 0 skipped (0.6s)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:41446:2026-05-23 09:34:45.661 -05:00 [INF]   [6/14] Importing 
+PaymentMethods (7 records)...
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:41468:2026-05-23 09:34:46.458 -05:00 [INF]     → 7 succeeded, 0 
+failed, 0 skipped (0.8s)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:41469:2026-05-23 09:34:46.463 -05:00 [INF]   [7/14] Importing 
+SalesTaxCodes (3 records)...
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:41479:2026-05-23 09:34:46.814 -05:00 [INF]     → 3 succeeded, 0 
+failed, 0 skipped (0.3s)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:41480:2026-05-23 09:34:46.819 -05:00 [INF]   [8/14] Importing 
+Terms (6 records)...
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:41499:2026-05-23 09:34:47.532 -05:00 [INF]     → 6 succeeded, 0 
+failed, 0 skipped (0.7s)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:41500:2026-05-23 09:34:47.539 -05:00 [INF]   [10/14] Importing 
+VendorTypes (3 records)...
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:41510:2026-05-23 09:34:47.907 -05:00 [INF]     → 3 succeeded, 0 
+failed, 0 skipped (0.4s)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:41511:2026-05-23 09:34:47.912 -05:00 [INF]   Stage 1 Result: 
+449/449 succeeded, 0 failed (34.9s)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:41514:2026-05-23 09:34:47.922 -05:00 [INF]   │  Stage 2/3: 
+Items & Tax Items                 │
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:41517:2026-05-23 09:34:47.931 -05:00 [INF]   [1/2] Importing 
+ItemSalesTax (6 records)...
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:41524:2026-05-23 09:34:48.369 -05:00 [INF]     → 6 succeeded, 0 
+failed, 0 skipped (0.4s)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:41525:2026-05-23 09:34:48.374 -05:00 [INF]   [2/2] Importing 
+Items (10 records)...
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:41550:2026-05-23 09:34:49.514 -05:00 [INF]     → 10 succeeded, 
+0 failed, 0 skipped (1.1s)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:41551:2026-05-23 09:34:49.518 -05:00 [INF]   Stage 2 Result: 
+16/16 succeeded, 0 failed (1.6s)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:41554:2026-05-23 09:34:49.528 -05:00 [INF]   │  Stage 3/3: 
+Transactions                      │
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:41557:2026-05-23 09:34:49.535 -05:00 [INF]   [4/13] Importing 
+SalesReceipts (30 records)...
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:41648:2026-05-23 09:34:51.578 -05:00 [INF]     → 0 succeeded, 
+30 failed, 0 skipped (2.0s)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:41649:2026-05-23 09:34:51.583 -05:00 [INF]   [6/13] Importing 
+JournalEntries (58 records)...
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:41709:2026-05-23 09:34:55.943 -05:00 [INF]     → 58 succeeded, 
+0 failed, 0 skipped (4.4s)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:41710:2026-05-23 09:34:55.948 -05:00 [INF]   [9/13] Importing 
+Deposits (225 records)...
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:41945:2026-05-23 09:35:13.936 -05:00 [INF]     → 225 succeeded, 
+0 failed, 0 skipped (18.0s)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:41946:2026-05-23 09:35:13.941 -05:00 [INF]   [10/13] Importing 
+Checks (1154 records)...
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:43124:2026-05-23 09:36:52.692 -05:00 [INF]     → 1154 
+succeeded, 0 failed, 0 skipped (98.7s)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:43125:2026-05-23 09:36:52.698 -05:00 [INF]   [13/13] Importing 
+Transfers (156 records)...
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:43285:2026-05-23 09:37:03.228 -05:00 [INF]     → 156 succeeded, 
+0 failed, 0 skipped (10.5s)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:43286:2026-05-23 09:37:03.234 -05:00 [WRN]   Stage 3: 30/1623 
+records failed but stage continues.
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:43287:2026-05-23 09:37:03.238 -05:00 [INF]   Stage 3 Result: 
+1593/1623 succeeded, 30 failed (133.7s)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:43293:2026-05-23 09:37:03.256 -05:00 [INF]   Total records: 
+2058/2088 succeeded
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:45451:2026-05-23 10:09:20.917 -05:00 [INF]   │  Stage 0: Verify 
+Account Types (FIX #3) │
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:45518:2026-05-23 10:09:21.458 -05:00 [INF]   │  Stage 1/3: 
+Foundation + Entities             │
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:45521:2026-05-23 10:09:21.466 -05:00 [INF]   [1/14] Importing 
+Accounts (142 records)...
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:45672:2026-05-23 10:09:31.839 -05:00 [INF]     → 142 succeeded, 
+0 failed, 0 skipped (10.4s)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:45673:2026-05-23 10:09:31.844 -05:00 [INF]   [2/14] Importing 
+Vendors (249 records)...
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:45927:2026-05-23 10:09:50.945 -05:00 [INF]     → 249 succeeded, 
+0 failed, 0 skipped (19.1s)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:45928:2026-05-23 10:09:50.950 -05:00 [INF]   [3/14] Importing 
+Customers (2 records)...
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:45931:2026-05-23 10:09:51.121 -05:00 [INF]     → 2 succeeded, 0 
+failed, 0 skipped (0.2s)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:45932:2026-05-23 10:09:51.126 -05:00 [INF]   [4/14] Importing 
+Employees (32 records)...
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:45965:2026-05-23 10:09:53.522 -05:00 [INF]     → 32 succeeded, 
+0 failed, 0 skipped (2.4s)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:45966:2026-05-23 10:09:53.526 -05:00 [INF]   [5/14] Importing 
+Classes (5 records)...
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:45982:2026-05-23 10:09:54.072 -05:00 [INF]     → 5 succeeded, 0 
+failed, 0 skipped (0.5s)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:45983:2026-05-23 10:09:54.077 -05:00 [INF]   [6/14] Importing 
+PaymentMethods (7 records)...
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:46005:2026-05-23 10:09:54.862 -05:00 [INF]     → 7 succeeded, 0 
+failed, 0 skipped (0.8s)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:46006:2026-05-23 10:09:54.867 -05:00 [INF]   [7/14] Importing 
+SalesTaxCodes (3 records)...
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:46016:2026-05-23 10:09:55.215 -05:00 [INF]     → 3 succeeded, 0 
+failed, 0 skipped (0.3s)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:46017:2026-05-23 10:09:55.220 -05:00 [INF]   [8/14] Importing 
+Terms (6 records)...
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:46036:2026-05-23 10:09:55.901 -05:00 [INF]     → 6 succeeded, 0 
+failed, 0 skipped (0.7s)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:46037:2026-05-23 10:09:55.907 -05:00 [INF]   [10/14] Importing 
+VendorTypes (3 records)...
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:46047:2026-05-23 10:09:56.254 -05:00 [INF]     → 3 succeeded, 0 
+failed, 0 skipped (0.3s)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:46048:2026-05-23 10:09:56.260 -05:00 [INF]   Stage 1 Result: 
+449/449 succeeded, 0 failed (34.8s)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:46051:2026-05-23 10:09:56.269 -05:00 [INF]   │  Stage 2/3: 
+Items & Tax Items                 │
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:46054:2026-05-23 10:09:56.277 -05:00 [INF]   [1/2] Importing 
+ItemSalesTax (6 records)...
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:46063:2026-05-23 10:09:56.756 -05:00 [INF]     → 6 succeeded, 0 
+failed, 0 skipped (0.5s)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:46064:2026-05-23 10:09:56.760 -05:00 [INF]   [2/2] Importing 
+Items (10 records)...
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:46089:2026-05-23 10:09:57.849 -05:00 [INF]     → 10 succeeded, 
+0 failed, 0 skipped (1.1s)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:46090:2026-05-23 10:09:57.855 -05:00 [INF]   Stage 2 Result: 
+16/16 succeeded, 0 failed (1.6s)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:46093:2026-05-23 10:09:57.865 -05:00 [INF]   │  Stage 3/3: 
+Transactions                      │
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:46096:2026-05-23 10:09:57.873 -05:00 [INF]   [4/13] Importing 
+SalesReceipts (30 records)...
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:46127:2026-05-23 10:10:00.659 -05:00 [INF]     → 30 succeeded, 
+0 failed, 0 skipped (2.8s)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:46128:2026-05-23 10:10:00.664 -05:00 [INF]   [6/13] Importing 
+JournalEntries (58 records)...
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:46188:2026-05-23 10:10:05.022 -05:00 [INF]     → 58 succeeded, 
+0 failed, 0 skipped (4.4s)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:46189:2026-05-23 10:10:05.027 -05:00 [INF]   [9/13] Importing 
+Deposits (225 records)...
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:46424:2026-05-23 10:10:22.451 -05:00 [INF]     → 225 succeeded, 
+0 failed, 0 skipped (17.4s)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:46425:2026-05-23 10:10:22.457 -05:00 [INF]   [10/13] Importing 
+Checks (1154 records)...
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:47603:2026-05-23 10:12:00.770 -05:00 [INF]     → 1154 
+succeeded, 0 failed, 0 skipped (98.3s)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:47604:2026-05-23 10:12:00.775 -05:00 [INF]   [13/13] Importing 
+Transfers (156 records)...
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:47764:2026-05-23 10:12:11.127 -05:00 [INF]     → 156 succeeded, 
+0 failed, 0 skipped (10.3s)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:47765:2026-05-23 10:12:11.132 -05:00 [INF]   Stage 3 Result: 
+1623/1623 succeeded, 0 failed (133.3s)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:47771:2026-05-23 10:12:11.150 -05:00 [INF]   Total records: 
+2088/2088 succeeded
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:50320:2026-05-23 11:06:53.511 -05:00 [INF]   │  Stage 0: Verify 
+Account Types (FIX #3) │
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:50399:2026-05-23 11:06:54.147 -05:00 [INF]   │  Stage 1/3: 
+Foundation + Entities             │
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:50402:2026-05-23 11:06:54.156 -05:00 [INF]   [1/14] Importing 
+Accounts (142 records)...
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:50553:2026-05-23 11:07:04.644 -05:00 [INF]     → 142 succeeded, 
+0 failed, 0 skipped (10.5s)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:50554:2026-05-23 11:07:04.649 -05:00 [INF]   [2/14] Importing 
+Vendors (249 records)...
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:50808:2026-05-23 11:07:23.854 -05:00 [INF]     → 249 succeeded, 
+0 failed, 0 skipped (19.2s)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:50809:2026-05-23 11:07:23.859 -05:00 [INF]   [3/14] Importing 
+Customers (2 records)...
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:50812:2026-05-23 11:07:24.034 -05:00 [INF]     → 2 succeeded, 0 
+failed, 0 skipped (0.2s)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:50813:2026-05-23 11:07:24.039 -05:00 [INF]   [4/14] Importing 
+Employees (32 records)...
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:50846:2026-05-23 11:07:26.495 -05:00 [INF]     → 32 succeeded, 
+0 failed, 0 skipped (2.5s)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:50847:2026-05-23 11:07:26.500 -05:00 [INF]   [5/14] Importing 
+Classes (5 records)...
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:50863:2026-05-23 11:07:27.093 -05:00 [INF]     → 5 succeeded, 0 
+failed, 0 skipped (0.6s)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:50864:2026-05-23 11:07:27.098 -05:00 [INF]   [6/14] Importing 
+PaymentMethods (7 records)...
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:50886:2026-05-23 11:07:27.942 -05:00 [INF]     → 7 succeeded, 0 
+failed, 0 skipped (0.8s)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:50887:2026-05-23 11:07:27.947 -05:00 [INF]   [7/14] Importing 
+SalesTaxCodes (3 records)...
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:50897:2026-05-23 11:07:28.292 -05:00 [INF]     → 3 succeeded, 0 
+failed, 0 skipped (0.3s)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:50898:2026-05-23 11:07:28.298 -05:00 [INF]   [8/14] Importing 
+Terms (6 records)...
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:50917:2026-05-23 11:07:29.043 -05:00 [INF]     → 6 succeeded, 0 
+failed, 0 skipped (0.7s)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:50918:2026-05-23 11:07:29.049 -05:00 [INF]   [10/14] Importing 
+VendorTypes (3 records)...
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:50928:2026-05-23 11:07:29.410 -05:00 [INF]     → 3 succeeded, 0 
+failed, 0 skipped (0.4s)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:50929:2026-05-23 11:07:29.416 -05:00 [INF]   Stage 1 Result: 
+449/449 succeeded, 0 failed (35.3s)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:50932:2026-05-23 11:07:29.425 -05:00 [INF]   │  Stage 2/3: 
+Items & Tax Items                 │
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:50935:2026-05-23 11:07:29.434 -05:00 [INF]   [1/2] Importing 
+ItemSalesTax (6 records)...
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:50944:2026-05-23 11:07:29.932 -05:00 [INF]     → 6 succeeded, 0 
+failed, 0 skipped (0.5s)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:50945:2026-05-23 11:07:29.937 -05:00 [INF]   [2/2] Importing 
+Items (10 records)...
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:50970:2026-05-23 11:07:31.032 -05:00 [INF]     → 10 succeeded, 
+0 failed, 0 skipped (1.1s)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:50971:2026-05-23 11:07:31.038 -05:00 [INF]   Stage 2 Result: 
+16/16 succeeded, 0 failed (1.6s)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:50974:2026-05-23 11:07:31.049 -05:00 [INF]   │  Stage 3/3: 
+Transactions                      │
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:50977:2026-05-23 11:07:31.057 -05:00 [INF]   [4/15] Importing 
+SalesReceipts (30 records)...
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:51008:2026-05-23 11:07:33.844 -05:00 [INF]     → 30 succeeded, 
+0 failed, 0 skipped (2.8s)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:51009:2026-05-23 11:07:33.849 -05:00 [INF]   [6/15] Importing 
+JournalEntries (58 records)...
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:51069:2026-05-23 11:07:38.138 -05:00 [INF]     → 58 succeeded, 
+0 failed, 0 skipped (4.3s)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:51070:2026-05-23 11:07:38.143 -05:00 [INF]   [9/15] Importing 
+Deposits (225 records)...
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:51305:2026-05-23 11:07:55.777 -05:00 [INF]     → 225 succeeded, 
+0 failed, 0 skipped (17.6s)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:51306:2026-05-23 11:07:55.782 -05:00 [INF]   [10/15] Importing 
+Checks (1154 records)...
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:52484:2026-05-23 11:09:35.483 -05:00 [INF]     → 1154 
+succeeded, 0 failed, 0 skipped (99.7s)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:52485:2026-05-23 11:09:35.488 -05:00 [INF]   [11/15] Importing 
+CreditCardCharges (369 records)...
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:52862:2026-05-23 11:10:02.796 -05:00 [INF]     → 369 succeeded, 
+0 failed, 0 skipped (27.3s)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:52863:2026-05-23 11:10:02.800 -05:00 [INF]   [12/15] Importing 
+CreditCardCredits (9 records)...
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:52875:2026-05-23 11:10:03.476 -05:00 [INF]     → 8 succeeded, 1 
+failed, 0 skipped (0.7s)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:52876:2026-05-23 11:10:03.481 -05:00 [INF]   [15/15] Importing 
+Transfers (156 records)...
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:53036:2026-05-23 11:10:14.089 -05:00 [INF]     → 156 succeeded, 
+0 failed, 0 skipped (10.6s)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:53037:2026-05-23 11:10:14.094 -05:00 [WRN]   Stage 3: 1/2001 
+records failed but stage continues.
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:53038:2026-05-23 11:10:14.098 -05:00 [INF]   Stage 3 Result: 
+2000/2001 succeeded, 1 failed (163.0s)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:53044:2026-05-23 11:10:14.116 -05:00 [INF]   Total records: 
+2465/2466 succeeded
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:55620:2026-05-23 11:40:31.449 -05:00 [INF]   │  Stage 0: Verify 
+Account Types (FIX #3) │
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:55699:2026-05-23 11:40:32.078 -05:00 [INF]   │  Stage 1/3: 
+Foundation + Entities             │
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:55702:2026-05-23 11:40:32.086 -05:00 [INF]   [1/14] Importing 
+Accounts (142 records)...
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:55853:2026-05-23 11:40:41.981 -05:00 [INF]     → 142 succeeded, 
+0 failed, 0 skipped (9.9s)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:55854:2026-05-23 11:40:41.987 -05:00 [INF]   [2/14] Importing 
+Vendors (249 records)...
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:56108:2026-05-23 11:41:01.070 -05:00 [INF]     → 249 succeeded, 
+0 failed, 0 skipped (19.1s)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:56109:2026-05-23 11:41:01.075 -05:00 [INF]   [3/14] Importing 
+Customers (2 records)...
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:56112:2026-05-23 11:41:01.239 -05:00 [INF]     → 2 succeeded, 0 
+failed, 0 skipped (0.2s)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:56113:2026-05-23 11:41:01.244 -05:00 [INF]   [4/14] Importing 
+Employees (32 records)...
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:56146:2026-05-23 11:41:03.586 -05:00 [INF]     → 32 succeeded, 
+0 failed, 0 skipped (2.3s)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:56147:2026-05-23 11:41:03.591 -05:00 [INF]   [5/14] Importing 
+Classes (5 records)...
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:56163:2026-05-23 11:41:04.133 -05:00 [INF]     → 5 succeeded, 0 
+failed, 0 skipped (0.5s)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:56164:2026-05-23 11:41:04.138 -05:00 [INF]   [6/14] Importing 
+PaymentMethods (7 records)...
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:56186:2026-05-23 11:41:04.940 -05:00 [INF]     → 7 succeeded, 0 
+failed, 0 skipped (0.8s)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:56187:2026-05-23 11:41:04.944 -05:00 [INF]   [7/14] Importing 
+SalesTaxCodes (3 records)...
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:56197:2026-05-23 11:41:05.284 -05:00 [INF]     → 3 succeeded, 0 
+failed, 0 skipped (0.3s)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:56198:2026-05-23 11:41:05.288 -05:00 [INF]   [8/14] Importing 
+Terms (6 records)...
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:56217:2026-05-23 11:41:05.940 -05:00 [INF]     → 6 succeeded, 0 
+failed, 0 skipped (0.6s)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:56218:2026-05-23 11:41:05.945 -05:00 [INF]   [10/14] Importing 
+VendorTypes (3 records)...
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:56228:2026-05-23 11:41:06.283 -05:00 [INF]     → 3 succeeded, 0 
+failed, 0 skipped (0.3s)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:56229:2026-05-23 11:41:06.288 -05:00 [INF]   Stage 1 Result: 
+449/449 succeeded, 0 failed (34.2s)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:56232:2026-05-23 11:41:06.299 -05:00 [INF]   │  Stage 2/3: 
+Items & Tax Items                 │
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:56235:2026-05-23 11:41:06.308 -05:00 [INF]   [1/2] Importing 
+ItemSalesTax (6 records)...
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:56244:2026-05-23 11:41:06.799 -05:00 [INF]     → 6 succeeded, 0 
+failed, 0 skipped (0.5s)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:56245:2026-05-23 11:41:06.804 -05:00 [INF]   [2/2] Importing 
+Items (10 records)...
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:56270:2026-05-23 11:41:07.845 -05:00 [INF]     → 10 succeeded, 
+0 failed, 0 skipped (1.0s)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:56271:2026-05-23 11:41:07.851 -05:00 [INF]   Stage 2 Result: 
+16/16 succeeded, 0 failed (1.5s)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:56274:2026-05-23 11:41:07.861 -05:00 [INF]   │  Stage 3/3: 
+Transactions                      │
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:56277:2026-05-23 11:41:07.870 -05:00 [INF]   [4/17] Importing 
+SalesReceipts (30 records)...
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:56308:2026-05-23 11:41:10.630 -05:00 [INF]     → 30 succeeded, 
+0 failed, 0 skipped (2.8s)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:56309:2026-05-23 11:41:10.636 -05:00 [INF]   [6/17] Importing 
+JournalEntries (58 records)...
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:56369:2026-05-23 11:41:14.939 -05:00 [INF]     → 58 succeeded, 
+0 failed, 0 skipped (4.3s)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:56370:2026-05-23 11:41:14.944 -05:00 [INF]   [9/17] Importing 
+Deposits (225 records)...
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:56605:2026-05-23 11:41:32.231 -05:00 [INF]     → 225 succeeded, 
+0 failed, 0 skipped (17.3s)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:56606:2026-05-23 11:41:32.236 -05:00 [INF]   [10/17] Importing 
+Checks (1154 records)...
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:57784:2026-05-23 11:43:09.772 -05:00 [INF]     → 1154 
+succeeded, 0 failed, 0 skipped (97.5s)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:57785:2026-05-23 11:43:09.778 -05:00 [INF]   [11/17] Importing 
+CreditCardCharges (369 records)...
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:58162:2026-05-23 11:43:36.558 -05:00 [INF]     → 369 succeeded, 
+0 failed, 0 skipped (26.8s)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:58163:2026-05-23 11:43:36.562 -05:00 [INF]   [12/17] Importing 
+CreditCardCredits (9 records)...
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:58175:2026-05-23 11:43:37.208 -05:00 [INF]     → 8 succeeded, 1 
+failed, 0 skipped (0.6s)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:58176:2026-05-23 11:43:37.214 -05:00 [INF]   [17/17] Importing 
+Transfers (156 records)...
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:58336:2026-05-23 11:43:47.633 -05:00 [INF]     → 156 succeeded, 
+0 failed, 0 skipped (10.4s)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:58337:2026-05-23 11:43:47.639 -05:00 [WRN]   Stage 3: 1/2001 
+records failed but stage continues.
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:58338:2026-05-23 11:43:47.642 -05:00 [INF]   Stage 3 Result: 
+2000/2001 succeeded, 1 failed (159.8s)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:58344:2026-05-23 11:43:47.660 -05:00 [INF]   Total records: 
+2465/2466 succeeded
+
+

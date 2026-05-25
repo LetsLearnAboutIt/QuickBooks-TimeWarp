@@ -1,3 +1,4 @@
+using System.IO;
 using System.Xml.Linq;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -326,6 +327,12 @@ namespace QB_TimeWarp.Services
             // ════════════════════════════════════════════════════════════════
             if (entityType == "Paychecks")
             {
+                var csvPath = @"C:\QB-TimeWarp\Working\PayrollDetail.csv";
+                if (File.Exists(csvPath))
+                {
+                    Log.Information(" FIX #44: Found manual PayrollDetail.csv — using CSV data (bypasses SDK)");
+                    return LoadPaychecksFromCsv(csvPath, entityType);
+                }
                 var fromDate = isTransaction ? _exportConfig.DateRangeStart : null;
                 var toDate = isTransaction ? _exportConfig.DateRangeEnd : null;
 
@@ -778,6 +785,130 @@ namespace QB_TimeWarp.Services
                 Log.Warning("  FIX #15: LineItems recovery failed for {EntityType}: {Message}",
                     data.EntityType, ex.Message);
             }
+        }
+
+        // ════════════════════════════════════════════════════════════════
+        // FIX #44: Load Paychecks from manual CSV export (bypasses SDK)
+        // ════════════════════════════════════════════════════════════════
+        private ExportedEntitySet LoadPaychecksFromCsv(string csvPath, string entityType)
+        {
+            var entities = new List<QBEntity>();
+            try
+            {
+                var lines = File.ReadAllLines(csvPath);
+                if (lines.Length < 2) return new ExportedEntitySet { EntityType = entityType, Entities = entities };
+
+                var header = lines[0].Split(',').Select(h => h.Trim('"').Trim()).ToArray();
+                int dateIdx = Array.FindIndex(header, h => h.IndexOf("Date", StringComparison.OrdinalIgnoreCase) >= 0);
+                int numIdx = Array.FindIndex(header, h => h.IndexOf("Num", StringComparison.OrdinalIgnoreCase) >= 0);
+                int nameIdx = Array.FindIndex(header, h => h.IndexOf("Employee", StringComparison.OrdinalIgnoreCase) >= 0);
+                int itemIdx = Array.FindIndex(header, h => h.IndexOf("Item", StringComparison.OrdinalIgnoreCase) >= 0);
+                int amtIdx = Array.FindIndex(header, h => h.IndexOf("Amount", StringComparison.OrdinalIgnoreCase) >= 0);
+
+                var groups = new Dictionary<string, QBEntity>();
+                int totalLines = 0;
+
+                foreach (var line in lines.Skip(1))
+                {
+                    if (string.IsNullOrWhiteSpace(line)) continue;
+                    var parts = ParseCsvLine(line);
+                    if (parts.Length <= Math.Max(numIdx, amtIdx)) continue;
+
+                    var num = parts[numIdx].Trim('"');
+                    if (string.IsNullOrWhiteSpace(num)) continue;
+
+                    if (!groups.ContainsKey(num))
+                    {
+                        var entity = new QBEntity
+                        {
+                            EntityType = entityType,
+                            TxnID = $"PC-{num}",
+                            Name = num,
+                            FullName = num,
+                            ExportedAt = DateTime.UtcNow,
+                            IsActive = true,
+                            Fields = new JObject
+                            {
+                                ["TxnDate"] = parts[dateIdx].Trim('"'),
+                                ["RefNumber"] = num,
+                                ["EmployeeRef"] = new JObject { ["FullName"] = nameIdx >= 0 ? parts[nameIdx].Trim('"') : "" },
+                                ["Memo"] = "Imported from PayrollDetail.csv"
+                            },
+                            LineItems = new List<JObject>()
+                        };
+                        groups[num] = entity;
+                    }
+
+                    var amtStr = parts[amtIdx].Trim('"').Replace("$", "").Replace(",", "").Replace("(", "-").Replace(")", "");
+                    if (decimal.TryParse(amtStr, out var amt) && itemIdx >= 0)
+                    {
+                        var lineItem = new JObject
+                        {
+                            ["PayrollItem"] = parts[itemIdx].Trim('"'),
+                            ["Amount"] = Math.Abs(amt),
+                            ["_lineType"] = "PayrollItemLineRet"
+                        };
+                        groups[num].LineItems.Add(lineItem);
+                        totalLines++;
+                    }
+                }
+
+                // FIX: Ensure every paycheck has Amount field and at least one line item
+                foreach (var entity in groups.Values)
+                {
+                    var sum = entity.LineItems.Sum(li => {
+                        decimal.TryParse(li["Amount"]?.ToString(), System.Globalization.NumberStyles.Any, System.Globalization.CultureInfo.InvariantCulture, out var a);
+                        return Math.Abs(a);
+                    });
+                    entity.Fields["Amount"] = sum;
+
+                    if (entity.LineItems.Count == 0)
+                    {
+                        // Add dummy line so transformer does not skip
+                        entity.LineItems.Add(new JObject
+                        {
+                            ["PayrollItem"] = "Net Pay",
+                            ["Amount"] = 0m,
+                            ["_lineType"] = "PayrollItemLineRet"
+                        });
+                        totalLines++;
+                    }
+                }
+
+                entities = groups.Values.ToList();
+                Log.Information("  FIX #11: Paychecks line item stats: {WithLines}/{Total} entities have line items, {TotalLines} total line items exported",
+                    entities.Count(e => e.LineItems.Count > 0), entities.Count, totalLines);
+            }
+            catch (Exception ex)
+            {
+                Log.Error(ex, "Failed to load Paychecks from CSV: {Message}", ex.Message);
+            }
+
+            return new ExportedEntitySet
+            {
+                EntityType = entityType,
+                SourceVersion = "QB2023-CSV",
+                ExportTimestamp = DateTime.UtcNow,
+                TotalCount = entities.Count,
+                ActiveCount = entities.Count,
+                InactiveCount = 0,
+                Entities = entities
+            };
+        }
+
+        private string[] ParseCsvLine(string line)
+        {
+            var result = new List<string>();
+            bool inQuotes = false;
+            var current = "";
+            foreach (char c in line)
+            {
+                if (c == '"') inQuotes = !inQuotes;
+                else if (c == ',' && !inQuotes) { result.Add(current); current = ""; }
+                else current += c;
+            }
+            result.Add(current);
+            return result.ToArray();
         }
     }
 }

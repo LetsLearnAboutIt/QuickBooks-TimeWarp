@@ -1,0 +1,172 @@
+﻿# Critical Fixes Needed â€” QB-TimeWarp
+
+> **Created:** May 19, 2026  
+> **Status:** All fixes identified, NONE yet implemented  
+> **Priority:** Implement in order listed â€” each fix has dependencies on prior fixes
+
+---
+
+## Fix Implementation Order
+
+```
+Fix 1 (Field Compatibility)     â† No dependencies, do first
+   â†“
+Fix 2 (IsActive)                â† No dependencies, can parallel with Fix 1
+   â†“
+Fix 3 (Hierarchical Names)      â† No dependencies, can parallel
+   â†“
+Fix 4 (Account Types + Ref Types) â† Depends on Fix 1 (clean fields needed)
+   â†“
+Fix 5 (Success Detection Bug)   â† Do last, needed for accurate testing
+   â†“
+  RE-TEST FULL IMPORT
+```
+
+---
+
+## Fix 1: Field Compatibility Filtering (SDK 16.0 â†’ 15.0)
+
+**Priority:** ðŸ”´ HIGHEST â€” Without this, records are rejected outright  
+**Dependencies:** None  
+**Files to modify:** `Services/DataTransformer.cs`, `Helpers/QBSDKVersionHelper.cs`
+
+### What to implement:
+1. In `DataTransformer.cs`, during the transform stage, iterate all entities
+2. For each entity, check every field against `QBSDKVersionHelper.GetUnsupportedFields(entityType)`
+3. Remove any field that QB 2021 SDK 15.0 doesn't support
+4. Log every removed field: `"Stripped SDK 16.0 field '{fieldName}' from {entityType} '{entityName}'"`
+5. Add dynamic learning: if import later fails with 0x80040400 for a specific field, add it to the exclusion list automatically
+
+### Expected outcome:
+- Zero `0x80040400` errors from unsupported fields
+- All entities contain only QB 2021-compatible fields
+
+---
+
+## Fix 2: IsActive = true on ALL Entities
+
+**Priority:** ðŸ”´ HIGH  
+**Dependencies:** None  
+**Files to modify:** `Services/DataTransformer.cs`, verify `Services/DataImporter.cs`
+
+### What to implement:
+1. In the transformation stage, for EVERY entity across ALL types, set `IsActive` to `true`
+2. This must apply in the staged import path (not just the legacy path)
+3. Verify the `ReactivateInactiveEntities` config flag is actually checked in `ImportDataInStages()`
+4. Log count: `"Reactivated {count} inactive entities across {typeCount} entity types"`
+
+### Expected outcome:
+- All entities import as active
+- No "inactive entity" rejection errors
+- Reference lookups to previously-inactive entities succeed
+
+---
+
+## Fix 3: Hierarchical Name Parsing (Leaf + ParentRef)
+
+**Priority:** ðŸ”´ HIGH  
+**Dependencies:** None (but import order within a type matters â€” parents before children)  
+**Files to modify:** `Services/DataTransformer.cs` or `Services/DataImporter.cs`
+
+### What to implement:
+1. For any entity where `Name` or `FullName` contains `:`, parse it:
+   - `"Automobile:Fuel"` â†’ `Name = "Fuel"`, `ParentRef.FullName = "Automobile"`
+   - `"Automobile:Fuel:Premium"` â†’ `Name = "Premium"`, `ParentRef.FullName = "Automobile:Fuel"`
+2. Within each stage, sort entities so parents import before children:
+   - Depth 0 (no `:`) first
+   - Depth 1 (one `:`) second
+   - Depth 2+ last
+3. After parent imports, resolve `ParentRef` to the parent's ListID
+4. Applies to: Accounts, Customers, Vendors, Items, Classes
+
+### Expected outcome:
+- Sub-accounts created under correct parent accounts
+- Sub-customers nested correctly
+- Sub-items properly linked
+- Full hierarchy preserved from QB 2023
+
+---
+
+## Fix 4: Stage 0 â€” Account Types + Missing Reference Types
+
+**Priority:** ðŸ”´ HIGH  
+**Dependencies:** Fix 1 (clean fields needed for reference type creation)  
+**Files to modify:** `Services/DataImporter.cs`, `Helpers/DependencyAnalyzer.cs`
+
+### What to implement:
+
+#### Part A: Account Type Verification
+1. Before importing accounts (Stage 1), extract all unique `AccountType` values from exported accounts
+2. Map each to a valid QB 2021 account type:
+   - QB 2023 types that exist in QB 2021: pass through
+   - QB 2023 types that don't exist: map to closest equivalent
+3. Log any mappings: `"Mapped account type '{source}' â†’ '{target}'"`
+
+#### Part B: Missing Reference Type Creation
+1. Query QB 2021 for ALL existing: SalesTaxCodes, Terms, PaymentMethods, CustomerTypes, VendorTypes, JobTypes, ShipMethods, PriceLevels, Classes
+2. Scan all exported entities for referenced types
+3. For each referenced type not in QB 2021, create it:
+   - **SalesTaxCodes**: Create with `IsTaxable=true`, `TaxRate=0` (safe default)
+   - **Terms**: Create as `StandardTerms` with days from name if parseable (e.g., "Net 30" â†’ 30 days)
+   - **PaymentMethods**: Create with name only
+   - **CustomerTypes/VendorTypes/JobTypes**: Create with name only
+   - **ShipMethods**: Create with name only
+   - **Classes**: Create with hierarchy (parent:child support)
+4. **VERIFY** each creation succeeded â€” don't just fire-and-forget
+5. Only proceed to Stage 1 after ALL prerequisites confirmed
+
+### Expected outcome:
+- Zero StatusCode 3140 errors during entity import
+- All reference lookups succeed
+- Stage 1-4 imports have all dependencies satisfied
+
+---
+
+## Fix 5: Success Detection Bug (359 Phantom Successes)
+
+**Priority:** ðŸŸ¡ MEDIUM â€” Doesn't block import, but needed for accurate testing  
+**Dependencies:** None (but implement last so testing of Fixes 1-4 is accurate)  
+**Files to modify:** `Services/DataImporter.cs`
+
+### What to implement:
+1. In the import response processing, verify success detection checks:
+   - QB response XML `statusCode="0"` (genuine success)
+   - NOT just "no exception thrown"
+   - NOT just "response received"
+2. Parse the response XML for each record and check:
+   ```xml
+   <CustomerAddRs statusCode="0" statusMessage="Status OK">  â† REAL success
+   <CustomerAddRs statusCode="3140" statusMessage="...">      â† FAILURE (was counted as success)
+   ```
+3. Add detailed logging: `"Import {entityType} '{name}': statusCode={code}, message={msg}"`
+4. Track separate counts: `submitted`, `succeeded` (statusCode=0), `failed` (statusCodeâ‰ 0)
+
+### Expected outcome:
+- Accurate success/failure counts
+- Clear per-record status in logs
+- Can trust the summary numbers for validation
+
+---
+
+## Post-Fix Verification Plan
+
+After implementing all 5 fixes:
+
+1. **Build and deploy** to VM
+2. **Close QB 2023, Open QB 2021** (transformation timing!)
+3. **Run Stage 0** â€” verify all reference types created
+4. **Run Stage 1** â€” verify accounts import (check hierarchy)
+5. **Run Stage 2** â€” verify entities import (check references resolve)
+6. **Run Stage 3** â€” verify items import
+7. **Run Stage 4** â€” verify transactions import
+8. **Check success counts** â€” should be accurate now (Fix 5)
+9. **Validate** â€” run the DataValidator for field-by-field comparison
+
+### Success Criteria
+- Stage 0: All reference types created, zero failures
+- Stage 1: All accounts import, hierarchy preserved
+- Stage 2: All customers/vendors import, references valid
+- Stage 3: All items import
+- Stage 4: Transaction import begins (may have some failures, but should be meaningful errors, not blanket rejections)
+- Success counts match actual QB 2021 records
+

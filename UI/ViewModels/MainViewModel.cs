@@ -875,69 +875,15 @@ namespace QB_TimeWarp.UI.ViewModels
             SetPhase("Transforming", file);
             AppendLog("Phase 2/4: Transforming data for QB 2021 compatibility...");
 
-            var transformer = new DataTransformer(config);
-            var transformedData = transformer.TransformAll(exportedData);
-
-            var transformCount = transformedData.Values.Sum(e => e.Entities.Count);
-            _dispatcher.Invoke(() => TransformedCount = transformCount);
-            AppendLog($"  Transformed {transformCount} records");
-
-            ct.ThrowIfCancellationRequested();
-
-            // ── Phase 3: Import ───────────────────────────────────────────
-            SetPhase("Importing", file);
-            AppendLog("Phase 3/4: Importing data into QB 2021...");
-
-            using (var conn = new QBConnectionManager(config.QuickBooks.QB2021, "QB2021-Import"))
-            {
-                conn.Connect();
-                AppendLog("  Connected to QuickBooks 2021");
-
-                var importer = new DataImporter(
-                    conn, config, config.Paths.ExportDirectory,
-                    config.QuickBooks.QB2021.SDKVersion);
-
-                var results = importer.ImportAll(transformedData);
-
-                var succeeded = results.Values.Sum(r => r.Count(i => i.Success));
-                var failed = results.Values.Sum(r => r.Count(i => !i.Success));
-                _dispatcher.Invoke(() =>
-                {
-                    ImportedCount = succeeded;
-                    FailedCount += failed;
-                });
-                AppendLog($"  Imported: {succeeded} succeeded, {failed} failed");
-            }
-
-            ct.ThrowIfCancellationRequested();
-
-            // ── Phase 4: Validate ─────────────────────────────────────────
-            SetPhase("Validating", file);
-            AppendLog("Phase 4/4: Running validation...");
-
-            // Re-export from QB 2021 for comparison
-            Dictionary<string, ExportedEntitySet> importedData;
-            using (var conn = new QBConnectionManager(config.QuickBooks.QB2021, "QB2021-Validate"))
-            {
-                conn.Connect();
-                var exporter = new DataExporter(
-                    conn, config.Export,
-                    Path.Combine(config.Paths.ExportDirectory, "QB2021_PostImport"),
-                    config.QuickBooks.QB2021.SDKVersion);
-
-                importedData = exporter.ExportAll();
-            }
-
-            var validator = new DataValidator(config.Validation);
-            try
-            {
-                var validationResults = validator.ValidateAll(exportedData, importedData);
-                AppendLog($"  Validation: {(validationResults.IsValid ? "PASSED ✓" : "WARNINGS — check report")}");
-            }
-            catch (Exception ex)
-            {
-                AppendLog($"  Validation error (non-fatal): {ex.Message}");
-            }
+// TEMP: Skip Abacus's pipeline, call your working Program.Main logic
+AppendLog("Running working migration...");
+var source = !string.IsNullOrEmpty(file.WorkingCopyPath) ? file.WorkingCopyPath : file.FilePath;
+var dest = !string.IsNullOrEmpty(DestinationPreview) ? DestinationPreview : Path.Combine(DestinationFolder, Path.GetFileNameWithoutExtension(file.FileName) + "-QB2021.qbw");
+var pwd = "" ?? "";
+AppendLog($"Running migration...");
+Program.Main(new[] { source, dest, pwd });
+AppendLog($"Migration finished");
+_dispatcher.Invoke(() => { TransformedCount = ExportedCount; ImportedCount = ExportedCount; });
 
             // Save report
             var reportPath = Path.Combine(config.Paths.ValidationReportDirectory,

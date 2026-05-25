@@ -1,0 +1,1258 @@
+﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+using QB_TimeWarp.Helpers;
+using QB_TimeWarp.Models;
+using Serilog;
+
+namespace QB_TimeWarp.Services
+{
+    /// <summary>
+    /// Transforms exported QB 2023 data to be compatible with QB 2021 using the FieldMappings.json config.
+    /// Applies field mappings, transformations, truncations, default values, entity reactivation,
+    /// class tracking preservation, accounting model matching, field format preservation,
+    /// and QB SDK 15.0 compatibility filtering (removes fields not supported in QB 2021).
+    /// </summary>
+    public class DataTransformer
+    {
+        private readonly FieldMappingsConfig _mappingsConfig;
+        private readonly GlobalMappingSettings _globalSettings;
+        private readonly FormatRulesConfig _formatRules;
+        private readonly TransformationRulesConfig _transformationRules;
+        private int _unmappedFieldCount;
+        private readonly HashSet<string> _loggedUnmappedFields = new();
+        private int _sdk16FieldsRemoved;
+        private int _fieldsLengthAdjusted;
+        private int _emptyNameFieldsFixed;
+        private int _payrollFieldsSimplified;
+        private int _ccBalanceSignsFixed;
+
+        // Transformation report tracking
+        private readonly TransformationReport _transformationReport = new();
+        private readonly Dictionary<string, int> _reactivatedCountByType = new();
+        private readonly HashSet<string> _discoveredClasses = new();
+        private readonly Dictionary<string, int> _classUsageByTxnType = new();
+        private readonly Dictionary<string, int> _classUsageByClassName = new();
+
+        /// <summary>
+        /// Entity types that support active/inactive status.
+        /// </summary>
+        private static readonly HashSet<string> ActiveStatusEntityTypes = new(StringComparer.OrdinalIgnoreCase)
+        {
+            "Customers", "Vendors", "Items", "Accounts", "Employees"
+        };
+
+        /// <summary>
+        /// Transaction entity types that support class tracking at the header level.
+        /// </summary>
+        private static readonly HashSet<string> ClassTrackingHeaderTypes = new(StringComparer.OrdinalIgnoreCase)
+        {
+            "Invoices", "Bills", "SalesReceipts", "PurchaseOrders", "JournalEntries",
+            "CreditMemos", "Estimates", "Checks", "VendorCredits"
+        };
+
+        public DataTransformer(string mappingsFilePath)
+            : this(mappingsFilePath, new TransformationRulesConfig())
+        {
+        }
+
+        public DataTransformer(string mappingsFilePath, TransformationRulesConfig transformationRules)
+        {
+            var json = File.ReadAllText(mappingsFilePath);
+            _mappingsConfig = JsonConvert.DeserializeObject<FieldMappingsConfig>(json)
+                ?? throw new InvalidOperationException($"Could not load field mappings from: {mappingsFilePath}");
+            _globalSettings = _mappingsConfig.GlobalSettings;
+            _formatRules = _mappingsConfig.FormatRules;
+            _transformationRules = transformationRules;
+
+            Log.Information("Loaded field mappings with {Count} entity type configurations.",
+                _mappingsConfig.EntityMappings.Count);
+            Log.Information("Transformation rules: ReactivateInactive={Reactivate}, PreserveClasses={Classes}, MatchAccounting={Accounting}",
+                _transformationRules.ReactivateInactiveEntities,
+                _transformationRules.PreserveClassTracking,
+                _transformationRules.MatchAccountingModel);
+            Log.Information("Format preservation: Dates={Dates}, Currency={Currency}, Phone={Phone}, PostalCode={Postal}, Encoding={Encoding}",
+                _formatRules.PreserveDateFormat,
+                _formatRules.PreserveCurrencyFormat,
+                _formatRules.PreservePhoneFormat,
+                _formatRules.PreservePostalCodeFormat,
+                _formatRules.PreserveEncoding);
+        }
+
+        public DataTransformer(FieldMappingsConfig config)
+            : this(config, new TransformationRulesConfig())
+        {
+        }
+
+        public DataTransformer(FieldMappingsConfig config, TransformationRulesConfig transformationRules)
+        {
+            _mappingsConfig = config;
+            _globalSettings = config.GlobalSettings;
+            _formatRules = config.FormatRules;
+            _transformationRules = transformationRules;
+        }
+
+        /// <summary>
+        /// Gets the transformation report generated during the last TransformAll call.
+        /// </summary>
+        public TransformationReport GetTransformationReport() => _transformationReport;
+
+        /// <summary>
+        /// Transforms all exported data according to the field mapping configuration.
+        /// Applies reactivation, class tracking, and accounting model rules.
+        /// </summary>
+        public Dictionary<string, ExportedEntitySet> TransformAll(Dictionary<string, ExportedEntitySet> exportedData)
+        {
+            Log.Information("â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•");
+            Log.Information("  STARTING DATA TRANSFORMATION");
+            Log.Information("â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•");
+
+            if (_transformationRules.ReactivateInactiveEntities)
+                Log.Information("  â–º Inactiveâ†’Active reactivation is ENABLED");
+            if (_transformationRules.PreserveClassTracking)
+                Log.Information("  â–º Class tracking preservation is ENABLED");
+            if (_transformationRules.MatchAccountingModel)
+                Log.Information("  â–º Accounting model matching is ENABLED");
+
+            var transformed = new Dictionary<string, ExportedEntitySet>();
+            _unmappedFieldCount = 0;
+            _reactivatedCountByType.Clear();
+            _discoveredClasses.Clear();
+            _classUsageByTxnType.Clear();
+            _classUsageByClassName.Clear();
+
+            // Extract company preferences if available (for accounting model)
+            if (_transformationRules.MatchAccountingModel)
+            {
+                ExtractAccountingModel(exportedData);
+            }
+
+            // Discover classes from source data
+            if (_transformationRules.PreserveClassTracking)
+            {
+                DiscoverClassesFromData(exportedData);
+            }
+
+            foreach (var (entityType, entitySet) in exportedData)
+            {
+                try
+                {
+                    Log.Information("Transforming: {EntityType} ({Count} records)...",
+                        entityType, entitySet.TotalCount);
+
+                    var transformedSet = TransformEntitySet(entityType, entitySet);
+                    transformed[entityType] = transformedSet;
+
+                    Log.Information("  âœ“ Transformed {Count} {EntityType} records",
+                        transformedSet.TotalCount, entityType);
+                }
+                catch (Exception ex)
+                {
+                    Log.Error(ex, "  âœ— Error transforming {EntityType}: {Message}", entityType, ex.Message);
+                    transformed[entityType] = entitySet; // Pass through unchanged on error
+                }
+            }
+
+            if (_unmappedFieldCount > 0)
+            {
+                Log.Warning("Total unmapped fields encountered: {Count}", _unmappedFieldCount);
+            }
+
+            // Build transformation report
+            BuildTransformationReport(exportedData);
+
+            // Log QB 2021 compatibility summary
+            LogQB2021CompatibilitySummary();
+
+            // Log reactivation summary
+            if (_transformationRules.ReactivateInactiveEntities && _reactivatedCountByType.Any())
+            {
+                LogReactivationSummary();
+            }
+
+            // Log class tracking summary
+            if (_transformationRules.PreserveClassTracking && _discoveredClasses.Any())
+            {
+                LogClassTrackingSummary();
+            }
+
+            // Log format preservation summary
+            LogFormatPreservationSummary();
+
+            Log.Information("â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•");
+            Log.Information("  TRANSFORMATION COMPLETE");
+            Log.Information("â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•");
+
+            return transformed;
+        }
+
+        /// <summary>
+        /// Transforms a single entity set.
+        /// </summary>
+        public ExportedEntitySet TransformEntitySet(string entityType, ExportedEntitySet source)
+        {
+            // Find the mapping config for this entity type
+            var mappingKey = GetMappingKey(entityType);
+            EntityMappingConfig? mapping = null;
+
+            if (mappingKey != null && _mappingsConfig.EntityMappings.ContainsKey(mappingKey))
+            {
+                mapping = _mappingsConfig.EntityMappings[mappingKey];
+            }
+
+            var transformedEntities = new List<QBEntity>();
+            int reactivatedCount = 0;
+
+            foreach (var entity in source.Entities)
+            {
+                try
+                {
+                    var transformed = TransformEntity(entity, mapping, entityType);
+
+                    // Apply inactiveâ†’active reactivation
+                    if (_transformationRules.ReactivateInactiveEntities
+                        && ActiveStatusEntityTypes.Contains(entityType)
+                        && !entity.IsActive)
+                    {
+                        transformed.IsActive = true;
+                        transformed.Fields["IsActive"] = JToken.FromObject("true");
+                        reactivatedCount++;
+
+                        Log.Debug("  Reactivated inactive {EntityType}: {Name}",
+                            entityType, entity.Name);
+
+                        _transformationReport.ReactivatedEntityDetails.Add(
+                            $"[{entityType}] {entity.FullName ?? entity.Name}");
+                    }
+                    else if (ActiveStatusEntityTypes.Contains(entityType))
+                    {
+                        // Ensure active entities stay active
+                        transformed.IsActive = entity.IsActive;
+                    }
+
+                    // Track class usage in transactions
+                    if (_transformationRules.PreserveClassTracking)
+                    {
+                        TrackClassUsage(entityType, transformed);
+                    }
+
+                    transformedEntities.Add(transformed);
+                }
+                catch (Exception ex)
+                {
+                    Log.Warning("Error transforming {EntityType} '{Name}': {Message}",
+                        entityType, entity.Name, ex.Message);
+                    transformedEntities.Add(entity); // Pass through on error
+                }
+            }
+
+            if (reactivatedCount > 0)
+            {
+                _reactivatedCountByType[entityType] = reactivatedCount;
+                Log.Information("  â–º Reactivated {Count} inactive {EntityType} records",
+                    reactivatedCount, entityType);
+            }
+
+            return new ExportedEntitySet
+            {
+                EntityType = entityType,
+                SourceVersion = "QB2023_Transformed",
+                ExportTimestamp = DateTime.UtcNow,
+                TotalCount = transformedEntities.Count,
+                ActiveCount = transformedEntities.Count(e => e.IsActive),
+                InactiveCount = transformedEntities.Count(e => !e.IsActive),
+                Entities = transformedEntities
+            };
+        }
+
+        /// <summary>
+        /// Transforms a single entity according to its field mappings.
+        /// Includes QB 2021 SDK 15.0 compatibility filtering.
+        /// </summary>
+        private QBEntity TransformEntity(QBEntity source, EntityMappingConfig? mapping, string entityType)
+        {
+            var transformed = new QBEntity
+            {
+                EntityType = source.EntityType,
+                ListID = source.ListID,
+                TxnID = source.TxnID,
+                Name = source.Name,
+                FullName = source.FullName,
+                IsActive = source.IsActive,
+                ExportedAt = source.ExportedAt
+            };
+
+            if (mapping == null)
+            {
+                // No mapping defined - pass fields through unchanged
+                transformed.Fields = source.Fields.DeepClone() as JObject ?? new JObject();
+                transformed.LineItems = source.LineItems.Select(li => li.DeepClone() as JObject ?? new JObject()).ToList();
+            }
+            else
+            {
+                // Apply field mappings
+                transformed.Fields = ApplyFieldMappings(source.Fields, mapping.FieldMappings, source.Name);
+
+                // Transform line items
+                if (mapping.LineItemMappings != null && source.LineItems.Any())
+                {
+                    transformed.LineItems = source.LineItems
+                        .Select(li => ApplyFieldMappings(li, mapping.LineItemMappings, $"{source.Name}:line"))
+                        .ToList();
+                }
+                else
+                {
+                    transformed.LineItems = source.LineItems
+                        .Select(li => li.DeepClone() as JObject ?? new JObject())
+                        .ToList();
+                }
+            }
+
+            // â”€â”€ QB 2021 SDK 15.0 Compatibility Fixes â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+            // Remove SDK 16.0-only fields that would cause 0x80040400 errors
+            RemoveSDK16OnlyFields(transformed.Fields, entityType);
+            foreach (var lineItem in transformed.LineItems)
+            {
+                RemoveSDK16OnlyFields(lineItem, $"{entityType}:line");
+            }
+
+            // Enforce QB 2021 field length limits
+            EnforceQB2021FieldLengths(transformed.Fields, entityType);
+            foreach (var lineItem in transformed.LineItems)
+            {
+                EnforceQB2021FieldLengths(lineItem, $"{entityType}:line");
+            }
+
+            // Fix empty Name fields (causes QB import to fail)
+            FixEmptyNameField(transformed, entityType);
+
+            // Simplify payroll fields for QB 2021 compatibility
+            SimplifyPayrollFields(transformed.Fields, entityType);
+
+            // Fix CC balance sign inversion (accountant flagged this)
+            FixCCBalanceSigns(transformed, entityType);
+
+            // Ensure account numbers are preserved (accountant flagged missing)
+            PreserveAccountNumbers(source, transformed, entityType);
+
+            // Ensure class assignments are preserved in transactions
+            if (_transformationRules.PreserveClassTracking && ClassTrackingHeaderTypes.Contains(entityType))
+            {
+                PreserveClassAssignment(source, transformed);
+            }
+
+            _transformationReport.TotalEntitiesTransformed++;
+
+            return transformed;
+        }
+
+        /// <summary>
+        /// Removes fields that only exist in SDK 16.0 (QB 2023) and are not supported in SDK 15.0 (QB 2021).
+        /// These fields cause 0x80040400 COM errors when sent to QB 2021.
+        /// </summary>
+        private void RemoveSDK16OnlyFields(JObject fields, string context)
+        {
+            var fieldsToRemove = new List<string>();
+
+            foreach (var prop in fields.Properties())
+            {
+                if (QBSDKVersionHelper.SDK16OnlyFields.Contains(prop.Name))
+                {
+                    fieldsToRemove.Add(prop.Name);
+                }
+                else if (prop.Value is JObject nested)
+                {
+                    // Check nested fields (e.g., "EmployeePayrollInfo.ClearEarnings")
+                    RemoveSDK16OnlyFields(nested, $"{context}.{prop.Name}");
+                }
+            }
+
+            foreach (var fieldName in fieldsToRemove)
+            {
+                fields.Remove(fieldName);
+                _sdk16FieldsRemoved++;
+                Log.Debug("  Removed SDK 16.0-only field '{Field}' from {Context} (not supported in QB 2021)",
+                    fieldName, context);
+            }
+        }
+
+        /// <summary>
+        /// Enforces QB 2021 (SDK 15.0) field length limits.
+        /// Fields that are longer than QB 2021 allows are truncated.
+        /// </summary>
+        private void EnforceQB2021FieldLengths(JObject fields, string context)
+        {
+            foreach (var prop in fields.Properties().ToList())
+            {
+                if (prop.Value is JObject nested)
+                {
+                    EnforceQB2021FieldLengths(nested, $"{context}.{prop.Name}");
+                    continue;
+                }
+
+                if (prop.Value.Type != JTokenType.String) continue;
+
+                var strValue = prop.Value.ToString();
+                var maxLen = QBSDKVersionHelper.GetQB2021MaxLength(prop.Name);
+
+                if (maxLen.HasValue && strValue.Length > maxLen.Value)
+                {
+                    var truncated = strValue.Substring(0, maxLen.Value);
+                    fields[prop.Name] = truncated;
+                    _fieldsLengthAdjusted++;
+                    Log.Debug("  Truncated field '{Field}' from {Original} to {Max} chars for QB 2021 in {Context}",
+                        prop.Name, strValue.Length, maxLen.Value, context);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Fixes empty Name fields by generating a placeholder name.
+        /// Empty names cause QB import to fail with validation errors.
+        /// </summary>
+        private void FixEmptyNameField(QBEntity entity, string entityType)
+        {
+            if (string.IsNullOrWhiteSpace(entity.Name) && string.IsNullOrWhiteSpace(entity.FullName))
+            {
+                // Generate a name from available fields
+                var generatedName = GenerateEntityName(entity, entityType);
+                entity.Name = generatedName;
+                entity.FullName = generatedName;
+                entity.Fields["Name"] = generatedName;
+                _emptyNameFieldsFixed++;
+                Log.Warning("  Fixed empty Name for {EntityType}: generated '{GeneratedName}'",
+                    entityType, generatedName);
+            }
+            else if (string.IsNullOrWhiteSpace(entity.Name) && !string.IsNullOrWhiteSpace(entity.FullName))
+            {
+                entity.Name = entity.FullName;
+                entity.Fields["Name"] = entity.FullName;
+                _emptyNameFieldsFixed++;
+                Log.Debug("  Copied FullName to empty Name for {EntityType}: '{Name}'",
+                    entityType, entity.FullName);
+            }
+        }
+
+        /// <summary>
+        /// Generates a fallback entity name from available fields.
+        /// </summary>
+        private static string GenerateEntityName(QBEntity entity, string entityType)
+        {
+            // Try common name-like fields
+            var candidates = new[] { "CompanyName", "FirstName", "Description", "RefNumber", "TxnNumber", "Memo" };
+            foreach (var field in candidates)
+            {
+                var value = entity.Fields[field]?.ToString();
+                if (!string.IsNullOrWhiteSpace(value))
+                {
+                    // Truncate to 41 chars (QB 2021 Name limit)
+                    return value.Length > 41 ? value.Substring(0, 41) : value;
+                }
+            }
+
+            // Try combining first + last name
+            var first = entity.Fields["FirstName"]?.ToString() ?? "";
+            var last = entity.Fields["LastName"]?.ToString() ?? "";
+            if (!string.IsNullOrWhiteSpace(first) || !string.IsNullOrWhiteSpace(last))
+            {
+                var combined = $"{first} {last}".Trim();
+                return combined.Length > 41 ? combined.Substring(0, 41) : combined;
+            }
+
+            // Last resort: use entity type + ID
+            var id = entity.ListID ?? entity.TxnID ?? Guid.NewGuid().ToString("N").Substring(0, 8);
+            return $"{entityType}_{id}".Substring(0, Math.Min(41, $"{entityType}_{id}".Length));
+        }
+
+        /// <summary>
+        /// Simplifies payroll-related fields for QB 2021 compatibility.
+        /// QB 2023 has a more complex payroll structure not supported by QB 2021's SDK.
+        /// </summary>
+        private void SimplifyPayrollFields(JObject fields, string context)
+        {
+            var fieldsToRemove = new List<string>();
+
+            foreach (var prop in fields.Properties())
+            {
+                if (QBSDKVersionHelper.IsPayrollFieldToSimplify(prop.Name))
+                {
+                    fieldsToRemove.Add(prop.Name);
+                }
+            }
+
+            foreach (var fieldName in fieldsToRemove)
+            {
+                fields.Remove(fieldName);
+                _payrollFieldsSimplified++;
+                Log.Debug("  Simplified payroll field '{Field}' from {Context} for QB 2021 compatibility",
+                    fieldName, context);
+            }
+        }
+
+        /// <summary>
+        /// Fixes credit card balance sign inversion issue flagged by accountant.
+        /// QB 2023 may report CC balances with opposite sign convention from QB 2021.
+        /// In QB 2021, CC (Credit Card type) account balances should be positive when you owe money.
+        /// </summary>
+        private void FixCCBalanceSigns(QBEntity entity, string entityType)
+        {
+            if (entityType != "Accounts") return;
+
+            var accountType = entity.Fields["AccountType"]?.ToString();
+            if (string.IsNullOrEmpty(accountType) ||
+                !accountType.Equals("CreditCard", StringComparison.OrdinalIgnoreCase))
+                return;
+
+            // Check for balance fields that may need sign inversion
+            var balanceFields = new[] { "Balance", "TotalBalance", "OpenBalance" };
+            foreach (var balField in balanceFields)
+            {
+                var balValue = entity.Fields[balField]?.ToString();
+                if (!string.IsNullOrEmpty(balValue) && decimal.TryParse(balValue,
+                    System.Globalization.NumberStyles.Any,
+                    System.Globalization.CultureInfo.InvariantCulture, out var balance))
+                {
+                    // QB 2021 expects positive balance = money owed on CC
+                    // QB 2023 sometimes reports with inverted sign
+                    // We negate negative CC balances to match QB 2021 convention
+                    if (balance < 0)
+                    {
+                        var corrected = Math.Abs(balance);
+                        entity.Fields[balField] = corrected.ToString("F2", System.Globalization.CultureInfo.InvariantCulture);
+                        _ccBalanceSignsFixed++;
+                        Log.Information("  Fixed CC balance sign for '{Name}': {Original} â†’ {Corrected}",
+                            entity.Name, balValue, corrected.ToString("F2"));
+                    }
+                }
+            }
+        }
+
+        /// <summary>
+        /// Ensures account numbers from QB 2023 are preserved in the transformed data.
+        /// Accountant flagged that account numbers were missing after migration.
+        /// </summary>
+        private void PreserveAccountNumbers(QBEntity source, QBEntity transformed, string entityType)
+        {
+            if (entityType != "Accounts") return;
+
+            var sourceAcctNum = source.Fields["AccountNumber"]?.ToString();
+            var transformedAcctNum = transformed.Fields["AccountNumber"]?.ToString();
+
+            if (!string.IsNullOrEmpty(sourceAcctNum) && string.IsNullOrEmpty(transformedAcctNum))
+            {
+                // Account number was lost during transformation â€” restore it
+                transformed.Fields["AccountNumber"] = sourceAcctNum;
+                Log.Debug("  Restored AccountNumber '{AcctNum}' for account '{Name}'",
+                    sourceAcctNum, source.Name);
+            }
+        }
+
+        /// <summary>
+        /// Ensures class assignments from source are carried into the transformed entity.
+        /// </summary>
+        private void PreserveClassAssignment(QBEntity source, QBEntity transformed)
+        {
+            // Preserve header-level class
+            var sourceClass = source.Fields["ClassRef"]?["FullName"]?.ToString();
+            if (!string.IsNullOrEmpty(sourceClass))
+            {
+                if (transformed.Fields["ClassRef"] == null)
+                {
+                    transformed.Fields["ClassRef"] = new JObject { ["FullName"] = sourceClass };
+                }
+                _discoveredClasses.Add(sourceClass);
+            }
+
+            // Preserve line-item level classes
+            for (int i = 0; i < source.LineItems.Count && i < transformed.LineItems.Count; i++)
+            {
+                var sourceLineClass = source.LineItems[i]["ClassRef"]?["FullName"]?.ToString();
+                if (!string.IsNullOrEmpty(sourceLineClass))
+                {
+                    if (transformed.LineItems[i]["ClassRef"] == null)
+                    {
+                        transformed.LineItems[i]["ClassRef"] = new JObject { ["FullName"] = sourceLineClass };
+                    }
+                    _discoveredClasses.Add(sourceLineClass);
+                }
+
+                // Handle JournalEntry-specific class refs
+                var debitClass = source.LineItems[i]["JournalDebitLine"]?["ClassRef"]?["FullName"]?.ToString()
+                    ?? source.LineItems[i]["JournalDebitLine.ClassRef.FullName"]?.ToString();
+                if (!string.IsNullOrEmpty(debitClass))
+                    _discoveredClasses.Add(debitClass);
+
+                var creditClass = source.LineItems[i]["JournalCreditLine"]?["ClassRef"]?["FullName"]?.ToString()
+                    ?? source.LineItems[i]["JournalCreditLine.ClassRef.FullName"]?.ToString();
+                if (!string.IsNullOrEmpty(creditClass))
+                    _discoveredClasses.Add(creditClass);
+            }
+        }
+
+        /// <summary>
+        /// Tracks class usage statistics for the transformation report.
+        /// </summary>
+        private void TrackClassUsage(string entityType, QBEntity entity)
+        {
+            void RecordClassUsage(string? className, string txnType)
+            {
+                if (string.IsNullOrEmpty(className)) return;
+
+                if (!_classUsageByTxnType.ContainsKey(txnType))
+                    _classUsageByTxnType[txnType] = 0;
+                _classUsageByTxnType[txnType]++;
+
+                if (!_classUsageByClassName.ContainsKey(className))
+                    _classUsageByClassName[className] = 0;
+                _classUsageByClassName[className]++;
+            }
+
+            // Check header-level class
+            var headerClass = entity.Fields["ClassRef"]?["FullName"]?.ToString();
+            RecordClassUsage(headerClass, entityType);
+
+            // Check line-item classes
+            foreach (var lineItem in entity.LineItems)
+            {
+                var lineClass = lineItem["ClassRef"]?["FullName"]?.ToString();
+                RecordClassUsage(lineClass, $"{entityType}:LineItems");
+            }
+        }
+
+        /// <summary>
+        /// Discovers all classes referenced in the exported data.
+        /// </summary>
+        private void DiscoverClassesFromData(Dictionary<string, ExportedEntitySet> exportedData)
+        {
+            Log.Information("  Discovering classes from source data...");
+
+            // Get classes from the Classes entity set if exported
+            if (exportedData.ContainsKey("Classes"))
+            {
+                foreach (var cls in exportedData["Classes"].Entities)
+                {
+                    var className = cls.FullName ?? cls.Name;
+                    if (!string.IsNullOrEmpty(className))
+                        _discoveredClasses.Add(className);
+                }
+                Log.Information("    Found {Count} classes in Classes export", exportedData["Classes"].TotalCount);
+            }
+
+            // Also scan transactions for class references
+            foreach (var (entityType, entitySet) in exportedData)
+            {
+                if (!ClassTrackingHeaderTypes.Contains(entityType)) continue;
+
+                foreach (var entity in entitySet.Entities)
+                {
+                    var headerClass = entity.Fields["ClassRef"]?["FullName"]?.ToString();
+                    if (!string.IsNullOrEmpty(headerClass))
+                        _discoveredClasses.Add(headerClass);
+
+                    foreach (var lineItem in entity.LineItems)
+                    {
+                        var lineClass = lineItem["ClassRef"]?["FullName"]?.ToString();
+                        if (!string.IsNullOrEmpty(lineClass))
+                            _discoveredClasses.Add(lineClass);
+                    }
+                }
+            }
+
+            Log.Information("    Total unique classes discovered: {Count}", _discoveredClasses.Count);
+        }
+
+        /// <summary>
+        /// Extracts accounting model preferences from exported data.
+        /// </summary>
+        private void ExtractAccountingModel(Dictionary<string, ExportedEntitySet> exportedData)
+        {
+            if (!exportedData.ContainsKey("Preferences")) return;
+
+            var prefsSet = exportedData["Preferences"];
+            if (!prefsSet.Entities.Any()) return;
+
+            var prefs = prefsSet.Entities.First();
+            var accountingMethod = prefs.Fields["AccountingPrefs"]?["ReportBasis"]?.ToString()
+                ?? prefs.Fields["ReportBasis"]?.ToString()
+                ?? prefs.Fields["AccountingMethod"]?.ToString()
+                ?? "";
+
+            if (!string.IsNullOrEmpty(accountingMethod))
+            {
+                _transformationReport.SourceAccountingMethod = accountingMethod;
+                Log.Information("  Source accounting method: {Method}", accountingMethod);
+            }
+
+            var classTracking = prefs.Fields["AccountingPrefs"]?["IsUsingClassTracking"]?.ToString()
+                ?? prefs.Fields["IsUsingClassTracking"]?.ToString();
+            if (!string.IsNullOrEmpty(classTracking))
+            {
+                Log.Information("  Source class tracking enabled: {Enabled}", classTracking);
+            }
+        }
+
+        /// <summary>
+        /// Gets all classes discovered during transformation (for import).
+        /// </summary>
+        public HashSet<string> GetDiscoveredClasses() => _discoveredClasses;
+
+        /// <summary>
+        /// Applies field mapping rules to a JObject, producing a new JObject with mapped fields.
+        /// </summary>
+        private JObject ApplyFieldMappings(JObject source, List<FieldMapping> mappings, string entityName)
+        {
+            var result = new JObject();
+            var mappedSourceFields = new HashSet<string>();
+
+            foreach (var mapping in mappings)
+            {
+                mappedSourceFields.Add(mapping.SourceField);
+
+                var sourceValue = GetNestedValue(source, mapping.SourceField);
+
+                switch (mapping.Action.ToLowerInvariant())
+                {
+                    case "skip":
+                        // Intentionally skip this field
+                        _transformationReport.TotalFieldsSkipped++;
+                        continue;
+
+                    case "map":
+                        if (mapping.TargetField == null) continue;
+                        if (sourceValue != null)
+                        {
+                            var processedValue = ProcessValue(sourceValue, mapping);
+                            SetNestedValue(result, mapping.TargetField, processedValue);
+                            _transformationReport.TotalFieldsMapped++;
+                        }
+                        break;
+
+                    case "transform":
+                        if (mapping.TargetField == null) continue;
+                        if (sourceValue != null)
+                        {
+                            var transformedValue = ApplyTransformation(
+                                sourceValue.ToString(),
+                                mapping.TransformFunction ?? "",
+                                mapping);
+                            SetNestedValue(result, mapping.TargetField, transformedValue);
+                            _transformationReport.TotalFieldsMapped++;
+                        }
+                        break;
+
+                    case "default":
+                        if (mapping.TargetField == null) continue;
+                        var val = sourceValue ?? JToken.FromObject(mapping.DefaultValue ?? "");
+                        SetNestedValue(result, mapping.TargetField, val);
+                        _transformationReport.TotalFieldsMapped++;
+                        break;
+                }
+            }
+
+            // Handle unmapped fields
+            if (_globalSettings.LogUnmappedFields)
+            {
+                foreach (var prop in source.Properties())
+                {
+                    if (!mappedSourceFields.Contains(prop.Name))
+                    {
+                        _unmappedFieldCount++;
+                        var fieldKey = $"{entityName}.{prop.Name}";
+                        if (_loggedUnmappedFields.Add(fieldKey))
+                        {
+                            Log.Debug("Unmapped field: {Entity} -> {Field}", entityName, prop.Name);
+                        }
+
+                        // If unmapped action is "passthrough", include the field as-is
+                        if (_globalSettings.UnmappedFieldAction == "passthrough")
+                        {
+                            result[prop.Name] = prop.Value.DeepClone();
+                        }
+                    }
+                }
+            }
+
+            return result;
+        }
+
+        /// <summary>
+        /// Gets a value from a JObject using dot-notation path (e.g., "BillAddress.City").
+        /// </summary>
+        private static JToken? GetNestedValue(JObject obj, string path)
+        {
+            var parts = path.Split('.');
+            JToken? current = obj;
+
+            foreach (var part in parts)
+            {
+                if (current is JObject jObj)
+                {
+                    current = jObj[part];
+                }
+                else
+                {
+                    return null;
+                }
+            }
+
+            return current;
+        }
+
+        /// <summary>
+        /// Sets a value in a JObject using dot-notation path, creating nested objects as needed.
+        /// </summary>
+        private static void SetNestedValue(JObject obj, string path, JToken value)
+        {
+            var parts = path.Split('.');
+
+            if (parts.Length == 1)
+            {
+                obj[path] = value;
+                return;
+            }
+
+            JObject current = obj;
+            for (int i = 0; i < parts.Length - 1; i++)
+            {
+                if (current[parts[i]] is not JObject nested)
+                {
+                    nested = new JObject();
+                    current[parts[i]] = nested;
+                }
+                current = nested;
+            }
+
+            current[parts.Last()] = value;
+        }
+
+        /// <summary>
+        /// Processes a field value according to mapping rules (truncation, type conversion, etc.).
+        /// Now includes format-aware processing for dates, currencies, phone numbers, and other field types.
+        /// </summary>
+        private JToken ProcessValue(JToken value, FieldMapping mapping)
+        {
+            var strValue = value.ToString();
+
+            // â”€â”€ Format-Aware Processing â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+            // Determine the format type: explicit from mapping, or auto-detected from field name
+            var formatType = mapping.FormatType
+                ?? DetectFormatType(mapping.SourceField, strValue);
+
+            if (formatType != null)
+            {
+                var formatResult = ApplyFormatPreservation(strValue, formatType, mapping);
+                if (formatResult != null)
+                {
+                    return JToken.FromObject(formatResult);
+                }
+            }
+
+            // â”€â”€ Standard Truncation (non-formatted fields) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+            if (mapping.MaxLength.HasValue && _globalSettings.TruncateLongStrings
+                && strValue.Length > mapping.MaxLength.Value)
+            {
+                // Use format-aware truncation if configured
+                if (_formatRules.TruncationBehavior == "PreserveFormat" && formatType != null)
+                {
+                    strValue = TransformFunctions.FormatAwareTruncate(
+                        strValue, mapping.MaxLength.Value, formatType);
+                    _transformationReport.FormatStats.FormatAwareTruncations++;
+                }
+                else
+                {
+                    Log.Debug("Truncating field {Field} from {Original} to {Max} chars",
+                        mapping.SourceField, strValue.Length, mapping.MaxLength.Value);
+                    strValue = strValue.Substring(0, mapping.MaxLength.Value);
+                }
+                _transformationReport.TotalFieldsTruncated++;
+                return JToken.FromObject(strValue);
+            }
+
+            return value.DeepClone();
+        }
+
+        /// <summary>
+        /// Auto-detects the format type of a field based on its name and value.
+        /// Returns: "date", "currency", "phone", "postalcode", "memo", or null.
+        /// </summary>
+        private string? DetectFormatType(string fieldName, string value)
+        {
+            if (string.IsNullOrEmpty(fieldName)) return null;
+
+            // Check date fields
+            if (_formatRules.PreserveDateFormat &&
+                TransformFunctions.IsDateField(fieldName, _formatRules.DateFieldPatterns))
+            {
+                return "date";
+            }
+
+            // Check currency fields
+            if (_formatRules.PreserveCurrencyFormat &&
+                TransformFunctions.IsCurrencyField(fieldName, _formatRules.CurrencyFieldPatterns))
+            {
+                return "currency";
+            }
+
+            // Check phone fields by name
+            var leafField = fieldName.Contains('.') ? fieldName.Split('.').Last() : fieldName;
+            if (_formatRules.PreservePhoneFormat &&
+                (leafField.Equals("Phone", StringComparison.OrdinalIgnoreCase) ||
+                 leafField.Equals("AltPhone", StringComparison.OrdinalIgnoreCase) ||
+                 leafField.Equals("Fax", StringComparison.OrdinalIgnoreCase) ||
+                 leafField.Equals("Mobile", StringComparison.OrdinalIgnoreCase)))
+            {
+                return "phone";
+            }
+
+            // Check postal code fields
+            if (_formatRules.PreservePostalCodeFormat &&
+                leafField.Equals("PostalCode", StringComparison.OrdinalIgnoreCase))
+            {
+                return "postalcode";
+            }
+
+            // Check memo/notes fields
+            if (_formatRules.PreserveMemoFormatting &&
+                (leafField.Equals("Memo", StringComparison.OrdinalIgnoreCase) ||
+                 leafField.Equals("Notes", StringComparison.OrdinalIgnoreCase)))
+            {
+                return "memo";
+            }
+
+            return null;
+        }
+
+        /// <summary>
+        /// Applies format-specific preservation logic to a field value.
+        /// Returns the preserved value string, or null if no format processing was applied.
+        /// </summary>
+        private string? ApplyFormatPreservation(string value, string formatType, FieldMapping mapping)
+        {
+            FormatPreservationResult? result = null;
+
+            switch (formatType.ToLowerInvariant())
+            {
+                case "date":
+                    result = TransformFunctions.PreserveDate(
+                        value,
+                        _formatRules.DateFormatStandard,
+                        _formatRules.StripTimezoneFromDates);
+
+                    _transformationReport.FormatStats.DateFieldsProcessed++;
+                    if (result.WasPreserved)
+                    {
+                        _transformationReport.FormatStats.DateFormatsPreserved++;
+                        if (result.FormatAction == "StripTimezone")
+                            _transformationReport.FormatStats.DateTimezonesStripped++;
+                    }
+                    else
+                    {
+                        _transformationReport.FormatStats.DateFormatIssues++;
+                    }
+
+                    // Track date format breakdown
+                    if (result.DetectedFormat != null)
+                    {
+                        var fmt = result.DetectedFormat;
+                        if (!_transformationReport.FormatStats.DateFormatBreakdown.ContainsKey(fmt))
+                            _transformationReport.FormatStats.DateFormatBreakdown[fmt] = 0;
+                        _transformationReport.FormatStats.DateFormatBreakdown[fmt]++;
+                    }
+
+                    if (!string.IsNullOrEmpty(result.Issue))
+                    {
+                        _transformationReport.FormatStats.FormatIssues.Add(
+                            $"[{mapping.SourceField}] {result.Issue}: '{value}'");
+                    }
+
+                    Log.Debug("Date format preserved: {Field} '{Original}' -> '{Preserved}' ({Action})",
+                        mapping.SourceField, value, result.PreservedValue, result.FormatAction);
+                    break;
+
+                case "currency":
+                    result = TransformFunctions.PreserveCurrencyFormat(
+                        value, _formatRules.CurrencyDecimalPlaces);
+
+                    _transformationReport.FormatStats.CurrencyFieldsProcessed++;
+                    if (result.WasPreserved)
+                        _transformationReport.FormatStats.CurrencyFormatsPreserved++;
+                    break;
+
+                case "phone":
+                    var phoneMax = mapping.MaxLength ?? 21;
+                    result = TransformFunctions.PreservePhoneFormat(value, phoneMax);
+
+                    _transformationReport.FormatStats.PhoneFieldsProcessed++;
+                    if (result.WasPreserved)
+                        _transformationReport.FormatStats.PhoneFormatsPreserved++;
+                    break;
+
+                case "postalcode":
+                    var postalMax = mapping.MaxLength ?? 13;
+                    result = TransformFunctions.PreservePostalCodeFormat(value, postalMax);
+
+                    _transformationReport.FormatStats.PostalCodeFieldsProcessed++;
+                    if (result.WasPreserved)
+                        _transformationReport.FormatStats.PostalCodeFormatsPreserved++;
+                    break;
+
+                case "memo":
+                    var memoMax = mapping.MaxLength ?? 4095;
+                    result = TransformFunctions.PreserveMemoFormat(
+                        value, memoMax, _formatRules.PreserveEncoding);
+
+                    _transformationReport.FormatStats.MemoFieldsProcessed++;
+                    if (_formatRules.PreserveEncoding)
+                        _transformationReport.FormatStats.EncodingPreserved++;
+                    break;
+            }
+
+            if (result != null && result.WasPreserved)
+            {
+                if (!string.IsNullOrEmpty(result.Issue))
+                {
+                    _transformationReport.FormatStats.FormatIssues.Add(
+                        $"[{mapping.SourceField}] {result.Issue}");
+                }
+                return result.PreservedValue;
+            }
+
+            return null;
+        }
+
+        /// <summary>
+        /// Applies a named transformation function to a value.
+        /// </summary>
+        private JToken ApplyTransformation(string value, string functionName, FieldMapping mapping)
+        {
+            if (_mappingsConfig.TransformFunctions.TryGetValue(functionName, out var transformConfig))
+            {
+                if (transformConfig.Mappings != null)
+                {
+                    // Value mapping transformation
+                    if (transformConfig.Mappings.TryGetValue(value, out var mappedValue))
+                    {
+                        return JToken.FromObject(mappedValue);
+                    }
+
+                    // Use default value if no mapping found
+                    if (transformConfig.DefaultValue != null)
+                    {
+                        Log.Debug("No mapping for value '{Value}' in {Function}, using default: {Default}",
+                            value, functionName, transformConfig.DefaultValue);
+                        return JToken.FromObject(transformConfig.DefaultValue);
+                    }
+                }
+            }
+
+            // Apply max length truncation as fallback
+            if (mapping.MaxLength.HasValue && value.Length > mapping.MaxLength.Value)
+            {
+                return JToken.FromObject(value.Substring(0, mapping.MaxLength.Value));
+            }
+
+            return JToken.FromObject(value);
+        }
+
+        /// <summary>
+        /// Builds the detailed transformation report.
+        /// </summary>
+        private void BuildTransformationReport(Dictionary<string, ExportedEntitySet> exportedData)
+        {
+            _transformationReport.GeneratedAt = DateTime.UtcNow;
+            _transformationReport.ReactivatedEntitiesByType = new Dictionary<string, int>(_reactivatedCountByType);
+
+            // Class tracking summary
+            if (_transformationRules.PreserveClassTracking)
+            {
+                _transformationReport.ClassTracking = new ClassTrackingSummary
+                {
+                    TotalClassesInSource = _discoveredClasses.Count,
+                    SourceClasses = _discoveredClasses.OrderBy(c => c).ToList(),
+                    ClassUsageByTransactionType = new Dictionary<string, int>(_classUsageByTxnType),
+                    ClassUsageByClassName = new Dictionary<string, int>(_classUsageByClassName)
+                };
+            }
+
+            // Build summary
+            var parts = new List<string>();
+            parts.Add($"Transformed {_transformationReport.TotalEntitiesTransformed} entities");
+            parts.Add($"Mapped {_transformationReport.TotalFieldsMapped} fields");
+
+            if (_transformationReport.TotalReactivatedEntities > 0)
+                parts.Add($"Reactivated {_transformationReport.TotalReactivatedEntities} inactive entities");
+
+            if (_discoveredClasses.Count > 0)
+                parts.Add($"Preserved {_discoveredClasses.Count} classes");
+
+            if (!string.IsNullOrEmpty(_transformationReport.SourceAccountingMethod))
+                parts.Add($"Accounting method: {_transformationReport.SourceAccountingMethod}");
+
+            // Format preservation summary
+            var fs = _transformationReport.FormatStats;
+            if (fs.DateFieldsProcessed > 0)
+                parts.Add($"Dates preserved: {fs.DateFormatsPreserved}/{fs.DateFieldsProcessed}");
+            if (fs.CurrencyFieldsProcessed > 0)
+                parts.Add($"Currency preserved: {fs.CurrencyFormatsPreserved}/{fs.CurrencyFieldsProcessed}");
+            if (fs.FormatIssues.Count > 0)
+                parts.Add($"Format issues: {fs.FormatIssues.Count}");
+
+            _transformationReport.Summary = string.Join(" | ", parts);
+        }
+
+        /// <summary>
+        /// Logs a summary of format preservation statistics.
+        /// </summary>
+        private void LogFormatPreservationSummary()
+        {
+            var fs = _transformationReport.FormatStats;
+            var totalFormatted = fs.DateFieldsProcessed + fs.CurrencyFieldsProcessed +
+                fs.PhoneFieldsProcessed + fs.PostalCodeFieldsProcessed + fs.MemoFieldsProcessed;
+
+            if (totalFormatted == 0) return;
+
+            Log.Information("â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€");
+            Log.Information("  FORMAT PRESERVATION SUMMARY");
+            Log.Information("â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€");
+
+            if (fs.DateFieldsProcessed > 0)
+            {
+                Log.Information("    Date fields: {Processed} processed, {Preserved} preserved, {Issues} issues",
+                    fs.DateFieldsProcessed, fs.DateFormatsPreserved, fs.DateFormatIssues);
+                if (fs.DateTimezonesStripped > 0)
+                    Log.Information("      Timezone stripped: {Count} datetime fields", fs.DateTimezonesStripped);
+                foreach (var (fmt, count) in fs.DateFormatBreakdown.OrderByDescending(kv => kv.Value))
+                    Log.Information("      Format '{Format}': {Count} fields", fmt, count);
+            }
+
+            if (fs.CurrencyFieldsProcessed > 0)
+                Log.Information("    Currency fields: {Processed} processed, {Preserved} preserved",
+                    fs.CurrencyFieldsProcessed, fs.CurrencyFormatsPreserved);
+
+            if (fs.PhoneFieldsProcessed > 0)
+                Log.Information("    Phone fields: {Processed} processed, {Preserved} preserved",
+                    fs.PhoneFieldsProcessed, fs.PhoneFormatsPreserved);
+
+            if (fs.PostalCodeFieldsProcessed > 0)
+                Log.Information("    Postal code fields: {Processed} processed, {Preserved} preserved",
+                    fs.PostalCodeFieldsProcessed, fs.PostalCodeFormatsPreserved);
+
+            if (fs.MemoFieldsProcessed > 0)
+                Log.Information("    Memo/Notes fields: {Processed} processed", fs.MemoFieldsProcessed);
+
+            if (fs.FormatAwareTruncations > 0)
+                Log.Information("    Format-aware truncations: {Count}", fs.FormatAwareTruncations);
+
+            if (fs.EncodingPreserved > 0)
+                Log.Information("    Encoding preserved: {Count} fields", fs.EncodingPreserved);
+
+            if (fs.FormatIssues.Count > 0)
+            {
+                Log.Warning("    Format issues ({Count}):", fs.FormatIssues.Count);
+                foreach (var issue in fs.FormatIssues.Take(10))
+                    Log.Warning("      {Issue}", issue);
+                if (fs.FormatIssues.Count > 10)
+                    Log.Warning("      ... and {More} more issues", fs.FormatIssues.Count - 10);
+            }
+        }
+
+        /// <summary>
+        /// Logs a summary of QB 2021 SDK 15.0 compatibility adjustments made during transformation.
+        /// </summary>
+        private void LogQB2021CompatibilitySummary()
+        {
+            var totalAdjustments = _sdk16FieldsRemoved + _fieldsLengthAdjusted +
+                _emptyNameFieldsFixed + _payrollFieldsSimplified + _ccBalanceSignsFixed;
+
+            if (totalAdjustments == 0) return;
+
+            Log.Information("â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€");
+            Log.Information("  QB 2021 (SDK 15.0) COMPATIBILITY SUMMARY");
+            Log.Information("â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€");
+
+            if (_sdk16FieldsRemoved > 0)
+                Log.Information("    SDK 16.0-only fields removed:     {Count} (would cause 0x80040400)", _sdk16FieldsRemoved);
+            if (_fieldsLengthAdjusted > 0)
+                Log.Information("    Fields truncated for 2021 limits:  {Count}", _fieldsLengthAdjusted);
+            if (_emptyNameFieldsFixed > 0)
+                Log.Information("    Empty Name fields fixed:           {Count}", _emptyNameFieldsFixed);
+            if (_payrollFieldsSimplified > 0)
+                Log.Information("    Payroll fields simplified:         {Count}", _payrollFieldsSimplified);
+            if (_ccBalanceSignsFixed > 0)
+                Log.Information("    CC balance signs corrected:        {Count}", _ccBalanceSignsFixed);
+
+            Log.Information("    â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€");
+            Log.Information("    TOTAL compatibility adjustments: {Total}", totalAdjustments);
+        }
+
+        /// <summary>
+        /// Logs a detailed summary of reactivated entities.
+        /// </summary>
+        private void LogReactivationSummary()
+        {
+            Log.Information("â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€");
+            Log.Information("  REACTIVATED ENTITIES SUMMARY");
+            Log.Information("â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€");
+
+            int total = 0;
+            foreach (var (entityType, count) in _reactivatedCountByType.OrderBy(kv => kv.Key))
+            {
+                Log.Information("    {EntityType}: {Count} entities reactivated", entityType, count);
+                total += count;
+            }
+
+            Log.Information("    â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€");
+            Log.Information("    TOTAL: {Total} entities reactivated (inactive â†’ active)", total);
+        }
+
+        /// <summary>
+        /// Logs a summary of class tracking information.
+        /// </summary>
+        private void LogClassTrackingSummary()
+        {
+            Log.Information("â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€");
+            Log.Information("  CLASS TRACKING SUMMARY");
+            Log.Information("â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€");
+            Log.Information("    Total unique classes: {Count}", _discoveredClasses.Count);
+
+            foreach (var cls in _discoveredClasses.OrderBy(c => c))
+            {
+                var usage = _classUsageByClassName.TryGetValue(cls, out var count) ? count : 0;
+                Log.Information("    Class '{Class}': used in {Count} transactions", cls, usage);
+            }
+
+            if (_classUsageByTxnType.Any())
+            {
+                Log.Information("    Class usage by transaction type:");
+                foreach (var (txnType, count) in _classUsageByTxnType.OrderBy(kv => kv.Key))
+                {
+                    Log.Information("      {TxnType}: {Count} assignments", txnType, count);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Maps our entity type names (Customers, Invoices, etc.) to the mapping config keys (Customer, Invoice, etc.).
+        /// </summary>
+        private string? GetMappingKey(string entityType)
+        {
+            var keyMap = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+            {
+                ["Accounts"] = "Account",
+                ["Customers"] = "Customer",
+                ["Vendors"] = "Vendor",
+                ["Employees"] = "Employee",
+                ["Items"] = "Item",
+                ["Invoices"] = "Invoice",
+                ["Bills"] = "Bill",
+                ["Payments"] = "Payment",
+                ["JournalEntries"] = "JournalEntry",
+                ["SalesReceipts"] = "SalesReceipt",
+                ["PurchaseOrders"] = "PurchaseOrder",
+                ["CreditMemos"] = "CreditMemo",
+                ["Estimates"] = "Estimate",
+            };
+
+            return keyMap.TryGetValue(entityType, out var key) ? key : null;
+        }
+    }
+}

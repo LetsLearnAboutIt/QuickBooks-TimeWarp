@@ -46,7 +46,7 @@
                         BorderBrush="#2A3448" BorderThickness="1" Margin="0,0,0,16">
                     <StackPanel>
                         <TextBlock Text="POWERED BY" FontSize="10" FontWeight="SemiBold"
-                                   Foreground="#6B7A90" LetterSpacing="1" Margin="0,0,0,12"
+                                   Foreground="#6B7A90" Margin="0,0,0,12"
                                    HorizontalAlignment="Center" />
 
                         <!-- OSA -->

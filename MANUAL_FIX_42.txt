@@ -1,0 +1,41 @@
+FIX #42 - Manual Application Instructions
+==========================================
+
+The Problem:
+JournalEntries are failing with error: "The field 'Memo' is not supported by this implementation."
+
+The Solution:
+Add "Memo" to the TransactionHeaderExcludedFields for JournalEntries in DataImporter.cs
+
+Steps:
+1. Open C:\QB-TimeWarp\Services\DataImporter.cs in Notepad or Visual Studio
+
+2. Find line ~241 which should look like:
+   "CreditTotal",
+
+3. Add a new line AFTER it:
+   "Memo",
+
+4. The complete block should look like this (around lines 235-243):
+   ["JournalEntries"] = new(StringComparer.OrdinalIgnoreCase)
+   {
+       "Name",
+       "Amount",
+       "TotalAmount",
+       "DebitTotal",
+       "CreditTotal",
+       "Memo",          // <-- ADD THIS LINE
+   },
+
+5. Save the file
+
+6. Rebuild:
+   cd C:\QB-TimeWarp
+   dotnet clean -c Release
+   dotnet build -c Release
+
+7. Run migration using the same process as before
+
+Expected Result:
+- JournalEntries should go from 58/378 to 436/0 (100% success)
+- No more "Memo is not supported" errors

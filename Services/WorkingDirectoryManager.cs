@@ -1,3 +1,4 @@
+using System.IO;
 using QB_TimeWarp.Models;
 using Serilog;
 
@@ -113,11 +114,11 @@ namespace QB_TimeWarp.Services
         {
             Log.Information("Resolving original file paths...");
 
-            // Resolve source file (Joshs_Gold_Coast — testing)
+            // Resolve source file (Client_Files)
             OriginalSourceFilePath = ResolveCompanyFile(
                 _sourceConfig.DesktopFolder,
                 _sourceConfig.CompanyFileName,
-                "Source (Joshs_Gold_Coast)");
+                "Source (Client_Files)");
 
             // Resolve target file (QB21_Blank_Template)
             OriginalTargetFilePath = ResolveCompanyFile(
@@ -647,3 +648,4 @@ namespace QB_TimeWarp.Services
         public OriginalFileProtectionException(string message) : base(message) { }
     }
 }
+

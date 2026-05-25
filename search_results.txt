@@ -1,0 +1,2398 @@
+﻿
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:1:2026-05-23 06:08:44.837 -05:00 [INF] QB-TimeWarp starting...
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:24:2026-05-23 06:09:05.827 -05:00 [INF]   STARTING DATA EXPORT 
+FROM QUICKBOOKS 2023
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:29:2026-05-23 06:09:06.168 -05:00 [INF]   ✓ Exported 142 
+Accounts records (Active: 96, Inactive: 46)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:32:2026-05-23 06:09:06.248 -05:00 [INF]   ✓ Exported 2 
+Customers records (Active: 2, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:35:2026-05-23 06:09:07.877 -05:00 [INF]   ✓ Exported 249 
+Vendors records (Active: 186, Inactive: 63)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:38:2026-05-23 06:09:08.146 -05:00 [INF]   ✓ Exported 32 
+Employees records (Active: 4, Inactive: 28)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:41:2026-05-23 06:09:08.209 -05:00 [INF]   ✓ Exported 0 Items 
+records (Active: 0, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:44:2026-05-23 06:09:08.275 -05:00 [INF]   ✓ Exported 7 
+PaymentMethods records (Active: 7, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:47:2026-05-23 06:09:08.342 -05:00 [INF]   ✓ Exported 6 Terms 
+records (Active: 6, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:50:2026-05-23 06:09:08.401 -05:00 [INF]   ✓ Exported 5 Classes 
+records (Active: 5, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:53:2026-05-23 06:09:08.461 -05:00 [INF]   ✓ Exported 3 
+SalesTaxCodes records (Active: 3, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:56:2026-05-23 06:09:08.519 -05:00 [INF]   ✓ Exported 6 
+ItemSalesTax records (Active: 6, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:59:2026-05-23 06:09:08.580 -05:00 [INF]   ✓ Exported 0 
+ShipMethods records (Active: 0, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:62:2026-05-23 06:09:08.638 -05:00 [INF]   ✓ Exported 0 
+CustomerTypes records (Active: 0, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:65:2026-05-23 06:09:08.692 -05:00 [INF]   ✓ Exported 3 
+VendorTypes records (Active: 3, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:68:2026-05-23 06:09:08.753 -05:00 [INF]   ✓ Exported 0 JobTypes 
+records (Active: 0, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:71:2026-05-23 06:09:08.808 -05:00 [INF]   ✓ Exported 0 
+PriceLevels records (Active: 0, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:74:2026-05-23 06:09:08.867 -05:00 [INF]   ✓ Exported 0 
+CustomerMsgs records (Active: 0, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:78:2026-05-23 06:09:08.929 -05:00 [INF]   FIX #11: Invoices 
+line item stats: 0/0 entities have line items, 0 total line items exported
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:79:2026-05-23 06:09:08.934 -05:00 [INF]   ✓ Exported 0 Invoices 
+records (Active: 0, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:83:2026-05-23 06:09:08.997 -05:00 [INF]   FIX #11: Bills line 
+item stats: 0/0 entities have line items, 0 total line items exported
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:84:2026-05-23 06:09:09.004 -05:00 [INF]   ✓ Exported 0 Bills 
+records (Active: 0, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:87:2026-05-23 06:09:09.073 -05:00 [INF]   ✓ Exported 0 Payments 
+records (Active: 0, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:91:2026-05-23 06:09:09.293 -05:00 [INF]   FIX #11: 
+JournalEntries line item stats: 58/58 entities have line items, 133 total line items exported
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:92:2026-05-23 06:09:09.300 -05:00 [INF]   ✓ Exported 58 
+JournalEntries records (Active: 58, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:96:2026-05-23 06:09:09.493 -05:00 [INF]   FIX #11: 
+SalesReceipts line item stats: 30/30 entities have line items, 107 total line items exported
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:97:2026-05-23 06:09:09.499 -05:00 [INF]   ✓ Exported 30 
+SalesReceipts records (Active: 30, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:101:2026-05-23 06:09:09.562 -05:00 [INF]   FIX #11: 
+PurchaseOrders line item stats: 0/0 entities have line items, 0 total line items exported
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:102:2026-05-23 06:09:09.568 -05:00 [INF]   ✓ Exported 0 
+PurchaseOrders records (Active: 0, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:106:2026-05-23 06:09:09.630 -05:00 [INF]   FIX #11: CreditMemos 
+line item stats: 0/0 entities have line items, 0 total line items exported
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:107:2026-05-23 06:09:09.636 -05:00 [INF]   ✓ Exported 0 
+CreditMemos records (Active: 0, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:111:2026-05-23 06:09:09.704 -05:00 [INF]   FIX #11: Estimates 
+line item stats: 0/0 entities have line items, 0 total line items exported
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:112:2026-05-23 06:09:09.709 -05:00 [INF]   ✓ Exported 0 
+Estimates records (Active: 0, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:116:2026-05-23 06:09:10.766 -05:00 [INF]   FIX #11: Deposits 
+line item stats: 225/225 entities have line items, 232 total line items exported
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:117:2026-05-23 06:09:10.778 -05:00 [INF]   ✓ Exported 225 
+Deposits records (Active: 225, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:121:2026-05-23 06:09:18.958 -05:00 [INF]   FIX #11: Checks line 
+item stats: 1154/1154 entities have line items, 1708 total line items exported
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:122:2026-05-23 06:09:18.972 -05:00 [INF]   ✓ Exported 1154 
+Checks records (Active: 1154, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:126:2026-05-23 06:09:19.042 -05:00 [INF]   FIX #11: 
+VendorCredits line item stats: 0/0 entities have line items, 0 total line items exported
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:127:2026-05-23 06:09:19.049 -05:00 [INF]   ✓ Exported 0 
+VendorCredits records (Active: 0, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:130:2026-05-23 06:09:19.110 -05:00 [INF]   ✓ Exported 0 
+InventoryAdjustments records (Active: 0, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:133:2026-05-23 06:09:19.458 -05:00 [INF]   ✓ Exported 156 
+Transfers records (Active: 156, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:136:2026-05-23 06:09:19.525 -05:00 [INF]   ✓ Exported 1 
+Preferences records (Active: 1, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:139:2026-05-23 06:09:19.585 -05:00 [INF]   ✓ Exported 1 
+CompanyInfo records (Active: 1, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:140:2026-05-23 06:09:19.601 -05:00 [INF] Export manifest saved 
+to: C:\QB-TimeWarp\ExportedData\_ExportManifest.json
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:150:2026-05-23 06:09:19.635 -05:00 [INF]   EXPORT COMPLETE: 
+2080 total records across 31 entity types
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:167:2026-05-23 06:09:21.122 -05:00 [INF]   STARTING DATA 
+TRANSFORMATION
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:1909:2026-05-23 06:09:27.174 -05:00 [INF] Transformed data 
+saved to: C:\QB-TimeWarp\ExportedData\Transformed
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:1910:2026-05-23 06:09:27.177 -05:00 [INF] Pre-import validation 
+skipped — QB 2021 not opened during export phase (strict workflow enforcement).
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:1960:2026-05-23 06:09:44.516 -05:00 [INF]   │  Phase 0b: 
+Pre-Import Dependency Analysis     │
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:1963:2026-05-23 06:09:44.523 -05:00 [INF]   DEPENDENCY ANALYSIS 
+— Scanning exported data
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:1990:2026-05-23 06:09:44.590 -05:00 [INF]   │  Phase 0c: Create 
+Missing Reference Types (FIX #4)    │
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:2647:      <Desc>STARTING JAN 1.64</Desc>
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:2653:      <Desc>Starting JAN NEW RATE FOR SALES TAX MILW CO 
+5.5 TO 5.9 PLUS EXPO .5 THEREFORE, NEW RATE TOTAL 6.4</Desc>
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:2693:      <Desc>STARTING JAN 1.64</Desc>
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:2699:      <Desc>Starting JAN NEW RATE FOR SALES TAX MILW CO 
+5.5 TO 5.9 PLUS EXPO .5 THEREFORE, NEW RATE TOTAL 6.4</Desc>
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:2745:      <Desc>STARTING JAN 1.64</Desc>
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:2751:      <Desc>Starting JAN NEW RATE FOR SALES TAX MILW CO 
+5.5 TO 5.9 PLUS EXPO .5 THEREFORE, NEW RATE TOTAL 6.4</Desc>
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:2800:      <Desc>STARTING JAN 1.64</Desc>
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:2806:      <Desc>Starting JAN NEW RATE FOR SALES TAX MILW CO 
+5.5 TO 5.9 PLUS EXPO .5 THEREFORE, NEW RATE TOTAL 6.4</Desc>
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:2855:      <Desc>STARTING JAN 1.64</Desc>
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:2861:      <Desc>Starting JAN NEW RATE FOR SALES TAX MILW CO 
+5.5 TO 5.9 PLUS EXPO .5 THEREFORE, NEW RATE TOTAL 6.4</Desc>
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:2909:      <Desc>STARTING JAN 1.64</Desc>
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:2915:      <Desc>Starting JAN NEW RATE FOR SALES TAX MILW CO 
+5.5 TO 5.9 PLUS EXPO .5 THEREFORE, NEW RATE TOTAL 6.4</Desc>
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:2963:      <Desc>STARTING JAN 1.64</Desc>
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:2969:      <Desc>Starting JAN NEW RATE FOR SALES TAX MILW CO 
+5.5 TO 5.9 PLUS EXPO .5 THEREFORE, NEW RATE TOTAL 6.4</Desc>
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:3017:      <Desc>STARTING JAN 1.64</Desc>
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:3023:      <Desc>Starting JAN NEW RATE FOR SALES TAX MILW CO 
+5.5 TO 5.9 PLUS EXPO .5 THEREFORE, NEW RATE TOTAL 6.4</Desc>
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:3071:      <Desc>STARTING JAN 1.64</Desc>
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:3077:      <Desc>Starting JAN NEW RATE FOR SALES TAX MILW CO 
+5.5 TO 5.9 PLUS EXPO .5 THEREFORE, NEW RATE TOTAL 6.4</Desc>
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:3125:      <Desc>STARTING JAN 1.64</Desc>
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:3131:      <Desc>Starting JAN NEW RATE FOR SALES TAX MILW CO 
+5.5 TO 5.9 PLUS EXPO .5 THEREFORE, NEW RATE TOTAL 6.4</Desc>
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:3179:      <Desc>STARTING JAN 1.64</Desc>
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:3185:      <Desc>Starting JAN NEW RATE FOR SALES TAX MILW CO 
+5.5 TO 5.9 PLUS EXPO .5 THEREFORE, NEW RATE TOTAL 6.4</Desc>
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:3248:      <Desc>STARTING JAN 1.64</Desc>
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:3254:      <Desc>Starting JAN NEW RATE FOR SALES TAX MILW CO 
+5.5 TO 5.9 PLUS EXPO .5 THEREFORE, NEW RATE TOTAL 6.4</Desc>
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:3302:      <Desc>STARTING JAN 1.64</Desc>
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:3308:      <Desc>Starting JAN NEW RATE FOR SALES TAX MILW CO 
+5.5 TO 5.9 PLUS EXPO .5 THEREFORE, NEW RATE TOTAL 6.4</Desc>
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:3356:      <Desc>STARTING JAN 1.64</Desc>
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:3362:      <Desc>Starting JAN NEW RATE FOR SALES TAX MILW CO 
+5.5 TO 5.9 PLUS EXPO .5 THEREFORE, NEW RATE TOTAL 6.4</Desc>
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:4438:2026-05-23 06:12:23.550 -05:00 [INF] ║  STAGED IMPORT 
+COMPLETE                               ║
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:4454:2026-05-23 06:12:39.167 -05:00 [INF]   STARTING DATA 
+EXPORT FROM QUICKBOOKS 2023
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:4459:2026-05-23 06:12:39.382 -05:00 [INF]   ✓ Exported 144 
+Accounts records (Active: 144, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:4462:2026-05-23 06:12:39.478 -05:00 [INF]   ✓ Exported 2 
+Customers records (Active: 2, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:4465:2026-05-23 06:12:41.098 -05:00 [INF]   ✓ Exported 249 
+Vendors records (Active: 249, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:4468:2026-05-23 06:12:41.270 -05:00 [INF]   ✓ Exported 22 
+Employees records (Active: 22, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:4471:2026-05-23 06:12:41.334 -05:00 [INF]   ✓ Exported 0 Items 
+records (Active: 0, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:4474:2026-05-23 06:12:41.397 -05:00 [INF]   ✓ Exported 9 
+PaymentMethods records (Active: 9, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:4477:2026-05-23 06:12:41.462 -05:00 [INF]   ✓ Exported 7 Terms 
+records (Active: 7, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:4480:2026-05-23 06:12:41.528 -05:00 [INF]   ✓ Exported 5 
+Classes records (Active: 5, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:4483:2026-05-23 06:12:41.589 -05:00 [INF]   ✓ Exported 3 
+SalesTaxCodes records (Active: 3, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:4486:2026-05-23 06:12:41.654 -05:00 [INF]   ✓ Exported 1 
+ItemSalesTax records (Active: 1, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:4489:2026-05-23 06:12:41.724 -05:00 [INF]   ✓ Exported 4 
+ShipMethods records (Active: 4, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:4492:2026-05-23 06:12:41.790 -05:00 [INF]   ✓ Exported 4 
+CustomerTypes records (Active: 4, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:4495:2026-05-23 06:12:41.855 -05:00 [INF]   ✓ Exported 5 
+VendorTypes records (Active: 5, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:4498:2026-05-23 06:12:41.923 -05:00 [INF]   ✓ Exported 2 
+JobTypes records (Active: 2, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:4501:2026-05-23 06:12:41.983 -05:00 [INF]   ✓ Exported 0 
+PriceLevels records (Active: 0, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:4504:2026-05-23 06:12:42.052 -05:00 [INF]   ✓ Exported 5 
+CustomerMsgs records (Active: 5, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:4508:2026-05-23 06:12:42.122 -05:00 [INF]   FIX #11: Invoices 
+line item stats: 0/0 entities have line items, 0 total line items exported
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:4509:2026-05-23 06:12:42.127 -05:00 [INF]   ✓ Exported 0 
+Invoices records (Active: 0, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:4513:2026-05-23 06:12:42.195 -05:00 [INF]   FIX #11: Bills line 
+item stats: 0/0 entities have line items, 0 total line items exported
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:4514:2026-05-23 06:12:42.201 -05:00 [INF]   ✓ Exported 0 Bills 
+records (Active: 0, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:4517:2026-05-23 06:12:42.270 -05:00 [INF]   ✓ Exported 0 
+Payments records (Active: 0, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:4521:2026-05-23 06:12:42.500 -05:00 [INF]   FIX #11: 
+JournalEntries line item stats: 58/58 entities have line items, 133 total line items exported
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:4522:2026-05-23 06:12:42.507 -05:00 [INF]   ✓ Exported 58 
+JournalEntries records (Active: 58, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:4526:2026-05-23 06:12:42.571 -05:00 [INF]   FIX #11: 
+SalesReceipts line item stats: 0/0 entities have line items, 0 total line items exported
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:4527:2026-05-23 06:12:42.577 -05:00 [INF]   ✓ Exported 0 
+SalesReceipts records (Active: 0, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:4531:2026-05-23 06:12:42.653 -05:00 [INF]   FIX #11: 
+PurchaseOrders line item stats: 0/0 entities have line items, 0 total line items exported
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:4532:2026-05-23 06:12:42.659 -05:00 [INF]   ✓ Exported 0 
+PurchaseOrders records (Active: 0, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:4536:2026-05-23 06:12:42.724 -05:00 [INF]   FIX #11: 
+CreditMemos line item stats: 0/0 entities have line items, 0 total line items exported
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:4537:2026-05-23 06:12:42.729 -05:00 [INF]   ✓ Exported 0 
+CreditMemos records (Active: 0, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:4541:2026-05-23 06:12:42.806 -05:00 [INF]   FIX #11: Estimates 
+line item stats: 0/0 entities have line items, 0 total line items exported
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:4542:2026-05-23 06:12:42.812 -05:00 [INF]   ✓ Exported 0 
+Estimates records (Active: 0, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:4546:2026-05-23 06:12:43.805 -05:00 [INF]   FIX #11: Deposits 
+line item stats: 222/222 entities have line items, 224 total line items exported
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:4547:2026-05-23 06:12:43.814 -05:00 [INF]   ✓ Exported 222 
+Deposits records (Active: 222, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:4551:2026-05-23 06:12:51.295 -05:00 [INF]   FIX #11: Checks 
+line item stats: 1154/1154 entities have line items, 1708 total line items exported
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:4552:2026-05-23 06:12:51.310 -05:00 [INF]   ✓ Exported 1154 
+Checks records (Active: 1154, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:4556:2026-05-23 06:12:51.385 -05:00 [INF]   FIX #11: 
+VendorCredits line item stats: 0/0 entities have line items, 0 total line items exported
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:4557:2026-05-23 06:12:51.392 -05:00 [INF]   ✓ Exported 0 
+VendorCredits records (Active: 0, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:4560:2026-05-23 06:12:51.456 -05:00 [INF]   ✓ Exported 0 
+InventoryAdjustments records (Active: 0, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:4563:2026-05-23 06:12:51.806 -05:00 [INF]   ✓ Exported 156 
+Transfers records (Active: 156, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:4566:2026-05-23 06:12:51.871 -05:00 [INF]   ✓ Exported 1 
+Preferences records (Active: 1, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:4569:2026-05-23 06:12:51.931 -05:00 [INF]   ✓ Exported 1 
+CompanyInfo records (Active: 1, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:4570:2026-05-23 06:12:51.937 -05:00 [INF] Export manifest saved 
+to: C:\QB-TimeWarp\ExportedData\QB2021_PostImport\_ExportManifest.json
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:4573:2026-05-23 06:12:51.943 -05:00 [INF]   EXPORT COMPLETE: 
+2054 total records across 31 entity types
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:4580:2026-05-23 06:12:56.342 -05:00 [INF]   STARTING DATA 
+VALIDATION
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:4626:2026-05-23 06:54:35.490 -05:00 [INF] QB-TimeWarp 
+starting...
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:4648:2026-05-23 06:54:51.662 -05:00 [INF]   STARTING DATA 
+EXPORT FROM QUICKBOOKS 2023
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:4653:2026-05-23 06:54:51.915 -05:00 [INF]   ✓ Exported 142 
+Accounts records (Active: 96, Inactive: 46)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:4656:2026-05-23 06:54:52.026 -05:00 [INF]   ✓ Exported 2 
+Customers records (Active: 2, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:4659:2026-05-23 06:54:53.747 -05:00 [INF]   ✓ Exported 249 
+Vendors records (Active: 186, Inactive: 63)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:4662:2026-05-23 06:54:54.044 -05:00 [INF]   ✓ Exported 32 
+Employees records (Active: 4, Inactive: 28)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:4665:2026-05-23 06:54:54.111 -05:00 [INF]   ✓ Exported 0 Items 
+records (Active: 0, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:4668:2026-05-23 06:54:54.173 -05:00 [INF]   ✓ Exported 7 
+PaymentMethods records (Active: 7, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:4671:2026-05-23 06:54:54.240 -05:00 [INF]   ✓ Exported 6 Terms 
+records (Active: 6, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:4674:2026-05-23 06:54:54.304 -05:00 [INF]   ✓ Exported 5 
+Classes records (Active: 5, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:4677:2026-05-23 06:54:54.370 -05:00 [INF]   ✓ Exported 3 
+SalesTaxCodes records (Active: 3, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:4680:2026-05-23 06:54:54.435 -05:00 [INF]   ✓ Exported 6 
+ItemSalesTax records (Active: 6, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:4683:2026-05-23 06:54:54.499 -05:00 [INF]   ✓ Exported 0 
+ShipMethods records (Active: 0, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:4686:2026-05-23 06:54:54.558 -05:00 [INF]   ✓ Exported 0 
+CustomerTypes records (Active: 0, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:4689:2026-05-23 06:54:54.623 -05:00 [INF]   ✓ Exported 3 
+VendorTypes records (Active: 3, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:4692:2026-05-23 06:54:54.682 -05:00 [INF]   ✓ Exported 0 
+JobTypes records (Active: 0, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:4695:2026-05-23 06:54:54.739 -05:00 [INF]   ✓ Exported 0 
+PriceLevels records (Active: 0, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:4698:2026-05-23 06:54:54.802 -05:00 [INF]   ✓ Exported 0 
+CustomerMsgs records (Active: 0, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:4702:2026-05-23 06:54:54.865 -05:00 [INF]   FIX #11: Invoices 
+line item stats: 0/0 entities have line items, 0 total line items exported
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:4703:2026-05-23 06:54:54.872 -05:00 [INF]   ✓ Exported 0 
+Invoices records (Active: 0, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:4707:2026-05-23 06:54:54.943 -05:00 [INF]   FIX #11: Bills line 
+item stats: 0/0 entities have line items, 0 total line items exported
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:4708:2026-05-23 06:54:54.949 -05:00 [INF]   ✓ Exported 0 Bills 
+records (Active: 0, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:4711:2026-05-23 06:54:55.019 -05:00 [INF]   ✓ Exported 0 
+Payments records (Active: 0, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:4715:2026-05-23 06:54:55.269 -05:00 [INF]   FIX #11: 
+JournalEntries line item stats: 58/58 entities have line items, 133 total line items exported
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:4716:2026-05-23 06:54:55.275 -05:00 [INF]   ✓ Exported 58 
+JournalEntries records (Active: 58, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:4720:2026-05-23 06:54:55.486 -05:00 [INF]   FIX #11: 
+SalesReceipts line item stats: 30/30 entities have line items, 107 total line items exported
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:4721:2026-05-23 06:54:55.493 -05:00 [INF]   ✓ Exported 30 
+SalesReceipts records (Active: 30, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:4725:2026-05-23 06:54:55.558 -05:00 [INF]   FIX #11: 
+PurchaseOrders line item stats: 0/0 entities have line items, 0 total line items exported
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:4726:2026-05-23 06:54:55.564 -05:00 [INF]   ✓ Exported 0 
+PurchaseOrders records (Active: 0, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:4730:2026-05-23 06:54:55.630 -05:00 [INF]   FIX #11: 
+CreditMemos line item stats: 0/0 entities have line items, 0 total line items exported
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:4731:2026-05-23 06:54:55.642 -05:00 [INF]   ✓ Exported 0 
+CreditMemos records (Active: 0, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:4735:2026-05-23 06:54:55.710 -05:00 [INF]   FIX #11: Estimates 
+line item stats: 0/0 entities have line items, 0 total line items exported
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:4736:2026-05-23 06:54:55.716 -05:00 [INF]   ✓ Exported 0 
+Estimates records (Active: 0, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:4740:2026-05-23 06:54:56.726 -05:00 [INF]   FIX #11: Deposits 
+line item stats: 225/225 entities have line items, 232 total line items exported
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:4741:2026-05-23 06:54:56.735 -05:00 [INF]   ✓ Exported 225 
+Deposits records (Active: 225, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:4745:2026-05-23 06:55:04.581 -05:00 [INF]   FIX #11: Checks 
+line item stats: 1154/1154 entities have line items, 1708 total line items exported
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:4746:2026-05-23 06:55:04.597 -05:00 [INF]   ✓ Exported 1154 
+Checks records (Active: 1154, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:4750:2026-05-23 06:55:04.662 -05:00 [INF]   FIX #11: 
+VendorCredits line item stats: 0/0 entities have line items, 0 total line items exported
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:4751:2026-05-23 06:55:04.667 -05:00 [INF]   ✓ Exported 0 
+VendorCredits records (Active: 0, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:4754:2026-05-23 06:55:04.722 -05:00 [INF]   ✓ Exported 0 
+InventoryAdjustments records (Active: 0, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:4757:2026-05-23 06:55:05.070 -05:00 [INF]   ✓ Exported 156 
+Transfers records (Active: 156, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:4760:2026-05-23 06:55:05.129 -05:00 [INF]   ✓ Exported 1 
+Preferences records (Active: 1, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:4763:2026-05-23 06:55:05.186 -05:00 [INF]   ✓ Exported 1 
+CompanyInfo records (Active: 1, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:4764:2026-05-23 06:55:05.200 -05:00 [INF] Export manifest saved 
+to: C:\QB-TimeWarp\ExportedData\_ExportManifest.json
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:4774:2026-05-23 06:55:05.234 -05:00 [INF]   EXPORT COMPLETE: 
+2080 total records across 31 entity types
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:4791:2026-05-23 06:55:06.767 -05:00 [INF]   STARTING DATA 
+TRANSFORMATION
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:6533:2026-05-23 06:55:13.057 -05:00 [INF] Transformed data 
+saved to: C:\QB-TimeWarp\ExportedData\Transformed
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:6534:2026-05-23 06:55:13.060 -05:00 [INF] Pre-import validation 
+skipped — QB 2021 not opened during export phase (strict workflow enforcement).
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:6584:2026-05-23 06:55:31.453 -05:00 [INF]   │  Phase 0b: 
+Pre-Import Dependency Analysis     │
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:6587:2026-05-23 06:55:31.460 -05:00 [INF]   DEPENDENCY ANALYSIS 
+— Scanning exported data
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:6614:2026-05-23 06:55:31.526 -05:00 [INF]   │  Phase 0c: Create 
+Missing Reference Types (FIX #4)    │
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:7239:      <Desc>STARTING JAN 1.64</Desc>
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:7245:      <Desc>Starting JAN NEW RATE FOR SALES TAX MILW CO 
+5.5 TO 5.9 PLUS EXPO .5 THEREFORE, NEW RATE TOTAL 6.4</Desc>
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:7285:      <Desc>STARTING JAN 1.64</Desc>
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:7291:      <Desc>Starting JAN NEW RATE FOR SALES TAX MILW CO 
+5.5 TO 5.9 PLUS EXPO .5 THEREFORE, NEW RATE TOTAL 6.4</Desc>
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:7337:      <Desc>STARTING JAN 1.64</Desc>
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:7343:      <Desc>Starting JAN NEW RATE FOR SALES TAX MILW CO 
+5.5 TO 5.9 PLUS EXPO .5 THEREFORE, NEW RATE TOTAL 6.4</Desc>
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:7392:      <Desc>STARTING JAN 1.64</Desc>
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:7398:      <Desc>Starting JAN NEW RATE FOR SALES TAX MILW CO 
+5.5 TO 5.9 PLUS EXPO .5 THEREFORE, NEW RATE TOTAL 6.4</Desc>
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:7447:      <Desc>STARTING JAN 1.64</Desc>
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:7453:      <Desc>Starting JAN NEW RATE FOR SALES TAX MILW CO 
+5.5 TO 5.9 PLUS EXPO .5 THEREFORE, NEW RATE TOTAL 6.4</Desc>
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:7501:      <Desc>STARTING JAN 1.64</Desc>
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:7507:      <Desc>Starting JAN NEW RATE FOR SALES TAX MILW CO 
+5.5 TO 5.9 PLUS EXPO .5 THEREFORE, NEW RATE TOTAL 6.4</Desc>
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:7555:      <Desc>STARTING JAN 1.64</Desc>
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:7561:      <Desc>Starting JAN NEW RATE FOR SALES TAX MILW CO 
+5.5 TO 5.9 PLUS EXPO .5 THEREFORE, NEW RATE TOTAL 6.4</Desc>
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:7609:      <Desc>STARTING JAN 1.64</Desc>
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:7615:      <Desc>Starting JAN NEW RATE FOR SALES TAX MILW CO 
+5.5 TO 5.9 PLUS EXPO .5 THEREFORE, NEW RATE TOTAL 6.4</Desc>
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:7663:      <Desc>STARTING JAN 1.64</Desc>
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:7669:      <Desc>Starting JAN NEW RATE FOR SALES TAX MILW CO 
+5.5 TO 5.9 PLUS EXPO .5 THEREFORE, NEW RATE TOTAL 6.4</Desc>
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:7717:      <Desc>STARTING JAN 1.64</Desc>
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:7723:      <Desc>Starting JAN NEW RATE FOR SALES TAX MILW CO 
+5.5 TO 5.9 PLUS EXPO .5 THEREFORE, NEW RATE TOTAL 6.4</Desc>
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:7771:      <Desc>STARTING JAN 1.64</Desc>
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:7777:      <Desc>Starting JAN NEW RATE FOR SALES TAX MILW CO 
+5.5 TO 5.9 PLUS EXPO .5 THEREFORE, NEW RATE TOTAL 6.4</Desc>
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:7840:      <Desc>STARTING JAN 1.64</Desc>
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:7846:      <Desc>Starting JAN NEW RATE FOR SALES TAX MILW CO 
+5.5 TO 5.9 PLUS EXPO .5 THEREFORE, NEW RATE TOTAL 6.4</Desc>
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:7894:      <Desc>STARTING JAN 1.64</Desc>
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:7900:      <Desc>Starting JAN NEW RATE FOR SALES TAX MILW CO 
+5.5 TO 5.9 PLUS EXPO .5 THEREFORE, NEW RATE TOTAL 6.4</Desc>
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:7948:      <Desc>STARTING JAN 1.64</Desc>
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:7954:      <Desc>Starting JAN NEW RATE FOR SALES TAX MILW CO 
+5.5 TO 5.9 PLUS EXPO .5 THEREFORE, NEW RATE TOTAL 6.4</Desc>
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:9030:2026-05-23 06:58:14.605 -05:00 [INF] ║  STAGED IMPORT 
+COMPLETE                               ║
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:9046:2026-05-23 06:58:30.287 -05:00 [INF]   STARTING DATA 
+EXPORT FROM QUICKBOOKS 2023
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:9051:2026-05-23 06:58:30.540 -05:00 [INF]   ✓ Exported 144 
+Accounts records (Active: 144, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:9054:2026-05-23 06:58:30.623 -05:00 [INF]   ✓ Exported 2 
+Customers records (Active: 2, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:9057:2026-05-23 06:58:32.262 -05:00 [INF]   ✓ Exported 249 
+Vendors records (Active: 249, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:9060:2026-05-23 06:58:32.457 -05:00 [INF]   ✓ Exported 22 
+Employees records (Active: 22, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:9063:2026-05-23 06:58:32.529 -05:00 [INF]   ✓ Exported 0 Items 
+records (Active: 0, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:9066:2026-05-23 06:58:32.605 -05:00 [INF]   ✓ Exported 9 
+PaymentMethods records (Active: 9, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:9069:2026-05-23 06:58:32.674 -05:00 [INF]   ✓ Exported 7 Terms 
+records (Active: 7, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:9072:2026-05-23 06:58:32.741 -05:00 [INF]   ✓ Exported 5 
+Classes records (Active: 5, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:9075:2026-05-23 06:58:32.805 -05:00 [INF]   ✓ Exported 3 
+SalesTaxCodes records (Active: 3, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:9078:2026-05-23 06:58:32.869 -05:00 [INF]   ✓ Exported 1 
+ItemSalesTax records (Active: 1, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:9081:2026-05-23 06:58:32.934 -05:00 [INF]   ✓ Exported 4 
+ShipMethods records (Active: 4, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:9084:2026-05-23 06:58:32.998 -05:00 [INF]   ✓ Exported 4 
+CustomerTypes records (Active: 4, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:9087:2026-05-23 06:58:33.069 -05:00 [INF]   ✓ Exported 5 
+VendorTypes records (Active: 5, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:9090:2026-05-23 06:58:33.136 -05:00 [INF]   ✓ Exported 2 
+JobTypes records (Active: 2, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:9093:2026-05-23 06:58:33.197 -05:00 [INF]   ✓ Exported 0 
+PriceLevels records (Active: 0, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:9096:2026-05-23 06:58:33.263 -05:00 [INF]   ✓ Exported 5 
+CustomerMsgs records (Active: 5, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:9100:2026-05-23 06:58:33.329 -05:00 [INF]   FIX #11: Invoices 
+line item stats: 0/0 entities have line items, 0 total line items exported
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:9101:2026-05-23 06:58:33.334 -05:00 [INF]   ✓ Exported 0 
+Invoices records (Active: 0, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:9105:2026-05-23 06:58:33.402 -05:00 [INF]   FIX #11: Bills line 
+item stats: 0/0 entities have line items, 0 total line items exported
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:9106:2026-05-23 06:58:33.407 -05:00 [INF]   ✓ Exported 0 Bills 
+records (Active: 0, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:9109:2026-05-23 06:58:33.474 -05:00 [INF]   ✓ Exported 0 
+Payments records (Active: 0, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:9113:2026-05-23 06:58:33.727 -05:00 [INF]   FIX #11: 
+JournalEntries line item stats: 58/58 entities have line items, 133 total line items exported
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:9114:2026-05-23 06:58:33.733 -05:00 [INF]   ✓ Exported 58 
+JournalEntries records (Active: 58, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:9118:2026-05-23 06:58:33.801 -05:00 [INF]   FIX #11: 
+SalesReceipts line item stats: 0/0 entities have line items, 0 total line items exported
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:9119:2026-05-23 06:58:33.806 -05:00 [INF]   ✓ Exported 0 
+SalesReceipts records (Active: 0, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:9123:2026-05-23 06:58:33.876 -05:00 [INF]   FIX #11: 
+PurchaseOrders line item stats: 0/0 entities have line items, 0 total line items exported
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:9124:2026-05-23 06:58:33.882 -05:00 [INF]   ✓ Exported 0 
+PurchaseOrders records (Active: 0, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:9128:2026-05-23 06:58:33.947 -05:00 [INF]   FIX #11: 
+CreditMemos line item stats: 0/0 entities have line items, 0 total line items exported
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:9129:2026-05-23 06:58:33.953 -05:00 [INF]   ✓ Exported 0 
+CreditMemos records (Active: 0, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:9133:2026-05-23 06:58:34.031 -05:00 [INF]   FIX #11: Estimates 
+line item stats: 0/0 entities have line items, 0 total line items exported
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:9134:2026-05-23 06:58:34.038 -05:00 [INF]   ✓ Exported 0 
+Estimates records (Active: 0, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:9138:2026-05-23 06:58:35.113 -05:00 [INF]   FIX #11: Deposits 
+line item stats: 222/222 entities have line items, 224 total line items exported
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:9139:2026-05-23 06:58:35.120 -05:00 [INF]   ✓ Exported 222 
+Deposits records (Active: 222, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:9143:2026-05-23 06:58:42.682 -05:00 [INF]   FIX #11: Checks 
+line item stats: 1154/1154 entities have line items, 1708 total line items exported
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:9144:2026-05-23 06:58:42.696 -05:00 [INF]   ✓ Exported 1154 
+Checks records (Active: 1154, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:9148:2026-05-23 06:58:42.762 -05:00 [INF]   FIX #11: 
+VendorCredits line item stats: 0/0 entities have line items, 0 total line items exported
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:9149:2026-05-23 06:58:42.768 -05:00 [INF]   ✓ Exported 0 
+VendorCredits records (Active: 0, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:9152:2026-05-23 06:58:42.836 -05:00 [INF]   ✓ Exported 0 
+InventoryAdjustments records (Active: 0, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:9155:2026-05-23 06:58:43.199 -05:00 [INF]   ✓ Exported 156 
+Transfers records (Active: 156, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:9158:2026-05-23 06:58:43.268 -05:00 [INF]   ✓ Exported 1 
+Preferences records (Active: 1, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:9161:2026-05-23 06:58:43.332 -05:00 [INF]   ✓ Exported 1 
+CompanyInfo records (Active: 1, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:9162:2026-05-23 06:58:43.338 -05:00 [INF] Export manifest saved 
+to: C:\QB-TimeWarp\ExportedData\QB2021_PostImport\_ExportManifest.json
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:9165:2026-05-23 06:58:43.345 -05:00 [INF]   EXPORT COMPLETE: 
+2054 total records across 31 entity types
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:9172:2026-05-23 06:58:47.841 -05:00 [INF]   STARTING DATA 
+VALIDATION
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:9218:2026-05-23 07:07:44.116 -05:00 [INF] QB-TimeWarp 
+starting...
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:9240:2026-05-23 07:07:59.718 -05:00 [INF]   STARTING DATA 
+EXPORT FROM QUICKBOOKS 2023
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:9245:2026-05-23 07:07:59.977 -05:00 [INF]   ✓ Exported 142 
+Accounts records (Active: 96, Inactive: 46)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:9248:2026-05-23 07:08:00.091 -05:00 [INF]   ✓ Exported 2 
+Customers records (Active: 2, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:9251:2026-05-23 07:08:01.795 -05:00 [INF]   ✓ Exported 249 
+Vendors records (Active: 186, Inactive: 63)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:9254:2026-05-23 07:08:02.045 -05:00 [INF]   ✓ Exported 32 
+Employees records (Active: 4, Inactive: 28)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:9257:2026-05-23 07:08:02.100 -05:00 [INF]   ✓ Exported 0 Items 
+records (Active: 0, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:9260:2026-05-23 07:08:02.151 -05:00 [INF]   ✓ Exported 7 
+PaymentMethods records (Active: 7, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:9263:2026-05-23 07:08:02.197 -05:00 [INF]   ✓ Exported 6 Terms 
+records (Active: 6, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:9266:2026-05-23 07:08:02.243 -05:00 [INF]   ✓ Exported 5 
+Classes records (Active: 5, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:9269:2026-05-23 07:08:02.285 -05:00 [INF]   ✓ Exported 3 
+SalesTaxCodes records (Active: 3, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:9272:2026-05-23 07:08:02.341 -05:00 [INF]   ✓ Exported 6 
+ItemSalesTax records (Active: 6, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:9275:2026-05-23 07:08:02.388 -05:00 [INF]   ✓ Exported 0 
+ShipMethods records (Active: 0, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:9278:2026-05-23 07:08:02.438 -05:00 [INF]   ✓ Exported 0 
+CustomerTypes records (Active: 0, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:9281:2026-05-23 07:08:02.493 -05:00 [INF]   ✓ Exported 3 
+VendorTypes records (Active: 3, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:9284:2026-05-23 07:08:02.549 -05:00 [INF]   ✓ Exported 0 
+JobTypes records (Active: 0, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:9287:2026-05-23 07:08:02.597 -05:00 [INF]   ✓ Exported 0 
+PriceLevels records (Active: 0, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:9290:2026-05-23 07:08:02.650 -05:00 [INF]   ✓ Exported 0 
+CustomerMsgs records (Active: 0, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:9294:2026-05-23 07:08:02.701 -05:00 [INF]   FIX #11: Invoices 
+line item stats: 0/0 entities have line items, 0 total line items exported
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:9295:2026-05-23 07:08:02.701 -05:00 [INF]   ✓ Exported 0 
+Invoices records (Active: 0, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:9299:2026-05-23 07:08:02.754 -05:00 [INF]   FIX #11: Bills line 
+item stats: 0/0 entities have line items, 0 total line items exported
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:9300:2026-05-23 07:08:02.754 -05:00 [INF]   ✓ Exported 0 Bills 
+records (Active: 0, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:9303:2026-05-23 07:08:02.802 -05:00 [INF]   ✓ Exported 0 
+Payments records (Active: 0, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:9307:2026-05-23 07:08:03.024 -05:00 [INF]   FIX #11: 
+JournalEntries line item stats: 58/58 entities have line items, 133 total line items exported
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:9308:2026-05-23 07:08:03.026 -05:00 [INF]   ✓ Exported 58 
+JournalEntries records (Active: 58, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:9312:2026-05-23 07:08:03.224 -05:00 [INF]   FIX #11: 
+SalesReceipts line item stats: 30/30 entities have line items, 107 total line items exported
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:9313:2026-05-23 07:08:03.225 -05:00 [INF]   ✓ Exported 30 
+SalesReceipts records (Active: 30, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:9317:2026-05-23 07:08:03.278 -05:00 [INF]   FIX #11: 
+PurchaseOrders line item stats: 0/0 entities have line items, 0 total line items exported
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:9318:2026-05-23 07:08:03.278 -05:00 [INF]   ✓ Exported 0 
+PurchaseOrders records (Active: 0, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:9322:2026-05-23 07:08:03.332 -05:00 [INF]   FIX #11: 
+CreditMemos line item stats: 0/0 entities have line items, 0 total line items exported
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:9323:2026-05-23 07:08:03.332 -05:00 [INF]   ✓ Exported 0 
+CreditMemos records (Active: 0, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:9327:2026-05-23 07:08:03.381 -05:00 [INF]   FIX #11: Estimates 
+line item stats: 0/0 entities have line items, 0 total line items exported
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:9328:2026-05-23 07:08:03.382 -05:00 [INF]   ✓ Exported 0 
+Estimates records (Active: 0, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:9332:2026-05-23 07:08:04.385 -05:00 [INF]   FIX #11: Deposits 
+line item stats: 225/225 entities have line items, 232 total line items exported
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:9333:2026-05-23 07:08:04.387 -05:00 [INF]   ✓ Exported 225 
+Deposits records (Active: 225, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:9337:2026-05-23 07:08:12.165 -05:00 [INF]   FIX #11: Checks 
+line item stats: 1154/1154 entities have line items, 1708 total line items exported
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:9338:2026-05-23 07:08:12.187 -05:00 [INF]   ✓ Exported 1154 
+Checks records (Active: 1154, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:9342:2026-05-23 07:08:12.242 -05:00 [INF]   FIX #11: 
+VendorCredits line item stats: 0/0 entities have line items, 0 total line items exported
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:9343:2026-05-23 07:08:12.242 -05:00 [INF]   ✓ Exported 0 
+VendorCredits records (Active: 0, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:9346:2026-05-23 07:08:12.304 -05:00 [INF]   ✓ Exported 0 
+InventoryAdjustments records (Active: 0, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:9349:2026-05-23 07:08:12.683 -05:00 [INF]   ✓ Exported 156 
+Transfers records (Active: 156, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:9352:2026-05-23 07:08:12.736 -05:00 [INF]   ✓ Exported 1 
+Preferences records (Active: 1, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:9355:2026-05-23 07:08:12.798 -05:00 [INF]   ✓ Exported 1 
+CompanyInfo records (Active: 1, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:9356:2026-05-23 07:08:12.810 -05:00 [INF] Export manifest saved 
+to: C:\QB-TimeWarp\ExportedData\_ExportManifest.json
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:9366:2026-05-23 07:08:12.816 -05:00 [INF]   EXPORT COMPLETE: 
+2080 total records across 31 entity types
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:9383:2026-05-23 07:08:14.372 -05:00 [INF]   STARTING DATA 
+TRANSFORMATION
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:11125:2026-05-23 07:08:15.160 -05:00 [INF] Transformed data 
+saved to: C:\QB-TimeWarp\ExportedData\Transformed
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:11126:2026-05-23 07:08:15.160 -05:00 [INF] Pre-import 
+validation skipped — QB 2021 not opened during export phase (strict workflow enforcement).
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:11170:2026-05-23 07:08:32.564 -05:00 [INF]   │  Phase 0b: 
+Pre-Import Dependency Analysis     │
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:11173:2026-05-23 07:08:32.565 -05:00 [INF]   DEPENDENCY 
+ANALYSIS — Scanning exported data
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:11200:2026-05-23 07:08:32.572 -05:00 [INF]   │  Phase 0c: 
+Create Missing Reference Types (FIX #4)    │
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:13092:      <Desc>STARTING JAN 1.64</Desc>
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:13098:      <Desc>Starting JAN NEW RATE FOR SALES TAX MILW CO 
+5.5 TO 5.9 PLUS EXPO .5 THEREFORE, NEW RATE TOTAL 6.4</Desc>
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:13139:      <Desc>STARTING JAN 1.64</Desc>
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:13145:      <Desc>Starting JAN NEW RATE FOR SALES TAX MILW CO 
+5.5 TO 5.9 PLUS EXPO .5 THEREFORE, NEW RATE TOTAL 6.4</Desc>
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:13192:      <Desc>STARTING JAN 1.64</Desc>
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:13198:      <Desc>Starting JAN NEW RATE FOR SALES TAX MILW CO 
+5.5 TO 5.9 PLUS EXPO .5 THEREFORE, NEW RATE TOTAL 6.4</Desc>
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:13248:      <Desc>STARTING JAN 1.64</Desc>
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:13254:      <Desc>Starting JAN NEW RATE FOR SALES TAX MILW CO 
+5.5 TO 5.9 PLUS EXPO .5 THEREFORE, NEW RATE TOTAL 6.4</Desc>
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:13304:      <Desc>STARTING JAN 1.64</Desc>
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:13310:      <Desc>Starting JAN NEW RATE FOR SALES TAX MILW CO 
+5.5 TO 5.9 PLUS EXPO .5 THEREFORE, NEW RATE TOTAL 6.4</Desc>
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:13359:      <Desc>STARTING JAN 1.64</Desc>
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:13365:      <Desc>Starting JAN NEW RATE FOR SALES TAX MILW CO 
+5.5 TO 5.9 PLUS EXPO .5 THEREFORE, NEW RATE TOTAL 6.4</Desc>
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:13414:      <Desc>STARTING JAN 1.64</Desc>
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:13420:      <Desc>Starting JAN NEW RATE FOR SALES TAX MILW CO 
+5.5 TO 5.9 PLUS EXPO .5 THEREFORE, NEW RATE TOTAL 6.4</Desc>
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:13469:      <Desc>STARTING JAN 1.64</Desc>
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:13475:      <Desc>Starting JAN NEW RATE FOR SALES TAX MILW CO 
+5.5 TO 5.9 PLUS EXPO .5 THEREFORE, NEW RATE TOTAL 6.4</Desc>
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:13524:      <Desc>STARTING JAN 1.64</Desc>
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:13530:      <Desc>Starting JAN NEW RATE FOR SALES TAX MILW CO 
+5.5 TO 5.9 PLUS EXPO .5 THEREFORE, NEW RATE TOTAL 6.4</Desc>
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:13579:      <Desc>STARTING JAN 1.64</Desc>
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:13585:      <Desc>Starting JAN NEW RATE FOR SALES TAX MILW CO 
+5.5 TO 5.9 PLUS EXPO .5 THEREFORE, NEW RATE TOTAL 6.4</Desc>
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:13634:      <Desc>STARTING JAN 1.64</Desc>
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:13640:      <Desc>Starting JAN NEW RATE FOR SALES TAX MILW CO 
+5.5 TO 5.9 PLUS EXPO .5 THEREFORE, NEW RATE TOTAL 6.4</Desc>
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:13704:      <Desc>STARTING JAN 1.64</Desc>
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:13710:      <Desc>Starting JAN NEW RATE FOR SALES TAX MILW CO 
+5.5 TO 5.9 PLUS EXPO .5 THEREFORE, NEW RATE TOTAL 6.4</Desc>
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:13759:      <Desc>STARTING JAN 1.64</Desc>
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:13765:      <Desc>Starting JAN NEW RATE FOR SALES TAX MILW CO 
+5.5 TO 5.9 PLUS EXPO .5 THEREFORE, NEW RATE TOTAL 6.4</Desc>
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:13814:      <Desc>STARTING JAN 1.64</Desc>
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:13820:      <Desc>Starting JAN NEW RATE FOR SALES TAX MILW CO 
+5.5 TO 5.9 PLUS EXPO .5 THEREFORE, NEW RATE TOTAL 6.4</Desc>
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:16505:2026-05-23 07:11:29.068 -05:00 [INF] ║  STAGED IMPORT 
+COMPLETE                               ║
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:16521:2026-05-23 07:11:44.869 -05:00 [INF]   STARTING DATA 
+EXPORT FROM QUICKBOOKS 2023
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:16526:2026-05-23 07:11:45.087 -05:00 [INF]   ✓ Exported 144 
+Accounts records (Active: 144, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:16529:2026-05-23 07:11:45.175 -05:00 [INF]   ✓ Exported 2 
+Customers records (Active: 2, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:16532:2026-05-23 07:11:46.790 -05:00 [INF]   ✓ Exported 249 
+Vendors records (Active: 249, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:16535:2026-05-23 07:11:46.955 -05:00 [INF]   ✓ Exported 22 
+Employees records (Active: 22, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:16538:2026-05-23 07:11:47.020 -05:00 [INF]   ✓ Exported 0 Items 
+records (Active: 0, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:16541:2026-05-23 07:11:47.084 -05:00 [INF]   ✓ Exported 9 
+PaymentMethods records (Active: 9, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:16544:2026-05-23 07:11:47.140 -05:00 [INF]   ✓ Exported 7 Terms 
+records (Active: 7, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:16547:2026-05-23 07:11:47.196 -05:00 [INF]   ✓ Exported 5 
+Classes records (Active: 5, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:16550:2026-05-23 07:11:47.245 -05:00 [INF]   ✓ Exported 3 
+SalesTaxCodes records (Active: 3, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:16553:2026-05-23 07:11:47.298 -05:00 [INF]   ✓ Exported 7 
+ItemSalesTax records (Active: 7, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:16556:2026-05-23 07:11:47.354 -05:00 [INF]   ✓ Exported 4 
+ShipMethods records (Active: 4, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:16559:2026-05-23 07:11:47.416 -05:00 [INF]   ✓ Exported 4 
+CustomerTypes records (Active: 4, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:16562:2026-05-23 07:11:47.468 -05:00 [INF]   ✓ Exported 5 
+VendorTypes records (Active: 5, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:16565:2026-05-23 07:11:47.531 -05:00 [INF]   ✓ Exported 2 
+JobTypes records (Active: 2, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:16568:2026-05-23 07:11:47.585 -05:00 [INF]   ✓ Exported 0 
+PriceLevels records (Active: 0, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:16571:2026-05-23 07:11:47.644 -05:00 [INF]   ✓ Exported 5 
+CustomerMsgs records (Active: 5, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:16575:2026-05-23 07:11:47.701 -05:00 [INF]   FIX #11: Invoices 
+line item stats: 0/0 entities have line items, 0 total line items exported
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:16576:2026-05-23 07:11:47.701 -05:00 [INF]   ✓ Exported 0 
+Invoices records (Active: 0, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:16580:2026-05-23 07:11:47.754 -05:00 [INF]   FIX #11: Bills 
+line item stats: 0/0 entities have line items, 0 total line items exported
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:16581:2026-05-23 07:11:47.755 -05:00 [INF]   ✓ Exported 0 Bills 
+records (Active: 0, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:16584:2026-05-23 07:11:47.815 -05:00 [INF]   ✓ Exported 0 
+Payments records (Active: 0, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:16588:2026-05-23 07:11:48.191 -05:00 [INF]   FIX #11: 
+JournalEntries line item stats: 116/116 entities have line items, 266 total line items exported
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:16589:2026-05-23 07:11:48.194 -05:00 [INF]   ✓ Exported 116 
+JournalEntries records (Active: 116, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:16593:2026-05-23 07:11:48.253 -05:00 [INF]   FIX #11: 
+SalesReceipts line item stats: 0/0 entities have line items, 0 total line items exported
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:16594:2026-05-23 07:11:48.254 -05:00 [INF]   ✓ Exported 0 
+SalesReceipts records (Active: 0, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:16598:2026-05-23 07:11:48.316 -05:00 [INF]   FIX #11: 
+PurchaseOrders line item stats: 0/0 entities have line items, 0 total line items exported
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:16599:2026-05-23 07:11:48.316 -05:00 [INF]   ✓ Exported 0 
+PurchaseOrders records (Active: 0, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:16603:2026-05-23 07:11:48.371 -05:00 [INF]   FIX #11: 
+CreditMemos line item stats: 0/0 entities have line items, 0 total line items exported
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:16604:2026-05-23 07:11:48.371 -05:00 [INF]   ✓ Exported 0 
+CreditMemos records (Active: 0, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:16608:2026-05-23 07:11:48.427 -05:00 [INF]   FIX #11: Estimates 
+line item stats: 0/0 entities have line items, 0 total line items exported
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:16609:2026-05-23 07:11:48.427 -05:00 [INF]   ✓ Exported 0 
+Estimates records (Active: 0, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:16613:2026-05-23 07:11:50.300 -05:00 [INF]   FIX #11: Deposits 
+line item stats: 444/444 entities have line items, 448 total line items exported
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:16614:2026-05-23 07:11:50.303 -05:00 [INF]   ✓ Exported 444 
+Deposits records (Active: 444, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:16618:2026-05-23 07:12:05.701 -05:00 [INF]   FIX #11: Checks 
+line item stats: 2308/2308 entities have line items, 3416 total line items exported
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:16619:2026-05-23 07:12:05.732 -05:00 [INF]   ✓ Exported 2308 
+Checks records (Active: 2308, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:16623:2026-05-23 07:12:05.785 -05:00 [INF]   FIX #11: 
+VendorCredits line item stats: 0/0 entities have line items, 0 total line items exported
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:16624:2026-05-23 07:12:05.786 -05:00 [INF]   ✓ Exported 0 
+VendorCredits records (Active: 0, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:16627:2026-05-23 07:12:05.846 -05:00 [INF]   ✓ Exported 0 
+InventoryAdjustments records (Active: 0, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:16630:2026-05-23 07:12:06.481 -05:00 [INF]   ✓ Exported 312 
+Transfers records (Active: 312, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:16633:2026-05-23 07:12:06.540 -05:00 [INF]   ✓ Exported 1 
+Preferences records (Active: 1, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:16636:2026-05-23 07:12:06.592 -05:00 [INF]   ✓ Exported 1 
+CompanyInfo records (Active: 1, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:16637:2026-05-23 07:12:06.593 -05:00 [INF] Export manifest 
+saved to: C:\QB-TimeWarp\ExportedData\QB2021_PostImport\_ExportManifest.json
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:16640:2026-05-23 07:12:06.593 -05:00 [INF]   EXPORT COMPLETE: 
+3650 total records across 31 entity types
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:16647:2026-05-23 07:12:11.054 -05:00 [INF]   STARTING DATA 
+VALIDATION
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:16693:2026-05-23 07:26:58.998 -05:00 [INF] QB-TimeWarp 
+starting...
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:16715:2026-05-23 07:27:15.264 -05:00 [INF]   STARTING DATA 
+EXPORT FROM QUICKBOOKS 2023
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:16720:2026-05-23 07:27:15.526 -05:00 [INF]   ✓ Exported 142 
+Accounts records (Active: 96, Inactive: 46)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:16723:2026-05-23 07:27:15.615 -05:00 [INF]   ✓ Exported 2 
+Customers records (Active: 2, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:16726:2026-05-23 07:27:17.378 -05:00 [INF]   ✓ Exported 249 
+Vendors records (Active: 186, Inactive: 63)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:16729:2026-05-23 07:27:17.682 -05:00 [INF]   ✓ Exported 32 
+Employees records (Active: 4, Inactive: 28)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:16732:2026-05-23 07:27:17.756 -05:00 [INF]   ✓ Exported 0 Items 
+records (Active: 0, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:16735:2026-05-23 07:27:17.820 -05:00 [INF]   ✓ Exported 7 
+PaymentMethods records (Active: 7, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:16738:2026-05-23 07:27:17.884 -05:00 [INF]   ✓ Exported 6 Terms 
+records (Active: 6, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:16741:2026-05-23 07:27:17.944 -05:00 [INF]   ✓ Exported 5 
+Classes records (Active: 5, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:16744:2026-05-23 07:27:18.011 -05:00 [INF]   ✓ Exported 3 
+SalesTaxCodes records (Active: 3, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:16747:2026-05-23 07:27:18.080 -05:00 [INF]   ✓ Exported 6 
+ItemSalesTax records (Active: 6, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:16750:2026-05-23 07:27:18.153 -05:00 [INF]   ✓ Exported 0 
+ShipMethods records (Active: 0, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:16753:2026-05-23 07:27:18.214 -05:00 [INF]   ✓ Exported 0 
+CustomerTypes records (Active: 0, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:16756:2026-05-23 07:27:18.283 -05:00 [INF]   ✓ Exported 3 
+VendorTypes records (Active: 3, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:16759:2026-05-23 07:27:18.346 -05:00 [INF]   ✓ Exported 0 
+JobTypes records (Active: 0, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:16762:2026-05-23 07:27:18.408 -05:00 [INF]   ✓ Exported 0 
+PriceLevels records (Active: 0, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:16765:2026-05-23 07:27:18.464 -05:00 [INF]   ✓ Exported 0 
+CustomerMsgs records (Active: 0, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:16769:2026-05-23 07:27:18.535 -05:00 [INF]   FIX #11: Invoices 
+line item stats: 0/0 entities have line items, 0 total line items exported
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:16770:2026-05-23 07:27:18.542 -05:00 [INF]   ✓ Exported 0 
+Invoices records (Active: 0, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:16774:2026-05-23 07:27:18.609 -05:00 [INF]   FIX #11: Bills 
+line item stats: 0/0 entities have line items, 0 total line items exported
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:16775:2026-05-23 07:27:18.615 -05:00 [INF]   ✓ Exported 0 Bills 
+records (Active: 0, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:16778:2026-05-23 07:27:18.686 -05:00 [INF]   ✓ Exported 0 
+Payments records (Active: 0, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:16782:2026-05-23 07:27:18.915 -05:00 [INF]   FIX #11: 
+JournalEntries line item stats: 58/58 entities have line items, 133 total line items exported
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:16783:2026-05-23 07:27:18.921 -05:00 [INF]   ✓ Exported 58 
+JournalEntries records (Active: 58, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:16787:2026-05-23 07:27:19.145 -05:00 [INF]   FIX #11: 
+SalesReceipts line item stats: 30/30 entities have line items, 107 total line items exported
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:16788:2026-05-23 07:27:19.151 -05:00 [INF]   ✓ Exported 30 
+SalesReceipts records (Active: 30, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:16792:2026-05-23 07:27:19.217 -05:00 [INF]   FIX #11: 
+PurchaseOrders line item stats: 0/0 entities have line items, 0 total line items exported
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:16793:2026-05-23 07:27:19.222 -05:00 [INF]   ✓ Exported 0 
+PurchaseOrders records (Active: 0, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:16797:2026-05-23 07:27:19.284 -05:00 [INF]   FIX #11: 
+CreditMemos line item stats: 0/0 entities have line items, 0 total line items exported
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:16798:2026-05-23 07:27:19.289 -05:00 [INF]   ✓ Exported 0 
+CreditMemos records (Active: 0, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:16802:2026-05-23 07:27:19.353 -05:00 [INF]   FIX #11: Estimates 
+line item stats: 0/0 entities have line items, 0 total line items exported
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:16803:2026-05-23 07:27:19.359 -05:00 [INF]   ✓ Exported 0 
+Estimates records (Active: 0, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:16807:2026-05-23 07:27:20.393 -05:00 [INF]   FIX #11: Deposits 
+line item stats: 225/225 entities have line items, 232 total line items exported
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:16808:2026-05-23 07:27:20.399 -05:00 [INF]   ✓ Exported 225 
+Deposits records (Active: 225, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:16812:2026-05-23 07:27:28.343 -05:00 [INF]   FIX #11: Checks 
+line item stats: 1154/1154 entities have line items, 1708 total line items exported
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:16813:2026-05-23 07:27:28.371 -05:00 [INF]   ✓ Exported 1154 
+Checks records (Active: 1154, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:16817:2026-05-23 07:27:28.441 -05:00 [INF]   FIX #11: 
+VendorCredits line item stats: 0/0 entities have line items, 0 total line items exported
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:16818:2026-05-23 07:27:28.447 -05:00 [INF]   ✓ Exported 0 
+VendorCredits records (Active: 0, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:16821:2026-05-23 07:27:28.510 -05:00 [INF]   ✓ Exported 0 
+InventoryAdjustments records (Active: 0, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:16824:2026-05-23 07:27:28.847 -05:00 [INF]   ✓ Exported 156 
+Transfers records (Active: 156, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:16827:2026-05-23 07:27:28.909 -05:00 [INF]   ✓ Exported 1 
+Preferences records (Active: 1, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:16830:2026-05-23 07:27:28.965 -05:00 [INF]   ✓ Exported 1 
+CompanyInfo records (Active: 1, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:16831:2026-05-23 07:27:28.979 -05:00 [INF] Export manifest 
+saved to: C:\QB-TimeWarp\ExportedData\_ExportManifest.json
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:16841:2026-05-23 07:27:29.019 -05:00 [INF]   EXPORT COMPLETE: 
+2080 total records across 31 entity types
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:16858:2026-05-23 07:27:30.504 -05:00 [INF]   STARTING DATA 
+TRANSFORMATION
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:18600:2026-05-23 07:27:36.830 -05:00 [INF] Transformed data 
+saved to: C:\QB-TimeWarp\ExportedData\Transformed
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:18601:2026-05-23 07:27:36.833 -05:00 [INF] Pre-import 
+validation skipped — QB 2021 not opened during export phase (strict workflow enforcement).
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:18651:2026-05-23 07:27:55.040 -05:00 [INF]   │  Phase 0b: 
+Pre-Import Dependency Analysis     │
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:18654:2026-05-23 07:27:55.048 -05:00 [INF]   DEPENDENCY 
+ANALYSIS — Scanning exported data
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:18681:2026-05-23 07:27:55.116 -05:00 [INF]   │  Phase 0c: 
+Create Missing Reference Types (FIX #4)    │
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:19762:      <Desc>STARTING JAN 1.64</Desc>
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:19768:      <Desc>Starting JAN NEW RATE FOR SALES TAX MILW CO 
+5.5 TO 5.9 PLUS EXPO .5 THEREFORE, NEW RATE TOTAL 6.4</Desc>
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:19809:      <Desc>STARTING JAN 1.64</Desc>
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:19815:      <Desc>Starting JAN NEW RATE FOR SALES TAX MILW CO 
+5.5 TO 5.9 PLUS EXPO .5 THEREFORE, NEW RATE TOTAL 6.4</Desc>
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:19862:      <Desc>STARTING JAN 1.64</Desc>
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:19868:      <Desc>Starting JAN NEW RATE FOR SALES TAX MILW CO 
+5.5 TO 5.9 PLUS EXPO .5 THEREFORE, NEW RATE TOTAL 6.4</Desc>
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:19918:      <Desc>STARTING JAN 1.64</Desc>
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:19924:      <Desc>Starting JAN NEW RATE FOR SALES TAX MILW CO 
+5.5 TO 5.9 PLUS EXPO .5 THEREFORE, NEW RATE TOTAL 6.4</Desc>
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:19974:      <Desc>STARTING JAN 1.64</Desc>
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:19980:      <Desc>Starting JAN NEW RATE FOR SALES TAX MILW CO 
+5.5 TO 5.9 PLUS EXPO .5 THEREFORE, NEW RATE TOTAL 6.4</Desc>
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:20029:      <Desc>STARTING JAN 1.64</Desc>
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:20035:      <Desc>Starting JAN NEW RATE FOR SALES TAX MILW CO 
+5.5 TO 5.9 PLUS EXPO .5 THEREFORE, NEW RATE TOTAL 6.4</Desc>
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:20084:      <Desc>STARTING JAN 1.64</Desc>
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:20090:      <Desc>Starting JAN NEW RATE FOR SALES TAX MILW CO 
+5.5 TO 5.9 PLUS EXPO .5 THEREFORE, NEW RATE TOTAL 6.4</Desc>
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:20139:      <Desc>STARTING JAN 1.64</Desc>
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:20145:      <Desc>Starting JAN NEW RATE FOR SALES TAX MILW CO 
+5.5 TO 5.9 PLUS EXPO .5 THEREFORE, NEW RATE TOTAL 6.4</Desc>
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:20194:      <Desc>STARTING JAN 1.64</Desc>
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:20200:      <Desc>Starting JAN NEW RATE FOR SALES TAX MILW CO 
+5.5 TO 5.9 PLUS EXPO .5 THEREFORE, NEW RATE TOTAL 6.4</Desc>
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:20249:      <Desc>STARTING JAN 1.64</Desc>
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:20255:      <Desc>Starting JAN NEW RATE FOR SALES TAX MILW CO 
+5.5 TO 5.9 PLUS EXPO .5 THEREFORE, NEW RATE TOTAL 6.4</Desc>
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:20304:      <Desc>STARTING JAN 1.64</Desc>
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:20310:      <Desc>Starting JAN NEW RATE FOR SALES TAX MILW CO 
+5.5 TO 5.9 PLUS EXPO .5 THEREFORE, NEW RATE TOTAL 6.4</Desc>
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:20374:      <Desc>STARTING JAN 1.64</Desc>
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:20380:      <Desc>Starting JAN NEW RATE FOR SALES TAX MILW CO 
+5.5 TO 5.9 PLUS EXPO .5 THEREFORE, NEW RATE TOTAL 6.4</Desc>
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:20429:      <Desc>STARTING JAN 1.64</Desc>
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:20435:      <Desc>Starting JAN NEW RATE FOR SALES TAX MILW CO 
+5.5 TO 5.9 PLUS EXPO .5 THEREFORE, NEW RATE TOTAL 6.4</Desc>
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:20484:      <Desc>STARTING JAN 1.64</Desc>
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:20490:      <Desc>Starting JAN NEW RATE FOR SALES TAX MILW CO 
+5.5 TO 5.9 PLUS EXPO .5 THEREFORE, NEW RATE TOTAL 6.4</Desc>
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:23175:2026-05-23 07:30:44.946 -05:00 [INF] ║  STAGED IMPORT 
+COMPLETE                               ║
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:23191:2026-05-23 07:31:00.573 -05:00 [INF]   STARTING DATA 
+EXPORT FROM QUICKBOOKS 2023
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:23196:2026-05-23 07:31:00.794 -05:00 [INF]   ✓ Exported 144 
+Accounts records (Active: 144, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:23199:2026-05-23 07:31:00.876 -05:00 [INF]   ✓ Exported 2 
+Customers records (Active: 2, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:23202:2026-05-23 07:31:02.490 -05:00 [INF]   ✓ Exported 249 
+Vendors records (Active: 249, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:23205:2026-05-23 07:31:02.661 -05:00 [INF]   ✓ Exported 22 
+Employees records (Active: 22, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:23208:2026-05-23 07:31:02.725 -05:00 [INF]   ✓ Exported 0 Items 
+records (Active: 0, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:23211:2026-05-23 07:31:02.789 -05:00 [INF]   ✓ Exported 9 
+PaymentMethods records (Active: 9, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:23214:2026-05-23 07:31:02.856 -05:00 [INF]   ✓ Exported 7 Terms 
+records (Active: 7, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:23217:2026-05-23 07:31:02.918 -05:00 [INF]   ✓ Exported 5 
+Classes records (Active: 5, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:23220:2026-05-23 07:31:02.976 -05:00 [INF]   ✓ Exported 3 
+SalesTaxCodes records (Active: 3, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:23223:2026-05-23 07:31:03.047 -05:00 [INF]   ✓ Exported 1 
+ItemSalesTax records (Active: 1, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:23226:2026-05-23 07:31:03.110 -05:00 [INF]   ✓ Exported 4 
+ShipMethods records (Active: 4, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:23229:2026-05-23 07:31:03.172 -05:00 [INF]   ✓ Exported 4 
+CustomerTypes records (Active: 4, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:23232:2026-05-23 07:31:03.236 -05:00 [INF]   ✓ Exported 5 
+VendorTypes records (Active: 5, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:23235:2026-05-23 07:31:03.299 -05:00 [INF]   ✓ Exported 2 
+JobTypes records (Active: 2, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:23238:2026-05-23 07:31:03.363 -05:00 [INF]   ✓ Exported 0 
+PriceLevels records (Active: 0, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:23241:2026-05-23 07:31:03.427 -05:00 [INF]   ✓ Exported 5 
+CustomerMsgs records (Active: 5, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:23245:2026-05-23 07:31:03.496 -05:00 [INF]   FIX #11: Invoices 
+line item stats: 0/0 entities have line items, 0 total line items exported
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:23246:2026-05-23 07:31:03.501 -05:00 [INF]   ✓ Exported 0 
+Invoices records (Active: 0, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:23250:2026-05-23 07:31:03.566 -05:00 [INF]   FIX #11: Bills 
+line item stats: 0/0 entities have line items, 0 total line items exported
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:23251:2026-05-23 07:31:03.572 -05:00 [INF]   ✓ Exported 0 Bills 
+records (Active: 0, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:23254:2026-05-23 07:31:03.636 -05:00 [INF]   ✓ Exported 0 
+Payments records (Active: 0, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:23258:2026-05-23 07:31:03.876 -05:00 [INF]   FIX #11: 
+JournalEntries line item stats: 58/58 entities have line items, 133 total line items exported
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:23259:2026-05-23 07:31:03.881 -05:00 [INF]   ✓ Exported 58 
+JournalEntries records (Active: 58, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:23263:2026-05-23 07:31:03.946 -05:00 [INF]   FIX #11: 
+SalesReceipts line item stats: 0/0 entities have line items, 0 total line items exported
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:23264:2026-05-23 07:31:03.953 -05:00 [INF]   ✓ Exported 0 
+SalesReceipts records (Active: 0, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:23268:2026-05-23 07:31:04.035 -05:00 [INF]   FIX #11: 
+PurchaseOrders line item stats: 0/0 entities have line items, 0 total line items exported
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:23269:2026-05-23 07:31:04.042 -05:00 [INF]   ✓ Exported 0 
+PurchaseOrders records (Active: 0, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:23273:2026-05-23 07:31:04.111 -05:00 [INF]   FIX #11: 
+CreditMemos line item stats: 0/0 entities have line items, 0 total line items exported
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:23274:2026-05-23 07:31:04.120 -05:00 [INF]   ✓ Exported 0 
+CreditMemos records (Active: 0, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:23278:2026-05-23 07:31:04.191 -05:00 [INF]   FIX #11: Estimates 
+line item stats: 0/0 entities have line items, 0 total line items exported
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:23279:2026-05-23 07:31:04.196 -05:00 [INF]   ✓ Exported 0 
+Estimates records (Active: 0, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:23283:2026-05-23 07:31:05.239 -05:00 [INF]   FIX #11: Deposits 
+line item stats: 222/222 entities have line items, 224 total line items exported
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:23284:2026-05-23 07:31:05.246 -05:00 [INF]   ✓ Exported 222 
+Deposits records (Active: 222, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:23288:2026-05-23 07:31:12.945 -05:00 [INF]   FIX #11: Checks 
+line item stats: 1154/1154 entities have line items, 1708 total line items exported
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:23289:2026-05-23 07:31:12.959 -05:00 [INF]   ✓ Exported 1154 
+Checks records (Active: 1154, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:23293:2026-05-23 07:31:13.031 -05:00 [INF]   FIX #11: 
+VendorCredits line item stats: 0/0 entities have line items, 0 total line items exported
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:23294:2026-05-23 07:31:13.037 -05:00 [INF]   ✓ Exported 0 
+VendorCredits records (Active: 0, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:23297:2026-05-23 07:31:13.099 -05:00 [INF]   ✓ Exported 0 
+InventoryAdjustments records (Active: 0, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:23300:2026-05-23 07:31:13.450 -05:00 [INF]   ✓ Exported 156 
+Transfers records (Active: 156, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:23303:2026-05-23 07:31:13.511 -05:00 [INF]   ✓ Exported 1 
+Preferences records (Active: 1, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:23306:2026-05-23 07:31:13.569 -05:00 [INF]   ✓ Exported 1 
+CompanyInfo records (Active: 1, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:23307:2026-05-23 07:31:13.575 -05:00 [INF] Export manifest 
+saved to: C:\QB-TimeWarp\ExportedData\QB2021_PostImport\_ExportManifest.json
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:23310:2026-05-23 07:31:13.582 -05:00 [INF]   EXPORT COMPLETE: 
+2054 total records across 31 entity types
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:23317:2026-05-23 07:31:17.942 -05:00 [INF]   STARTING DATA 
+VALIDATION
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:23363:2026-05-23 07:56:36.330 -05:00 [INF] QB-TimeWarp 
+starting...
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:23385:2026-05-23 07:56:52.540 -05:00 [INF]   STARTING DATA 
+EXPORT FROM QUICKBOOKS 2023
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:23390:2026-05-23 07:56:52.803 -05:00 [INF]   ✓ Exported 142 
+Accounts records (Active: 96, Inactive: 46)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:23393:2026-05-23 07:56:52.879 -05:00 [INF]   ✓ Exported 2 
+Customers records (Active: 2, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:23396:2026-05-23 07:56:54.565 -05:00 [INF]   ✓ Exported 249 
+Vendors records (Active: 186, Inactive: 63)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:23399:2026-05-23 07:56:54.840 -05:00 [INF]   ✓ Exported 32 
+Employees records (Active: 4, Inactive: 28)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:23402:2026-05-23 07:56:54.898 -05:00 [INF]   ✓ Exported 0 Items 
+records (Active: 0, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:23405:2026-05-23 07:56:54.948 -05:00 [INF]   ✓ Exported 7 
+PaymentMethods records (Active: 7, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:23408:2026-05-23 07:56:54.998 -05:00 [INF]   ✓ Exported 6 Terms 
+records (Active: 6, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:23411:2026-05-23 07:56:55.053 -05:00 [INF]   ✓ Exported 5 
+Classes records (Active: 5, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:23414:2026-05-23 07:56:55.100 -05:00 [INF]   ✓ Exported 3 
+SalesTaxCodes records (Active: 3, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:23417:2026-05-23 07:56:55.151 -05:00 [INF]   ✓ Exported 6 
+ItemSalesTax records (Active: 6, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:23420:2026-05-23 07:56:55.198 -05:00 [INF]   ✓ Exported 0 
+ShipMethods records (Active: 0, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:23423:2026-05-23 07:56:55.246 -05:00 [INF]   ✓ Exported 0 
+CustomerTypes records (Active: 0, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:23426:2026-05-23 07:56:55.294 -05:00 [INF]   ✓ Exported 3 
+VendorTypes records (Active: 3, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:23429:2026-05-23 07:56:55.345 -05:00 [INF]   ✓ Exported 0 
+JobTypes records (Active: 0, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:23432:2026-05-23 07:56:55.391 -05:00 [INF]   ✓ Exported 0 
+PriceLevels records (Active: 0, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:23435:2026-05-23 07:56:55.444 -05:00 [INF]   ✓ Exported 0 
+CustomerMsgs records (Active: 0, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:23439:2026-05-23 07:56:55.496 -05:00 [INF]   FIX #11: Invoices 
+line item stats: 0/0 entities have line items, 0 total line items exported
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:23440:2026-05-23 07:56:55.497 -05:00 [INF]   ✓ Exported 0 
+Invoices records (Active: 0, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:23444:2026-05-23 07:56:55.547 -05:00 [INF]   FIX #11: Bills 
+line item stats: 0/0 entities have line items, 0 total line items exported
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:23445:2026-05-23 07:56:55.548 -05:00 [INF]   ✓ Exported 0 Bills 
+records (Active: 0, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:23448:2026-05-23 07:56:55.600 -05:00 [INF]   ✓ Exported 0 
+Payments records (Active: 0, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:23452:2026-05-23 07:56:55.825 -05:00 [INF]   FIX #11: 
+JournalEntries line item stats: 58/58 entities have line items, 133 total line items exported
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:23453:2026-05-23 07:56:55.826 -05:00 [INF]   ✓ Exported 58 
+JournalEntries records (Active: 58, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:23457:2026-05-23 07:56:56.020 -05:00 [INF]   FIX #11: 
+SalesReceipts line item stats: 30/30 entities have line items, 107 total line items exported
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:23458:2026-05-23 07:56:56.021 -05:00 [INF]   ✓ Exported 30 
+SalesReceipts records (Active: 30, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:23462:2026-05-23 07:56:56.080 -05:00 [INF]   FIX #11: 
+PurchaseOrders line item stats: 0/0 entities have line items, 0 total line items exported
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:23463:2026-05-23 07:56:56.081 -05:00 [INF]   ✓ Exported 0 
+PurchaseOrders records (Active: 0, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:23467:2026-05-23 07:56:56.135 -05:00 [INF]   FIX #11: 
+CreditMemos line item stats: 0/0 entities have line items, 0 total line items exported
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:23468:2026-05-23 07:56:56.136 -05:00 [INF]   ✓ Exported 0 
+CreditMemos records (Active: 0, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:23472:2026-05-23 07:56:56.196 -05:00 [INF]   FIX #11: Estimates 
+line item stats: 0/0 entities have line items, 0 total line items exported
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:23473:2026-05-23 07:56:56.197 -05:00 [INF]   ✓ Exported 0 
+Estimates records (Active: 0, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:23477:2026-05-23 07:56:57.267 -05:00 [INF]   FIX #11: Deposits 
+line item stats: 225/225 entities have line items, 232 total line items exported
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:23478:2026-05-23 07:56:57.268 -05:00 [INF]   ✓ Exported 225 
+Deposits records (Active: 225, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:23482:2026-05-23 07:57:05.123 -05:00 [INF]   FIX #11: Checks 
+line item stats: 1154/1154 entities have line items, 1708 total line items exported
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:23483:2026-05-23 07:57:05.146 -05:00 [INF]   ✓ Exported 1154 
+Checks records (Active: 1154, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:23487:2026-05-23 07:57:05.197 -05:00 [INF]   FIX #11: 
+VendorCredits line item stats: 0/0 entities have line items, 0 total line items exported
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:23488:2026-05-23 07:57:05.198 -05:00 [INF]   ✓ Exported 0 
+VendorCredits records (Active: 0, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:23491:2026-05-23 07:57:05.251 -05:00 [INF]   ✓ Exported 0 
+InventoryAdjustments records (Active: 0, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:23494:2026-05-23 07:57:05.589 -05:00 [INF]   ✓ Exported 156 
+Transfers records (Active: 156, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:23497:2026-05-23 07:57:05.651 -05:00 [INF]   ✓ Exported 1 
+Preferences records (Active: 1, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:23500:2026-05-23 07:57:05.708 -05:00 [INF]   ✓ Exported 1 
+CompanyInfo records (Active: 1, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:23501:2026-05-23 07:57:05.720 -05:00 [INF] Export manifest 
+saved to: C:\QB-TimeWarp\ExportedData\_ExportManifest.json
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:23511:2026-05-23 07:57:05.727 -05:00 [INF]   EXPORT COMPLETE: 
+2080 total records across 31 entity types
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:23528:2026-05-23 07:57:07.144 -05:00 [INF]   STARTING DATA 
+TRANSFORMATION
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:25284:2026-05-23 07:57:07.987 -05:00 [INF] Transformed data 
+saved to: C:\QB-TimeWarp\ExportedData\Transformed
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:25285:2026-05-23 07:57:07.987 -05:00 [INF] Pre-import 
+validation skipped — QB 2021 not opened during export phase (strict workflow enforcement).
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:25335:2026-05-23 07:57:26.475 -05:00 [INF]   │  Phase 0b: 
+Pre-Import Dependency Analysis     │
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:25338:2026-05-23 07:57:26.476 -05:00 [INF]   DEPENDENCY 
+ANALYSIS — Scanning exported data
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:25365:2026-05-23 07:57:26.488 -05:00 [INF]   │  Phase 0c: 
+Create Missing Reference Types (FIX #4)    │
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:26241:      <Desc>STARTING JAN 1.64</Desc>
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:26247:      <Desc>Starting JAN NEW RATE FOR SALES TAX MILW CO 
+5.5 TO 5.9 PLUS EXPO .5 THEREFORE, NEW RATE TOTAL 6.4</Desc>
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:26288:      <Desc>STARTING JAN 1.64</Desc>
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:26294:      <Desc>Starting JAN NEW RATE FOR SALES TAX MILW CO 
+5.5 TO 5.9 PLUS EXPO .5 THEREFORE, NEW RATE TOTAL 6.4</Desc>
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:26341:      <Desc>STARTING JAN 1.64</Desc>
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:26347:      <Desc>Starting JAN NEW RATE FOR SALES TAX MILW CO 
+5.5 TO 5.9 PLUS EXPO .5 THEREFORE, NEW RATE TOTAL 6.4</Desc>
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:26397:      <Desc>STARTING JAN 1.64</Desc>
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:26403:      <Desc>Starting JAN NEW RATE FOR SALES TAX MILW CO 
+5.5 TO 5.9 PLUS EXPO .5 THEREFORE, NEW RATE TOTAL 6.4</Desc>
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:26453:      <Desc>STARTING JAN 1.64</Desc>
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:26459:      <Desc>Starting JAN NEW RATE FOR SALES TAX MILW CO 
+5.5 TO 5.9 PLUS EXPO .5 THEREFORE, NEW RATE TOTAL 6.4</Desc>
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:26508:      <Desc>STARTING JAN 1.64</Desc>
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:26514:      <Desc>Starting JAN NEW RATE FOR SALES TAX MILW CO 
+5.5 TO 5.9 PLUS EXPO .5 THEREFORE, NEW RATE TOTAL 6.4</Desc>
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:26563:      <Desc>STARTING JAN 1.64</Desc>
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:26569:      <Desc>Starting JAN NEW RATE FOR SALES TAX MILW CO 
+5.5 TO 5.9 PLUS EXPO .5 THEREFORE, NEW RATE TOTAL 6.4</Desc>
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:26618:      <Desc>STARTING JAN 1.64</Desc>
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:26624:      <Desc>Starting JAN NEW RATE FOR SALES TAX MILW CO 
+5.5 TO 5.9 PLUS EXPO .5 THEREFORE, NEW RATE TOTAL 6.4</Desc>
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:26673:      <Desc>STARTING JAN 1.64</Desc>
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:26679:      <Desc>Starting JAN NEW RATE FOR SALES TAX MILW CO 
+5.5 TO 5.9 PLUS EXPO .5 THEREFORE, NEW RATE TOTAL 6.4</Desc>
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:26728:      <Desc>STARTING JAN 1.64</Desc>
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:26734:      <Desc>Starting JAN NEW RATE FOR SALES TAX MILW CO 
+5.5 TO 5.9 PLUS EXPO .5 THEREFORE, NEW RATE TOTAL 6.4</Desc>
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:26783:      <Desc>STARTING JAN 1.64</Desc>
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:26789:      <Desc>Starting JAN NEW RATE FOR SALES TAX MILW CO 
+5.5 TO 5.9 PLUS EXPO .5 THEREFORE, NEW RATE TOTAL 6.4</Desc>
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:26853:      <Desc>STARTING JAN 1.64</Desc>
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:26859:      <Desc>Starting JAN NEW RATE FOR SALES TAX MILW CO 
+5.5 TO 5.9 PLUS EXPO .5 THEREFORE, NEW RATE TOTAL 6.4</Desc>
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:26908:      <Desc>STARTING JAN 1.64</Desc>
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:26914:      <Desc>Starting JAN NEW RATE FOR SALES TAX MILW CO 
+5.5 TO 5.9 PLUS EXPO .5 THEREFORE, NEW RATE TOTAL 6.4</Desc>
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:26963:      <Desc>STARTING JAN 1.64</Desc>
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:26969:      <Desc>Starting JAN NEW RATE FOR SALES TAX MILW CO 
+5.5 TO 5.9 PLUS EXPO .5 THEREFORE, NEW RATE TOTAL 6.4</Desc>
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:29654:2026-05-23 08:00:07.071 -05:00 [INF] ║  STAGED IMPORT 
+COMPLETE                               ║
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:29670:2026-05-23 08:00:22.545 -05:00 [INF]   STARTING DATA 
+EXPORT FROM QUICKBOOKS 2023
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:29675:2026-05-23 08:00:22.755 -05:00 [INF]   ✓ Exported 144 
+Accounts records (Active: 144, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:29678:2026-05-23 08:00:22.854 -05:00 [INF]   ✓ Exported 2 
+Customers records (Active: 2, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:29681:2026-05-23 08:00:24.475 -05:00 [INF]   ✓ Exported 249 
+Vendors records (Active: 249, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:29684:2026-05-23 08:00:24.631 -05:00 [INF]   ✓ Exported 22 
+Employees records (Active: 22, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:29687:2026-05-23 08:00:24.684 -05:00 [INF]   ✓ Exported 0 Items 
+records (Active: 0, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:29690:2026-05-23 08:00:24.738 -05:00 [INF]   ✓ Exported 9 
+PaymentMethods records (Active: 9, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:29693:2026-05-23 08:00:24.788 -05:00 [INF]   ✓ Exported 7 Terms 
+records (Active: 7, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:29696:2026-05-23 08:00:24.841 -05:00 [INF]   ✓ Exported 5 
+Classes records (Active: 5, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:29699:2026-05-23 08:00:24.893 -05:00 [INF]   ✓ Exported 3 
+SalesTaxCodes records (Active: 3, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:29702:2026-05-23 08:00:24.944 -05:00 [INF]   ✓ Exported 7 
+ItemSalesTax records (Active: 7, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:29705:2026-05-23 08:00:25.001 -05:00 [INF]   ✓ Exported 4 
+ShipMethods records (Active: 4, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:29708:2026-05-23 08:00:25.063 -05:00 [INF]   ✓ Exported 4 
+CustomerTypes records (Active: 4, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:29711:2026-05-23 08:00:25.118 -05:00 [INF]   ✓ Exported 5 
+VendorTypes records (Active: 5, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:29714:2026-05-23 08:00:25.177 -05:00 [INF]   ✓ Exported 2 
+JobTypes records (Active: 2, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:29717:2026-05-23 08:00:25.225 -05:00 [INF]   ✓ Exported 0 
+PriceLevels records (Active: 0, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:29720:2026-05-23 08:00:25.277 -05:00 [INF]   ✓ Exported 5 
+CustomerMsgs records (Active: 5, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:29724:2026-05-23 08:00:25.330 -05:00 [INF]   FIX #11: Invoices 
+line item stats: 0/0 entities have line items, 0 total line items exported
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:29725:2026-05-23 08:00:25.331 -05:00 [INF]   ✓ Exported 0 
+Invoices records (Active: 0, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:29729:2026-05-23 08:00:25.392 -05:00 [INF]   FIX #11: Bills 
+line item stats: 0/0 entities have line items, 0 total line items exported
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:29730:2026-05-23 08:00:25.393 -05:00 [INF]   ✓ Exported 0 Bills 
+records (Active: 0, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:29733:2026-05-23 08:00:25.445 -05:00 [INF]   ✓ Exported 0 
+Payments records (Active: 0, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:29737:2026-05-23 08:00:25.648 -05:00 [INF]   FIX #11: 
+JournalEntries line item stats: 58/58 entities have line items, 133 total line items exported
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:29738:2026-05-23 08:00:25.649 -05:00 [INF]   ✓ Exported 58 
+JournalEntries records (Active: 58, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:29742:2026-05-23 08:00:25.708 -05:00 [INF]   FIX #11: 
+SalesReceipts line item stats: 0/0 entities have line items, 0 total line items exported
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:29743:2026-05-23 08:00:25.709 -05:00 [INF]   ✓ Exported 0 
+SalesReceipts records (Active: 0, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:29747:2026-05-23 08:00:25.764 -05:00 [INF]   FIX #11: 
+PurchaseOrders line item stats: 0/0 entities have line items, 0 total line items exported
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:29748:2026-05-23 08:00:25.764 -05:00 [INF]   ✓ Exported 0 
+PurchaseOrders records (Active: 0, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:29752:2026-05-23 08:00:25.814 -05:00 [INF]   FIX #11: 
+CreditMemos line item stats: 0/0 entities have line items, 0 total line items exported
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:29753:2026-05-23 08:00:25.815 -05:00 [INF]   ✓ Exported 0 
+CreditMemos records (Active: 0, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:29757:2026-05-23 08:00:25.868 -05:00 [INF]   FIX #11: Estimates 
+line item stats: 0/0 entities have line items, 0 total line items exported
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:29758:2026-05-23 08:00:25.869 -05:00 [INF]   ✓ Exported 0 
+Estimates records (Active: 0, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:29762:2026-05-23 08:00:26.877 -05:00 [INF]   FIX #11: Deposits 
+line item stats: 222/222 entities have line items, 224 total line items exported
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:29763:2026-05-23 08:00:26.879 -05:00 [INF]   ✓ Exported 222 
+Deposits records (Active: 222, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:29767:2026-05-23 08:00:34.712 -05:00 [INF]   FIX #11: Checks 
+line item stats: 1154/1154 entities have line items, 1708 total line items exported
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:29768:2026-05-23 08:00:34.739 -05:00 [INF]   ✓ Exported 1154 
+Checks records (Active: 1154, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:29772:2026-05-23 08:00:34.795 -05:00 [INF]   FIX #11: 
+VendorCredits line item stats: 0/0 entities have line items, 0 total line items exported
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:29773:2026-05-23 08:00:34.796 -05:00 [INF]   ✓ Exported 0 
+VendorCredits records (Active: 0, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:29776:2026-05-23 08:00:34.851 -05:00 [INF]   ✓ Exported 0 
+InventoryAdjustments records (Active: 0, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:29779:2026-05-23 08:00:35.206 -05:00 [INF]   ✓ Exported 156 
+Transfers records (Active: 156, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:29782:2026-05-23 08:00:35.264 -05:00 [INF]   ✓ Exported 1 
+Preferences records (Active: 1, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:29785:2026-05-23 08:00:35.315 -05:00 [INF]   ✓ Exported 1 
+CompanyInfo records (Active: 1, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:29786:2026-05-23 08:00:35.316 -05:00 [INF] Export manifest 
+saved to: C:\QB-TimeWarp\ExportedData\QB2021_PostImport\_ExportManifest.json
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:29789:2026-05-23 08:00:35.316 -05:00 [INF]   EXPORT COMPLETE: 
+2060 total records across 31 entity types
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:29796:2026-05-23 08:00:39.687 -05:00 [INF]   STARTING DATA 
+VALIDATION
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:29842:2026-05-23 08:45:24.428 -05:00 [INF] QB-TimeWarp 
+starting...
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:29864:2026-05-23 08:45:40.279 -05:00 [INF]   STARTING DATA 
+EXPORT FROM QUICKBOOKS 2023
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:29869:2026-05-23 08:45:40.544 -05:00 [INF]   ✓ Exported 142 
+Accounts records (Active: 96, Inactive: 46)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:29872:2026-05-23 08:45:40.633 -05:00 [INF]   ✓ Exported 2 
+Customers records (Active: 2, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:29875:2026-05-23 08:45:42.292 -05:00 [INF]   ✓ Exported 249 
+Vendors records (Active: 186, Inactive: 63)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:29878:2026-05-23 08:45:42.551 -05:00 [INF]   ✓ Exported 32 
+Employees records (Active: 4, Inactive: 28)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:29881:2026-05-23 08:45:42.618 -05:00 [INF]   ✓ Exported 0 Items 
+records (Active: 0, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:29884:2026-05-23 08:45:42.679 -05:00 [INF]   ✓ Exported 7 
+PaymentMethods records (Active: 7, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:29887:2026-05-23 08:45:42.737 -05:00 [INF]   ✓ Exported 6 Terms 
+records (Active: 6, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:29890:2026-05-23 08:45:42.798 -05:00 [INF]   ✓ Exported 5 
+Classes records (Active: 5, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:29893:2026-05-23 08:45:42.853 -05:00 [INF]   ✓ Exported 3 
+SalesTaxCodes records (Active: 3, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:29896:2026-05-23 08:45:42.911 -05:00 [INF]   ✓ Exported 6 
+ItemSalesTax records (Active: 6, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:29899:2026-05-23 08:45:42.968 -05:00 [INF]   ✓ Exported 0 
+ShipMethods records (Active: 0, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:29902:2026-05-23 08:45:43.035 -05:00 [INF]   ✓ Exported 0 
+CustomerTypes records (Active: 0, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:29905:2026-05-23 08:45:43.097 -05:00 [INF]   ✓ Exported 3 
+VendorTypes records (Active: 3, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:29908:2026-05-23 08:45:43.159 -05:00 [INF]   ✓ Exported 0 
+JobTypes records (Active: 0, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:29911:2026-05-23 08:45:43.216 -05:00 [INF]   ✓ Exported 0 
+PriceLevels records (Active: 0, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:29914:2026-05-23 08:45:43.276 -05:00 [INF]   ✓ Exported 0 
+CustomerMsgs records (Active: 0, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:29918:2026-05-23 08:45:43.342 -05:00 [INF]   FIX #11: Invoices 
+line item stats: 0/0 entities have line items, 0 total line items exported
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:29919:2026-05-23 08:45:43.348 -05:00 [INF]   ✓ Exported 0 
+Invoices records (Active: 0, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:29923:2026-05-23 08:45:43.408 -05:00 [INF]   FIX #11: Bills 
+line item stats: 0/0 entities have line items, 0 total line items exported
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:29924:2026-05-23 08:45:43.413 -05:00 [INF]   ✓ Exported 0 Bills 
+records (Active: 0, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:29927:2026-05-23 08:45:43.476 -05:00 [INF]   ✓ Exported 0 
+Payments records (Active: 0, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:29931:2026-05-23 08:45:43.703 -05:00 [INF]   FIX #11: 
+JournalEntries line item stats: 58/58 entities have line items, 133 total line items exported
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:29932:2026-05-23 08:45:43.709 -05:00 [INF]   ✓ Exported 58 
+JournalEntries records (Active: 58, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:29936:2026-05-23 08:45:43.912 -05:00 [INF]   FIX #11: 
+SalesReceipts line item stats: 30/30 entities have line items, 107 total line items exported
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:29937:2026-05-23 08:45:43.919 -05:00 [INF]   ✓ Exported 30 
+SalesReceipts records (Active: 30, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:29941:2026-05-23 08:45:43.980 -05:00 [INF]   FIX #11: 
+PurchaseOrders line item stats: 0/0 entities have line items, 0 total line items exported
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:29942:2026-05-23 08:45:43.986 -05:00 [INF]   ✓ Exported 0 
+PurchaseOrders records (Active: 0, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:29946:2026-05-23 08:45:44.052 -05:00 [INF]   FIX #11: 
+CreditMemos line item stats: 0/0 entities have line items, 0 total line items exported
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:29947:2026-05-23 08:45:44.058 -05:00 [INF]   ✓ Exported 0 
+CreditMemos records (Active: 0, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:29951:2026-05-23 08:45:44.126 -05:00 [INF]   FIX #11: Estimates 
+line item stats: 0/0 entities have line items, 0 total line items exported
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:29952:2026-05-23 08:45:44.136 -05:00 [INF]   ✓ Exported 0 
+Estimates records (Active: 0, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:29956:2026-05-23 08:45:45.405 -05:00 [INF]   FIX #11: Deposits 
+line item stats: 225/225 entities have line items, 232 total line items exported
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:29957:2026-05-23 08:45:45.412 -05:00 [INF]   ✓ Exported 225 
+Deposits records (Active: 225, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:29961:2026-05-23 08:45:53.633 -05:00 [INF]   FIX #11: Checks 
+line item stats: 1154/1154 entities have line items, 1708 total line items exported
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:29962:2026-05-23 08:45:53.658 -05:00 [INF]   ✓ Exported 1154 
+Checks records (Active: 1154, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:29966:2026-05-23 08:45:53.720 -05:00 [INF]   FIX #11: 
+VendorCredits line item stats: 0/0 entities have line items, 0 total line items exported
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:29967:2026-05-23 08:45:53.727 -05:00 [INF]   ✓ Exported 0 
+VendorCredits records (Active: 0, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:29970:2026-05-23 08:45:53.784 -05:00 [INF]   ✓ Exported 0 
+InventoryAdjustments records (Active: 0, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:29973:2026-05-23 08:45:54.135 -05:00 [INF]   ✓ Exported 156 
+Transfers records (Active: 156, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:29976:2026-05-23 08:45:54.195 -05:00 [INF]   ✓ Exported 1 
+Preferences records (Active: 1, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:29979:2026-05-23 08:45:54.250 -05:00 [INF]   ✓ Exported 1 
+CompanyInfo records (Active: 1, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:29980:2026-05-23 08:45:54.266 -05:00 [INF] Export manifest 
+saved to: C:\QB-TimeWarp\ExportedData\_ExportManifest.json
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:29990:2026-05-23 08:45:54.297 -05:00 [INF]   EXPORT COMPLETE: 
+2080 total records across 31 entity types
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:30007:2026-05-23 08:45:55.766 -05:00 [INF]   STARTING DATA 
+TRANSFORMATION
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:31763:2026-05-23 08:46:01.977 -05:00 [INF] Transformed data 
+saved to: C:\QB-TimeWarp\ExportedData\Transformed
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:31764:2026-05-23 08:46:01.980 -05:00 [INF] Pre-import 
+validation skipped — QB 2021 not opened during export phase (strict workflow enforcement).
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:31814:2026-05-23 08:46:21.141 -05:00 [INF]   │  Phase 0b: 
+Pre-Import Dependency Analysis     │
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:31817:2026-05-23 08:46:21.148 -05:00 [INF]   DEPENDENCY 
+ANALYSIS — Scanning exported data
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:31844:2026-05-23 08:46:21.220 -05:00 [INF]   │  Phase 0c: 
+Create Missing Reference Types (FIX #4)    │
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:34151:2026-05-23 08:49:12.735 -05:00 [INF] ║  STAGED IMPORT 
+COMPLETE                               ║
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:34167:2026-05-23 08:49:28.273 -05:00 [INF]   STARTING DATA 
+EXPORT FROM QUICKBOOKS 2023
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:34172:2026-05-23 08:49:28.504 -05:00 [INF]   ✓ Exported 145 
+Accounts records (Active: 145, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:34175:2026-05-23 08:49:28.622 -05:00 [INF]   ✓ Exported 2 
+Customers records (Active: 2, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:34178:2026-05-23 08:49:30.232 -05:00 [INF]   ✓ Exported 249 
+Vendors records (Active: 249, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:34181:2026-05-23 08:49:30.427 -05:00 [INF]   ✓ Exported 32 
+Employees records (Active: 32, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:34184:2026-05-23 08:49:30.494 -05:00 [INF]   ✓ Exported 0 Items 
+records (Active: 0, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:34187:2026-05-23 08:49:30.553 -05:00 [INF]   ✓ Exported 9 
+PaymentMethods records (Active: 9, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:34190:2026-05-23 08:49:30.619 -05:00 [INF]   ✓ Exported 7 Terms 
+records (Active: 7, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:34193:2026-05-23 08:49:30.681 -05:00 [INF]   ✓ Exported 5 
+Classes records (Active: 5, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:34196:2026-05-23 08:49:30.743 -05:00 [INF]   ✓ Exported 3 
+SalesTaxCodes records (Active: 3, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:34199:2026-05-23 08:49:30.807 -05:00 [INF]   ✓ Exported 7 
+ItemSalesTax records (Active: 7, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:34202:2026-05-23 08:49:30.877 -05:00 [INF]   ✓ Exported 4 
+ShipMethods records (Active: 4, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:34205:2026-05-23 08:49:30.946 -05:00 [INF]   ✓ Exported 4 
+CustomerTypes records (Active: 4, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:34208:2026-05-23 08:49:31.023 -05:00 [INF]   ✓ Exported 5 
+VendorTypes records (Active: 5, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:34211:2026-05-23 08:49:31.090 -05:00 [INF]   ✓ Exported 2 
+JobTypes records (Active: 2, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:34214:2026-05-23 08:49:31.149 -05:00 [INF]   ✓ Exported 0 
+PriceLevels records (Active: 0, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:34217:2026-05-23 08:49:31.214 -05:00 [INF]   ✓ Exported 5 
+CustomerMsgs records (Active: 5, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:34221:2026-05-23 08:49:31.280 -05:00 [INF]   FIX #11: Invoices 
+line item stats: 0/0 entities have line items, 0 total line items exported
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:34222:2026-05-23 08:49:31.285 -05:00 [INF]   ✓ Exported 0 
+Invoices records (Active: 0, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:34226:2026-05-23 08:49:31.350 -05:00 [INF]   FIX #11: Bills 
+line item stats: 0/0 entities have line items, 0 total line items exported
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:34227:2026-05-23 08:49:31.358 -05:00 [INF]   ✓ Exported 0 Bills 
+records (Active: 0, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:34230:2026-05-23 08:49:31.421 -05:00 [INF]   ✓ Exported 0 
+Payments records (Active: 0, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:34234:2026-05-23 08:49:31.633 -05:00 [INF]   FIX #11: 
+JournalEntries line item stats: 58/58 entities have line items, 133 total line items exported
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:34235:2026-05-23 08:49:31.639 -05:00 [INF]   ✓ Exported 58 
+JournalEntries records (Active: 58, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:34239:2026-05-23 08:49:31.706 -05:00 [INF]   FIX #11: 
+SalesReceipts line item stats: 0/0 entities have line items, 0 total line items exported
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:34240:2026-05-23 08:49:31.711 -05:00 [INF]   ✓ Exported 0 
+SalesReceipts records (Active: 0, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:34244:2026-05-23 08:49:31.785 -05:00 [INF]   FIX #11: 
+PurchaseOrders line item stats: 0/0 entities have line items, 0 total line items exported
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:34245:2026-05-23 08:49:31.790 -05:00 [INF]   ✓ Exported 0 
+PurchaseOrders records (Active: 0, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:34249:2026-05-23 08:49:31.866 -05:00 [INF]   FIX #11: 
+CreditMemos line item stats: 0/0 entities have line items, 0 total line items exported
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:34250:2026-05-23 08:49:31.872 -05:00 [INF]   ✓ Exported 0 
+CreditMemos records (Active: 0, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:34254:2026-05-23 08:49:31.939 -05:00 [INF]   FIX #11: Estimates 
+line item stats: 0/0 entities have line items, 0 total line items exported
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:34255:2026-05-23 08:49:31.945 -05:00 [INF]   ✓ Exported 0 
+Estimates records (Active: 0, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:34259:2026-05-23 08:49:32.958 -05:00 [INF]   FIX #11: Deposits 
+line item stats: 225/225 entities have line items, 227 total line items exported
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:34260:2026-05-23 08:49:32.965 -05:00 [INF]   ✓ Exported 225 
+Deposits records (Active: 225, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:34264:2026-05-23 08:49:40.234 -05:00 [INF]   FIX #11: Checks 
+line item stats: 1154/1154 entities have line items, 1708 total line items exported
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:34265:2026-05-23 08:49:40.258 -05:00 [INF]   ✓ Exported 1154 
+Checks records (Active: 1154, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:34269:2026-05-23 08:49:40.331 -05:00 [INF]   FIX #11: 
+VendorCredits line item stats: 0/0 entities have line items, 0 total line items exported
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:34270:2026-05-23 08:49:40.338 -05:00 [INF]   ✓ Exported 0 
+VendorCredits records (Active: 0, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:34273:2026-05-23 08:49:40.408 -05:00 [INF]   ✓ Exported 0 
+InventoryAdjustments records (Active: 0, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:34276:2026-05-23 08:49:40.770 -05:00 [INF]   ✓ Exported 156 
+Transfers records (Active: 156, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:34279:2026-05-23 08:49:40.832 -05:00 [INF]   ✓ Exported 1 
+Preferences records (Active: 1, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:34282:2026-05-23 08:49:40.894 -05:00 [INF]   ✓ Exported 1 
+CompanyInfo records (Active: 1, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:34283:2026-05-23 08:49:40.900 -05:00 [INF] Export manifest 
+saved to: C:\QB-TimeWarp\ExportedData\QB2021_PostImport\_ExportManifest.json
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:34286:2026-05-23 08:49:40.908 -05:00 [INF]   EXPORT COMPLETE: 
+2074 total records across 31 entity types
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:34293:2026-05-23 08:49:45.407 -05:00 [INF]   STARTING DATA 
+VALIDATION
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:34339:2026-05-23 09:04:53.181 -05:00 [INF] QB-TimeWarp 
+starting...
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:34361:2026-05-23 09:05:09.220 -05:00 [INF]   STARTING DATA 
+EXPORT FROM QUICKBOOKS 2023
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:34366:2026-05-23 09:05:09.438 -05:00 [INF]   ✓ Exported 142 
+Accounts records (Active: 96, Inactive: 46)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:34369:2026-05-23 09:05:09.529 -05:00 [INF]   ✓ Exported 2 
+Customers records (Active: 2, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:34372:2026-05-23 09:05:11.270 -05:00 [INF]   ✓ Exported 249 
+Vendors records (Active: 186, Inactive: 63)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:34375:2026-05-23 09:05:11.553 -05:00 [INF]   ✓ Exported 32 
+Employees records (Active: 4, Inactive: 28)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:34383:2026-05-23 09:05:11.642 -05:00 [INF]   ✓ Exported 10 
+Items records (Active: 10, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:34386:2026-05-23 09:05:11.701 -05:00 [INF]   ✓ Exported 7 
+PaymentMethods records (Active: 7, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:34389:2026-05-23 09:05:11.768 -05:00 [INF]   ✓ Exported 6 Terms 
+records (Active: 6, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:34392:2026-05-23 09:05:11.824 -05:00 [INF]   ✓ Exported 5 
+Classes records (Active: 5, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:34395:2026-05-23 09:05:11.878 -05:00 [INF]   ✓ Exported 3 
+SalesTaxCodes records (Active: 3, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:34398:2026-05-23 09:05:11.942 -05:00 [INF]   ✓ Exported 6 
+ItemSalesTax records (Active: 6, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:34401:2026-05-23 09:05:11.999 -05:00 [INF]   ✓ Exported 0 
+ShipMethods records (Active: 0, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:34404:2026-05-23 09:05:12.067 -05:00 [INF]   ✓ Exported 0 
+CustomerTypes records (Active: 0, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:34407:2026-05-23 09:05:12.134 -05:00 [INF]   ✓ Exported 3 
+VendorTypes records (Active: 3, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:34410:2026-05-23 09:05:12.192 -05:00 [INF]   ✓ Exported 0 
+JobTypes records (Active: 0, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:34413:2026-05-23 09:05:12.247 -05:00 [INF]   ✓ Exported 0 
+PriceLevels records (Active: 0, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:34416:2026-05-23 09:05:12.308 -05:00 [INF]   ✓ Exported 0 
+CustomerMsgs records (Active: 0, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:34420:2026-05-23 09:05:12.376 -05:00 [INF]   FIX #11: Invoices 
+line item stats: 0/0 entities have line items, 0 total line items exported
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:34421:2026-05-23 09:05:12.383 -05:00 [INF]   ✓ Exported 0 
+Invoices records (Active: 0, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:34425:2026-05-23 09:05:12.450 -05:00 [INF]   FIX #11: Bills 
+line item stats: 0/0 entities have line items, 0 total line items exported
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:34426:2026-05-23 09:05:12.455 -05:00 [INF]   ✓ Exported 0 Bills 
+records (Active: 0, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:34429:2026-05-23 09:05:12.523 -05:00 [INF]   ✓ Exported 0 
+Payments records (Active: 0, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:34433:2026-05-23 09:05:12.777 -05:00 [INF]   FIX #11: 
+JournalEntries line item stats: 58/58 entities have line items, 133 total line items exported
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:34434:2026-05-23 09:05:12.784 -05:00 [INF]   ✓ Exported 58 
+JournalEntries records (Active: 58, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:34438:2026-05-23 09:05:12.982 -05:00 [INF]   FIX #11: 
+SalesReceipts line item stats: 30/30 entities have line items, 107 total line items exported
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:34439:2026-05-23 09:05:12.988 -05:00 [INF]   ✓ Exported 30 
+SalesReceipts records (Active: 30, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:34443:2026-05-23 09:05:13.059 -05:00 [INF]   FIX #11: 
+PurchaseOrders line item stats: 0/0 entities have line items, 0 total line items exported
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:34444:2026-05-23 09:05:13.065 -05:00 [INF]   ✓ Exported 0 
+PurchaseOrders records (Active: 0, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:34448:2026-05-23 09:05:13.127 -05:00 [INF]   FIX #11: 
+CreditMemos line item stats: 0/0 entities have line items, 0 total line items exported
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:34449:2026-05-23 09:05:13.132 -05:00 [INF]   ✓ Exported 0 
+CreditMemos records (Active: 0, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:34453:2026-05-23 09:05:13.194 -05:00 [INF]   FIX #11: Estimates 
+line item stats: 0/0 entities have line items, 0 total line items exported
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:34454:2026-05-23 09:05:13.200 -05:00 [INF]   ✓ Exported 0 
+Estimates records (Active: 0, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:34458:2026-05-23 09:05:14.268 -05:00 [INF]   FIX #11: Deposits 
+line item stats: 225/225 entities have line items, 232 total line items exported
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:34459:2026-05-23 09:05:14.275 -05:00 [INF]   ✓ Exported 225 
+Deposits records (Active: 225, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:34463:2026-05-23 09:05:22.393 -05:00 [INF]   FIX #11: Checks 
+line item stats: 1154/1154 entities have line items, 1708 total line items exported
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:34464:2026-05-23 09:05:22.417 -05:00 [INF]   ✓ Exported 1154 
+Checks records (Active: 1154, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:34468:2026-05-23 09:05:22.485 -05:00 [INF]   FIX #11: 
+VendorCredits line item stats: 0/0 entities have line items, 0 total line items exported
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:34469:2026-05-23 09:05:22.491 -05:00 [INF]   ✓ Exported 0 
+VendorCredits records (Active: 0, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:34472:2026-05-23 09:05:22.551 -05:00 [INF]   ✓ Exported 0 
+InventoryAdjustments records (Active: 0, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:34475:2026-05-23 09:05:22.917 -05:00 [INF]   ✓ Exported 156 
+Transfers records (Active: 156, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:34478:2026-05-23 09:05:22.986 -05:00 [INF]   ✓ Exported 1 
+Preferences records (Active: 1, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:34481:2026-05-23 09:05:23.053 -05:00 [INF]   ✓ Exported 1 
+CompanyInfo records (Active: 1, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:34482:2026-05-23 09:05:23.068 -05:00 [INF] Export manifest 
+saved to: C:\QB-TimeWarp\ExportedData\_ExportManifest.json
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:34492:2026-05-23 09:05:23.102 -05:00 [INF]   EXPORT COMPLETE: 
+2090 total records across 31 entity types
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:34509:2026-05-23 09:05:24.546 -05:00 [INF]   STARTING DATA 
+TRANSFORMATION
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:36265:2026-05-23 09:05:30.818 -05:00 [INF] Transformed data 
+saved to: C:\QB-TimeWarp\ExportedData\Transformed
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:36266:2026-05-23 09:05:30.821 -05:00 [INF] Pre-import 
+validation skipped — QB 2021 not opened during export phase (strict workflow enforcement).
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:36316:2026-05-23 09:05:49.872 -05:00 [INF]   │  Phase 0b: 
+Pre-Import Dependency Analysis     │
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:36319:2026-05-23 09:05:49.880 -05:00 [INF]   DEPENDENCY 
+ANALYSIS — Scanning exported data
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:36346:2026-05-23 09:05:49.958 -05:00 [INF]   │  Phase 0c: 
+Create Missing Reference Types (FIX #4)    │
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:38755:2026-05-23 09:08:42.142 -05:00 [INF] ║  STAGED IMPORT 
+COMPLETE                               ║
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:38771:2026-05-23 09:08:57.813 -05:00 [INF]   STARTING DATA 
+EXPORT FROM QUICKBOOKS 2023
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:38776:2026-05-23 09:08:58.028 -05:00 [INF]   ✓ Exported 145 
+Accounts records (Active: 145, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:38779:2026-05-23 09:08:58.123 -05:00 [INF]   ✓ Exported 2 
+Customers records (Active: 2, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:38782:2026-05-23 09:08:59.641 -05:00 [INF]   ✓ Exported 249 
+Vendors records (Active: 249, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:38785:2026-05-23 09:08:59.842 -05:00 [INF]   ✓ Exported 32 
+Employees records (Active: 32, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:38790:2026-05-23 09:08:59.913 -05:00 [INF]   ✓ Exported 7 Items 
+records (Active: 7, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:38793:2026-05-23 09:08:59.979 -05:00 [INF]   ✓ Exported 9 
+PaymentMethods records (Active: 9, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:38796:2026-05-23 09:09:00.077 -05:00 [INF]   ✓ Exported 7 Terms 
+records (Active: 7, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:38799:2026-05-23 09:09:00.149 -05:00 [INF]   ✓ Exported 5 
+Classes records (Active: 5, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:38802:2026-05-23 09:09:00.215 -05:00 [INF]   ✓ Exported 3 
+SalesTaxCodes records (Active: 3, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:38805:2026-05-23 09:09:00.278 -05:00 [INF]   ✓ Exported 7 
+ItemSalesTax records (Active: 7, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:38808:2026-05-23 09:09:00.342 -05:00 [INF]   ✓ Exported 4 
+ShipMethods records (Active: 4, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:38811:2026-05-23 09:09:00.409 -05:00 [INF]   ✓ Exported 4 
+CustomerTypes records (Active: 4, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:38814:2026-05-23 09:09:00.470 -05:00 [INF]   ✓ Exported 5 
+VendorTypes records (Active: 5, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:38817:2026-05-23 09:09:00.538 -05:00 [INF]   ✓ Exported 2 
+JobTypes records (Active: 2, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:38820:2026-05-23 09:09:00.597 -05:00 [INF]   ✓ Exported 0 
+PriceLevels records (Active: 0, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:38823:2026-05-23 09:09:00.659 -05:00 [INF]   ✓ Exported 5 
+CustomerMsgs records (Active: 5, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:38827:2026-05-23 09:09:00.725 -05:00 [INF]   FIX #11: Invoices 
+line item stats: 0/0 entities have line items, 0 total line items exported
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:38828:2026-05-23 09:09:00.730 -05:00 [INF]   ✓ Exported 0 
+Invoices records (Active: 0, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:38832:2026-05-23 09:09:00.798 -05:00 [INF]   FIX #11: Bills 
+line item stats: 0/0 entities have line items, 0 total line items exported
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:38833:2026-05-23 09:09:00.803 -05:00 [INF]   ✓ Exported 0 Bills 
+records (Active: 0, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:38836:2026-05-23 09:09:00.865 -05:00 [INF]   ✓ Exported 0 
+Payments records (Active: 0, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:38840:2026-05-23 09:09:01.083 -05:00 [INF]   FIX #11: 
+JournalEntries line item stats: 58/58 entities have line items, 133 total line items exported
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:38841:2026-05-23 09:09:01.089 -05:00 [INF]   ✓ Exported 58 
+JournalEntries records (Active: 58, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:38845:2026-05-23 09:09:01.152 -05:00 [INF]   FIX #11: 
+SalesReceipts line item stats: 0/0 entities have line items, 0 total line items exported
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:38846:2026-05-23 09:09:01.157 -05:00 [INF]   ✓ Exported 0 
+SalesReceipts records (Active: 0, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:38850:2026-05-23 09:09:01.222 -05:00 [INF]   FIX #11: 
+PurchaseOrders line item stats: 0/0 entities have line items, 0 total line items exported
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:38851:2026-05-23 09:09:01.227 -05:00 [INF]   ✓ Exported 0 
+PurchaseOrders records (Active: 0, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:38855:2026-05-23 09:09:01.292 -05:00 [INF]   FIX #11: 
+CreditMemos line item stats: 0/0 entities have line items, 0 total line items exported
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:38856:2026-05-23 09:09:01.297 -05:00 [INF]   ✓ Exported 0 
+CreditMemos records (Active: 0, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:38860:2026-05-23 09:09:01.364 -05:00 [INF]   FIX #11: Estimates 
+line item stats: 0/0 entities have line items, 0 total line items exported
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:38861:2026-05-23 09:09:01.370 -05:00 [INF]   ✓ Exported 0 
+Estimates records (Active: 0, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:38865:2026-05-23 09:09:02.355 -05:00 [INF]   FIX #11: Deposits 
+line item stats: 225/225 entities have line items, 227 total line items exported
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:38866:2026-05-23 09:09:02.361 -05:00 [INF]   ✓ Exported 225 
+Deposits records (Active: 225, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:38870:2026-05-23 09:09:09.764 -05:00 [INF]   FIX #11: Checks 
+line item stats: 1154/1154 entities have line items, 1708 total line items exported
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:38871:2026-05-23 09:09:09.790 -05:00 [INF]   ✓ Exported 1154 
+Checks records (Active: 1154, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:38875:2026-05-23 09:09:09.856 -05:00 [INF]   FIX #11: 
+VendorCredits line item stats: 0/0 entities have line items, 0 total line items exported
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:38876:2026-05-23 09:09:09.862 -05:00 [INF]   ✓ Exported 0 
+VendorCredits records (Active: 0, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:38879:2026-05-23 09:09:09.926 -05:00 [INF]   ✓ Exported 0 
+InventoryAdjustments records (Active: 0, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:38882:2026-05-23 09:09:10.309 -05:00 [INF]   ✓ Exported 156 
+Transfers records (Active: 156, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:38885:2026-05-23 09:09:10.377 -05:00 [INF]   ✓ Exported 1 
+Preferences records (Active: 1, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:38888:2026-05-23 09:09:10.438 -05:00 [INF]   ✓ Exported 1 
+CompanyInfo records (Active: 1, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:38889:2026-05-23 09:09:10.444 -05:00 [INF] Export manifest 
+saved to: C:\QB-TimeWarp\ExportedData\QB2021_PostImport\_ExportManifest.json
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:38892:2026-05-23 09:09:10.452 -05:00 [INF]   EXPORT COMPLETE: 
+2081 total records across 31 entity types
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:38899:2026-05-23 09:09:15.012 -05:00 [INF]   STARTING DATA 
+VALIDATION
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:38945:2026-05-23 09:33:17.017 -05:00 [INF] QB-TimeWarp 
+starting...
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:38967:2026-05-23 09:33:32.928 -05:00 [INF]   STARTING DATA 
+EXPORT FROM QUICKBOOKS 2023
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:38972:2026-05-23 09:33:33.170 -05:00 [INF]   ✓ Exported 142 
+Accounts records (Active: 96, Inactive: 46)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:38975:2026-05-23 09:33:33.256 -05:00 [INF]   ✓ Exported 2 
+Customers records (Active: 2, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:38978:2026-05-23 09:33:34.927 -05:00 [INF]   ✓ Exported 249 
+Vendors records (Active: 186, Inactive: 63)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:38981:2026-05-23 09:33:35.223 -05:00 [INF]   ✓ Exported 32 
+Employees records (Active: 4, Inactive: 28)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:38989:2026-05-23 09:33:35.305 -05:00 [INF]   ✓ Exported 10 
+Items records (Active: 10, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:38992:2026-05-23 09:33:35.363 -05:00 [INF]   ✓ Exported 7 
+PaymentMethods records (Active: 7, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:38995:2026-05-23 09:33:35.426 -05:00 [INF]   ✓ Exported 6 Terms 
+records (Active: 6, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:38998:2026-05-23 09:33:35.476 -05:00 [INF]   ✓ Exported 5 
+Classes records (Active: 5, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:39001:2026-05-23 09:33:35.530 -05:00 [INF]   ✓ Exported 3 
+SalesTaxCodes records (Active: 3, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:39004:2026-05-23 09:33:35.591 -05:00 [INF]   ✓ Exported 6 
+ItemSalesTax records (Active: 6, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:39007:2026-05-23 09:33:35.651 -05:00 [INF]   ✓ Exported 0 
+ShipMethods records (Active: 0, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:39010:2026-05-23 09:33:35.712 -05:00 [INF]   ✓ Exported 0 
+CustomerTypes records (Active: 0, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:39013:2026-05-23 09:33:35.775 -05:00 [INF]   ✓ Exported 3 
+VendorTypes records (Active: 3, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:39016:2026-05-23 09:33:35.836 -05:00 [INF]   ✓ Exported 0 
+JobTypes records (Active: 0, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:39019:2026-05-23 09:33:35.895 -05:00 [INF]   ✓ Exported 0 
+PriceLevels records (Active: 0, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:39022:2026-05-23 09:33:35.951 -05:00 [INF]   ✓ Exported 0 
+CustomerMsgs records (Active: 0, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:39026:2026-05-23 09:33:36.020 -05:00 [INF]   FIX #11: Invoices 
+line item stats: 0/0 entities have line items, 0 total line items exported
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:39027:2026-05-23 09:33:36.026 -05:00 [INF]   ✓ Exported 0 
+Invoices records (Active: 0, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:39031:2026-05-23 09:33:36.093 -05:00 [INF]   FIX #11: Bills 
+line item stats: 0/0 entities have line items, 0 total line items exported
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:39032:2026-05-23 09:33:36.098 -05:00 [INF]   ✓ Exported 0 Bills 
+records (Active: 0, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:39035:2026-05-23 09:33:36.158 -05:00 [INF]   ✓ Exported 0 
+Payments records (Active: 0, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:39039:2026-05-23 09:33:36.385 -05:00 [INF]   FIX #11: 
+JournalEntries line item stats: 58/58 entities have line items, 133 total line items exported
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:39040:2026-05-23 09:33:36.391 -05:00 [INF]   ✓ Exported 58 
+JournalEntries records (Active: 58, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:39044:2026-05-23 09:33:36.592 -05:00 [INF]   FIX #11: 
+SalesReceipts line item stats: 30/30 entities have line items, 107 total line items exported
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:39045:2026-05-23 09:33:36.599 -05:00 [INF]   ✓ Exported 30 
+SalesReceipts records (Active: 30, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:39049:2026-05-23 09:33:36.662 -05:00 [INF]   FIX #11: 
+PurchaseOrders line item stats: 0/0 entities have line items, 0 total line items exported
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:39050:2026-05-23 09:33:36.668 -05:00 [INF]   ✓ Exported 0 
+PurchaseOrders records (Active: 0, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:39054:2026-05-23 09:33:36.727 -05:00 [INF]   FIX #11: 
+CreditMemos line item stats: 0/0 entities have line items, 0 total line items exported
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:39055:2026-05-23 09:33:36.733 -05:00 [INF]   ✓ Exported 0 
+CreditMemos records (Active: 0, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:39059:2026-05-23 09:33:36.795 -05:00 [INF]   FIX #11: Estimates 
+line item stats: 0/0 entities have line items, 0 total line items exported
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:39060:2026-05-23 09:33:36.801 -05:00 [INF]   ✓ Exported 0 
+Estimates records (Active: 0, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:39064:2026-05-23 09:33:37.821 -05:00 [INF]   FIX #11: Deposits 
+line item stats: 225/225 entities have line items, 232 total line items exported
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:39065:2026-05-23 09:33:37.828 -05:00 [INF]   ✓ Exported 225 
+Deposits records (Active: 225, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:39069:2026-05-23 09:33:45.499 -05:00 [INF]   FIX #11: Checks 
+line item stats: 1154/1154 entities have line items, 1708 total line items exported
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:39070:2026-05-23 09:33:45.523 -05:00 [INF]   ✓ Exported 1154 
+Checks records (Active: 1154, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:39074:2026-05-23 09:33:45.582 -05:00 [INF]   FIX #11: 
+VendorCredits line item stats: 0/0 entities have line items, 0 total line items exported
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:39075:2026-05-23 09:33:45.587 -05:00 [INF]   ✓ Exported 0 
+VendorCredits records (Active: 0, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:39078:2026-05-23 09:33:45.646 -05:00 [INF]   ✓ Exported 0 
+InventoryAdjustments records (Active: 0, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:39081:2026-05-23 09:33:45.984 -05:00 [INF]   ✓ Exported 156 
+Transfers records (Active: 156, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:39084:2026-05-23 09:33:46.049 -05:00 [INF]   ✓ Exported 1 
+Preferences records (Active: 1, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:39087:2026-05-23 09:33:46.108 -05:00 [INF]   ✓ Exported 1 
+CompanyInfo records (Active: 1, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:39088:2026-05-23 09:33:46.122 -05:00 [INF] Export manifest 
+saved to: C:\QB-TimeWarp\ExportedData\_ExportManifest.json
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:39098:2026-05-23 09:33:46.154 -05:00 [INF]   EXPORT COMPLETE: 
+2090 total records across 31 entity types
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:39115:2026-05-23 09:33:47.607 -05:00 [INF]   STARTING DATA 
+TRANSFORMATION
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:40872:2026-05-23 09:33:53.842 -05:00 [INF] Transformed data 
+saved to: C:\QB-TimeWarp\ExportedData\Transformed
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:40873:2026-05-23 09:33:53.845 -05:00 [INF] Pre-import 
+validation skipped — QB 2021 not opened during export phase (strict workflow enforcement).
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:40923:2026-05-23 09:34:12.462 -05:00 [INF]   │  Phase 0b: 
+Pre-Import Dependency Analysis     │
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:40926:2026-05-23 09:34:12.469 -05:00 [INF]   DEPENDENCY 
+ANALYSIS — Scanning exported data
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:40953:2026-05-23 09:34:12.541 -05:00 [INF]   │  Phase 0c: 
+Create Missing Reference Types (FIX #4)    │
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:43290:2026-05-23 09:37:03.248 -05:00 [INF] ║  STAGED IMPORT 
+COMPLETE                               ║
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:43306:2026-05-23 09:37:18.966 -05:00 [INF]   STARTING DATA 
+EXPORT FROM QUICKBOOKS 2023
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:43311:2026-05-23 09:37:19.190 -05:00 [INF]   ✓ Exported 145 
+Accounts records (Active: 145, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:43314:2026-05-23 09:37:19.283 -05:00 [INF]   ✓ Exported 2 
+Customers records (Active: 2, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:43317:2026-05-23 09:37:20.920 -05:00 [INF]   ✓ Exported 249 
+Vendors records (Active: 249, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:43320:2026-05-23 09:37:21.122 -05:00 [INF]   ✓ Exported 32 
+Employees records (Active: 32, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:43327:2026-05-23 09:37:21.199 -05:00 [INF]   ✓ Exported 10 
+Items records (Active: 10, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:43330:2026-05-23 09:37:21.262 -05:00 [INF]   ✓ Exported 9 
+PaymentMethods records (Active: 9, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:43333:2026-05-23 09:37:21.326 -05:00 [INF]   ✓ Exported 7 Terms 
+records (Active: 7, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:43336:2026-05-23 09:37:21.387 -05:00 [INF]   ✓ Exported 5 
+Classes records (Active: 5, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:43339:2026-05-23 09:37:21.444 -05:00 [INF]   ✓ Exported 3 
+SalesTaxCodes records (Active: 3, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:43342:2026-05-23 09:37:21.503 -05:00 [INF]   ✓ Exported 7 
+ItemSalesTax records (Active: 7, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:43345:2026-05-23 09:37:21.565 -05:00 [INF]   ✓ Exported 4 
+ShipMethods records (Active: 4, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:43348:2026-05-23 09:37:21.626 -05:00 [INF]   ✓ Exported 4 
+CustomerTypes records (Active: 4, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:43351:2026-05-23 09:37:21.689 -05:00 [INF]   ✓ Exported 5 
+VendorTypes records (Active: 5, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:43354:2026-05-23 09:37:21.752 -05:00 [INF]   ✓ Exported 2 
+JobTypes records (Active: 2, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:43357:2026-05-23 09:37:21.812 -05:00 [INF]   ✓ Exported 0 
+PriceLevels records (Active: 0, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:43360:2026-05-23 09:37:21.877 -05:00 [INF]   ✓ Exported 5 
+CustomerMsgs records (Active: 5, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:43364:2026-05-23 09:37:21.941 -05:00 [INF]   FIX #11: Invoices 
+line item stats: 0/0 entities have line items, 0 total line items exported
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:43365:2026-05-23 09:37:21.946 -05:00 [INF]   ✓ Exported 0 
+Invoices records (Active: 0, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:43369:2026-05-23 09:37:22.024 -05:00 [INF]   FIX #11: Bills 
+line item stats: 0/0 entities have line items, 0 total line items exported
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:43370:2026-05-23 09:37:22.030 -05:00 [INF]   ✓ Exported 0 Bills 
+records (Active: 0, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:43373:2026-05-23 09:37:22.093 -05:00 [INF]   ✓ Exported 0 
+Payments records (Active: 0, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:43377:2026-05-23 09:37:22.316 -05:00 [INF]   FIX #11: 
+JournalEntries line item stats: 58/58 entities have line items, 133 total line items exported
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:43378:2026-05-23 09:37:22.322 -05:00 [INF]   ✓ Exported 58 
+JournalEntries records (Active: 58, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:43382:2026-05-23 09:37:22.387 -05:00 [INF]   FIX #11: 
+SalesReceipts line item stats: 0/0 entities have line items, 0 total line items exported
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:43383:2026-05-23 09:37:22.391 -05:00 [INF]   ✓ Exported 0 
+SalesReceipts records (Active: 0, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:43387:2026-05-23 09:37:22.455 -05:00 [INF]   FIX #11: 
+PurchaseOrders line item stats: 0/0 entities have line items, 0 total line items exported
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:43388:2026-05-23 09:37:22.461 -05:00 [INF]   ✓ Exported 0 
+PurchaseOrders records (Active: 0, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:43392:2026-05-23 09:37:22.530 -05:00 [INF]   FIX #11: 
+CreditMemos line item stats: 0/0 entities have line items, 0 total line items exported
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:43393:2026-05-23 09:37:22.535 -05:00 [INF]   ✓ Exported 0 
+CreditMemos records (Active: 0, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:43397:2026-05-23 09:37:22.600 -05:00 [INF]   FIX #11: Estimates 
+line item stats: 0/0 entities have line items, 0 total line items exported
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:43398:2026-05-23 09:37:22.605 -05:00 [INF]   ✓ Exported 0 
+Estimates records (Active: 0, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:43402:2026-05-23 09:37:23.615 -05:00 [INF]   FIX #11: Deposits 
+line item stats: 225/225 entities have line items, 227 total line items exported
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:43403:2026-05-23 09:37:23.622 -05:00 [INF]   ✓ Exported 225 
+Deposits records (Active: 225, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:43407:2026-05-23 09:37:31.329 -05:00 [INF]   FIX #11: Checks 
+line item stats: 1154/1154 entities have line items, 1708 total line items exported
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:43408:2026-05-23 09:37:31.358 -05:00 [INF]   ✓ Exported 1154 
+Checks records (Active: 1154, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:43412:2026-05-23 09:37:31.428 -05:00 [INF]   FIX #11: 
+VendorCredits line item stats: 0/0 entities have line items, 0 total line items exported
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:43413:2026-05-23 09:37:31.435 -05:00 [INF]   ✓ Exported 0 
+VendorCredits records (Active: 0, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:43416:2026-05-23 09:37:31.503 -05:00 [INF]   ✓ Exported 0 
+InventoryAdjustments records (Active: 0, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:43419:2026-05-23 09:37:31.873 -05:00 [INF]   ✓ Exported 156 
+Transfers records (Active: 156, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:43422:2026-05-23 09:37:31.940 -05:00 [INF]   ✓ Exported 1 
+Preferences records (Active: 1, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:43425:2026-05-23 09:37:32.002 -05:00 [INF]   ✓ Exported 1 
+CompanyInfo records (Active: 1, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:43426:2026-05-23 09:37:32.010 -05:00 [INF] Export manifest 
+saved to: C:\QB-TimeWarp\ExportedData\QB2021_PostImport\_ExportManifest.json
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:43429:2026-05-23 09:37:32.018 -05:00 [INF]   EXPORT COMPLETE: 
+2084 total records across 31 entity types
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:43436:2026-05-23 09:37:36.426 -05:00 [INF]   STARTING DATA 
+VALIDATION
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:43482:2026-05-23 10:08:24.236 -05:00 [INF] QB-TimeWarp 
+starting...
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:43504:2026-05-23 10:08:39.897 -05:00 [INF]   STARTING DATA 
+EXPORT FROM QUICKBOOKS 2023
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:43509:2026-05-23 10:08:40.148 -05:00 [INF]   ✓ Exported 142 
+Accounts records (Active: 96, Inactive: 46)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:43512:2026-05-23 10:08:40.234 -05:00 [INF]   ✓ Exported 2 
+Customers records (Active: 2, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:43515:2026-05-23 10:08:41.821 -05:00 [INF]   ✓ Exported 249 
+Vendors records (Active: 186, Inactive: 63)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:43518:2026-05-23 10:08:42.080 -05:00 [INF]   ✓ Exported 32 
+Employees records (Active: 4, Inactive: 28)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:43526:2026-05-23 10:08:42.163 -05:00 [INF]   ✓ Exported 10 
+Items records (Active: 10, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:43529:2026-05-23 10:08:42.222 -05:00 [INF]   ✓ Exported 7 
+PaymentMethods records (Active: 7, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:43532:2026-05-23 10:08:42.280 -05:00 [INF]   ✓ Exported 6 Terms 
+records (Active: 6, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:43535:2026-05-23 10:08:42.338 -05:00 [INF]   ✓ Exported 5 
+Classes records (Active: 5, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:43538:2026-05-23 10:08:42.392 -05:00 [INF]   ✓ Exported 3 
+SalesTaxCodes records (Active: 3, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:43541:2026-05-23 10:08:42.446 -05:00 [INF]   ✓ Exported 6 
+ItemSalesTax records (Active: 6, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:43544:2026-05-23 10:08:42.502 -05:00 [INF]   ✓ Exported 0 
+ShipMethods records (Active: 0, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:43547:2026-05-23 10:08:42.556 -05:00 [INF]   ✓ Exported 0 
+CustomerTypes records (Active: 0, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:43550:2026-05-23 10:08:42.619 -05:00 [INF]   ✓ Exported 3 
+VendorTypes records (Active: 3, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:43553:2026-05-23 10:08:42.680 -05:00 [INF]   ✓ Exported 0 
+JobTypes records (Active: 0, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:43556:2026-05-23 10:08:42.744 -05:00 [INF]   ✓ Exported 0 
+PriceLevels records (Active: 0, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:43559:2026-05-23 10:08:42.799 -05:00 [INF]   ✓ Exported 0 
+CustomerMsgs records (Active: 0, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:43563:2026-05-23 10:08:42.864 -05:00 [INF]   FIX #11: Invoices 
+line item stats: 0/0 entities have line items, 0 total line items exported
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:43564:2026-05-23 10:08:42.869 -05:00 [INF]   ✓ Exported 0 
+Invoices records (Active: 0, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:43568:2026-05-23 10:08:42.928 -05:00 [INF]   FIX #11: Bills 
+line item stats: 0/0 entities have line items, 0 total line items exported
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:43569:2026-05-23 10:08:42.933 -05:00 [INF]   ✓ Exported 0 Bills 
+records (Active: 0, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:43572:2026-05-23 10:08:42.995 -05:00 [INF]   ✓ Exported 0 
+Payments records (Active: 0, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:43576:2026-05-23 10:08:43.268 -05:00 [INF]   FIX #11: 
+JournalEntries line item stats: 58/58 entities have line items, 133 total line items exported
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:43577:2026-05-23 10:08:43.275 -05:00 [INF]   ✓ Exported 58 
+JournalEntries records (Active: 58, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:43581:2026-05-23 10:08:43.475 -05:00 [INF]   FIX #11: 
+SalesReceipts line item stats: 30/30 entities have line items, 107 total line items exported
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:43582:2026-05-23 10:08:43.481 -05:00 [INF]   ✓ Exported 30 
+SalesReceipts records (Active: 30, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:43586:2026-05-23 10:08:43.543 -05:00 [INF]   FIX #11: 
+PurchaseOrders line item stats: 0/0 entities have line items, 0 total line items exported
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:43587:2026-05-23 10:08:43.549 -05:00 [INF]   ✓ Exported 0 
+PurchaseOrders records (Active: 0, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:43591:2026-05-23 10:08:43.621 -05:00 [INF]   FIX #11: 
+CreditMemos line item stats: 0/0 entities have line items, 0 total line items exported
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:43592:2026-05-23 10:08:43.628 -05:00 [INF]   ✓ Exported 0 
+CreditMemos records (Active: 0, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:43596:2026-05-23 10:08:43.706 -05:00 [INF]   FIX #11: Estimates 
+line item stats: 0/0 entities have line items, 0 total line items exported
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:43597:2026-05-23 10:08:43.712 -05:00 [INF]   ✓ Exported 0 
+Estimates records (Active: 0, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:43601:2026-05-23 10:08:44.923 -05:00 [INF]   FIX #11: Deposits 
+line item stats: 225/225 entities have line items, 232 total line items exported
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:43602:2026-05-23 10:08:44.931 -05:00 [INF]   ✓ Exported 225 
+Deposits records (Active: 225, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:43606:2026-05-23 10:08:53.347 -05:00 [INF]   FIX #11: Checks 
+line item stats: 1154/1154 entities have line items, 1708 total line items exported
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:43607:2026-05-23 10:08:53.371 -05:00 [INF]   ✓ Exported 1154 
+Checks records (Active: 1154, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:43611:2026-05-23 10:08:53.448 -05:00 [INF]   FIX #11: 
+VendorCredits line item stats: 0/0 entities have line items, 0 total line items exported
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:43612:2026-05-23 10:08:53.454 -05:00 [INF]   ✓ Exported 0 
+VendorCredits records (Active: 0, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:43615:2026-05-23 10:08:53.515 -05:00 [INF]   ✓ Exported 0 
+InventoryAdjustments records (Active: 0, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:43618:2026-05-23 10:08:53.879 -05:00 [INF]   ✓ Exported 156 
+Transfers records (Active: 156, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:43621:2026-05-23 10:08:53.941 -05:00 [INF]   ✓ Exported 1 
+Preferences records (Active: 1, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:43624:2026-05-23 10:08:54.001 -05:00 [INF]   ✓ Exported 1 
+CompanyInfo records (Active: 1, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:43625:2026-05-23 10:08:54.020 -05:00 [INF] Export manifest 
+saved to: C:\QB-TimeWarp\ExportedData\_ExportManifest.json
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:43635:2026-05-23 10:08:54.055 -05:00 [INF]   EXPORT COMPLETE: 
+2090 total records across 31 entity types
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:43652:2026-05-23 10:08:55.545 -05:00 [INF]   STARTING DATA 
+TRANSFORMATION
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:45409:2026-05-23 10:09:02.049 -05:00 [INF] Transformed data 
+saved to: C:\QB-TimeWarp\ExportedData\Transformed
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:45410:2026-05-23 10:09:02.052 -05:00 [INF] Pre-import 
+validation skipped — QB 2021 not opened during export phase (strict workflow enforcement).
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:45460:2026-05-23 10:09:20.994 -05:00 [INF]   │  Phase 0b: 
+Pre-Import Dependency Analysis     │
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:45463:2026-05-23 10:09:21.003 -05:00 [INF]   DEPENDENCY 
+ANALYSIS — Scanning exported data
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:45490:2026-05-23 10:09:21.086 -05:00 [INF]   │  Phase 0c: 
+Create Missing Reference Types (FIX #4)    │
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:47768:2026-05-23 10:12:11.142 -05:00 [INF] ║  STAGED IMPORT 
+COMPLETE                               ║
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:47783:2026-05-23 10:12:26.717 -05:00 [INF]   STARTING DATA 
+EXPORT FROM QUICKBOOKS 2023
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:47788:2026-05-23 10:12:26.943 -05:00 [INF]   ✓ Exported 145 
+Accounts records (Active: 145, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:47791:2026-05-23 10:12:27.049 -05:00 [INF]   ✓ Exported 2 
+Customers records (Active: 2, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:47794:2026-05-23 10:12:28.701 -05:00 [INF]   ✓ Exported 250 
+Vendors records (Active: 250, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:47797:2026-05-23 10:12:28.899 -05:00 [INF]   ✓ Exported 32 
+Employees records (Active: 32, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:47804:2026-05-23 10:12:28.976 -05:00 [INF]   ✓ Exported 10 
+Items records (Active: 10, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:47807:2026-05-23 10:12:29.051 -05:00 [INF]   ✓ Exported 9 
+PaymentMethods records (Active: 9, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:47810:2026-05-23 10:12:29.117 -05:00 [INF]   ✓ Exported 7 Terms 
+records (Active: 7, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:47813:2026-05-23 10:12:29.185 -05:00 [INF]   ✓ Exported 5 
+Classes records (Active: 5, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:47816:2026-05-23 10:12:29.247 -05:00 [INF]   ✓ Exported 3 
+SalesTaxCodes records (Active: 3, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:47819:2026-05-23 10:12:29.312 -05:00 [INF]   ✓ Exported 7 
+ItemSalesTax records (Active: 7, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:47822:2026-05-23 10:12:29.378 -05:00 [INF]   ✓ Exported 4 
+ShipMethods records (Active: 4, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:47825:2026-05-23 10:12:29.443 -05:00 [INF]   ✓ Exported 4 
+CustomerTypes records (Active: 4, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:47828:2026-05-23 10:12:29.509 -05:00 [INF]   ✓ Exported 5 
+VendorTypes records (Active: 5, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:47831:2026-05-23 10:12:29.575 -05:00 [INF]   ✓ Exported 2 
+JobTypes records (Active: 2, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:47834:2026-05-23 10:12:29.633 -05:00 [INF]   ✓ Exported 0 
+PriceLevels records (Active: 0, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:47837:2026-05-23 10:12:29.698 -05:00 [INF]   ✓ Exported 5 
+CustomerMsgs records (Active: 5, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:47841:2026-05-23 10:12:29.764 -05:00 [INF]   FIX #11: Invoices 
+line item stats: 0/0 entities have line items, 0 total line items exported
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:47842:2026-05-23 10:12:29.770 -05:00 [INF]   ✓ Exported 0 
+Invoices records (Active: 0, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:47846:2026-05-23 10:12:29.839 -05:00 [INF]   FIX #11: Bills 
+line item stats: 0/0 entities have line items, 0 total line items exported
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:47847:2026-05-23 10:12:29.845 -05:00 [INF]   ✓ Exported 0 Bills 
+records (Active: 0, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:47850:2026-05-23 10:12:29.907 -05:00 [INF]   ✓ Exported 0 
+Payments records (Active: 0, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:47854:2026-05-23 10:12:30.128 -05:00 [INF]   FIX #11: 
+JournalEntries line item stats: 58/58 entities have line items, 133 total line items exported
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:47855:2026-05-23 10:12:30.135 -05:00 [INF]   ✓ Exported 58 
+JournalEntries records (Active: 58, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:47859:2026-05-23 10:12:30.308 -05:00 [INF]   FIX #11: 
+SalesReceipts line item stats: 30/30 entities have line items, 107 total line items exported
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:47860:2026-05-23 10:12:30.314 -05:00 [INF]   ✓ Exported 30 
+SalesReceipts records (Active: 30, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:47864:2026-05-23 10:12:30.383 -05:00 [INF]   FIX #11: 
+PurchaseOrders line item stats: 0/0 entities have line items, 0 total line items exported
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:47865:2026-05-23 10:12:30.388 -05:00 [INF]   ✓ Exported 0 
+PurchaseOrders records (Active: 0, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:47869:2026-05-23 10:12:30.457 -05:00 [INF]   FIX #11: 
+CreditMemos line item stats: 0/0 entities have line items, 0 total line items exported
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:47870:2026-05-23 10:12:30.462 -05:00 [INF]   ✓ Exported 0 
+CreditMemos records (Active: 0, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:47874:2026-05-23 10:12:30.536 -05:00 [INF]   FIX #11: Estimates 
+line item stats: 0/0 entities have line items, 0 total line items exported
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:47875:2026-05-23 10:12:30.542 -05:00 [INF]   ✓ Exported 0 
+Estimates records (Active: 0, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:47879:2026-05-23 10:12:31.540 -05:00 [INF]   FIX #11: Deposits 
+line item stats: 225/225 entities have line items, 227 total line items exported
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:47880:2026-05-23 10:12:31.547 -05:00 [INF]   ✓ Exported 225 
+Deposits records (Active: 225, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:47884:2026-05-23 10:12:38.722 -05:00 [INF]   FIX #11: Checks 
+line item stats: 1154/1154 entities have line items, 1708 total line items exported
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:47885:2026-05-23 10:12:38.746 -05:00 [INF]   ✓ Exported 1154 
+Checks records (Active: 1154, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:47889:2026-05-23 10:12:38.814 -05:00 [INF]   FIX #11: 
+VendorCredits line item stats: 0/0 entities have line items, 0 total line items exported
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:47890:2026-05-23 10:12:38.820 -05:00 [INF]   ✓ Exported 0 
+VendorCredits records (Active: 0, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:47893:2026-05-23 10:12:38.884 -05:00 [INF]   ✓ Exported 0 
+InventoryAdjustments records (Active: 0, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:47896:2026-05-23 10:12:39.232 -05:00 [INF]   ✓ Exported 156 
+Transfers records (Active: 156, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:47899:2026-05-23 10:12:39.293 -05:00 [INF]   ✓ Exported 1 
+Preferences records (Active: 1, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:47902:2026-05-23 10:12:39.355 -05:00 [INF]   ✓ Exported 1 
+CompanyInfo records (Active: 1, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:47903:2026-05-23 10:12:39.361 -05:00 [INF] Export manifest 
+saved to: C:\QB-TimeWarp\ExportedData\QB2021_PostImport\_ExportManifest.json
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:47906:2026-05-23 10:12:39.369 -05:00 [INF]   EXPORT COMPLETE: 
+2115 total records across 31 entity types
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:47913:2026-05-23 10:12:43.715 -05:00 [INF]   STARTING DATA 
+VALIDATION
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:47959:2026-05-23 11:05:51.413 -05:00 [INF] QB-TimeWarp 
+starting...
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:47981:2026-05-23 11:06:08.750 -05:00 [INF]   STARTING DATA 
+EXPORT FROM QUICKBOOKS 2023
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:47986:2026-05-23 11:06:09.070 -05:00 [INF]   ✓ Exported 142 
+Accounts records (Active: 96, Inactive: 46)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:47989:2026-05-23 11:06:09.154 -05:00 [INF]   ✓ Exported 2 
+Customers records (Active: 2, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:47992:2026-05-23 11:06:10.814 -05:00 [INF]   ✓ Exported 249 
+Vendors records (Active: 186, Inactive: 63)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:47995:2026-05-23 11:06:11.095 -05:00 [INF]   ✓ Exported 32 
+Employees records (Active: 4, Inactive: 28)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:48003:2026-05-23 11:06:11.182 -05:00 [INF]   ✓ Exported 10 
+Items records (Active: 10, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:48006:2026-05-23 11:06:11.246 -05:00 [INF]   ✓ Exported 7 
+PaymentMethods records (Active: 7, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:48009:2026-05-23 11:06:11.304 -05:00 [INF]   ✓ Exported 6 Terms 
+records (Active: 6, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:48012:2026-05-23 11:06:11.363 -05:00 [INF]   ✓ Exported 5 
+Classes records (Active: 5, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:48015:2026-05-23 11:06:11.417 -05:00 [INF]   ✓ Exported 3 
+SalesTaxCodes records (Active: 3, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:48018:2026-05-23 11:06:11.475 -05:00 [INF]   ✓ Exported 6 
+ItemSalesTax records (Active: 6, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:48021:2026-05-23 11:06:11.533 -05:00 [INF]   ✓ Exported 0 
+ShipMethods records (Active: 0, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:48024:2026-05-23 11:06:11.593 -05:00 [INF]   ✓ Exported 0 
+CustomerTypes records (Active: 0, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:48027:2026-05-23 11:06:11.654 -05:00 [INF]   ✓ Exported 3 
+VendorTypes records (Active: 3, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:48030:2026-05-23 11:06:11.714 -05:00 [INF]   ✓ Exported 0 
+JobTypes records (Active: 0, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:48033:2026-05-23 11:06:11.772 -05:00 [INF]   ✓ Exported 0 
+PriceLevels records (Active: 0, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:48036:2026-05-23 11:06:11.833 -05:00 [INF]   ✓ Exported 0 
+CustomerMsgs records (Active: 0, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:48040:2026-05-23 11:06:11.894 -05:00 [INF]   FIX #11: Invoices 
+line item stats: 0/0 entities have line items, 0 total line items exported
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:48041:2026-05-23 11:06:11.900 -05:00 [INF]   ✓ Exported 0 
+Invoices records (Active: 0, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:48045:2026-05-23 11:06:11.962 -05:00 [INF]   FIX #11: Bills 
+line item stats: 0/0 entities have line items, 0 total line items exported
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:48046:2026-05-23 11:06:11.968 -05:00 [INF]   ✓ Exported 0 Bills 
+records (Active: 0, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:48049:2026-05-23 11:06:12.034 -05:00 [INF]   ✓ Exported 0 
+Payments records (Active: 0, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:48053:2026-05-23 11:06:12.259 -05:00 [INF]   FIX #11: 
+JournalEntries line item stats: 58/58 entities have line items, 133 total line items exported
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:48054:2026-05-23 11:06:12.265 -05:00 [INF]   ✓ Exported 58 
+JournalEntries records (Active: 58, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:48058:2026-05-23 11:06:12.466 -05:00 [INF]   FIX #11: 
+SalesReceipts line item stats: 30/30 entities have line items, 107 total line items exported
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:48059:2026-05-23 11:06:12.474 -05:00 [INF]   ✓ Exported 30 
+SalesReceipts records (Active: 30, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:48063:2026-05-23 11:06:12.538 -05:00 [INF]   FIX #11: 
+PurchaseOrders line item stats: 0/0 entities have line items, 0 total line items exported
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:48064:2026-05-23 11:06:12.548 -05:00 [INF]   ✓ Exported 0 
+PurchaseOrders records (Active: 0, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:48068:2026-05-23 11:06:12.608 -05:00 [INF]   FIX #11: 
+CreditMemos line item stats: 0/0 entities have line items, 0 total line items exported
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:48069:2026-05-23 11:06:12.613 -05:00 [INF]   ✓ Exported 0 
+CreditMemos records (Active: 0, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:48073:2026-05-23 11:06:12.675 -05:00 [INF]   FIX #11: Estimates 
+line item stats: 0/0 entities have line items, 0 total line items exported
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:48074:2026-05-23 11:06:12.680 -05:00 [INF]   ✓ Exported 0 
+Estimates records (Active: 0, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:48078:2026-05-23 11:06:13.683 -05:00 [INF]   FIX #11: Deposits 
+line item stats: 225/225 entities have line items, 232 total line items exported
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:48079:2026-05-23 11:06:13.690 -05:00 [INF]   ✓ Exported 225 
+Deposits records (Active: 225, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:48083:2026-05-23 11:06:21.981 -05:00 [INF]   FIX #11: Checks 
+line item stats: 1154/1154 entities have line items, 1708 total line items exported
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:48084:2026-05-23 11:06:22.018 -05:00 [INF]   ✓ Exported 1154 
+Checks records (Active: 1154, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:48088:2026-05-23 11:06:23.246 -05:00 [INF]   FIX #11: 
+CreditCardCharges line item stats: 369/369 entities have line items, 369 total line items exported
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:48089:2026-05-23 11:06:23.254 -05:00 [INF]   ✓ Exported 369 
+CreditCardCharges records (Active: 369, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:48093:2026-05-23 11:06:23.347 -05:00 [INF]   FIX #11: 
+CreditCardCredits line item stats: 9/9 entities have line items, 9 total line items exported
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:48094:2026-05-23 11:06:23.353 -05:00 [INF]   ✓ Exported 9 
+CreditCardCredits records (Active: 9, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:48098:2026-05-23 11:06:23.415 -05:00 [INF]   FIX #11: 
+VendorCredits line item stats: 0/0 entities have line items, 0 total line items exported
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:48099:2026-05-23 11:06:23.421 -05:00 [INF]   ✓ Exported 0 
+VendorCredits records (Active: 0, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:48102:2026-05-23 11:06:23.480 -05:00 [INF]   ✓ Exported 0 
+InventoryAdjustments records (Active: 0, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:48105:2026-05-23 11:06:23.821 -05:00 [INF]   ✓ Exported 156 
+Transfers records (Active: 156, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:48108:2026-05-23 11:06:23.884 -05:00 [INF]   ✓ Exported 1 
+Preferences records (Active: 1, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:48111:2026-05-23 11:06:23.938 -05:00 [INF]   ✓ Exported 1 
+CompanyInfo records (Active: 1, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:48112:2026-05-23 11:06:23.954 -05:00 [INF] Export manifest 
+saved to: C:\QB-TimeWarp\ExportedData\_ExportManifest.json
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:48122:2026-05-23 11:06:23.987 -05:00 [INF]   EXPORT COMPLETE: 
+2468 total records across 33 entity types
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:48139:2026-05-23 11:06:25.594 -05:00 [INF]   STARTING DATA 
+TRANSFORMATION
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:50278:2026-05-23 11:06:33.016 -05:00 [INF] Transformed data 
+saved to: C:\QB-TimeWarp\ExportedData\Transformed
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:50279:2026-05-23 11:06:33.019 -05:00 [INF] Pre-import 
+validation skipped — QB 2021 not opened during export phase (strict workflow enforcement).
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:50329:2026-05-23 11:06:53.592 -05:00 [INF]   │  Phase 0a: 
+Verify Sales Tax Enabled (FIX #24)         │
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:50339:2026-05-23 11:06:53.671 -05:00 [INF]   │  Phase 0b: 
+Pre-Import Dependency Analysis     │
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:50342:2026-05-23 11:06:53.677 -05:00 [INF]   DEPENDENCY 
+ANALYSIS — Scanning exported data
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:50369:2026-05-23 11:06:53.748 -05:00 [INF]   │  Phase 0c: 
+Create Missing Reference Types (FIX #4)    │
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:53041:2026-05-23 11:10:14.108 -05:00 [INF] ║  STAGED IMPORT 
+COMPLETE                               ║
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:53057:2026-05-23 11:10:29.881 -05:00 [INF]   STARTING DATA 
+EXPORT FROM QUICKBOOKS 2023
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:53062:2026-05-23 11:10:30.095 -05:00 [INF]   ✓ Exported 145 
+Accounts records (Active: 145, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:53065:2026-05-23 11:10:30.187 -05:00 [INF]   ✓ Exported 2 
+Customers records (Active: 2, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:53068:2026-05-23 11:10:31.782 -05:00 [INF]   ✓ Exported 250 
+Vendors records (Active: 250, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:53071:2026-05-23 11:10:31.971 -05:00 [INF]   ✓ Exported 32 
+Employees records (Active: 32, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:53078:2026-05-23 11:10:32.053 -05:00 [INF]   ✓ Exported 10 
+Items records (Active: 10, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:53081:2026-05-23 11:10:32.122 -05:00 [INF]   ✓ Exported 9 
+PaymentMethods records (Active: 9, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:53084:2026-05-23 11:10:32.188 -05:00 [INF]   ✓ Exported 7 Terms 
+records (Active: 7, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:53087:2026-05-23 11:10:32.256 -05:00 [INF]   ✓ Exported 5 
+Classes records (Active: 5, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:53090:2026-05-23 11:10:32.319 -05:00 [INF]   ✓ Exported 3 
+SalesTaxCodes records (Active: 3, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:53093:2026-05-23 11:10:32.386 -05:00 [INF]   ✓ Exported 7 
+ItemSalesTax records (Active: 7, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:53096:2026-05-23 11:10:32.448 -05:00 [INF]   ✓ Exported 4 
+ShipMethods records (Active: 4, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:53099:2026-05-23 11:10:32.510 -05:00 [INF]   ✓ Exported 4 
+CustomerTypes records (Active: 4, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:53102:2026-05-23 11:10:32.575 -05:00 [INF]   ✓ Exported 5 
+VendorTypes records (Active: 5, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:53105:2026-05-23 11:10:32.638 -05:00 [INF]   ✓ Exported 2 
+JobTypes records (Active: 2, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:53108:2026-05-23 11:10:32.700 -05:00 [INF]   ✓ Exported 0 
+PriceLevels records (Active: 0, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:53111:2026-05-23 11:10:32.763 -05:00 [INF]   ✓ Exported 5 
+CustomerMsgs records (Active: 5, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:53115:2026-05-23 11:10:32.827 -05:00 [INF]   FIX #11: Invoices 
+line item stats: 0/0 entities have line items, 0 total line items exported
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:53116:2026-05-23 11:10:32.832 -05:00 [INF]   ✓ Exported 0 
+Invoices records (Active: 0, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:53120:2026-05-23 11:10:32.899 -05:00 [INF]   FIX #11: Bills 
+line item stats: 0/0 entities have line items, 0 total line items exported
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:53121:2026-05-23 11:10:32.906 -05:00 [INF]   ✓ Exported 0 Bills 
+records (Active: 0, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:53124:2026-05-23 11:10:32.970 -05:00 [INF]   ✓ Exported 0 
+Payments records (Active: 0, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:53128:2026-05-23 11:10:33.204 -05:00 [INF]   FIX #11: 
+JournalEntries line item stats: 58/58 entities have line items, 133 total line items exported
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:53129:2026-05-23 11:10:33.209 -05:00 [INF]   ✓ Exported 58 
+JournalEntries records (Active: 58, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:53133:2026-05-23 11:10:33.380 -05:00 [INF]   FIX #11: 
+SalesReceipts line item stats: 30/30 entities have line items, 107 total line items exported
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:53134:2026-05-23 11:10:33.386 -05:00 [INF]   ✓ Exported 30 
+SalesReceipts records (Active: 30, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:53138:2026-05-23 11:10:33.455 -05:00 [INF]   FIX #11: 
+PurchaseOrders line item stats: 0/0 entities have line items, 0 total line items exported
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:53139:2026-05-23 11:10:33.461 -05:00 [INF]   ✓ Exported 0 
+PurchaseOrders records (Active: 0, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:53143:2026-05-23 11:10:33.530 -05:00 [INF]   FIX #11: 
+CreditMemos line item stats: 0/0 entities have line items, 0 total line items exported
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:53144:2026-05-23 11:10:33.535 -05:00 [INF]   ✓ Exported 0 
+CreditMemos records (Active: 0, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:53148:2026-05-23 11:10:33.603 -05:00 [INF]   FIX #11: Estimates 
+line item stats: 0/0 entities have line items, 0 total line items exported
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:53149:2026-05-23 11:10:33.608 -05:00 [INF]   ✓ Exported 0 
+Estimates records (Active: 0, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:53153:2026-05-23 11:10:34.663 -05:00 [INF]   FIX #11: Deposits 
+line item stats: 225/225 entities have line items, 227 total line items exported
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:53154:2026-05-23 11:10:34.670 -05:00 [INF]   ✓ Exported 225 
+Deposits records (Active: 225, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:53158:2026-05-23 11:10:42.556 -05:00 [INF]   FIX #11: Checks 
+line item stats: 1154/1154 entities have line items, 1708 total line items exported
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:53159:2026-05-23 11:10:42.580 -05:00 [INF]   ✓ Exported 1154 
+Checks records (Active: 1154, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:53163:2026-05-23 11:10:43.731 -05:00 [INF]   FIX #11: 
+CreditCardCharges line item stats: 369/369 entities have line items, 369 total line items exported
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:53164:2026-05-23 11:10:43.738 -05:00 [INF]   ✓ Exported 369 
+CreditCardCharges records (Active: 369, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:53168:2026-05-23 11:10:43.833 -05:00 [INF]   FIX #11: 
+CreditCardCredits line item stats: 8/8 entities have line items, 8 total line items exported
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:53169:2026-05-23 11:10:43.838 -05:00 [INF]   ✓ Exported 8 
+CreditCardCredits records (Active: 8, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:53173:2026-05-23 11:10:43.903 -05:00 [INF]   FIX #11: 
+VendorCredits line item stats: 0/0 entities have line items, 0 total line items exported
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:53174:2026-05-23 11:10:43.909 -05:00 [INF]   ✓ Exported 0 
+VendorCredits records (Active: 0, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:53177:2026-05-23 11:10:43.971 -05:00 [INF]   ✓ Exported 0 
+InventoryAdjustments records (Active: 0, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:53180:2026-05-23 11:10:44.311 -05:00 [INF]   ✓ Exported 156 
+Transfers records (Active: 156, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:53183:2026-05-23 11:10:44.380 -05:00 [INF]   ✓ Exported 1 
+Preferences records (Active: 1, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:53186:2026-05-23 11:10:44.439 -05:00 [INF]   ✓ Exported 1 
+CompanyInfo records (Active: 1, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:53187:2026-05-23 11:10:44.445 -05:00 [INF] Export manifest 
+saved to: C:\QB-TimeWarp\ExportedData\QB2021_PostImport\_ExportManifest.json
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:53190:2026-05-23 11:10:44.452 -05:00 [INF]   EXPORT COMPLETE: 
+2492 total records across 33 entity types
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:53197:2026-05-23 11:10:48.846 -05:00 [INF]   STARTING DATA 
+VALIDATION
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:53245:2026-05-23 11:39:31.607 -05:00 [INF] QB-TimeWarp 
+starting...
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:53267:2026-05-23 11:39:47.664 -05:00 [INF]   STARTING DATA 
+EXPORT FROM QUICKBOOKS 2023
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:53272:2026-05-23 11:39:47.908 -05:00 [INF]   ✓ Exported 142 
+Accounts records (Active: 96, Inactive: 46)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:53275:2026-05-23 11:39:47.989 -05:00 [INF]   ✓ Exported 2 
+Customers records (Active: 2, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:53278:2026-05-23 11:39:49.713 -05:00 [INF]   ✓ Exported 249 
+Vendors records (Active: 186, Inactive: 63)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:53281:2026-05-23 11:39:49.988 -05:00 [INF]   ✓ Exported 32 
+Employees records (Active: 4, Inactive: 28)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:53289:2026-05-23 11:39:50.086 -05:00 [INF]   ✓ Exported 10 
+Items records (Active: 10, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:53292:2026-05-23 11:39:50.150 -05:00 [INF]   ✓ Exported 7 
+PaymentMethods records (Active: 7, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:53295:2026-05-23 11:39:50.215 -05:00 [INF]   ✓ Exported 6 Terms 
+records (Active: 6, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:53298:2026-05-23 11:39:50.272 -05:00 [INF]   ✓ Exported 5 
+Classes records (Active: 5, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:53301:2026-05-23 11:39:50.330 -05:00 [INF]   ✓ Exported 3 
+SalesTaxCodes records (Active: 3, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:53304:2026-05-23 11:39:50.391 -05:00 [INF]   ✓ Exported 6 
+ItemSalesTax records (Active: 6, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:53307:2026-05-23 11:39:50.454 -05:00 [INF]   ✓ Exported 0 
+ShipMethods records (Active: 0, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:53310:2026-05-23 11:39:50.510 -05:00 [INF]   ✓ Exported 0 
+CustomerTypes records (Active: 0, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:53313:2026-05-23 11:39:50.569 -05:00 [INF]   ✓ Exported 3 
+VendorTypes records (Active: 3, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:53316:2026-05-23 11:39:50.628 -05:00 [INF]   ✓ Exported 0 
+JobTypes records (Active: 0, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:53319:2026-05-23 11:39:50.686 -05:00 [INF]   ✓ Exported 0 
+PriceLevels records (Active: 0, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:53322:2026-05-23 11:39:50.750 -05:00 [INF]   ✓ Exported 0 
+CustomerMsgs records (Active: 0, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:53326:2026-05-23 11:39:50.812 -05:00 [INF]   FIX #11: Invoices 
+line item stats: 0/0 entities have line items, 0 total line items exported
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:53327:2026-05-23 11:39:50.818 -05:00 [INF]   ✓ Exported 0 
+Invoices records (Active: 0, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:53331:2026-05-23 11:39:50.880 -05:00 [INF]   FIX #11: Bills 
+line item stats: 0/0 entities have line items, 0 total line items exported
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:53332:2026-05-23 11:39:50.885 -05:00 [INF]   ✓ Exported 0 Bills 
+records (Active: 0, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:53335:2026-05-23 11:39:50.943 -05:00 [INF]   ✓ Exported 0 
+Payments records (Active: 0, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:53339:2026-05-23 11:39:51.213 -05:00 [INF]   FIX #11: 
+JournalEntries line item stats: 58/58 entities have line items, 133 total line items exported
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:53340:2026-05-23 11:39:51.219 -05:00 [INF]   ✓ Exported 58 
+JournalEntries records (Active: 58, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:53344:2026-05-23 11:39:51.473 -05:00 [INF]   FIX #11: 
+SalesReceipts line item stats: 30/30 entities have line items, 107 total line items exported
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:53345:2026-05-23 11:39:51.479 -05:00 [INF]   ✓ Exported 30 
+SalesReceipts records (Active: 30, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:53349:2026-05-23 11:39:51.552 -05:00 [INF]   FIX #11: 
+PurchaseOrders line item stats: 0/0 entities have line items, 0 total line items exported
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:53350:2026-05-23 11:39:51.558 -05:00 [INF]   ✓ Exported 0 
+PurchaseOrders records (Active: 0, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:53354:2026-05-23 11:39:51.633 -05:00 [INF]   FIX #11: 
+CreditMemos line item stats: 0/0 entities have line items, 0 total line items exported
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:53355:2026-05-23 11:39:51.640 -05:00 [INF]   ✓ Exported 0 
+CreditMemos records (Active: 0, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:53359:2026-05-23 11:39:51.708 -05:00 [INF]   FIX #11: Estimates 
+line item stats: 0/0 entities have line items, 0 total line items exported
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:53360:2026-05-23 11:39:51.713 -05:00 [INF]   ✓ Exported 0 
+Estimates records (Active: 0, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:53364:2026-05-23 11:39:52.850 -05:00 [INF]   FIX #11: Deposits 
+line item stats: 225/225 entities have line items, 232 total line items exported
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:53365:2026-05-23 11:39:52.858 -05:00 [INF]   ✓ Exported 225 
+Deposits records (Active: 225, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:53369:2026-05-23 11:40:00.874 -05:00 [INF]   FIX #11: Checks 
+line item stats: 1154/1154 entities have line items, 1708 total line items exported
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:53370:2026-05-23 11:40:00.904 -05:00 [INF]   ✓ Exported 1154 
+Checks records (Active: 1154, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:53374:2026-05-23 11:40:02.203 -05:00 [INF]   FIX #11: 
+CreditCardCharges line item stats: 369/369 entities have line items, 369 total line items exported
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:53375:2026-05-23 11:40:02.211 -05:00 [INF]   ✓ Exported 369 
+CreditCardCharges records (Active: 369, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:53379:2026-05-23 11:40:02.308 -05:00 [INF]   FIX #11: 
+CreditCardCredits line item stats: 9/9 entities have line items, 9 total line items exported
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:53380:2026-05-23 11:40:02.314 -05:00 [INF]   ✓ Exported 9 
+CreditCardCredits records (Active: 9, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:53384:2026-05-23 11:40:02.388 -05:00 [INF]   FIX #11: 
+BillPaymentChecks line item stats: 0/0 entities have line items, 0 total line items exported
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:53385:2026-05-23 11:40:02.394 -05:00 [INF]   ✓ Exported 0 
+BillPaymentChecks records (Active: 0, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:53389:2026-05-23 11:40:02.458 -05:00 [INF]   FIX #11: 
+BillPaymentCreditCards line item stats: 0/0 entities have line items, 0 total line items exported
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:53390:2026-05-23 11:40:02.464 -05:00 [INF]   ✓ Exported 0 
+BillPaymentCreditCards records (Active: 0, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:53394:2026-05-23 11:40:02.529 -05:00 [INF]   FIX #11: 
+VendorCredits line item stats: 0/0 entities have line items, 0 total line items exported
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:53395:2026-05-23 11:40:02.535 -05:00 [INF]   ✓ Exported 0 
+VendorCredits records (Active: 0, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:53398:2026-05-23 11:40:02.601 -05:00 [INF]   ✓ Exported 0 
+InventoryAdjustments records (Active: 0, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:53401:2026-05-23 11:40:02.978 -05:00 [INF]   ✓ Exported 156 
+Transfers records (Active: 156, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:53404:2026-05-23 11:40:03.050 -05:00 [INF]   ✓ Exported 1 
+Preferences records (Active: 1, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:53407:2026-05-23 11:40:03.114 -05:00 [INF]   ✓ Exported 1 
+CompanyInfo records (Active: 1, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:53408:2026-05-23 11:40:03.129 -05:00 [INF] Export manifest 
+saved to: C:\QB-TimeWarp\ExportedData\_ExportManifest.json
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:53418:2026-05-23 11:40:03.166 -05:00 [INF]   EXPORT COMPLETE: 
+2468 total records across 35 entity types
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:53435:2026-05-23 11:40:04.701 -05:00 [INF]   STARTING DATA 
+TRANSFORMATION
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:55578:2026-05-23 11:40:12.322 -05:00 [INF] Transformed data 
+saved to: C:\QB-TimeWarp\ExportedData\Transformed
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:55579:2026-05-23 11:40:12.325 -05:00 [INF] Pre-import 
+validation skipped — QB 2021 not opened during export phase (strict workflow enforcement).
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:55629:2026-05-23 11:40:31.529 -05:00 [INF]   │  Phase 0a: 
+Verify Sales Tax Enabled (FIX #24)         │
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:55639:2026-05-23 11:40:31.609 -05:00 [INF]   │  Phase 0b: 
+Pre-Import Dependency Analysis     │
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:55642:2026-05-23 11:40:31.616 -05:00 [INF]   DEPENDENCY 
+ANALYSIS — Scanning exported data
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:55669:2026-05-23 11:40:31.690 -05:00 [INF]   │  Phase 0c: 
+Create Missing Reference Types (FIX #4)    │
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:58341:2026-05-23 11:43:47.651 -05:00 [INF] ║  STAGED IMPORT 
+COMPLETE                               ║
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:58357:2026-05-23 11:44:03.267 -05:00 [INF]   STARTING DATA 
+EXPORT FROM QUICKBOOKS 2023
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:58362:2026-05-23 11:44:03.489 -05:00 [INF]   ✓ Exported 145 
+Accounts records (Active: 145, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:58365:2026-05-23 11:44:03.568 -05:00 [INF]   ✓ Exported 2 
+Customers records (Active: 2, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:58368:2026-05-23 11:44:05.075 -05:00 [INF]   ✓ Exported 250 
+Vendors records (Active: 250, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:58371:2026-05-23 11:44:05.264 -05:00 [INF]   ✓ Exported 32 
+Employees records (Active: 32, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:58378:2026-05-23 11:44:05.337 -05:00 [INF]   ✓ Exported 10 
+Items records (Active: 10, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:58381:2026-05-23 11:44:05.404 -05:00 [INF]   ✓ Exported 9 
+PaymentMethods records (Active: 9, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:58384:2026-05-23 11:44:05.465 -05:00 [INF]   ✓ Exported 7 Terms 
+records (Active: 7, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:58387:2026-05-23 11:44:05.528 -05:00 [INF]   ✓ Exported 5 
+Classes records (Active: 5, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:58390:2026-05-23 11:44:05.589 -05:00 [INF]   ✓ Exported 3 
+SalesTaxCodes records (Active: 3, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:58393:2026-05-23 11:44:05.651 -05:00 [INF]   ✓ Exported 7 
+ItemSalesTax records (Active: 7, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:58396:2026-05-23 11:44:05.715 -05:00 [INF]   ✓ Exported 4 
+ShipMethods records (Active: 4, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:58399:2026-05-23 11:44:05.786 -05:00 [INF]   ✓ Exported 4 
+CustomerTypes records (Active: 4, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:58402:2026-05-23 11:44:05.847 -05:00 [INF]   ✓ Exported 5 
+VendorTypes records (Active: 5, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:58405:2026-05-23 11:44:05.911 -05:00 [INF]   ✓ Exported 2 
+JobTypes records (Active: 2, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:58408:2026-05-23 11:44:05.968 -05:00 [INF]   ✓ Exported 0 
+PriceLevels records (Active: 0, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:58411:2026-05-23 11:44:06.036 -05:00 [INF]   ✓ Exported 5 
+CustomerMsgs records (Active: 5, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:58415:2026-05-23 11:44:06.107 -05:00 [INF]   FIX #11: Invoices 
+line item stats: 0/0 entities have line items, 0 total line items exported
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:58416:2026-05-23 11:44:06.115 -05:00 [INF]   ✓ Exported 0 
+Invoices records (Active: 0, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:58420:2026-05-23 11:44:06.191 -05:00 [INF]   FIX #11: Bills 
+line item stats: 0/0 entities have line items, 0 total line items exported
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:58421:2026-05-23 11:44:06.197 -05:00 [INF]   ✓ Exported 0 Bills 
+records (Active: 0, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:58424:2026-05-23 11:44:06.264 -05:00 [INF]   ✓ Exported 0 
+Payments records (Active: 0, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:58428:2026-05-23 11:44:06.480 -05:00 [INF]   FIX #11: 
+JournalEntries line item stats: 58/58 entities have line items, 133 total line items exported
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:58429:2026-05-23 11:44:06.486 -05:00 [INF]   ✓ Exported 58 
+JournalEntries records (Active: 58, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:58433:2026-05-23 11:44:06.666 -05:00 [INF]   FIX #11: 
+SalesReceipts line item stats: 30/30 entities have line items, 107 total line items exported
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:58434:2026-05-23 11:44:06.671 -05:00 [INF]   ✓ Exported 30 
+SalesReceipts records (Active: 30, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:58438:2026-05-23 11:44:06.742 -05:00 [INF]   FIX #11: 
+PurchaseOrders line item stats: 0/0 entities have line items, 0 total line items exported
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:58439:2026-05-23 11:44:06.748 -05:00 [INF]   ✓ Exported 0 
+PurchaseOrders records (Active: 0, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:58443:2026-05-23 11:44:06.820 -05:00 [INF]   FIX #11: 
+CreditMemos line item stats: 0/0 entities have line items, 0 total line items exported
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:58444:2026-05-23 11:44:06.826 -05:00 [INF]   ✓ Exported 0 
+CreditMemos records (Active: 0, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:58448:2026-05-23 11:44:06.892 -05:00 [INF]   FIX #11: Estimates 
+line item stats: 0/0 entities have line items, 0 total line items exported
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:58449:2026-05-23 11:44:06.898 -05:00 [INF]   ✓ Exported 0 
+Estimates records (Active: 0, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:58453:2026-05-23 11:44:07.906 -05:00 [INF]   FIX #11: Deposits 
+line item stats: 225/225 entities have line items, 227 total line items exported
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:58454:2026-05-23 11:44:07.913 -05:00 [INF]   ✓ Exported 225 
+Deposits records (Active: 225, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:58458:2026-05-23 11:44:15.118 -05:00 [INF]   FIX #11: Checks 
+line item stats: 1154/1154 entities have line items, 1708 total line items exported
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:58459:2026-05-23 11:44:15.142 -05:00 [INF]   ✓ Exported 1154 
+Checks records (Active: 1154, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:58463:2026-05-23 11:44:16.265 -05:00 [INF]   FIX #11: 
+CreditCardCharges line item stats: 369/369 entities have line items, 369 total line items exported
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:58464:2026-05-23 11:44:16.279 -05:00 [INF]   ✓ Exported 369 
+CreditCardCharges records (Active: 369, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:58468:2026-05-23 11:44:16.367 -05:00 [INF]   FIX #11: 
+CreditCardCredits line item stats: 8/8 entities have line items, 8 total line items exported
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:58469:2026-05-23 11:44:16.374 -05:00 [INF]   ✓ Exported 8 
+CreditCardCredits records (Active: 8, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:58473:2026-05-23 11:44:16.443 -05:00 [INF]   FIX #11: 
+BillPaymentChecks line item stats: 0/0 entities have line items, 0 total line items exported
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:58474:2026-05-23 11:44:16.450 -05:00 [INF]   ✓ Exported 0 
+BillPaymentChecks records (Active: 0, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:58478:2026-05-23 11:44:16.518 -05:00 [INF]   FIX #11: 
+BillPaymentCreditCards line item stats: 0/0 entities have line items, 0 total line items exported
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:58479:2026-05-23 11:44:16.524 -05:00 [INF]   ✓ Exported 0 
+BillPaymentCreditCards records (Active: 0, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:58483:2026-05-23 11:44:16.593 -05:00 [INF]   FIX #11: 
+VendorCredits line item stats: 0/0 entities have line items, 0 total line items exported
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:58484:2026-05-23 11:44:16.599 -05:00 [INF]   ✓ Exported 0 
+VendorCredits records (Active: 0, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:58487:2026-05-23 11:44:16.663 -05:00 [INF]   ✓ Exported 0 
+InventoryAdjustments records (Active: 0, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:58490:2026-05-23 11:44:16.986 -05:00 [INF]   ✓ Exported 156 
+Transfers records (Active: 156, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:58493:2026-05-23 11:44:17.057 -05:00 [INF]   ✓ Exported 1 
+Preferences records (Active: 1, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:58496:2026-05-23 11:44:17.118 -05:00 [INF]   ✓ Exported 1 
+CompanyInfo records (Active: 1, Inactive: 0)
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:58497:2026-05-23 11:44:17.125 -05:00 [INF] Export manifest 
+saved to: C:\QB-TimeWarp\ExportedData\QB2021_PostImport\_ExportManifest.json
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:58500:2026-05-23 11:44:17.132 -05:00 [INF]   EXPORT COMPLETE: 
+2492 total records across 35 entity types
+C:\QB-TimeWarp\Logs\QB-TimeWarp-20260523.log:58507:2026-05-23 11:44:21.591 -05:00 [INF]   STARTING DATA 
+VALIDATION
+
+

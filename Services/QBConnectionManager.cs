@@ -34,12 +34,12 @@ namespace QB_TimeWarp.Services
         {
             @"\Desktop\Joshs_Gold_Coast",
             @"\Desktop\QB21_Blank_Template",
+            @"\Desktop\Client_Files",
             @"\Desktop\Air_Masters",
             // Legacy paths (with spaces) — still blocked for safety
             @"\Desktop\Joshua's Gold Coast",
             @"\Desktop\Blank Template",
-            @"\Desktop\Air Masters",
-            @"\Desktop\AirMasters"
+            @"\Desktop\Air Masters"
         };
 
         public QBConnectionManager(QBInstanceConfig config, string instanceName)

@@ -13,7 +13,6 @@
     <Description>QuickBooks Data Migration Tool - QB 2023 to QB 2021</Description>
     <Authors>QB-TimeWarp</Authors>
     <Version>1.0.0</Version>
-    <ApplicationIcon>Resources\timewarp.ico</ApplicationIcon>
   </PropertyGroup>
 
   <ItemGroup>

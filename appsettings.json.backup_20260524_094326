@@ -1,0 +1,144 @@
+{
+  "_comment_safety": "WORKING COPY SYSTEM: QB-TimeWarp copies originals to Working folders and operates ONLY on copies. Client Original on Users Desktop and QB21 Blank Master C:\\QB-TimeWarp\\Working\\QB21_Blank_Template\\Blank_Template.qbw are NEVER modified.",
+  "SourceFiles": {
+    "DesktopFolder": "C:\\Users\\AIAgent\\Desktop\\Joshs_Gold_Coast",
+    "CompanyFileName": "*.qbw"
+  },
+  "TargetFiles": {
+    "DesktopFolder": "C:\\QB-TimeWarp\\Working\\QB21_Blank_Template",
+    "CompanyFileName": "*.qbw"
+  },
+  "WorkingDirectories": {
+    "SourcePath": "C:\\QB-TimeWarp\\Working\\Source",
+    "TargetPath": "C:\\QB-TimeWarp\\Working\\Target",
+    "AutoCreateWorkingCopies": true,
+    "PreserveOriginals": true
+  },
+  "QuickBooks": {
+    "QB2023": {
+      "InstallPath": "C:\\Program Files\\Intuit\\Quickbooks 2023\\QBWPremierAccountant.exe",
+      "CompanyFilePath": "C:\\QB-TimeWarp\\Working\\Source\\Joshs_Gold_Coast_II_2023.qbw",
+      "ApplicationName": "QB-TimeWarp",
+      "SDKVersion": "16.0",
+      "MaxRetries": 3,
+      "TimeoutSeconds": 300
+    },
+    "QB2021": {
+      "InstallPath": "C:\\Program Files (x86)\\Intuit\\QuickBooks 2021\\QBW32PremierAccountant.exe",
+      "CompanyFilePath": "C:\\QB-TimeWarp\\Working\\Target\\Blank_Template.qbw",
+      "ApplicationName": "QB-TimeWarp",
+      "SDKVersion": "15.0",
+      "MaxRetries": 3,
+      "TimeoutSeconds": 300
+    }
+  },
+  "Paths": {
+    "_comment_paths": "ABSOLUTE PATHS — prevents CWD issues when running from publish\\ vs root. All paths resolve correctly regardless of where the exe is launched from.",
+    "ExportDirectory": "C:\\QB-TimeWarp\\ExportedData",
+    "SchemaDirectory": "C:\\QB-TimeWarp\\Schemas",
+    "LogDirectory": "C:\\QB-TimeWarp\\Logs",
+    "ValidationReportDirectory": "C:\\QB-TimeWarp\\Validation",
+    "FieldMappingsFile": "C:\\QB-TimeWarp\\Configuration\\FieldMappings.json"
+  },
+  "Export": {
+    "BatchSize": 500,
+    "IncludeInactiveRecords": true,
+    "ExportFormat": "JSON",
+    "DateRangeStart": "",
+    "DateRangeEnd": "",
+    "EntityTypes": [
+      "Accounts",
+      "Customers",
+      "Vendors",
+      "Employees",
+      "Items",
+      "ItemSalesTax",
+      "PaymentMethods",
+      "Terms",
+      "Classes",
+      "SalesTaxCodes",
+      "ShipMethods",
+      "CustomerTypes",
+      "VendorTypes",
+      "JobTypes",
+      "PriceLevels",
+      "CustomerMsgs",
+      "Invoices",
+      "Bills",
+      "Payments",
+      "SalesReceipts",
+      "PurchaseOrders",
+      "JournalEntries",
+      "CreditMemos",
+      "Estimates",
+      "Deposits",
+      "Checks",
+      "CreditCardCharges",
+      "CreditCardCredits",
+      "VendorCredits",
+      "InventoryAdjustments",
+      "Transfers",
+      "Paychecks",
+      "Preferences",
+      "CompanyInfo"
+    ],
+    "_comment_credit_cards": "FIX #38: CreditCard types are EXPORTED from QB2023 but converted to JournalEntries during transformation (QB 2021 doesn't support them). They won't appear in Import.ImportOrder because they'll be JournalEntries by that point.",
+    "_comment_paychecks": "FIX #44: Paychecks are EXPORTED from QB2023 (payroll subscription active) but converted to JournalEntries during transformation (QB 2021 cannot use PaycheckAdd without payroll subscription). Like CreditCards, they merge into JournalEntries via FIX #40."
+  },
+  "Import": {
+    "BatchSize": 100,
+    "SkipOnError": true,
+    "DryRun": false,
+    "UseStagedImport": true,
+    "AutoCreateMissingDependencies": true,
+    "ValidateBetweenStages": true,
+    "HaltOnFoundationFailure": true,
+    "Stages": {
+      "Stage1_FoundationAndEntities": true,
+      "Stage2_Items": true,
+      "Stage3_Transactions": true
+    },
+    "_comment_stages": "Stage 1: Accounts/Terms/Classes/Vendors/Customers/Employees/etc → Stage 2: Items & ItemSalesTax → Stage 3: Transactions",
+    "ImportOrder": [
+      "Accounts",
+      "Customers",
+      "Vendors",
+      "Employees",
+      "Items",
+      "Invoices",
+      "Bills",
+      "Payments",
+      "SalesReceipts",
+      "PurchaseOrders",
+      "JournalEntries",
+      "CreditMemos",
+      "Estimates",
+      "Deposits",
+      "Checks",
+      "VendorCredits",
+      "InventoryAdjustments",
+      "Transfers"
+    ]
+  },
+  "Validation": {
+    "EnableFieldByFieldComparison": true,
+    "EnableFinancialReconciliation": true,
+    "EnableEntityCountVerification": true,
+    "EnableJournalValidation": true,
+    "ToleranceAmount": 0.01,
+    "ReportFormat": "JSON"
+  },
+  "TransformationRules": {
+    "ReactivateInactiveEntities": true,
+    "PreserveClassTracking": true,
+    "MatchAccountingModel": true
+  },
+  "Logging": {
+    "MinimumLevel": "Information",
+    "EnableConsoleOutput": true,
+    "EnableFileOutput": true,
+    "LogFileName": "QB-TimeWarp-{Date}.log",
+    "MaxFileSizeMB": 100,
+    "RetainedFileCount": 10
+  }
+}
