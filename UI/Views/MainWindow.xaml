@@ -7,7 +7,10 @@
         Width="1100" Height="760"
         MinWidth="900" MinHeight="640"
         WindowStartupLocation="CenterScreen"
-        Background="{StaticResource BgMain}"
+        WindowStyle="None"
+        AllowsTransparency="True"
+        ResizeMode="CanResizeWithGrip"
+        Background="Transparent"
         Foreground="{StaticResource TextPrimary}"
         AllowDrop="True"
         Drop="Window_Drop"
@@ -50,7 +53,57 @@
         </Style>
     </Window.Resources>
 
+    <!-- Outer border provides the seamless edge (no visible chrome) -->
+    <Border Background="{StaticResource BgMain}" BorderBrush="#1A2332" BorderThickness="1" CornerRadius="0">
     <Grid>
+        <Grid.RowDefinitions>
+            <!-- Row 0: Custom Title Bar -->
+            <RowDefinition Height="32" />
+            <!-- Row 1: Main Content -->
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <!-- ═══════ CUSTOM TITLE BAR ═══════ -->
+        <Border Grid.Row="0" Background="{StaticResource BgDeep}"
+                MouseLeftButtonDown="TitleBar_MouseLeftButtonDown"
+                MouseLeftButtonUp="TitleBar_MouseLeftButtonUp">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+
+                <!-- App branding (left side of title bar) -->
+                <StackPanel Grid.Column="0" Orientation="Horizontal" Margin="10,0,0,0"
+                            VerticalAlignment="Center">
+                    <Image Source="/UI/Assets/osa-icon.png"
+                           Width="18" Height="18" Stretch="Uniform"
+                           RenderOptions.BitmapScalingMode="HighQuality"
+                           Margin="0,0,8,0" />
+                    <TextBlock Text="QuickBooks TimeWarp" FontSize="12" FontWeight="SemiBold"
+                               Foreground="{StaticResource TextBody}" VerticalAlignment="Center" />
+                </StackPanel>
+
+                <!-- Center area is draggable (handled by the parent Border MouseDown) -->
+
+                <!-- Window control buttons (right side) -->
+                <StackPanel Grid.Column="2" Orientation="Horizontal" HorizontalAlignment="Right">
+                    <Button x:Name="BtnMinimize" Content="&#xE921;"
+                            Style="{StaticResource WindowControlButton}"
+                            Click="BtnMinimize_Click" ToolTip="Minimize" />
+                    <Button x:Name="BtnMaximize" Content="&#xE922;"
+                            Style="{StaticResource WindowControlButton}"
+                            Click="BtnMaximize_Click" ToolTip="Maximize" />
+                    <Button x:Name="BtnClose" Content="&#xE8BB;"
+                            Style="{StaticResource WindowCloseButton}"
+                            Click="BtnClose_Click" ToolTip="Close" />
+                </StackPanel>
+            </Grid>
+        </Border>
+
+        <!-- ═══════ MAIN BODY (below title bar) ═══════ -->
+        <Grid Grid.Row="1">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="220" />
             <ColumnDefinition Width="*" />
@@ -111,6 +164,7 @@
         <!-- ═══════ MAIN CONTENT AREA ═══════ -->
         <ScrollViewer Grid.Column="1" VerticalScrollBarVisibility="Auto"
                       HorizontalScrollBarVisibility="Disabled"
+                      Style="{StaticResource ThinScrollViewer}"
                       Background="{StaticResource BgMain}" Padding="0">
             <Grid Margin="28,24,28,20">
 
@@ -764,5 +818,7 @@
 
             </Grid>
         </ScrollViewer>
+        </Grid>
     </Grid>
+    </Border>
 </Window>

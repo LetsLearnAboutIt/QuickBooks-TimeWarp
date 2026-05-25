@@ -4,13 +4,17 @@
         Title="License Agreement — QuickBooks Time-Warp®"
         Width="700" Height="720"
         WindowStartupLocation="CenterScreen"
-        Background="#0D1117"
+        WindowStyle="None"
+        AllowsTransparency="True"
+        Background="Transparent"
         Foreground="#E8ECF1"
         ResizeMode="CanResizeWithGrip"
         Icon="/UI/Assets/osa-icon.png">
 
+    <Border Background="#0D1117" BorderBrush="#1A2332" BorderThickness="1">
     <Grid>
         <Grid.RowDefinitions>
+            <RowDefinition Height="32" />      <!-- Title Bar -->
             <RowDefinition Height="Auto" />   <!-- Security callout -->
             <RowDefinition Height="Auto" />   <!-- Header -->
             <RowDefinition Height="*" />       <!-- EULA text -->
@@ -18,8 +22,24 @@
             <RowDefinition Height="Auto" />   <!-- Buttons -->
         </Grid.RowDefinitions>
 
+        <!-- Custom Title Bar -->
+        <Border Grid.Row="0" Background="#0D1117"
+                MouseLeftButtonDown="TitleBar_MouseLeftButtonDown">
+            <Grid>
+                <StackPanel Orientation="Horizontal" Margin="10,0,0,0" VerticalAlignment="Center">
+                    <Image Source="/UI/Assets/osa-icon.png" Width="16" Height="16"
+                           RenderOptions.BitmapScalingMode="HighQuality" Margin="0,0,8,0" />
+                    <TextBlock Text="License Agreement" FontSize="12"
+                               Foreground="#6B7A90" VerticalAlignment="Center" />
+                </StackPanel>
+                <Button Content="&#xE8BB;" Click="Decline_Click"
+                        Style="{StaticResource WindowCloseButton}"
+                        HorizontalAlignment="Right" />
+            </Grid>
+        </Border>
+
         <!-- ═══ Security Callout Banner ═══ -->
-        <Border Grid.Row="0" Padding="20,16" Margin="20,20,20,0" CornerRadius="10"
+        <Border Grid.Row="1" Padding="20,16" Margin="20,20,20,0" CornerRadius="10"
                 BorderThickness="1.5" BorderBrush="#00D4FF">
             <Border.Background>
                 <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
@@ -44,7 +64,7 @@
         </Border>
 
         <!-- ═══ Header ═══ -->
-        <Border Grid.Row="1" Padding="20,14,20,10">
+        <Border Grid.Row="2" Padding="20,14,20,10">
             <StackPanel>
                 <TextBlock Text="End User License Agreement" FontSize="18" FontWeight="Bold"
                            Foreground="#E8ECF1" />
@@ -54,9 +74,10 @@
         </Border>
 
         <!-- ═══ Scrollable EULA Text ═══ -->
-        <Border Grid.Row="2" Margin="20,0,20,0" Background="#151B28" CornerRadius="8"
+        <Border Grid.Row="3" Margin="20,0,20,0" Background="#151B28" CornerRadius="8"
                 BorderBrush="#2A3448" BorderThickness="1" Padding="2">
-            <ScrollViewer VerticalScrollBarVisibility="Auto" Padding="4">
+            <ScrollViewer VerticalScrollBarVisibility="Auto" Padding="4"
+                          Style="{StaticResource ThinScrollViewer}">
                 <TextBox x:Name="EulaTextBox"
                          IsReadOnly="True"
                          TextWrapping="Wrap"
@@ -72,7 +93,7 @@
         </Border>
 
         <!-- ═══ Checkbox + Links ═══ -->
-        <StackPanel Grid.Row="3" Margin="20,14,20,0">
+        <StackPanel Grid.Row="4" Margin="20,14,20,0">
 
             <!-- Agreement checkbox -->
             <CheckBox x:Name="AgreeCheckBox" Checked="AgreeCheckBox_Changed" Unchecked="AgreeCheckBox_Changed"
@@ -135,7 +156,7 @@
         </StackPanel>
 
         <!-- ═══ Action Buttons ═══ -->
-        <Border Grid.Row="4" Background="#0A0E17" Padding="20,14" Margin="0,14,0,0">
+        <Border Grid.Row="5" Background="#0A0E17" Padding="20,14" Margin="0,14,0,0">
             <DockPanel>
                 <StackPanel DockPanel.Dock="Right" Orientation="Horizontal">
                     <Button x:Name="DeclineButton" Content="  Decline  " Click="Decline_Click"
@@ -200,4 +221,5 @@
             </DockPanel>
         </Border>
     </Grid>
+    </Border>
 </Window>

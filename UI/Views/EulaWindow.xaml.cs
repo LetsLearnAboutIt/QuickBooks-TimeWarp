@@ -1,6 +1,7 @@
 using System.Diagnostics;
 using System.IO;
 using System.Windows;
+using System.Windows.Input;
 
 namespace QB_TimeWarp.UI.Views
 {
@@ -19,6 +20,11 @@ namespace QB_TimeWarp.UI.Views
         {
             InitializeComponent();
             LoadEulaText();
+        }
+
+        private void TitleBar_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            DragMove();
         }
 
         // ── Load EULA content ─────────────────────────────────────────

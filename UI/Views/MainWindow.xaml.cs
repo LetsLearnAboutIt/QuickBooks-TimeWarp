@@ -1,5 +1,6 @@
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
 using QB_TimeWarp.UI.ViewModels;
 
 namespace QB_TimeWarp.UI.Views
@@ -12,6 +13,65 @@ namespace QB_TimeWarp.UI.Views
         {
             InitializeComponent();
             _activeNavButton = NavHome;
+            StateChanged += MainWindow_StateChanged;
+        }
+
+        // ── Custom Title Bar — Drag, Double-click Maximize ──────────
+
+        private void TitleBar_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            if (e.ClickCount == 2)
+            {
+                ToggleMaximize();
+            }
+            else
+            {
+                DragMove();
+            }
+        }
+
+        private void TitleBar_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
+        {
+            // Intentionally empty — completes the mouse event pair
+        }
+
+        // ── Window Control Buttons ──────────────────────────────────
+
+        private void BtnMinimize_Click(object sender, RoutedEventArgs e)
+        {
+            WindowState = WindowState.Minimized;
+        }
+
+        private void BtnMaximize_Click(object sender, RoutedEventArgs e)
+        {
+            ToggleMaximize();
+        }
+
+        private void BtnClose_Click(object sender, RoutedEventArgs e)
+        {
+            Close();
+        }
+
+        private void ToggleMaximize()
+        {
+            WindowState = WindowState == WindowState.Maximized
+                ? WindowState.Normal
+                : WindowState.Maximized;
+        }
+
+        private void MainWindow_StateChanged(object? sender, EventArgs e)
+        {
+            // Update the maximize/restore glyph
+            if (BtnMaximize != null)
+            {
+                // Segoe MDL2 Assets: E922 = Maximize, E923 = Restore
+                BtnMaximize.Content = WindowState == WindowState.Maximized
+                    ? "\uE923"
+                    : "\uE922";
+                BtnMaximize.ToolTip = WindowState == WindowState.Maximized
+                    ? "Restore Down"
+                    : "Maximize";
+            }
         }
 
         // ── Sidebar Navigation ─────────────────────────────────────────

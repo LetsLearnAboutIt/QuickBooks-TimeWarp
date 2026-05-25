@@ -3,6 +3,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
 
 namespace QB_TimeWarp.UI.Views
 {
@@ -186,5 +187,10 @@ namespace QB_TimeWarp.UI.Views
         }
 
         private void Close_Click(object sender, RoutedEventArgs e) => Close();
+
+        private void TitleBar_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            DragMove();
+        }
     }
 }
