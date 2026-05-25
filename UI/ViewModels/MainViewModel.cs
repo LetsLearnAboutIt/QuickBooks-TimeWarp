@@ -12,22 +12,54 @@ using Serilog.Events;
 
 namespace QB_TimeWarp.UI.ViewModels
 {
+    // ════════════════════════════════════════════════════════════════════
+    //  Supporting Models
+    // ════════════════════════════════════════════════════════════════════
+
     /// <summary>
     /// Model for each QBW file in the file list grid.
+    /// Tracks both the original path (read-only) and the safe working copy.
     /// </summary>
     public class QBWFileEntry : ViewModelBase
     {
         private string _filePath = string.Empty;
+        private string _workingCopyPath = string.Empty;
         private string _status = "Queued";
-        private string _statusColor = "#AAAAAA";
+        private string _statusColor = "#6B7A90";
+        private string _fileSize = "—";
+        private string _lastModified = "—";
 
+        /// <summary>Original file path — the customer's real .QBW. Never modified.</summary>
         public string FilePath
         {
             get => _filePath;
-            set => SetProperty(ref _filePath, value);
+            set
+            {
+                SetProperty(ref _filePath, value);
+                OnPropertyChanged(nameof(FileName));
+            }
         }
 
         public string FileName => Path.GetFileName(_filePath);
+
+        /// <summary>Safe copy in C:\QB-TimeWarp\Working\Source\ — this is what the engine works on.</summary>
+        public string WorkingCopyPath
+        {
+            get => _workingCopyPath;
+            set => SetProperty(ref _workingCopyPath, value);
+        }
+
+        public string FileSize
+        {
+            get => _fileSize;
+            set => SetProperty(ref _fileSize, value);
+        }
+
+        public string LastModified
+        {
+            get => _lastModified;
+            set => SetProperty(ref _lastModified, value);
+        }
 
         public string Status
         {
@@ -39,8 +71,10 @@ namespace QB_TimeWarp.UI.ViewModels
                 {
                     "Success" => "#4ADE80",
                     "Running" or "Exporting" or "Transforming" or "Importing" => "#00D4FF",
+                    "Copying" => "#FBBF24",
                     "Failed" => "#F87171",
                     "Queued" => "#6B7A90",
+                    "Ready" => "#00B4D8",
                     _ => "#E8ECF1"
                 };
             }
@@ -54,7 +88,41 @@ namespace QB_TimeWarp.UI.ViewModels
     }
 
     /// <summary>
-    /// Primary ViewModel for MainWindow — drives the entire migration workflow.
+    /// Represents an entity type checkbox in the Migration Configuration panel.
+    /// </summary>
+    public class EntityTypeOption : ViewModelBase
+    {
+        private bool _isSelected = true;
+        private string _displayName = string.Empty;
+        private string _category = string.Empty;   // "List" or "Transaction"
+
+        public string Name { get; set; } = string.Empty;
+
+        public string DisplayName
+        {
+            get => _displayName;
+            set => SetProperty(ref _displayName, value);
+        }
+
+        public string Category
+        {
+            get => _category;
+            set => SetProperty(ref _category, value);
+        }
+
+        public bool IsSelected
+        {
+            get => _isSelected;
+            set => SetProperty(ref _isSelected, value);
+        }
+    }
+
+    // ════════════════════════════════════════════════════════════════════
+    //  MainViewModel
+    // ════════════════════════════════════════════════════════════════════
+
+    /// <summary>
+    /// Primary ViewModel for MainWindow — drives the entire 3-section migration workflow.
     /// </summary>
     public class MainViewModel : ViewModelBase
     {
@@ -65,10 +133,26 @@ namespace QB_TimeWarp.UI.ViewModels
         private string _windowTitle = "QuickBooks TimeWarp® — QB 2023 → QB 2021 Migration";
         private bool _isMigrationRunning;
         private bool _isIdle = true;
+        private bool _showProgressSection;
+
+        // Section 2: Destination & Options
+        private string _destinationFolder = @"C:\QB-TimeWarp\Output";
+        private string _destinationFileName = string.Empty;
+        private string _destinationPreview = string.Empty;
+        private DateTime? _dateRangeFrom;
+        private DateTime? _dateRangeTo;
+        private string _validationLevel = "Standard";  // Quick, Standard, Thorough
+
+        // Estimates
+        private string _sourceFileSizeText = "—";
+        private string _estimatedDestSizeText = "—";
+        private string _estimatedTimeText = "—";
+        private string _estimatedRecordCount = "—";
+        private long _sourceFileSizeBytes;
 
         // Progress
         private string _currentPhase = "Ready";
-        private string _currentPhaseColor = "#AAAAAA";
+        private string _currentPhaseColor = "#6B7A90";
         private double _overallProgress;
         private string _progressText = "Idle";
         private int _exportedCount;
@@ -86,29 +170,43 @@ namespace QB_TimeWarp.UI.ViewModels
         // Activity log
         private string _activityLog = string.Empty;
 
+        // Working directory constants
+        private const string WorkingSourceDir = @"C:\QB-TimeWarp\Working\Source";
+
         // ── Constructor ───────────────────────────────────────────────────────
         public MainViewModel()
         {
             _dispatcher = Dispatcher.CurrentDispatcher;
             Files = new ObservableCollection<QBWFileEntry>();
+            EntityTypes = new ObservableCollection<EntityTypeOption>();
 
+            // Populate entity type checkboxes
+            InitializeEntityTypes();
+
+            // Commands
             AddFilesCommand = new RelayCommand(OnAddFiles, () => IsIdle);
             RemoveSelectedCommand = new RelayCommand(OnRemoveSelected, () => IsIdle && Files.Count > 0);
             StartMigrationCommand = new RelayCommand(OnStartMigration, () => IsIdle && Files.Count > 0);
             StopMigrationCommand = new RelayCommand(OnStopMigration, () => IsMigrationRunning);
             OpenSettingsCommand = new RelayCommand(OnOpenSettings);
             ClearLogCommand = new RelayCommand(() => ActivityLog = string.Empty);
+            SelectDestinationCommand = new RelayCommand(OnSelectDestination, () => IsIdle);
+            SelectAllEntitiesCommand = new RelayCommand(OnSelectAllEntities);
+            DeselectAllEntitiesCommand = new RelayCommand(OnDeselectAllEntities);
+            ResetMigrationCommand = new RelayCommand(OnResetMigration, () => !IsMigrationRunning);
+
+            // File collection change listener for estimates
+            Files.CollectionChanged += (s, e) => CalculateEstimates();
         }
 
-        // ── Properties ────────────────────────────────────────────────────────
+        // ── Properties: Section 1 — Source File ────────────────────────────
+        public ObservableCollection<QBWFileEntry> Files { get; }
 
         public string WindowTitle
         {
             get => _windowTitle;
             set => SetProperty(ref _windowTitle, value);
         }
-
-        public ObservableCollection<QBWFileEntry> Files { get; }
 
         public bool IsMigrationRunning
         {
@@ -125,6 +223,102 @@ namespace QB_TimeWarp.UI.ViewModels
             get => _isIdle;
             set => SetProperty(ref _isIdle, value);
         }
+
+        public bool ShowProgressSection
+        {
+            get => _showProgressSection;
+            set => SetProperty(ref _showProgressSection, value);
+        }
+
+        // ── Properties: Section 2 — Destination & Options ──────────────────
+
+        public string DestinationFolder
+        {
+            get => _destinationFolder;
+            set
+            {
+                SetProperty(ref _destinationFolder, value);
+                UpdateDestinationPreview();
+            }
+        }
+
+        public string DestinationFileName
+        {
+            get => _destinationFileName;
+            set => SetProperty(ref _destinationFileName, value);
+        }
+
+        public string DestinationPreview
+        {
+            get => _destinationPreview;
+            set => SetProperty(ref _destinationPreview, value);
+        }
+
+        public DateTime? DateRangeFrom
+        {
+            get => _dateRangeFrom;
+            set => SetProperty(ref _dateRangeFrom, value);
+        }
+
+        public DateTime? DateRangeTo
+        {
+            get => _dateRangeTo;
+            set => SetProperty(ref _dateRangeTo, value);
+        }
+
+        public string ValidationLevel
+        {
+            get => _validationLevel;
+            set => SetProperty(ref _validationLevel, value);
+        }
+
+        public bool ValidationQuick
+        {
+            get => _validationLevel == "Quick";
+            set { if (value) ValidationLevel = "Quick"; }
+        }
+
+        public bool ValidationStandard
+        {
+            get => _validationLevel == "Standard";
+            set { if (value) ValidationLevel = "Standard"; }
+        }
+
+        public bool ValidationThorough
+        {
+            get => _validationLevel == "Thorough";
+            set { if (value) ValidationLevel = "Thorough"; }
+        }
+
+        public ObservableCollection<EntityTypeOption> EntityTypes { get; }
+
+        // ── Properties: Estimates ──────────────────────────────────────────
+
+        public string SourceFileSizeText
+        {
+            get => _sourceFileSizeText;
+            set => SetProperty(ref _sourceFileSizeText, value);
+        }
+
+        public string EstimatedDestSizeText
+        {
+            get => _estimatedDestSizeText;
+            set => SetProperty(ref _estimatedDestSizeText, value);
+        }
+
+        public string EstimatedTimeText
+        {
+            get => _estimatedTimeText;
+            set => SetProperty(ref _estimatedTimeText, value);
+        }
+
+        public string EstimatedRecordCount
+        {
+            get => _estimatedRecordCount;
+            set => SetProperty(ref _estimatedRecordCount, value);
+        }
+
+        // ── Properties: Section 3 — Progress ──────────────────────────────
 
         public string CurrentPhase
         {
@@ -232,6 +426,10 @@ namespace QB_TimeWarp.UI.ViewModels
         public ICommand StopMigrationCommand { get; }
         public ICommand OpenSettingsCommand { get; }
         public ICommand ClearLogCommand { get; }
+        public ICommand SelectDestinationCommand { get; }
+        public ICommand SelectAllEntitiesCommand { get; }
+        public ICommand DeselectAllEntitiesCommand { get; }
+        public ICommand ResetMigrationCommand { get; }
 
         // ── Logging helper ────────────────────────────────────────────────────
 
@@ -244,7 +442,185 @@ namespace QB_TimeWarp.UI.ViewModels
             });
         }
 
-        // ── Command handlers ──────────────────────────────────────────────────
+        // ══════════════════════════════════════════════════════════════════════
+        //  Entity Type Initialization
+        // ══════════════════════════════════════════════════════════════════════
+
+        private void InitializeEntityTypes()
+        {
+            // Lists / Reference data
+            var listTypes = new[]
+            {
+                ("Accounts",       "Chart of Accounts"),
+                ("Customers",      "Customers & Jobs"),
+                ("Vendors",        "Vendors"),
+                ("Employees",      "Employees"),
+                ("Items",          "Items & Services"),
+                ("ItemSalesTax",   "Sales Tax Items"),
+                ("PaymentMethods", "Payment Methods"),
+                ("Terms",          "Payment Terms"),
+                ("Classes",        "Class Tracking"),
+                ("SalesTaxCodes",  "Sales Tax Codes"),
+                ("ShipMethods",    "Shipping Methods"),
+                ("CustomerTypes",  "Customer Types"),
+                ("VendorTypes",    "Vendor Types"),
+                ("JobTypes",       "Job Types"),
+                ("PriceLevels",    "Price Levels"),
+                ("CustomerMsgs",   "Customer Messages"),
+            };
+
+            foreach (var (name, display) in listTypes)
+                EntityTypes.Add(new EntityTypeOption { Name = name, DisplayName = display, Category = "List" });
+
+            // Transactions
+            var txnTypes = new[]
+            {
+                ("Invoices",             "Invoices"),
+                ("Bills",                "Bills"),
+                ("Payments",             "Received Payments"),
+                ("SalesReceipts",        "Sales Receipts"),
+                ("PurchaseOrders",       "Purchase Orders"),
+                ("JournalEntries",       "Journal Entries"),
+                ("CreditMemos",          "Credit Memos"),
+                ("Estimates",            "Estimates"),
+                ("Deposits",             "Deposits"),
+                ("Checks",               "Checks"),
+                ("CreditCardCharges",    "Credit Card Charges"),
+                ("CreditCardCredits",    "Credit Card Credits"),
+                ("VendorCredits",        "Vendor Credits"),
+                ("InventoryAdjustments", "Inventory Adjustments"),
+                ("Transfers",            "Transfers"),
+                ("Paychecks",            "Paychecks (→ Journal Entries)"),
+            };
+
+            foreach (var (name, display) in txnTypes)
+                EntityTypes.Add(new EntityTypeOption { Name = name, DisplayName = display, Category = "Transaction" });
+
+            // System entities (always selected, non-configurable in UI)
+            EntityTypes.Add(new EntityTypeOption { Name = "Preferences", DisplayName = "Preferences", Category = "System" });
+            EntityTypes.Add(new EntityTypeOption { Name = "CompanyInfo", DisplayName = "Company Info", Category = "System" });
+        }
+
+        // ══════════════════════════════════════════════════════════════════════
+        //  File Safety — Copy Source to Working Directory
+        // ══════════════════════════════════════════════════════════════════════
+
+        /// <summary>
+        /// Copies the original company file to C:\QB-TimeWarp\Working\Source\
+        /// so the migration engine NEVER touches the customer's real file.
+        /// </summary>
+        private void CopySourceFileToWorking(QBWFileEntry entry)
+        {
+            try
+            {
+                entry.Status = "Copying";
+                AppendLog($"🛡 Creating safe working copy of {entry.FileName}...");
+
+                Directory.CreateDirectory(WorkingSourceDir);
+
+                var fileName = Path.GetFileName(entry.FilePath);
+                var workingPath = Path.Combine(WorkingSourceDir, fileName);
+
+                // If file already exists, add timestamp suffix
+                if (File.Exists(workingPath) && workingPath != entry.FilePath)
+                {
+                    var nameNoExt = Path.GetFileNameWithoutExtension(fileName);
+                    var ext = Path.GetExtension(fileName);
+                    workingPath = Path.Combine(WorkingSourceDir,
+                        $"{nameNoExt}_{DateTime.Now:yyyyMMdd_HHmmss}{ext}");
+                }
+
+                File.Copy(entry.FilePath, workingPath, overwrite: true);
+
+                entry.WorkingCopyPath = workingPath;
+                entry.Status = "Ready";
+
+                var fi = new FileInfo(workingPath);
+                entry.FileSize = FormatFileSize(fi.Length);
+                entry.LastModified = fi.LastWriteTime.ToString("MMM dd, yyyy h:mm tt");
+
+                AppendLog($"  ✓ Working copy created: {workingPath}");
+                AppendLog($"  ✓ Original file at {entry.FilePath} will NOT be modified.");
+            }
+            catch (Exception ex)
+            {
+                entry.Status = "Failed";
+                AppendLog($"  ✗ Failed to create working copy: {ex.Message}");
+                Log.Error(ex, "Failed to copy source file {File}", entry.FilePath);
+            }
+        }
+
+        // ══════════════════════════════════════════════════════════════════════
+        //  Estimates Calculation
+        // ══════════════════════════════════════════════════════════════════════
+
+        private void CalculateEstimates()
+        {
+            _sourceFileSizeBytes = 0;
+
+            foreach (var file in Files)
+            {
+                try
+                {
+                    if (!string.IsNullOrEmpty(file.FilePath) && File.Exists(file.FilePath))
+                    {
+                        var fi = new FileInfo(file.FilePath);
+                        _sourceFileSizeBytes += fi.Length;
+
+                        file.FileSize = FormatFileSize(fi.Length);
+                        file.LastModified = fi.LastWriteTime.ToString("MMM dd, yyyy h:mm tt");
+                    }
+                }
+                catch { /* silently skip if file can't be read yet */ }
+            }
+
+            if (_sourceFileSizeBytes > 0)
+            {
+                SourceFileSizeText = FormatFileSize(_sourceFileSizeBytes);
+
+                // Estimates: destination is typically 90-95% of source
+                var estDest = (long)(_sourceFileSizeBytes * 0.93);
+                EstimatedDestSizeText = $"~{FormatFileSize(estDest)}";
+
+                // Time estimate: ~1.5–2 min per MB of source
+                var mb = _sourceFileSizeBytes / (1024.0 * 1024.0);
+                var minTime = Math.Max(1, (int)(mb * 1.0));
+                var maxTime = Math.Max(2, (int)(mb * 2.0));
+                EstimatedTimeText = $"~{minTime}–{maxTime} minutes";
+
+                // Record count: rough heuristic ~55 records per MB
+                var estRecords = (int)(mb * 55);
+                EstimatedRecordCount = $"~{estRecords:N0} records";
+            }
+            else
+            {
+                SourceFileSizeText = "—";
+                EstimatedDestSizeText = "—";
+                EstimatedTimeText = "—";
+                EstimatedRecordCount = "—";
+            }
+
+            UpdateDestinationPreview();
+        }
+
+        private void UpdateDestinationPreview()
+        {
+            if (Files.Count > 0)
+            {
+                var firstName = Path.GetFileNameWithoutExtension(Files[0].FileName);
+                DestinationFileName = $"{firstName}-QB2021.qbw";
+                DestinationPreview = Path.Combine(DestinationFolder, DestinationFileName);
+            }
+            else
+            {
+                DestinationFileName = string.Empty;
+                DestinationPreview = string.Empty;
+            }
+        }
+
+        // ══════════════════════════════════════════════════════════════════════
+        //  Command Handlers
+        // ══════════════════════════════════════════════════════════════════════
 
         private void OnAddFiles()
         {
@@ -261,21 +637,92 @@ namespace QB_TimeWarp.UI.ViewModels
                 {
                     if (Files.All(f => f.FilePath != file))
                     {
-                        Files.Add(new QBWFileEntry { FilePath = file });
+                        var entry = new QBWFileEntry { FilePath = file };
+
+                        // Populate file info immediately
+                        try
+                        {
+                            var fi = new FileInfo(file);
+                            entry.FileSize = FormatFileSize(fi.Length);
+                            entry.LastModified = fi.LastWriteTime.ToString("MMM dd, yyyy h:mm tt");
+                        }
+                        catch { }
+
+                        Files.Add(entry);
                         AppendLog($"Added: {Path.GetFileName(file)}");
                     }
                 }
+                CalculateEstimates();
+            }
+        }
+
+        /// <summary>Called from drag-drop code-behind, so we make it public.</summary>
+        public void AddFileFromDrop(string filePath)
+        {
+            if (Files.All(f => f.FilePath != filePath))
+            {
+                var entry = new QBWFileEntry { FilePath = filePath };
+                try
+                {
+                    var fi = new FileInfo(filePath);
+                    entry.FileSize = FormatFileSize(fi.Length);
+                    entry.LastModified = fi.LastWriteTime.ToString("MMM dd, yyyy h:mm tt");
+                }
+                catch { }
+
+                Files.Add(entry);
+                AppendLog($"Added (drag-drop): {Path.GetFileName(filePath)}");
+                CalculateEstimates();
             }
         }
 
         private void OnRemoveSelected()
         {
-            // Remove the last file if no selection mechanism
             if (Files.Count > 0)
             {
                 var removed = Files[^1];
                 Files.RemoveAt(Files.Count - 1);
                 AppendLog($"Removed: {removed.FileName}");
+
+                // Cleanup working copy
+                if (!string.IsNullOrEmpty(removed.WorkingCopyPath) && File.Exists(removed.WorkingCopyPath))
+                {
+                    try { File.Delete(removed.WorkingCopyPath); } catch { }
+                }
+            }
+        }
+
+        private void OnSelectDestination()
+        {
+            // WPF doesn't have a FolderBrowserDialog — use the common dialog workaround
+            var dialog = new Microsoft.Win32.SaveFileDialog
+            {
+                Title = "Select Destination Folder",
+                FileName = "Select This Folder",
+                Filter = "Folder Selection|*.*",
+                CheckFileExists = false,
+                CheckPathExists = true,
+                InitialDirectory = DestinationFolder
+            };
+
+            if (dialog.ShowDialog() == true)
+            {
+                DestinationFolder = Path.GetDirectoryName(dialog.FileName)
+                    ?? @"C:\QB-TimeWarp\Output";
+                AppendLog($"Destination set: {DestinationFolder}");
+            }
+        }
+
+        private void OnSelectAllEntities()
+        {
+            foreach (var e in EntityTypes) e.IsSelected = true;
+        }
+
+        private void OnDeselectAllEntities()
+        {
+            foreach (var e in EntityTypes)
+            {
+                if (e.Category != "System") e.IsSelected = false;
             }
         }
 
@@ -292,8 +739,34 @@ namespace QB_TimeWarp.UI.ViewModels
             AppendLog("⚠ Cancellation requested — waiting for current operation to finish...");
         }
 
+        private void OnResetMigration()
+        {
+            ShowProgressSection = false;
+            ResetCounters();
+            foreach (var f in Files) f.Status = "Queued";
+            AppendLog("Migration reset — ready for a new run.");
+        }
+
         private async void OnStartMigration()
         {
+            // ── Phase 0: Create safe working copies ────────────────────
+            AppendLog("═══════════════════════════════════════════════");
+            AppendLog("🛡 SAFETY: Creating working copies of all source files...");
+            AppendLog("   Your original files will NOT be modified.");
+            AppendLog("═══════════════════════════════════════════════");
+
+            foreach (var file in Files)
+            {
+                CopySourceFileToWorking(file);
+                if (file.Status == "Failed")
+                {
+                    AppendLog("✗ Aborting — could not create working copy.");
+                    return;
+                }
+            }
+
+            // Show progress section
+            ShowProgressSection = true;
             IsMigrationRunning = true;
             _cts = new CancellationTokenSource();
 
@@ -352,15 +825,22 @@ namespace QB_TimeWarp.UI.ViewModels
             }
         }
 
-        // ── Migration engine ──────────────────────────────────────────────────
+        // ══════════════════════════════════════════════════════════════════════
+        //  Migration Engine
+        // ══════════════════════════════════════════════════════════════════════
 
         private void RunMigrationForFile(QBWFileEntry file, CancellationToken ct)
         {
             // Load configuration
             var config = LoadConfiguration();
 
-            // Override source path to the selected file
-            config.QuickBooks.QB2023.CompanyFilePath = file.FilePath;
+            // Override source path to the WORKING COPY (not the original!)
+            var migrationPath = !string.IsNullOrEmpty(file.WorkingCopyPath)
+                ? file.WorkingCopyPath
+                : file.FilePath;
+
+            config.QuickBooks.QB2023.CompanyFilePath = migrationPath;
+            AppendLog($"  Using working copy: {migrationPath}");
 
             ct.ThrowIfCancellationRequested();
 
@@ -466,7 +946,9 @@ namespace QB_TimeWarp.UI.ViewModels
             AppendLog($"  Report saved: {reportPath}");
         }
 
-        // ── Helpers ───────────────────────────────────────────────────────
+        // ══════════════════════════════════════════════════════════════════════
+        //  Helpers
+        // ══════════════════════════════════════════════════════════════════════
 
         private void SetPhase(string phase, QBWFileEntry file)
         {
@@ -515,6 +997,14 @@ namespace QB_TimeWarp.UI.ViewModels
             TransformStepColor = "#2A3448";
             ImportStepColor = "#2A3448";
             ValidateStepColor = "#2A3448";
+        }
+
+        private static string FormatFileSize(long bytes)
+        {
+            if (bytes < 1024) return $"{bytes} B";
+            if (bytes < 1024 * 1024) return $"{bytes / 1024.0:F1} KB";
+            if (bytes < 1024 * 1024 * 1024) return $"{bytes / (1024.0 * 1024.0):F1} MB";
+            return $"{bytes / (1024.0 * 1024.0 * 1024.0):F2} GB";
         }
 
         private static AppConfiguration LoadConfiguration()

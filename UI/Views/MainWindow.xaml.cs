@@ -101,23 +101,27 @@ namespace QB_TimeWarp.UI.Views
                 var files = (string[])e.Data.GetData(DataFormats.FileDrop)!;
                 foreach (var file in files.Where(f => f.EndsWith(".qbw", StringComparison.OrdinalIgnoreCase)))
                 {
-                    if (vm.Files.All(f => f.FilePath != file))
-                    {
-                        vm.Files.Add(new QBWFileEntry { FilePath = file });
-                        vm.AppendLog($"Added (drag-drop): {System.IO.Path.GetFileName(file)}");
-                    }
+                    vm.AddFileFromDrop(file);
                 }
             }
         }
 
-        // ── Auto-scroll log ───────────────────────────────────────────
+        // ── Navigate to Migration page from Home ─────────────────────
+
+        private void GoToMigration_Click(object sender, RoutedEventArgs e) => SwitchPage("Migration");
+
+        // ── Auto-scroll log boxes ────────────────────────────────────
 
         private void ActivityLogBox_TextChanged(object sender, TextChangedEventArgs e)
         {
             if (sender is TextBox tb)
-            {
                 tb.ScrollToEnd();
-            }
+        }
+
+        private void MigrationLogBox_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            if (sender is TextBox tb)
+                tb.ScrollToEnd();
         }
     }
 }
