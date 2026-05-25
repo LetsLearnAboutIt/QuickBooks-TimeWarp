@@ -37,11 +37,11 @@ namespace QB_TimeWarp.UI.ViewModels
                 SetProperty(ref _status, value);
                 StatusColor = value switch
                 {
-                    "Success" => "#00E676",
-                    "Running" or "Exporting" or "Transforming" or "Importing" => "#40C4FF",
-                    "Failed" => "#FF5252",
-                    "Queued" => "#AAAAAA",
-                    _ => "#FFFFFF"
+                    "Success" => "#4ADE80",
+                    "Running" or "Exporting" or "Transforming" or "Importing" => "#00D4FF",
+                    "Failed" => "#F87171",
+                    "Queued" => "#6B7A90",
+                    _ => "#E8ECF1"
                 };
             }
         }
@@ -78,10 +78,10 @@ namespace QB_TimeWarp.UI.ViewModels
         private int _totalEntities;
 
         // Phase step indicators
-        private string _exportStepColor = "#555555";
-        private string _transformStepColor = "#555555";
-        private string _importStepColor = "#555555";
-        private string _validateStepColor = "#555555";
+        private string _exportStepColor = "#2A3448";
+        private string _transformStepColor = "#2A3448";
+        private string _importStepColor = "#2A3448";
+        private string _validateStepColor = "#2A3448";
 
         // Activity log
         private string _activityLog = string.Empty;
@@ -134,13 +134,13 @@ namespace QB_TimeWarp.UI.ViewModels
                 SetProperty(ref _currentPhase, value);
                 CurrentPhaseColor = value switch
                 {
-                    "Exporting" => "#40C4FF",
-                    "Transforming" => "#FFD740",
-                    "Importing" => "#69F0AE",
-                    "Validating" => "#CE93D8",
-                    "Complete" => "#00E676",
-                    "Failed" => "#FF5252",
-                    _ => "#AAAAAA"
+                    "Exporting" => "#00D4FF",
+                    "Transforming" => "#FBBF24",
+                    "Importing" => "#4ADE80",
+                    "Validating" => "#A78BFA",
+                    "Complete" => "#4ADE80",
+                    "Failed" => "#F87171",
+                    _ => "#6B7A90"
                 };
             }
         }
@@ -476,16 +476,16 @@ namespace QB_TimeWarp.UI.ViewModels
                 file.Status = phase;
 
                 // Update step indicators
-                ExportStepColor = phase == "Exporting" ? "#40C4FF"
-                    : (phase != "Ready" ? "#00E676" : "#555555");
+                ExportStepColor = phase == "Exporting" ? "#00D4FF"
+                    : (phase != "Ready" ? "#4ADE80" : "#2A3448");
 
-                TransformStepColor = phase == "Transforming" ? "#FFD740"
-                    : (phase == "Importing" || phase == "Validating" ? "#00E676" : "#555555");
+                TransformStepColor = phase == "Transforming" ? "#FBBF24"
+                    : (phase == "Importing" || phase == "Validating" ? "#4ADE80" : "#2A3448");
 
-                ImportStepColor = phase == "Importing" ? "#69F0AE"
-                    : (phase == "Validating" ? "#00E676" : "#555555");
+                ImportStepColor = phase == "Importing" ? "#4ADE80"
+                    : (phase == "Validating" ? "#4ADE80" : "#2A3448");
 
-                ValidateStepColor = phase == "Validating" ? "#CE93D8" : "#555555";
+                ValidateStepColor = phase == "Validating" ? "#A78BFA" : "#2A3448";
 
                 OverallProgress = phase switch
                 {
@@ -511,10 +511,10 @@ namespace QB_TimeWarp.UI.ViewModels
             OverallProgress = 0;
             CurrentPhase = "Ready";
             ProgressText = "Starting...";
-            ExportStepColor = "#555555";
-            TransformStepColor = "#555555";
-            ImportStepColor = "#555555";
-            ValidateStepColor = "#555555";
+            ExportStepColor = "#2A3448";
+            TransformStepColor = "#2A3448";
+            ImportStepColor = "#2A3448";
+            ValidateStepColor = "#2A3448";
         }
 
         private static AppConfiguration LoadConfiguration()
