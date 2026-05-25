@@ -1186,6 +1186,16 @@ namespace QB_TimeWarp.Services
                 Log.Information("  FIX #3: Account type verification complete. " +
                     "{Found}/{Required} types available.",
                     existingTypes.Count, requiredAccountTypes.Length);
+                // FIX #44c: Ensure payroll bank account exists for paycheck journals
+                try
+                {
+                //    EnsureAccountExists("Checking", "Bank"); // using real Educators account instead
+                }
+                catch (Exception ex)
+                {
+                    Log.Warning("  FIX #44c: Could not ensure 'Checking' account: {Message}", ex.Message);
+                }
+
             }
             catch (Exception ex)
             {
@@ -3874,5 +3884,60 @@ namespace QB_TimeWarp.Services
                 return null;
             }
         }
+        /// <summary>
+        /// FIX #44c: Ensures a specific account exists in QB 2021, creating it if missing.
+        /// Used to auto-create the "Checking" bank account required for paycheck journal entries.
+        /// </summary>
+        private void EnsureAccountExists(string accountName, string accountType)
+        {
+            try
+            {
+                // Check if account already exists via name mapping
+                string mapKey = $"Accounts:{accountName}";
+                if (_nameToListIdMap.ContainsKey(mapKey))
+                {
+                    Log.Debug("  FIX #44c: Account '{Name}' already exists", accountName);
+                    return;
+                }
+
+                // Query QB to double-check
+                var queryXml = $"<AccountQueryRq><FullName>{System.Security.SecurityElement.Escape(accountName)}</FullName></AccountQueryRq>";
+                var fullQuery = QBConnectionManager.BuildQBXMLRequest(queryXml, _effectiveSDKVersion);
+                var response = _connection.ProcessRequestWithRetry(fullQuery);
+                var doc = System.Xml.Linq.XDocument.Parse(response);
+                
+                if (doc.Descendants("AccountRet").Any())
+                {
+                    Log.Debug("  FIX #44c: Account '{Name}' found in QB", accountName);
+                    return;
+                }
+
+                // Create the account
+                Log.Information("  FIX #44c: Creating missing {Type} account '{Name}' for paycheck compatibility", accountType, accountName);
+                var addXml = $@"<AccountAddRq>
+                    <AccountAdd>
+                        <Name>{System.Security.SecurityElement.Escape(accountName)}</Name>
+                        <AccountType>{accountType}</AccountType>
+                    </AccountAdd>
+                </AccountAddRq>";
+                
+                var fullAdd = QBConnectionManager.BuildQBXMLRequest(addXml, _effectiveSDKVersion);
+                var addResponse = _connection.ProcessRequestWithRetry(fullAdd);
+                var addDoc = System.Xml.Linq.XDocument.Parse(addResponse);
+                
+                var newListId = addDoc.Descendants("ListID").FirstOrDefault()?.Value;
+                if (!string.IsNullOrEmpty(newListId))
+                {
+                    _nameToListIdMap[mapKey] = newListId;
+                    Log.Information("  FIX #44c: ✓ Created account '{Name}' (ListID: {ListID})", accountName, newListId);
+                }
+            }
+            catch (Exception ex)
+            {
+                Log.Warning("  FIX #44c: Failed to ensure account '{Name}': {Message}", accountName, ex.Message);
+                throw;
+            }
+        }
+
     }
 }

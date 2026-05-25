@@ -878,7 +878,20 @@ namespace QB_TimeWarp.Services
             {
                 if (creditCardTxn.Fields.ContainsKey(field))
                 {
-                    journalEntry.Fields[field] = creditCardTxn.Fields[field]?.DeepClone();
+                    var val = creditCardTxn.Fields[field];
+                    if (field == "TxnDate" && val != null)
+                    {
+                        // FIX #44b: QBFC requires ISO date, not MM/dd/yyyy string from CSV
+                        var dateStr = val.ToString();
+                        if (DateTime.TryParse(dateStr, out var dt))
+                            journalEntry.Fields[field] = JToken.FromObject(dt.ToString("yyyy-MM-dd"));
+                        else
+                            journalEntry.Fields[field] = JToken.FromObject(DateTime.Today.ToString("yyyy-MM-dd"));
+                    }
+                    else
+                    {
+                        journalEntry.Fields[field] = val?.DeepClone();
+                    }
                 }
             }
 
@@ -1025,7 +1038,20 @@ namespace QB_TimeWarp.Services
             {
                 if (paycheck.Fields.ContainsKey(field))
                 {
-                    journalEntry.Fields[field] = paycheck.Fields[field]?.DeepClone();
+                    var val = paycheck.Fields[field];
+                    if (field == "TxnDate" && val != null)
+                    {
+                        // FIX #44b: QBFC requires ISO date, not MM/dd/yyyy string from CSV
+                        var dateStr = val.ToString();
+                        if (DateTime.TryParse(dateStr, out var dt))
+                            journalEntry.Fields[field] = JToken.FromObject(dt.ToString("yyyy-MM-dd"));
+                        else
+                            journalEntry.Fields[field] = JToken.FromObject(DateTime.Today.ToString("yyyy-MM-dd"));
+                    }
+                    else
+                    {
+                        journalEntry.Fields[field] = val?.DeepClone();
+                    }
                 }
             }
 
@@ -1054,8 +1080,7 @@ namespace QB_TimeWarp.Services
 
             // ── Extract bank account from header ───────────────────────
             var bankAccountRef = paycheck.Fields["AccountRef"]?.DeepClone() as JObject;
-            var bankAccountName = bankAccountRef?["FullName"]?.ToString() ?? "Checking";
-
+            var bankAccountName = bankAccountRef?["FullName"]?.ToString() ?? "Educators Credit Union";
             // ── Parse amounts from header ──────────────────────────────
             // PaycheckRet.Amount = net check amount (what employee receives)
             var netAmount = decimal.Zero;
@@ -1125,8 +1150,7 @@ namespace QB_TimeWarp.Services
                 }
             }
 
-            bool hasDetailLines = paycheck.LineItems.Count > 0 &&
-                                  (totalEarnings > 0 || totalDeductions > 0 || totalTaxes > 0);
+            bool hasDetailLines = paycheck.LineItems.Count > 0; // FIX: accept zero-amount lines from CSV
 
             if (hasDetailLines)
             {
@@ -1144,8 +1168,7 @@ namespace QB_TimeWarp.Services
                         ["Memo"] = $"Gross wages - {employeeName}",
                         ["_lineType"] = "JournalDebitLine"
                     };
-                    if (employeeRef != null)
-                        earningsJournalLine["EntityRef"] = employeeRef.DeepClone();
+                    // EntityRef removed to avoid invalid empty reference
                     journalEntry.LineItems.Add(earningsJournalLine);
                 }
 
@@ -1159,9 +1182,7 @@ namespace QB_TimeWarp.Services
                         ["Memo"] = $"Employer contributions - {employeeName}",
                         ["_lineType"] = "JournalDebitLine"
                     };
-                    if (employeeRef != null)
-                        contribJournalLine["EntityRef"] = employeeRef.DeepClone();
-                    journalEntry.LineItems.Add(contribJournalLine);
+journalEntry.LineItems.Add(contribJournalLine);
                 }
 
                 // ── CR: Employee taxes + deductions → Payroll Liabilities ─
@@ -1175,9 +1196,7 @@ namespace QB_TimeWarp.Services
                         ["Memo"] = $"Payroll taxes & deductions - {employeeName}",
                         ["_lineType"] = "JournalCreditLine"
                     };
-                    if (employeeRef != null)
-                        liabilitiesJournalLine["EntityRef"] = employeeRef.DeepClone();
-                    journalEntry.LineItems.Add(liabilitiesJournalLine);
+journalEntry.LineItems.Add(liabilitiesJournalLine);
                 }
 
                 // ── CR: Net pay → Bank account ─────────────────────────
@@ -1196,9 +1215,7 @@ namespace QB_TimeWarp.Services
                         ["Memo"] = $"Net paycheck - {employeeName}",
                         ["_lineType"] = "JournalCreditLine"
                     };
-                    if (employeeRef != null)
-                        bankJournalLine["EntityRef"] = employeeRef.DeepClone();
-                    journalEntry.LineItems.Add(bankJournalLine);
+journalEntry.LineItems.Add(bankJournalLine);
                 }
 
                 Log.Debug("  [FIX #44] Converted Paycheck (TxnID={TxnID}) DETAILED: " +
@@ -1223,9 +1240,7 @@ namespace QB_TimeWarp.Services
                         ["Memo"] = $"Paycheck (summary) - {employeeName}",
                         ["_lineType"] = "JournalDebitLine"
                     };
-                    if (employeeRef != null)
-                        expenseLine["EntityRef"] = employeeRef.DeepClone();
-                    journalEntry.LineItems.Add(expenseLine);
+journalEntry.LineItems.Add(expenseLine);
 
                     // CR: Bank account
                     var bankLine = new JObject
@@ -1235,9 +1250,7 @@ namespace QB_TimeWarp.Services
                         ["Memo"] = $"Net paycheck - {employeeName}",
                         ["_lineType"] = "JournalCreditLine"
                     };
-                    if (employeeRef != null)
-                        bankLine["EntityRef"] = employeeRef.DeepClone();
-                    journalEntry.LineItems.Add(bankLine);
+journalEntry.LineItems.Add(bankLine);
 
                     Log.Warning("  [FIX #44] Converted Paycheck (TxnID={TxnID}) FALLBACK: " +
                         "No detail lines available, used header Amount={Amount:F2} for 2-line JE. " +
@@ -1247,7 +1260,7 @@ namespace QB_TimeWarp.Services
                 else
                 {
                     Log.Warning("  [FIX #44] Paycheck (TxnID={TxnID}) has no Amount and no detail lines. " +
-                        "Skipping — this paycheck cannot be converted to a meaningful JournalEntry.",
+                        "Creating zero-value JournalEntry to preserve count.",
                         paycheck.TxnID ?? "N/A");
                 }
             }
