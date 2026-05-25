@@ -125,7 +125,7 @@
                            HorizontalAlignment="Center" Margin="0,0,0,10"
                            RenderOptions.BitmapScalingMode="HighQuality" />
                     <TextBlock Text="TimeWarp" FontSize="17" FontWeight="Bold"
-                               Foreground="{StaticResource TextPrimary}" HorizontalAlignment="Center" />
+                               Foreground="{StaticResource AccentBright}" HorizontalAlignment="Center" />
                     <TextBlock Text="QuickBooks® Migration" FontSize="10"
                                Foreground="{StaticResource TextDim}" HorizontalAlignment="Center"
                                Margin="0,-1,0,0" />
@@ -144,14 +144,14 @@
                     <Button x:Name="NavLog" Content="📋   Activity Log"
                             Style="{StaticResource NavButton}" Click="NavLog_Click" />
 
-                    <Separator Background="#2A3448" Margin="16,16,16,8" />
+                    <Separator Background="#1A2E50" Margin="16,16,16,8" />
                     <Button x:Name="NavAbout" Content="ℹ   About"
                             Style="{StaticResource NavButton}" Click="NavAbout_Click" />
                 </StackPanel>
 
                 <!-- Sidebar footer -->
                 <StackPanel Grid.Row="2" Margin="16,0,16,14">
-                    <Separator Background="#2A3448" Margin="0,0,0,10" />
+                    <Separator Background="#1A2E50" Margin="0,0,0,10" />
                     <TextBlock Text="v1.0.0" FontSize="10" Foreground="{StaticResource TextMuted}"
                                HorizontalAlignment="Center" />
                     <TextBlock Text="© 2010–2026 OSA / LRS" FontSize="9"
@@ -173,38 +173,70 @@
                 <!-- ╚══════════════════════════════════════════════════════╝ -->
                 <StackPanel x:Name="PageHome" Visibility="Visible">
 
-                    <!-- Hero Welcome Banner (Premium) -->
-                    <Border Background="{StaticResource HeroBannerBg}"
-                            CornerRadius="12" Padding="32,28" Margin="0,0,0,18"
-                            BorderBrush="#1A3A5C" BorderThickness="1">
+                    <!-- Hero Welcome Banner (Intel Pro Graphics Style — vibrant blue radial glow) -->
+                    <Border CornerRadius="12" Margin="0,0,0,18"
+                            BorderBrush="#1A3A6C" BorderThickness="1" ClipToBounds="True">
                         <Border.Effect>
-                            <DropShadowEffect ShadowDepth="4" BlurRadius="20" Opacity="0.3" Color="#000000" Direction="270" />
+                            <DropShadowEffect ShadowDepth="0" BlurRadius="24" Opacity="0.4" Color="#0050A0" Direction="0" />
                         </Border.Effect>
                         <Grid>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="*" />
-                                <ColumnDefinition Width="Auto" />
-                            </Grid.ColumnDefinitions>
-                            <StackPanel Grid.Column="0" VerticalAlignment="Center">
-                                <TextBlock Text="Welcome to QuickBooks TimeWarp®"
-                                           FontSize="26" FontWeight="Bold"
-                                           Foreground="{StaticResource TextPrimary}" />
-                                <TextBlock Text="Seamlessly migrate your QuickBooks 2023 data to QuickBooks 2021 with full validation and reporting."
-                                           FontSize="14" Foreground="{StaticResource TextBody}"
-                                           TextWrapping="Wrap" Margin="0,10,0,16" MaxWidth="480" />
-                                <Button Content="🔄  Go to Migration Console" Click="NavMigration_Click"
-                                        Style="{StaticResource SuccessButton}" />
-                            </StackPanel>
-                            <Image Grid.Column="1" Source="/UI/Assets/osa-icon.png"
-                                   Width="80" Height="80" Stretch="Uniform" Opacity="0.3"
-                                   VerticalAlignment="Center" Margin="20,0,8,0"
-                                   RenderOptions.BitmapScalingMode="HighQuality" />
+                            <!-- Layer 1: Linear gradient base -->
+                            <Border Background="{StaticResource HeroBannerBg}" CornerRadius="12" />
+                            <!-- Layer 2: Radial blue glow overlay (atmospheric light effect) -->
+                            <Border Background="{StaticResource HeroRadialGlow}" CornerRadius="12" />
+                            <!-- Layer 3: Content -->
+                            <Grid Margin="32,28">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+                                <StackPanel Grid.Column="0" VerticalAlignment="Center">
+                                    <StackPanel Orientation="Horizontal" Margin="0,0,0,4">
+                                        <TextBlock Text="Welcome to" FontSize="22" FontWeight="Medium"
+                                                   Foreground="#C0D0E8" />
+                                    </StackPanel>
+                                    <StackPanel Orientation="Horizontal" Margin="0,0,0,12">
+                                        <TextBlock Text="QuickBooks " FontSize="28" FontWeight="Bold"
+                                                   Foreground="White" />
+                                        <TextBlock Text="TimeWarp®" FontSize="28" FontWeight="Bold"
+                                                   Foreground="{StaticResource AccentBright}">
+                                            <TextBlock.Effect>
+                                                <DropShadowEffect ShadowDepth="0" BlurRadius="8" Opacity="0.6" Color="#00E5FF" />
+                                            </TextBlock.Effect>
+                                        </TextBlock>
+                                    </StackPanel>
+                                    <TextBlock Text="Seamlessly migrate your QuickBooks 2023 data to QuickBooks 2021 with full validation and reporting."
+                                               FontSize="14" Foreground="#90A8C4"
+                                               TextWrapping="Wrap" Margin="0,0,0,18" MaxWidth="480" />
+                                    <StackPanel Orientation="Horizontal">
+                                        <Button Content="🔄  Go to Migration Console" Click="NavMigration_Click"
+                                                Style="{StaticResource SuccessButton}" />
+                                        <!-- Intel-style status badge -->
+                                        <Border Background="#0D3320" CornerRadius="10" Padding="10,4" Margin="12,0,0,0"
+                                                VerticalAlignment="Center">
+                                            <Border.Effect>
+                                                <DropShadowEffect ShadowDepth="0" BlurRadius="8" Opacity="0.4" Color="#22C55E" />
+                                            </Border.Effect>
+                                            <StackPanel Orientation="Horizontal">
+                                                <TextBlock Text="✓" FontSize="12" FontWeight="Bold" Foreground="#4ADE80"
+                                                           VerticalAlignment="Center" Margin="0,0,5,0" />
+                                                <TextBlock Text="System Ready" FontSize="11" FontWeight="SemiBold"
+                                                           Foreground="#4ADE80" VerticalAlignment="Center" />
+                                            </StackPanel>
+                                        </Border>
+                                    </StackPanel>
+                                </StackPanel>
+                                <Image Grid.Column="1" Source="/UI/Assets/osa-icon.png"
+                                       Width="84" Height="84" Stretch="Uniform" Opacity="0.25"
+                                       VerticalAlignment="Center" Margin="20,0,8,0"
+                                       RenderOptions.BitmapScalingMode="HighQuality" />
+                            </Grid>
                         </Grid>
                     </Border>
 
                     <!-- Safety notice -->
-                    <Border Background="#0F1923" CornerRadius="8" Padding="16,12" Margin="0,0,0,16"
-                            BorderBrush="#1A3A5C" BorderThickness="1">
+                    <Border Background="#0A1420" CornerRadius="8" Padding="16,12" Margin="0,0,0,16"
+                            BorderBrush="#1A3058" BorderThickness="1">
                         <StackPanel Orientation="Horizontal">
                             <TextBlock Text="🛡" FontSize="20" VerticalAlignment="Center" Margin="0,0,12,0" />
                             <StackPanel VerticalAlignment="Center">
@@ -328,9 +360,9 @@
                                         <Border Background="{StaticResource AccentBright}" CornerRadius="16"
                                                 Width="32" Height="32" Margin="0,0,12,0">
                                             <Border.Effect>
-                                                <DropShadowEffect ShadowDepth="0" BlurRadius="10" Opacity="0.45" Color="#00D4FF" />
+                                                <DropShadowEffect ShadowDepth="0" BlurRadius="12" Opacity="0.5" Color="#00E5FF" />
                                             </Border.Effect>
-                                            <TextBlock Text="1" Foreground="#0D1117" FontSize="16" FontWeight="Bold"
+                                            <TextBlock Text="1" Foreground="#061428" FontSize="16" FontWeight="Bold"
                                                        HorizontalAlignment="Center" VerticalAlignment="Center" />
                                         </Border>
                                         <TextBlock Text="Source File Selection" Style="{StaticResource SectionTitle}" Margin="0"
@@ -346,8 +378,8 @@
                             </Border>
 
                             <!-- Safety notice -->
-                            <Border Background="#0C1A12" CornerRadius="6" Padding="14,10" Margin="0,0,0,12"
-                                    BorderBrush="#1A3D28" BorderThickness="1">
+                            <Border Background="#0A1420" CornerRadius="6" Padding="14,10" Margin="0,0,0,12"
+                                    BorderBrush="#1A3058" BorderThickness="1">
                                 <StackPanel Orientation="Horizontal">
                                     <TextBlock Text="🛡" FontSize="16" VerticalAlignment="Center" Margin="0,0,10,0" />
                                     <TextBlock Foreground="{StaticResource Success}" FontSize="12" VerticalAlignment="Center" TextWrapping="Wrap">
@@ -358,7 +390,7 @@
                             </Border>
 
                             <!-- Drop zone hint -->
-                            <Border Background="#0F1923" BorderBrush="{StaticResource Accent}"
+                            <Border Background="#0A1428" BorderBrush="{StaticResource AccentBright}"
                                     BorderThickness="1.5" CornerRadius="8" Padding="20,14"
                                     Margin="0,0,0,10"
                                     Visibility="{Binding IsIdle, Converter={StaticResource BoolToVis}}">
@@ -375,8 +407,8 @@
                                       AutoGenerateColumns="False" IsReadOnly="True"
                                       HeadersVisibility="Column" GridLinesVisibility="None"
                                       Background="Transparent" Foreground="{StaticResource TextBody}"
-                                      BorderThickness="0" RowBackground="#1C2333"
-                                      AlternatingRowBackground="#1F2A3C"
+                                      BorderThickness="0" RowBackground="#141E38"
+                                      AlternatingRowBackground="#182640"
                                       CanUserAddRows="False" SelectionMode="Single"
                                       VerticalScrollBarVisibility="Auto" MinHeight="60" MaxHeight="220"
                                       ColumnHeaderStyle="{StaticResource DGColumnHeader}"
@@ -434,9 +466,9 @@
                                     <Border Background="{StaticResource AccentBright}" CornerRadius="16"
                                             Width="32" Height="32" Margin="0,0,12,0">
                                         <Border.Effect>
-                                            <DropShadowEffect ShadowDepth="0" BlurRadius="10" Opacity="0.45" Color="#00D4FF" />
+                                            <DropShadowEffect ShadowDepth="0" BlurRadius="12" Opacity="0.5" Color="#00E5FF" />
                                         </Border.Effect>
-                                        <TextBlock Text="2" Foreground="#0D1117" FontSize="16" FontWeight="Bold"
+                                        <TextBlock Text="2" Foreground="#061428" FontSize="16" FontWeight="Bold"
                                                    HorizontalAlignment="Center" VerticalAlignment="Center" />
                                     </Border>
                                     <TextBlock Text="Migration Configuration" Style="{StaticResource SectionTitle}" Margin="0"
@@ -462,7 +494,7 @@
                                 <Run Text="{Binding DestinationPreview, Mode=OneWay}" Foreground="{StaticResource TextBody}" />
                             </TextBlock>
 
-                            <Separator Background="#2A3448" Margin="0,0,0,16" />
+                            <Separator Background="#1A2E50" Margin="0,0,0,16" />
 
                             <!-- ── Date Range ── -->
                             <TextBlock Text="DATE RANGE FILTER" FontSize="12" FontWeight="Bold"
@@ -492,7 +524,7 @@
                                 </StackPanel>
                             </Grid>
 
-                            <Separator Background="#2A3448" Margin="0,0,0,16" />
+                            <Separator Background="#1A2E50" Margin="0,0,0,16" />
 
                             <!-- ── Entity Types ── -->
                             <DockPanel Margin="0,0,0,10">
@@ -544,7 +576,7 @@
                                 </ItemsControl.ItemTemplate>
                             </ItemsControl>
 
-                            <Separator Background="#2A3448" Margin="0,10,0,16" />
+                            <Separator Background="#1A2E50" Margin="0,10,0,16" />
 
                             <!-- ── Validation Level ── -->
                             <TextBlock Text="VALIDATION LEVEL" FontSize="12" FontWeight="Bold"
@@ -561,7 +593,7 @@
                                              GroupName="ValidationLevel" />
                             </StackPanel>
 
-                            <Separator Background="#2A3448" Margin="0,0,0,16" />
+                            <Separator Background="#1A2E50" Margin="0,0,0,16" />
 
                             <!-- ── Estimates ── -->
                             <TextBlock Text="ESTIMATES" FontSize="12" FontWeight="Bold"
@@ -607,9 +639,16 @@
                     </Border>
 
                     <!-- ═════════════════════════ START MIGRATION BUTTON ═════════════════════════ -->
-                    <Border Background="#0F1923" CornerRadius="8" Padding="20,16" Margin="0,0,0,12"
-                            BorderBrush="#1A3A5C" BorderThickness="1"
+                    <Border CornerRadius="8" Padding="20,16" Margin="0,0,0,12"
+                            BorderBrush="#1A3A6C" BorderThickness="1"
                             Visibility="{Binding IsIdle, Converter={StaticResource BoolToVis}}">
+                        <Border.Background>
+                            <LinearGradientBrush StartPoint="0,0.5" EndPoint="1,0.5">
+                                <GradientStop Color="#0A1428" Offset="0" />
+                                <GradientStop Color="#0E1E3C" Offset="0.5" />
+                                <GradientStop Color="#0A1428" Offset="1" />
+                            </LinearGradientBrush>
+                        </Border.Background>
                         <DockPanel>
                             <StackPanel DockPanel.Dock="Left" VerticalAlignment="Center">
                                 <TextBlock Text="Ready to migrate?" FontSize="17" FontWeight="Bold"
@@ -624,8 +663,8 @@
                     </Border>
 
                     <!-- Running controls -->
-                    <Border Background="#1C0A0A" CornerRadius="8" Padding="20,14" Margin="0,0,0,12"
-                            BorderBrush="#3D1A1A" BorderThickness="1"
+                    <Border Background="#1A0C14" CornerRadius="8" Padding="20,14" Margin="0,0,0,12"
+                            BorderBrush="#3D1A2A" BorderThickness="1"
                             Visibility="{Binding IsMigrationRunning, Converter={StaticResource BoolToVis}}">
                         <DockPanel>
                             <StackPanel DockPanel.Dock="Left" VerticalAlignment="Center">
@@ -654,9 +693,9 @@
                                         <Border CornerRadius="16" Width="32" Height="32" Margin="0,0,12,0"
                                                 Background="{StaticResource AccentBright}">
                                             <Border.Effect>
-                                                <DropShadowEffect ShadowDepth="0" BlurRadius="12" Opacity="0.5" Color="#00D4FF" />
+                                                <DropShadowEffect ShadowDepth="0" BlurRadius="12" Opacity="0.5" Color="#00E5FF" />
                                             </Border.Effect>
-                                            <TextBlock Text="3" Foreground="#0D1117" FontSize="16" FontWeight="Bold"
+                                            <TextBlock Text="3" Foreground="#061428" FontSize="16" FontWeight="Bold"
                                                        HorizontalAlignment="Center" VerticalAlignment="Center" />
                                         </Border>
                                         <TextBlock Text="Migration Progress" Style="{StaticResource SectionTitle}" Margin="0"
@@ -669,11 +708,24 @@
                                 </DockPanel>
                             </Border>
 
-                            <!-- ═══════ NORTON/McAFEE-STYLE STAGE PIPELINE ═══════ -->
-                            <Border Background="#0E1420" CornerRadius="10" Padding="20,22" Margin="0,0,0,18"
-                                    BorderBrush="#1A2438" BorderThickness="1">
+                            <!-- ═══════ NORTON/McAFEE-STYLE STAGE PIPELINE (Vibrant Blue) ═══════ -->
+                            <Border CornerRadius="10" Padding="20,22" Margin="0,0,0,18"
+                                    BorderBrush="#152040" BorderThickness="1" ClipToBounds="True">
+                                <Border.Background>
+                                    <LinearGradientBrush StartPoint="0.5,0" EndPoint="0.5,1">
+                                        <GradientStop Color="#0A1225" Offset="0" />
+                                        <GradientStop Color="#0C1830" Offset="0.5" />
+                                        <GradientStop Color="#0A1225" Offset="1" />
+                                    </LinearGradientBrush>
+                                </Border.Background>
                                 <Grid>
+                                    <!-- Blue atmospheric overlay -->
+                                    <Border Background="{StaticResource BlueSpotlight}" CornerRadius="10"
+                                            Margin="-20,-22" IsHitTestVisible="False" />
+
+                                    <Grid>
                                     <Grid.RowDefinitions>
+                                        <RowDefinition Height="Auto" />
                                         <RowDefinition Height="Auto" />
                                         <RowDefinition Height="Auto" />
                                     </Grid.RowDefinitions>
@@ -690,51 +742,123 @@
                                             <ColumnDefinition Width="*" />
                                         </Grid.ColumnDefinitions>
 
-                                        <!-- Stage 1: Export -->
-                                        <Border Grid.Column="0" Width="48" Height="48" CornerRadius="24"
+                                        <!-- Stage 1: Export (with pulse animation on glow) -->
+                                        <Border Grid.Column="0" Width="52" Height="52" CornerRadius="26"
                                                 Background="{Binding ExportStepColor, Converter={StaticResource StrToBrush}}"
-                                                HorizontalAlignment="Center" VerticalAlignment="Center">
+                                                HorizontalAlignment="Center" VerticalAlignment="Center"
+                                                x:Name="Stage1Circle">
                                             <Border.Effect>
-                                                <DropShadowEffect ShadowDepth="0" BlurRadius="12" Opacity="0.45" Color="#00D4FF" />
+                                                <DropShadowEffect x:Name="Stage1Glow" ShadowDepth="0" BlurRadius="16" Opacity="0.55" Color="#00C8FF" />
                                             </Border.Effect>
-                                            <TextBlock Text="📤" FontSize="20" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                            <TextBlock Text="📤" FontSize="22" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                            <Border.Triggers>
+                                                <EventTrigger RoutedEvent="Loaded">
+                                                    <BeginStoryboard>
+                                                        <Storyboard RepeatBehavior="Forever" AutoReverse="True">
+                                                            <DoubleAnimation Storyboard.TargetName="Stage1Glow"
+                                                                             Storyboard.TargetProperty="Opacity"
+                                                                             From="0.35" To="0.75" Duration="0:0:1.8" />
+                                                            <DoubleAnimation Storyboard.TargetName="Stage1Glow"
+                                                                             Storyboard.TargetProperty="BlurRadius"
+                                                                             From="12" To="24" Duration="0:0:1.8" />
+                                                        </Storyboard>
+                                                    </BeginStoryboard>
+                                                </EventTrigger>
+                                            </Border.Triggers>
                                         </Border>
 
-                                        <!-- Connector 1→2 -->
-                                        <Border Grid.Column="1" Height="3" VerticalAlignment="Center"
+                                        <!-- Connector 1→2 (animated data flow line) -->
+                                        <Border Grid.Column="1" Height="4" VerticalAlignment="Center"
                                                 CornerRadius="2"
-                                                Background="{Binding TransformStepColor, Converter={StaticResource StrToBrush}}" />
+                                                Background="{Binding TransformStepColor, Converter={StaticResource StrToBrush}}">
+                                            <Border.Effect>
+                                                <DropShadowEffect ShadowDepth="0" BlurRadius="6" Opacity="0.4" Color="#0080C0" />
+                                            </Border.Effect>
+                                        </Border>
 
                                         <!-- Stage 2: Transform -->
-                                        <Border Grid.Column="2" Width="48" Height="48" CornerRadius="24"
+                                        <Border Grid.Column="2" Width="52" Height="52" CornerRadius="26"
                                                 Background="{Binding TransformStepColor, Converter={StaticResource StrToBrush}}"
-                                                HorizontalAlignment="Center" VerticalAlignment="Center">
-                                            <TextBlock Text="🔄" FontSize="20" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                                HorizontalAlignment="Center" VerticalAlignment="Center"
+                                                x:Name="Stage2Circle">
+                                            <Border.Effect>
+                                                <DropShadowEffect x:Name="Stage2Glow" ShadowDepth="0" BlurRadius="16" Opacity="0.55" Color="#00C8FF" />
+                                            </Border.Effect>
+                                            <TextBlock Text="🔄" FontSize="22" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                            <Border.Triggers>
+                                                <EventTrigger RoutedEvent="Loaded">
+                                                    <BeginStoryboard>
+                                                        <Storyboard RepeatBehavior="Forever" AutoReverse="True">
+                                                            <DoubleAnimation Storyboard.TargetName="Stage2Glow"
+                                                                             Storyboard.TargetProperty="Opacity"
+                                                                             From="0.35" To="0.75" Duration="0:0:2.0" />
+                                                        </Storyboard>
+                                                    </BeginStoryboard>
+                                                </EventTrigger>
+                                            </Border.Triggers>
                                         </Border>
 
                                         <!-- Connector 2→3 -->
-                                        <Border Grid.Column="3" Height="3" VerticalAlignment="Center"
+                                        <Border Grid.Column="3" Height="4" VerticalAlignment="Center"
                                                 CornerRadius="2"
-                                                Background="{Binding ImportStepColor, Converter={StaticResource StrToBrush}}" />
+                                                Background="{Binding ImportStepColor, Converter={StaticResource StrToBrush}}">
+                                            <Border.Effect>
+                                                <DropShadowEffect ShadowDepth="0" BlurRadius="6" Opacity="0.4" Color="#0080C0" />
+                                            </Border.Effect>
+                                        </Border>
 
                                         <!-- Stage 3: Import -->
-                                        <Border Grid.Column="4" Width="48" Height="48" CornerRadius="24"
+                                        <Border Grid.Column="4" Width="52" Height="52" CornerRadius="26"
                                                 Background="{Binding ImportStepColor, Converter={StaticResource StrToBrush}}"
-                                                HorizontalAlignment="Center" VerticalAlignment="Center">
-                                            <TextBlock Text="📥" FontSize="20" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                                HorizontalAlignment="Center" VerticalAlignment="Center"
+                                                x:Name="Stage3Circle">
+                                            <Border.Effect>
+                                                <DropShadowEffect x:Name="Stage3Glow" ShadowDepth="0" BlurRadius="16" Opacity="0.55" Color="#00C8FF" />
+                                            </Border.Effect>
+                                            <TextBlock Text="📥" FontSize="22" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                            <Border.Triggers>
+                                                <EventTrigger RoutedEvent="Loaded">
+                                                    <BeginStoryboard>
+                                                        <Storyboard RepeatBehavior="Forever" AutoReverse="True">
+                                                            <DoubleAnimation Storyboard.TargetName="Stage3Glow"
+                                                                             Storyboard.TargetProperty="Opacity"
+                                                                             From="0.35" To="0.75" Duration="0:0:2.2" />
+                                                        </Storyboard>
+                                                    </BeginStoryboard>
+                                                </EventTrigger>
+                                            </Border.Triggers>
                                         </Border>
 
                                         <!-- Connector 3→4 -->
-                                        <Border Grid.Column="5" Height="3" VerticalAlignment="Center"
+                                        <Border Grid.Column="5" Height="4" VerticalAlignment="Center"
                                                 CornerRadius="2"
-                                                Background="{Binding ValidateStepColor, Converter={StaticResource StrToBrush}}" />
+                                                Background="{Binding ValidateStepColor, Converter={StaticResource StrToBrush}}">
+                                            <Border.Effect>
+                                                <DropShadowEffect ShadowDepth="0" BlurRadius="6" Opacity="0.4" Color="#0080C0" />
+                                            </Border.Effect>
+                                        </Border>
 
                                         <!-- Stage 4: Validate -->
-                                        <Border Grid.Column="6" Width="48" Height="48" CornerRadius="24"
+                                        <Border Grid.Column="6" Width="52" Height="52" CornerRadius="26"
                                                 Background="{Binding ValidateStepColor, Converter={StaticResource StrToBrush}}"
-                                                HorizontalAlignment="Center" VerticalAlignment="Center">
-                                            <TextBlock Text="✓" FontSize="22" FontWeight="Bold" Foreground="White"
+                                                HorizontalAlignment="Center" VerticalAlignment="Center"
+                                                x:Name="Stage4Circle">
+                                            <Border.Effect>
+                                                <DropShadowEffect x:Name="Stage4Glow" ShadowDepth="0" BlurRadius="16" Opacity="0.55" Color="#00C8FF" />
+                                            </Border.Effect>
+                                            <TextBlock Text="✓" FontSize="24" FontWeight="Bold" Foreground="White"
                                                        HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                            <Border.Triggers>
+                                                <EventTrigger RoutedEvent="Loaded">
+                                                    <BeginStoryboard>
+                                                        <Storyboard RepeatBehavior="Forever" AutoReverse="True">
+                                                            <DoubleAnimation Storyboard.TargetName="Stage4Glow"
+                                                                             Storyboard.TargetProperty="Opacity"
+                                                                             From="0.35" To="0.75" Duration="0:0:2.4" />
+                                                        </Storyboard>
+                                                    </BeginStoryboard>
+                                                </EventTrigger>
+                                            </Border.Triggers>
                                         </Border>
                                     </Grid>
 
@@ -754,6 +878,32 @@
                                         <TextBlock Grid.Column="4" Text="Import" Style="{StaticResource StageLabel}" />
                                         <TextBlock Grid.Column="6" Text="Validate" Style="{StaticResource StageLabel}" />
                                     </Grid>
+
+                                    <!-- Status Badge Row (Intel-style ✓ pills) -->
+                                    <Grid Grid.Row="2" Margin="12,6,12,0">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="2*" />
+                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="2*" />
+                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="2*" />
+                                            <ColumnDefinition Width="*" />
+                                        </Grid.ColumnDefinitions>
+                                        <Border Grid.Column="0" Background="#0D3320" CornerRadius="8" Padding="6,2" HorizontalAlignment="Center">
+                                            <TextBlock Text="✓" FontSize="10" FontWeight="Bold" Foreground="#4ADE80" HorizontalAlignment="Center" />
+                                        </Border>
+                                        <Border Grid.Column="2" Background="#0D3320" CornerRadius="8" Padding="6,2" HorizontalAlignment="Center">
+                                            <TextBlock Text="✓" FontSize="10" FontWeight="Bold" Foreground="#4ADE80" HorizontalAlignment="Center" />
+                                        </Border>
+                                        <Border Grid.Column="4" Background="#0D3320" CornerRadius="8" Padding="6,2" HorizontalAlignment="Center">
+                                            <TextBlock Text="✓" FontSize="10" FontWeight="Bold" Foreground="#4ADE80" HorizontalAlignment="Center" />
+                                        </Border>
+                                        <Border Grid.Column="6" Background="#0D3320" CornerRadius="8" Padding="6,2" HorizontalAlignment="Center">
+                                            <TextBlock Text="✓" FontSize="10" FontWeight="Bold" Foreground="#4ADE80" HorizontalAlignment="Center" />
+                                        </Border>
+                                    </Grid>
+                                    </Grid>
                                 </Grid>
                             </Border>
 
@@ -767,7 +917,7 @@
                                            FontSize="14" FontWeight="Bold" HorizontalAlignment="Right" DockPanel.Dock="Right" />
                             </DockPanel>
 
-                            <Separator Background="#2A3448" Margin="0,16,0,16" />
+                            <Separator Background="#1A2E50" Margin="0,16,0,16" />
 
                             <!-- ── Live Stats (enlarged) ── -->
                             <Grid Margin="0,0,0,16">
@@ -818,8 +968,8 @@
                                         Style="{StaticResource SmallButton}" DockPanel.Dock="Right"
                                         HorizontalAlignment="Right" VerticalAlignment="Center" />
                             </DockPanel>
-                            <Border Background="#0D1117" CornerRadius="8" Padding="0" MinHeight="180" MaxHeight="300"
-                                    BorderBrush="#1A2438" BorderThickness="1">
+                            <Border Background="#0A1018" CornerRadius="8" Padding="0" MinHeight="180" MaxHeight="300"
+                                    BorderBrush="#152040" BorderThickness="1">
                                 <TextBox Text="{Binding ActivityLog, Mode=OneWay}"
                                          IsReadOnly="True" TextWrapping="Wrap"
                                          VerticalScrollBarVisibility="Auto"

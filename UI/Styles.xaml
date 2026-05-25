@@ -38,9 +38,9 @@
     <SolidColorBrush x:Key="BorderColor"  Color="#2A3448" />
     <SolidColorBrush x:Key="BorderLight"  Color="#3A4660" />
 
-    <SolidColorBrush x:Key="Accent"       Color="#00B4D8" />
-    <SolidColorBrush x:Key="AccentBright" Color="#00D4FF" />
-    <SolidColorBrush x:Key="AccentGlow"   Color="#0096C7" />
+    <SolidColorBrush x:Key="Accent"       Color="#00C8E8" />
+    <SolidColorBrush x:Key="AccentBright" Color="#00E5FF" />
+    <SolidColorBrush x:Key="AccentGlow"   Color="#00A5D4" />
 
     <SolidColorBrush x:Key="Success"      Color="#4ADE80" />
     <SolidColorBrush x:Key="Warning"      Color="#FBBF24" />
@@ -51,46 +51,87 @@
     <SolidColorBrush x:Key="TextDim"      Color="#6B7A90" />
     <SolidColorBrush x:Key="TextMuted"    Color="#4A5568" />
 
-    <!-- Gradient for the hero/welcome banner (Intel-style blue gradient) -->
+    <!-- ═══ VIBRANT BLUE GRADIENT SYSTEM (Intel Pro Graphics Inspired) ═══ -->
+
+    <!-- Hero banner: dramatic dark-to-bright blue radial (matches Intel welcome card) -->
     <LinearGradientBrush x:Key="HeroBannerBg" StartPoint="0,0.5" EndPoint="1,0.5">
-        <GradientStop Color="#0A1628" Offset="0" />
-        <GradientStop Color="#112240" Offset="0.4" />
-        <GradientStop Color="#1A3A5C" Offset="0.75" />
-        <GradientStop Color="#0D2847" Offset="1" />
+        <GradientStop Color="#080E1A" Offset="0" />
+        <GradientStop Color="#0C1A38" Offset="0.3" />
+        <GradientStop Color="#122858" Offset="0.6" />
+        <GradientStop Color="#1B3F7A" Offset="0.85" />
+        <GradientStop Color="#2456A0" Offset="1" />
     </LinearGradientBrush>
 
-    <!-- ── Premium Gradient Brushes ────────────────────────────────── -->
-    <!-- Subtle top-to-bottom card gradient for elevated panels -->
-    <LinearGradientBrush x:Key="CardGradientBg" StartPoint="0,0" EndPoint="0,1">
-        <GradientStop Color="#1E2740" Offset="0" />
-        <GradientStop Color="#1C2333" Offset="0.5" />
-        <GradientStop Color="#191F2E" Offset="1" />
+    <!-- Hero radial overlay — bright blue glow emanating from upper-right corner -->
+    <RadialGradientBrush x:Key="HeroRadialGlow" Center="0.85,0.2" RadiusX="0.8" RadiusY="1.2"
+                         GradientOrigin="0.9,0.15">
+        <GradientStop Color="#4000A0FF" Offset="0" />
+        <GradientStop Color="#250060D0" Offset="0.4" />
+        <GradientStop Color="#10003880" Offset="0.7" />
+        <GradientStop Color="#00000000" Offset="1" />
+    </RadialGradientBrush>
+
+    <!-- ── Premium Blue-Tinted Card Gradients ──────────────────────── -->
+    <!-- Card gradient: blue-tinted (not gray) — matches Intel card aesthetic -->
+    <LinearGradientBrush x:Key="CardGradientBg" StartPoint="0,0" EndPoint="1,1">
+        <GradientStop Color="#141E38" Offset="0" />
+        <GradientStop Color="#121A30" Offset="0.4" />
+        <GradientStop Color="#101828" Offset="0.7" />
+        <GradientStop Color="#0E1624" Offset="1" />
     </LinearGradientBrush>
 
-    <!-- Section header gradient (left-to-right with cyan accent hint) -->
+    <!-- Section header: bold blue gradient with bright accent -->
     <LinearGradientBrush x:Key="SectionHeaderGradient" StartPoint="0,0.5" EndPoint="1,0.5">
-        <GradientStop Color="#141C2D" Offset="0" />
-        <GradientStop Color="#0E1A2E" Offset="0.5" />
-        <GradientStop Color="#101828" Offset="1" />
+        <GradientStop Color="#0C1628" Offset="0" />
+        <GradientStop Color="#0F1E3A" Offset="0.3" />
+        <GradientStop Color="#132850" Offset="0.65" />
+        <GradientStop Color="#0F1E3A" Offset="1" />
     </LinearGradientBrush>
 
-    <!-- Stat card subtle gradient -->
+    <!-- Stat card: blue-tinted with depth -->
     <LinearGradientBrush x:Key="StatCardGradient" StartPoint="0,0" EndPoint="0,1">
-        <GradientStop Color="#1F2A3E" Offset="0" />
-        <GradientStop Color="#1A2235" Offset="1" />
+        <GradientStop Color="#15213C" Offset="0" />
+        <GradientStop Color="#111C32" Offset="0.5" />
+        <GradientStop Color="#0E1828" Offset="1" />
+    </LinearGradientBrush>
+
+    <!-- Pipeline area background: deep blue -->
+    <LinearGradientBrush x:Key="PipelineBg" StartPoint="0.5,0" EndPoint="0.5,1">
+        <GradientStop Color="#0A1225" Offset="0" />
+        <GradientStop Color="#0C1830" Offset="0.5" />
+        <GradientStop Color="#0A1225" Offset="1" />
     </LinearGradientBrush>
 
     <!-- Pipeline connector gradient (completed state) -->
     <LinearGradientBrush x:Key="PipelineConnectorActive" StartPoint="0,0.5" EndPoint="1,0.5">
-        <GradientStop Color="#00D4FF" Offset="0" />
-        <GradientStop Color="#00B4D8" Offset="1" />
+        <GradientStop Color="#00E5FF" Offset="0" />
+        <GradientStop Color="#00C8E8" Offset="1" />
     </LinearGradientBrush>
 
-    <!-- Badge glow gradient -->
-    <RadialGradientBrush x:Key="BadgeGlowBrush" Center="0.5,0.5" RadiusX="0.6" RadiusY="0.6">
-        <GradientStop Color="#3300D4FF" Offset="0" />
-        <GradientStop Color="#0000D4FF" Offset="1" />
+    <!-- Badge glow: intense blue radial -->
+    <RadialGradientBrush x:Key="BadgeGlowBrush" Center="0.5,0.5" RadiusX="0.7" RadiusY="0.7">
+        <GradientStop Color="#5000E5FF" Offset="0" />
+        <GradientStop Color="#0000E5FF" Offset="1" />
     </RadialGradientBrush>
+
+    <!-- Atmospheric blue spotlight (for overlay on important areas) -->
+    <RadialGradientBrush x:Key="BlueSpotlight" Center="0.5,0.3" RadiusX="0.7" RadiusY="0.8">
+        <GradientStop Color="#1800A0FF" Offset="0" />
+        <GradientStop Color="#08004080" Offset="0.5" />
+        <GradientStop Color="#00000000" Offset="1" />
+    </RadialGradientBrush>
+
+    <!-- Progress bar animated gradient foreground -->
+    <LinearGradientBrush x:Key="ProgressBarGlow" StartPoint="0,0.5" EndPoint="1,0.5">
+        <GradientStop Color="#00A5D4" Offset="0" />
+        <GradientStop Color="#00E5FF" Offset="0.5" />
+        <GradientStop Color="#33F0FF" Offset="0.75" />
+        <GradientStop Color="#00E5FF" Offset="1" />
+    </LinearGradientBrush>
+
+    <!-- Status badge background (green, Intel "Up To Date" style) -->
+    <SolidColorBrush x:Key="StatusBadgeGreen" Color="#22C55E" />
+    <SolidColorBrush x:Key="StatusBadgePurple" Color="#7C3AED" />
 
     <!-- ── Text Styles ─────────────────────────────────────────────── -->
     <Style x:Key="HeaderText" TargetType="TextBlock">
@@ -130,27 +171,27 @@
         <Setter Property="HorizontalAlignment" Value="Center" />
     </Style>
 
-    <!-- ── Card Border (enhanced with gradient + deeper shadow) ───── -->
+    <!-- ── Card Border (blue-tinted with atmospheric blue glow) ──── -->
     <Style x:Key="Card" TargetType="Border">
         <Setter Property="Background" Value="{StaticResource CardGradientBg}" />
         <Setter Property="CornerRadius" Value="10" />
         <Setter Property="Padding" Value="22,18" />
         <Setter Property="Margin" Value="0,0,0,14" />
-        <Setter Property="BorderBrush" Value="{StaticResource BorderColor}" />
+        <Setter Property="BorderBrush" Value="#1E2E50" />
         <Setter Property="BorderThickness" Value="1" />
         <Setter Property="Effect">
             <Setter.Value>
-                <DropShadowEffect ShadowDepth="3" BlurRadius="14" Opacity="0.35" Color="#000000" Direction="270" />
+                <DropShadowEffect ShadowDepth="2" BlurRadius="18" Opacity="0.35" Color="#001840" Direction="270" />
             </Setter.Value>
         </Setter>
     </Style>
 
-    <!-- Glow Card (active sections — cyan glow halo) -->
+    <!-- Glow Card (active sections — intense blue glow halo) -->
     <Style x:Key="GlowCard" TargetType="Border" BasedOn="{StaticResource Card}">
-        <Setter Property="BorderBrush" Value="#1A00D4FF" />
+        <Setter Property="BorderBrush" Value="#3000A0FF" />
         <Setter Property="Effect">
             <Setter.Value>
-                <DropShadowEffect ShadowDepth="0" BlurRadius="20" Opacity="0.4" Color="#00D4FF" Direction="0" />
+                <DropShadowEffect ShadowDepth="0" BlurRadius="28" Opacity="0.55" Color="#0080FF" Direction="0" />
             </Setter.Value>
         </Setter>
     </Style>
@@ -159,11 +200,11 @@
         <Setter Property="Background" Value="{StaticResource StatCardGradient}" />
         <Setter Property="CornerRadius" Value="10" />
         <Setter Property="Padding" Value="18,14" />
-        <Setter Property="BorderBrush" Value="{StaticResource BorderColor}" />
+        <Setter Property="BorderBrush" Value="#1A2B4A" />
         <Setter Property="BorderThickness" Value="1" />
         <Setter Property="Effect">
             <Setter.Value>
-                <DropShadowEffect ShadowDepth="2" BlurRadius="8" Opacity="0.2" Color="#000000" Direction="270" />
+                <DropShadowEffect ShadowDepth="1" BlurRadius="12" Opacity="0.25" Color="#001030" Direction="270" />
             </Setter.Value>
         </Setter>
     </Style>
@@ -228,16 +269,16 @@
                     <Border x:Name="Bd" Background="{TemplateBinding Background}"
                             CornerRadius="7" Padding="{TemplateBinding Padding}">
                         <Border.Effect>
-                            <DropShadowEffect ShadowDepth="0" BlurRadius="8" Opacity="0.3" Color="#00D4FF" />
+                            <DropShadowEffect ShadowDepth="0" BlurRadius="12" Opacity="0.45" Color="#00C8FF" />
                         </Border.Effect>
                         <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
                     </Border>
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsMouseOver" Value="True">
-                            <Setter TargetName="Bd" Property="Background" Value="#33E0FF" />
+                            <Setter TargetName="Bd" Property="Background" Value="#33EEFF" />
                             <Setter TargetName="Bd" Property="Effect">
                                 <Setter.Value>
-                                    <DropShadowEffect ShadowDepth="0" BlurRadius="14" Opacity="0.5" Color="#00D4FF" />
+                                    <DropShadowEffect ShadowDepth="0" BlurRadius="22" Opacity="0.7" Color="#00C8FF" />
                                 </Setter.Value>
                             </Setter>
                         </Trigger>
@@ -392,21 +433,22 @@
         <Setter Property="Padding" Value="0,13" />
     </Style>
 
-    <!-- ── Modern ProgressBar (enhanced — taller with glow) ─────── -->
+    <!-- ── Modern ProgressBar (vibrant gradient with intense glow) ── -->
     <Style x:Key="ModernProgress" TargetType="ProgressBar">
         <Setter Property="Height" Value="10" />
-        <Setter Property="Background" Value="#1A2438" />
-        <Setter Property="Foreground" Value="{StaticResource AccentBright}" />
+        <Setter Property="Background" Value="#0C1628" />
+        <Setter Property="Foreground" Value="{StaticResource ProgressBarGlow}" />
         <Setter Property="BorderThickness" Value="0" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="ProgressBar">
                     <Grid>
-                        <Border x:Name="PART_Track" Background="{TemplateBinding Background}" CornerRadius="5" />
+                        <Border x:Name="PART_Track" Background="{TemplateBinding Background}" CornerRadius="5"
+                                BorderBrush="#152040" BorderThickness="1" />
                         <Border x:Name="PART_Indicator" Background="{TemplateBinding Foreground}" CornerRadius="5"
                                 HorizontalAlignment="Left">
                             <Border.Effect>
-                                <DropShadowEffect ShadowDepth="0" BlurRadius="10" Opacity="0.5" Color="#00D4FF" />
+                                <DropShadowEffect ShadowDepth="0" BlurRadius="16" Opacity="0.7" Color="#00C8FF" />
                             </Border.Effect>
                         </Border>
                     </Grid>
@@ -451,7 +493,7 @@
         <Setter Property="MinWidth" Value="100" />
         <Setter Property="Effect">
             <Setter.Value>
-                <DropShadowEffect ShadowDepth="1" BlurRadius="6" Opacity="0.25" Color="#000000" Direction="270" />
+                <DropShadowEffect ShadowDepth="0" BlurRadius="10" Opacity="0.35" Color="#0060A0" Direction="0" />
             </Setter.Value>
         </Setter>
     </Style>
