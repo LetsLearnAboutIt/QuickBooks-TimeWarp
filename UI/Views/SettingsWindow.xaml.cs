@@ -1,5 +1,6 @@
 using System.IO;
 using System.Windows;
+using System.Windows.Input;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -15,6 +16,11 @@ namespace QB_TimeWarp.UI.Views
             InitializeComponent();
             _settingsPath = Path.Combine(Directory.GetCurrentDirectory(), "appsettings.json");
             LoadCurrentSettings();
+        }
+
+        private void TitleBar_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            DragMove();
         }
 
         private void LoadCurrentSettings()

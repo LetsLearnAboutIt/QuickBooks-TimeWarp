@@ -4,20 +4,40 @@
         Title="Settings — QuickBooks TimeWarp"
         Width="680" Height="680"
         WindowStartupLocation="CenterOwner"
-        Background="#151B28"
+        WindowStyle="None"
+        AllowsTransparency="True"
+        Background="Transparent"
         Foreground="#E8ECF1"
         ResizeMode="CanResizeWithGrip"
         Icon="/UI/Assets/osa-icon.png">
 
+    <Border Background="#151B28" BorderBrush="#1A2332" BorderThickness="1">
     <Grid>
         <Grid.RowDefinitions>
+            <RowDefinition Height="32" />    <!-- Title Bar -->
             <RowDefinition Height="Auto" />  <!-- Header -->
             <RowDefinition Height="*" />     <!-- Content -->
             <RowDefinition Height="Auto" />  <!-- Footer buttons -->
         </Grid.RowDefinitions>
 
+        <!-- Custom Title Bar -->
+        <Border Grid.Row="0" Background="#0D1117"
+                MouseLeftButtonDown="TitleBar_MouseLeftButtonDown">
+            <Grid>
+                <StackPanel Orientation="Horizontal" Margin="10,0,0,0" VerticalAlignment="Center">
+                    <Image Source="/UI/Assets/osa-icon.png" Width="16" Height="16"
+                           RenderOptions.BitmapScalingMode="HighQuality" Margin="0,0,8,0" />
+                    <TextBlock Text="Settings" FontSize="12"
+                               Foreground="#6B7A90" VerticalAlignment="Center" />
+                </StackPanel>
+                <Button Content="&#xE8BB;" Click="Cancel_Click"
+                        Style="{StaticResource WindowCloseButton}"
+                        HorizontalAlignment="Right" />
+            </Grid>
+        </Border>
+
         <!-- Header bar -->
-        <Border Grid.Row="0" Background="#0D1117" Padding="24,16">
+        <Border Grid.Row="1" Background="#0D1117" Padding="24,16">
             <StackPanel>
                 <TextBlock Text="⚙  Settings" FontSize="20" FontWeight="SemiBold" Foreground="#E8ECF1" />
                 <TextBlock Text="Configure connections, import options, and paths"
@@ -26,7 +46,8 @@
         </Border>
 
         <!-- Scrollable settings content -->
-        <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" Padding="24,16">
+        <ScrollViewer Grid.Row="2" VerticalScrollBarVisibility="Auto" Padding="24,16"
+                      Style="{StaticResource ThinScrollViewer}">
             <StackPanel Margin="24,16,24,8">
 
                 <!-- ── Connection Card ───────────────────────────────── -->
@@ -238,7 +259,7 @@
         </ScrollViewer>
 
         <!-- Footer buttons -->
-        <Border Grid.Row="2" Background="#0D1117" Padding="24,14">
+        <Border Grid.Row="3" Background="#0D1117" Padding="24,14">
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
                 <Button Content="Save Settings" Click="SaveSettings_Click"
                         Style="{StaticResource PrimaryButton}" Margin="0,0,10,0" />
@@ -247,4 +268,5 @@
             </StackPanel>
         </Border>
     </Grid>
+    </Border>
 </Window>

@@ -4,18 +4,39 @@
         Title="About — QuickBooks TimeWarp®"
         Width="520" Height="780"
         WindowStartupLocation="CenterOwner"
-        Background="#0D1117"
+        WindowStyle="None"
+        AllowsTransparency="True"
+        Background="Transparent"
         Foreground="#E8ECF1"
         ResizeMode="NoResize"
         Icon="/UI/Assets/osa-icon.png">
 
+    <Border Background="#0D1117" BorderBrush="#1A2332" BorderThickness="1">
     <Grid>
         <Grid.RowDefinitions>
+            <RowDefinition Height="32" />     <!-- Title Bar -->
             <RowDefinition Height="*" />      <!-- Content -->
             <RowDefinition Height="Auto" />   <!-- Footer -->
         </Grid.RowDefinitions>
 
-        <ScrollViewer Grid.Row="0" VerticalScrollBarVisibility="Auto">
+        <!-- Custom Title Bar -->
+        <Border Grid.Row="0" Background="#0D1117"
+                MouseLeftButtonDown="TitleBar_MouseLeftButtonDown">
+            <Grid>
+                <StackPanel Orientation="Horizontal" Margin="10,0,0,0" VerticalAlignment="Center">
+                    <Image Source="/UI/Assets/osa-icon.png" Width="16" Height="16"
+                           RenderOptions.BitmapScalingMode="HighQuality" Margin="0,0,8,0" />
+                    <TextBlock Text="About — QuickBooks TimeWarp®" FontSize="12"
+                               Foreground="#6B7A90" VerticalAlignment="Center" />
+                </StackPanel>
+                <Button Content="&#xE8BB;" Click="Close_Click"
+                        Style="{StaticResource WindowCloseButton}"
+                        HorizontalAlignment="Right" />
+            </Grid>
+        </Border>
+
+        <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto"
+                      Style="{StaticResource ThinScrollViewer}">
             <StackPanel Margin="32,28,32,16">
 
                 <!-- ═══ Logo & Product Name ═══ -->
@@ -203,7 +224,7 @@
         </ScrollViewer>
 
         <!-- ═══ Footer ═══ -->
-        <Border Grid.Row="1" Background="#0A0E17" Padding="24,14">
+        <Border Grid.Row="2" Background="#0A0E17" Padding="24,14">
             <DockPanel>
                 <Button Content="Close" Click="Close_Click" DockPanel.Dock="Right"
                         Style="{StaticResource SecondaryButton}" HorizontalAlignment="Right" />
@@ -219,4 +240,5 @@
             </DockPanel>
         </Border>
     </Grid>
+    </Border>
 </Window>

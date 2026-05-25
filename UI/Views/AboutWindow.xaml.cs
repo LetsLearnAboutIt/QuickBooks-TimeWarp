@@ -12,6 +12,13 @@ namespace QB_TimeWarp.UI.Views
             InitializeComponent();
         }
 
+        // ── Custom Title Bar Drag ──────────────────────────────────────
+
+        private void TitleBar_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            DragMove();
+        }
+
         // ── Website / email link handlers ─────────────────────────────
 
         private void OpenOSAWebsite(object sender, MouseButtonEventArgs e)
