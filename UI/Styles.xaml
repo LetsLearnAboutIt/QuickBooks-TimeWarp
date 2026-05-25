@@ -59,21 +59,54 @@
         <GradientStop Color="#0D2847" Offset="1" />
     </LinearGradientBrush>
 
+    <!-- ── Premium Gradient Brushes ────────────────────────────────── -->
+    <!-- Subtle top-to-bottom card gradient for elevated panels -->
+    <LinearGradientBrush x:Key="CardGradientBg" StartPoint="0,0" EndPoint="0,1">
+        <GradientStop Color="#1E2740" Offset="0" />
+        <GradientStop Color="#1C2333" Offset="0.5" />
+        <GradientStop Color="#191F2E" Offset="1" />
+    </LinearGradientBrush>
+
+    <!-- Section header gradient (left-to-right with cyan accent hint) -->
+    <LinearGradientBrush x:Key="SectionHeaderGradient" StartPoint="0,0.5" EndPoint="1,0.5">
+        <GradientStop Color="#141C2D" Offset="0" />
+        <GradientStop Color="#0E1A2E" Offset="0.5" />
+        <GradientStop Color="#101828" Offset="1" />
+    </LinearGradientBrush>
+
+    <!-- Stat card subtle gradient -->
+    <LinearGradientBrush x:Key="StatCardGradient" StartPoint="0,0" EndPoint="0,1">
+        <GradientStop Color="#1F2A3E" Offset="0" />
+        <GradientStop Color="#1A2235" Offset="1" />
+    </LinearGradientBrush>
+
+    <!-- Pipeline connector gradient (completed state) -->
+    <LinearGradientBrush x:Key="PipelineConnectorActive" StartPoint="0,0.5" EndPoint="1,0.5">
+        <GradientStop Color="#00D4FF" Offset="0" />
+        <GradientStop Color="#00B4D8" Offset="1" />
+    </LinearGradientBrush>
+
+    <!-- Badge glow gradient -->
+    <RadialGradientBrush x:Key="BadgeGlowBrush" Center="0.5,0.5" RadiusX="0.6" RadiusY="0.6">
+        <GradientStop Color="#3300D4FF" Offset="0" />
+        <GradientStop Color="#0000D4FF" Offset="1" />
+    </RadialGradientBrush>
+
     <!-- ── Text Styles ─────────────────────────────────────────────── -->
     <Style x:Key="HeaderText" TargetType="TextBlock">
-        <Setter Property="FontSize" Value="22" />
-        <Setter Property="FontWeight" Value="SemiBold" />
+        <Setter Property="FontSize" Value="26" />
+        <Setter Property="FontWeight" Value="Bold" />
         <Setter Property="Foreground" Value="{StaticResource TextPrimary}" />
     </Style>
 
     <Style x:Key="SubheaderText" TargetType="TextBlock">
-        <Setter Property="FontSize" Value="15" />
+        <Setter Property="FontSize" Value="16" />
         <Setter Property="FontWeight" Value="Medium" />
         <Setter Property="Foreground" Value="{StaticResource TextPrimary}" />
     </Style>
 
     <Style x:Key="BodyText" TargetType="TextBlock">
-        <Setter Property="FontSize" Value="13" />
+        <Setter Property="FontSize" Value="13.5" />
         <Setter Property="Foreground" Value="{StaticResource TextBody}" />
     </Style>
 
@@ -83,33 +116,56 @@
     </Style>
 
     <Style x:Key="SectionTitle" TargetType="TextBlock">
-        <Setter Property="FontSize" Value="16" />
-        <Setter Property="FontWeight" Value="SemiBold" />
+        <Setter Property="FontSize" Value="19" />
+        <Setter Property="FontWeight" Value="Bold" />
         <Setter Property="Foreground" Value="{StaticResource TextPrimary}" />
         <Setter Property="Margin" Value="0,0,0,12" />
     </Style>
 
-    <!-- ── Card Border ─────────────────────────────────────────────── -->
+    <!-- Premium stage label (used in Norton-style pipeline) -->
+    <Style x:Key="StageLabel" TargetType="TextBlock">
+        <Setter Property="FontSize" Value="12" />
+        <Setter Property="FontWeight" Value="SemiBold" />
+        <Setter Property="Foreground" Value="{StaticResource TextBody}" />
+        <Setter Property="HorizontalAlignment" Value="Center" />
+    </Style>
+
+    <!-- ── Card Border (enhanced with gradient + deeper shadow) ───── -->
     <Style x:Key="Card" TargetType="Border">
-        <Setter Property="Background" Value="{StaticResource BgCard}" />
-        <Setter Property="CornerRadius" Value="8" />
-        <Setter Property="Padding" Value="20,16" />
-        <Setter Property="Margin" Value="0,0,0,12" />
+        <Setter Property="Background" Value="{StaticResource CardGradientBg}" />
+        <Setter Property="CornerRadius" Value="10" />
+        <Setter Property="Padding" Value="22,18" />
+        <Setter Property="Margin" Value="0,0,0,14" />
         <Setter Property="BorderBrush" Value="{StaticResource BorderColor}" />
         <Setter Property="BorderThickness" Value="1" />
         <Setter Property="Effect">
             <Setter.Value>
-                <DropShadowEffect ShadowDepth="2" BlurRadius="8" Opacity="0.25" Color="#000000" Direction="270" />
+                <DropShadowEffect ShadowDepth="3" BlurRadius="14" Opacity="0.35" Color="#000000" Direction="270" />
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!-- Glow Card (active sections — cyan glow halo) -->
+    <Style x:Key="GlowCard" TargetType="Border" BasedOn="{StaticResource Card}">
+        <Setter Property="BorderBrush" Value="#1A00D4FF" />
+        <Setter Property="Effect">
+            <Setter.Value>
+                <DropShadowEffect ShadowDepth="0" BlurRadius="20" Opacity="0.4" Color="#00D4FF" Direction="0" />
             </Setter.Value>
         </Setter>
     </Style>
 
     <Style x:Key="StatCard" TargetType="Border">
-        <Setter Property="Background" Value="{StaticResource BgCard}" />
-        <Setter Property="CornerRadius" Value="8" />
-        <Setter Property="Padding" Value="16,12" />
+        <Setter Property="Background" Value="{StaticResource StatCardGradient}" />
+        <Setter Property="CornerRadius" Value="10" />
+        <Setter Property="Padding" Value="18,14" />
         <Setter Property="BorderBrush" Value="{StaticResource BorderColor}" />
         <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="Effect">
+            <Setter.Value>
+                <DropShadowEffect ShadowDepth="2" BlurRadius="8" Opacity="0.2" Color="#000000" Direction="270" />
+            </Setter.Value>
+        </Setter>
     </Style>
 
     <!-- ── Sidebar Navigation Button ───────────────────────────────── -->
@@ -157,25 +213,33 @@
         </Setter>
     </Style>
 
-    <!-- ── Primary Button (Cyan) ───────────────────────────────────── -->
+    <!-- ── Primary Button (Cyan) — Enhanced ────────────────────────── -->
     <Style x:Key="PrimaryButton" TargetType="Button">
         <Setter Property="Background" Value="{StaticResource AccentBright}" />
         <Setter Property="Foreground" Value="#0D1117" />
-        <Setter Property="FontWeight" Value="SemiBold" />
-        <Setter Property="FontSize" Value="13" />
-        <Setter Property="Padding" Value="20,10" />
+        <Setter Property="FontWeight" Value="Bold" />
+        <Setter Property="FontSize" Value="15" />
+        <Setter Property="Padding" Value="24,12" />
         <Setter Property="BorderThickness" Value="0" />
         <Setter Property="Cursor" Value="Hand" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="Button">
                     <Border x:Name="Bd" Background="{TemplateBinding Background}"
-                            CornerRadius="6" Padding="{TemplateBinding Padding}">
+                            CornerRadius="7" Padding="{TemplateBinding Padding}">
+                        <Border.Effect>
+                            <DropShadowEffect ShadowDepth="0" BlurRadius="8" Opacity="0.3" Color="#00D4FF" />
+                        </Border.Effect>
                         <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
                     </Border>
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsMouseOver" Value="True">
                             <Setter TargetName="Bd" Property="Background" Value="#33E0FF" />
+                            <Setter TargetName="Bd" Property="Effect">
+                                <Setter.Value>
+                                    <DropShadowEffect ShadowDepth="0" BlurRadius="14" Opacity="0.5" Color="#00D4FF" />
+                                </Setter.Value>
+                            </Setter>
                         </Trigger>
                         <Trigger Property="IsPressed" Value="True">
                             <Setter TargetName="Bd" Property="Background" Value="{StaticResource AccentGlow}" />
@@ -183,6 +247,7 @@
                         <Trigger Property="IsEnabled" Value="False">
                             <Setter TargetName="Bd" Property="Background" Value="#2A3448" />
                             <Setter Property="Foreground" Value="#4A5568" />
+                            <Setter TargetName="Bd" Property="Effect" Value="{x:Null}" />
                         </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>
@@ -190,25 +255,33 @@
         </Setter>
     </Style>
 
-    <!-- ── Success Button (Green) ──────────────────────────────────── -->
+    <!-- ── Success Button (Green) — Enhanced ──────────────────────── -->
     <Style x:Key="SuccessButton" TargetType="Button">
         <Setter Property="Background" Value="{StaticResource Success}" />
         <Setter Property="Foreground" Value="#0D1117" />
         <Setter Property="FontWeight" Value="Bold" />
-        <Setter Property="FontSize" Value="14" />
-        <Setter Property="Padding" Value="28,11" />
+        <Setter Property="FontSize" Value="16" />
+        <Setter Property="Padding" Value="32,13" />
         <Setter Property="BorderThickness" Value="0" />
         <Setter Property="Cursor" Value="Hand" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="Button">
                     <Border x:Name="Bd" Background="{TemplateBinding Background}"
-                            CornerRadius="6" Padding="{TemplateBinding Padding}">
+                            CornerRadius="7" Padding="{TemplateBinding Padding}">
+                        <Border.Effect>
+                            <DropShadowEffect ShadowDepth="0" BlurRadius="10" Opacity="0.3" Color="#4ADE80" />
+                        </Border.Effect>
                         <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
                     </Border>
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsMouseOver" Value="True">
                             <Setter TargetName="Bd" Property="Background" Value="#6EE7A0" />
+                            <Setter TargetName="Bd" Property="Effect">
+                                <Setter.Value>
+                                    <DropShadowEffect ShadowDepth="0" BlurRadius="16" Opacity="0.5" Color="#4ADE80" />
+                                </Setter.Value>
+                            </Setter>
                         </Trigger>
                         <Trigger Property="IsPressed" Value="True">
                             <Setter TargetName="Bd" Property="Background" Value="#22C55E" />
@@ -216,6 +289,7 @@
                         <Trigger Property="IsEnabled" Value="False">
                             <Setter TargetName="Bd" Property="Background" Value="#2A3448" />
                             <Setter Property="Foreground" Value="#4A5568" />
+                            <Setter TargetName="Bd" Property="Effect" Value="{x:Null}" />
                         </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>
@@ -290,14 +364,14 @@
 
     <!-- ── Toolbar Button (small, outline) ─────────────────────────── -->
     <Style x:Key="ToolbarButton" TargetType="Button" BasedOn="{StaticResource PrimaryButton}">
-        <Setter Property="FontSize" Value="12" />
+        <Setter Property="FontSize" Value="13" />
         <Setter Property="FontWeight" Value="SemiBold" />
-        <Setter Property="Padding" Value="14,7" />
+        <Setter Property="Padding" Value="16,8" />
     </Style>
 
     <Style x:Key="ToolbarButtonSecondary" TargetType="Button" BasedOn="{StaticResource SecondaryButton}">
-        <Setter Property="FontSize" Value="12" />
-        <Setter Property="Padding" Value="12,7" />
+        <Setter Property="FontSize" Value="13" />
+        <Setter Property="Padding" Value="14,8" />
     </Style>
 
     <!-- ── Small Button (log clear, copy, etc.) ────────────────────── -->
@@ -318,19 +392,23 @@
         <Setter Property="Padding" Value="0,13" />
     </Style>
 
-    <!-- ── Modern ProgressBar ──────────────────────────────────────── -->
+    <!-- ── Modern ProgressBar (enhanced — taller with glow) ─────── -->
     <Style x:Key="ModernProgress" TargetType="ProgressBar">
-        <Setter Property="Height" Value="6" />
-        <Setter Property="Background" Value="#2A3448" />
+        <Setter Property="Height" Value="10" />
+        <Setter Property="Background" Value="#1A2438" />
         <Setter Property="Foreground" Value="{StaticResource AccentBright}" />
         <Setter Property="BorderThickness" Value="0" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="ProgressBar">
                     <Grid>
-                        <Border x:Name="PART_Track" Background="{TemplateBinding Background}" CornerRadius="3" />
-                        <Border x:Name="PART_Indicator" Background="{TemplateBinding Foreground}" CornerRadius="3"
-                                HorizontalAlignment="Left" />
+                        <Border x:Name="PART_Track" Background="{TemplateBinding Background}" CornerRadius="5" />
+                        <Border x:Name="PART_Indicator" Background="{TemplateBinding Foreground}" CornerRadius="5"
+                                HorizontalAlignment="Left">
+                            <Border.Effect>
+                                <DropShadowEffect ShadowDepth="0" BlurRadius="10" Opacity="0.5" Color="#00D4FF" />
+                            </Border.Effect>
+                        </Border>
                     </Grid>
                 </ControlTemplate>
             </Setter.Value>
@@ -368,9 +446,14 @@
 
     <!-- ── Step Indicator Pill (Export / Transform / Import / Validate) ── -->
     <Style x:Key="StepPill" TargetType="Border">
-        <Setter Property="CornerRadius" Value="6" />
-        <Setter Property="Padding" Value="16,10" />
-        <Setter Property="MinWidth" Value="90" />
+        <Setter Property="CornerRadius" Value="8" />
+        <Setter Property="Padding" Value="18,12" />
+        <Setter Property="MinWidth" Value="100" />
+        <Setter Property="Effect">
+            <Setter.Value>
+                <DropShadowEffect ShadowDepth="1" BlurRadius="6" Opacity="0.25" Color="#000000" Direction="270" />
+            </Setter.Value>
+        </Setter>
     </Style>
 
     <!-- ═══════════════════════════════════════════════════════════════

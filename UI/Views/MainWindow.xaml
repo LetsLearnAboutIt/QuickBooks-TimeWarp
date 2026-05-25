@@ -173,10 +173,13 @@
                 <!-- ╚══════════════════════════════════════════════════════╝ -->
                 <StackPanel x:Name="PageHome" Visibility="Visible">
 
-                    <!-- Hero Welcome Banner -->
+                    <!-- Hero Welcome Banner (Premium) -->
                     <Border Background="{StaticResource HeroBannerBg}"
-                            CornerRadius="10" Padding="28,24" Margin="0,0,0,16"
+                            CornerRadius="12" Padding="32,28" Margin="0,0,0,18"
                             BorderBrush="#1A3A5C" BorderThickness="1">
+                        <Border.Effect>
+                            <DropShadowEffect ShadowDepth="4" BlurRadius="20" Opacity="0.3" Color="#000000" Direction="270" />
+                        </Border.Effect>
                         <Grid>
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="*" />
@@ -184,16 +187,16 @@
                             </Grid.ColumnDefinitions>
                             <StackPanel Grid.Column="0" VerticalAlignment="Center">
                                 <TextBlock Text="Welcome to QuickBooks TimeWarp®"
-                                           FontSize="22" FontWeight="SemiBold"
+                                           FontSize="26" FontWeight="Bold"
                                            Foreground="{StaticResource TextPrimary}" />
                                 <TextBlock Text="Seamlessly migrate your QuickBooks 2023 data to QuickBooks 2021 with full validation and reporting."
-                                           FontSize="13" Foreground="{StaticResource TextBody}"
-                                           TextWrapping="Wrap" Margin="0,8,0,14" MaxWidth="480" />
+                                           FontSize="14" Foreground="{StaticResource TextBody}"
+                                           TextWrapping="Wrap" Margin="0,10,0,16" MaxWidth="480" />
                                 <Button Content="🔄  Go to Migration Console" Click="NavMigration_Click"
                                         Style="{StaticResource SuccessButton}" />
                             </StackPanel>
                             <Image Grid.Column="1" Source="/UI/Assets/osa-icon.png"
-                                   Width="72" Height="72" Stretch="Uniform" Opacity="0.35"
+                                   Width="80" Height="80" Stretch="Uniform" Opacity="0.3"
                                    VerticalAlignment="Center" Margin="20,0,8,0"
                                    RenderOptions.BitmapScalingMode="HighQuality" />
                         </Grid>
@@ -227,30 +230,30 @@
 
                         <Border Grid.Column="0" Style="{StaticResource StatCard}">
                             <StackPanel HorizontalAlignment="Center">
-                                <TextBlock Text="{Binding ExportedCount}" FontSize="28" FontWeight="Bold"
+                                <TextBlock Text="{Binding ExportedCount}" FontSize="32" FontWeight="Bold"
                                            Foreground="{StaticResource AccentBright}" HorizontalAlignment="Center" />
-                                <TextBlock Text="Exported" Style="{StaticResource DimText}" HorizontalAlignment="Center" />
+                                <TextBlock Text="Exported" FontSize="12" Foreground="{StaticResource TextDim}" HorizontalAlignment="Center" />
                             </StackPanel>
                         </Border>
                         <Border Grid.Column="2" Style="{StaticResource StatCard}">
                             <StackPanel HorizontalAlignment="Center">
-                                <TextBlock Text="{Binding TransformedCount}" FontSize="28" FontWeight="Bold"
+                                <TextBlock Text="{Binding TransformedCount}" FontSize="32" FontWeight="Bold"
                                            Foreground="{StaticResource Warning}" HorizontalAlignment="Center" />
-                                <TextBlock Text="Transformed" Style="{StaticResource DimText}" HorizontalAlignment="Center" />
+                                <TextBlock Text="Transformed" FontSize="12" Foreground="{StaticResource TextDim}" HorizontalAlignment="Center" />
                             </StackPanel>
                         </Border>
                         <Border Grid.Column="4" Style="{StaticResource StatCard}">
                             <StackPanel HorizontalAlignment="Center">
-                                <TextBlock Text="{Binding ImportedCount}" FontSize="28" FontWeight="Bold"
+                                <TextBlock Text="{Binding ImportedCount}" FontSize="32" FontWeight="Bold"
                                            Foreground="{StaticResource Success}" HorizontalAlignment="Center" />
-                                <TextBlock Text="Imported" Style="{StaticResource DimText}" HorizontalAlignment="Center" />
+                                <TextBlock Text="Imported" FontSize="12" Foreground="{StaticResource TextDim}" HorizontalAlignment="Center" />
                             </StackPanel>
                         </Border>
                         <Border Grid.Column="6" Style="{StaticResource StatCard}">
                             <StackPanel HorizontalAlignment="Center">
-                                <TextBlock Text="{Binding FailedCount}" FontSize="28" FontWeight="Bold"
+                                <TextBlock Text="{Binding FailedCount}" FontSize="32" FontWeight="Bold"
                                            Foreground="{StaticResource Danger}" HorizontalAlignment="Center" />
-                                <TextBlock Text="Failed" Style="{StaticResource DimText}" HorizontalAlignment="Center" />
+                                <TextBlock Text="Failed" FontSize="12" Foreground="{StaticResource TextDim}" HorizontalAlignment="Center" />
                             </StackPanel>
                         </Border>
                     </Grid>
@@ -260,7 +263,7 @@
                             Visibility="{Binding ShowProgressSection, Converter={StaticResource BoolToVis}}">
                         <StackPanel>
                             <TextBlock Text="Migration Progress" Style="{StaticResource SectionTitle}" />
-                            <Grid Margin="0,0,0,12">
+                            <Grid Margin="0,0,0,14">
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="*" />
                                     <ColumnDefinition Width="Auto" />
@@ -272,31 +275,31 @@
                                 </Grid.ColumnDefinitions>
                                 <Border Grid.Column="0" Style="{StaticResource StepPill}"
                                         Background="{Binding ExportStepColor, Converter={StaticResource StrToBrush}}">
-                                    <TextBlock Text="📤 Export" FontSize="11" Foreground="White" FontWeight="SemiBold" HorizontalAlignment="Center" />
+                                    <TextBlock Text="📤 Export" FontSize="13" Foreground="White" FontWeight="Bold" HorizontalAlignment="Center" />
                                 </Border>
-                                <TextBlock Grid.Column="1" Text="→" Foreground="{StaticResource TextMuted}" FontSize="16" VerticalAlignment="Center" Margin="8,0" />
+                                <TextBlock Grid.Column="1" Text="→" Foreground="{StaticResource TextMuted}" FontSize="18" VerticalAlignment="Center" Margin="8,0" />
                                 <Border Grid.Column="2" Style="{StaticResource StepPill}"
                                         Background="{Binding TransformStepColor, Converter={StaticResource StrToBrush}}">
-                                    <TextBlock Text="🔄 Transform" FontSize="11" Foreground="White" FontWeight="SemiBold" HorizontalAlignment="Center" />
+                                    <TextBlock Text="🔄 Transform" FontSize="13" Foreground="White" FontWeight="Bold" HorizontalAlignment="Center" />
                                 </Border>
-                                <TextBlock Grid.Column="3" Text="→" Foreground="{StaticResource TextMuted}" FontSize="16" VerticalAlignment="Center" Margin="8,0" />
+                                <TextBlock Grid.Column="3" Text="→" Foreground="{StaticResource TextMuted}" FontSize="18" VerticalAlignment="Center" Margin="8,0" />
                                 <Border Grid.Column="4" Style="{StaticResource StepPill}"
                                         Background="{Binding ImportStepColor, Converter={StaticResource StrToBrush}}">
-                                    <TextBlock Text="📥 Import" FontSize="11" Foreground="White" FontWeight="SemiBold" HorizontalAlignment="Center" />
+                                    <TextBlock Text="📥 Import" FontSize="13" Foreground="White" FontWeight="Bold" HorizontalAlignment="Center" />
                                 </Border>
-                                <TextBlock Grid.Column="5" Text="→" Foreground="{StaticResource TextMuted}" FontSize="16" VerticalAlignment="Center" Margin="8,0" />
+                                <TextBlock Grid.Column="5" Text="→" Foreground="{StaticResource TextMuted}" FontSize="18" VerticalAlignment="Center" Margin="8,0" />
                                 <Border Grid.Column="6" Style="{StaticResource StepPill}"
                                         Background="{Binding ValidateStepColor, Converter={StaticResource StrToBrush}}">
-                                    <TextBlock Text="✓ Validate" FontSize="11" Foreground="White" FontWeight="SemiBold" HorizontalAlignment="Center" />
+                                    <TextBlock Text="✓ Validate" FontSize="13" Foreground="White" FontWeight="Bold" HorizontalAlignment="Center" />
                                 </Border>
                             </Grid>
                             <ProgressBar Value="{Binding OverallProgress}" Minimum="0" Maximum="100"
-                                         Style="{StaticResource ModernProgress}" Height="8" />
-                            <DockPanel Margin="0,8,0,0">
+                                         Style="{StaticResource ModernProgress}" Height="10" />
+                            <DockPanel Margin="0,10,0,0">
                                 <TextBlock Text="{Binding CurrentPhase, StringFormat='Phase: {0}'}"
-                                           Foreground="{StaticResource TextDim}" FontSize="12" DockPanel.Dock="Left" />
+                                           Foreground="{StaticResource TextDim}" FontSize="13" DockPanel.Dock="Left" />
                                 <TextBlock Text="{Binding ProgressText}" Foreground="{StaticResource AccentBright}"
-                                           FontSize="12" FontWeight="SemiBold" HorizontalAlignment="Right" DockPanel.Dock="Right" />
+                                           FontSize="14" FontWeight="Bold" HorizontalAlignment="Right" DockPanel.Dock="Right" />
                             </DockPanel>
                         </StackPanel>
                     </Border>
@@ -317,23 +320,30 @@
                     ══════════════════════════════════════════════════════ -->
                     <Border Style="{StaticResource Card}">
                         <StackPanel>
-                            <!-- Section header -->
-                            <DockPanel Margin="0,0,0,14">
-                                <StackPanel Orientation="Horizontal" DockPanel.Dock="Left" VerticalAlignment="Center">
-                                    <Border Background="{StaticResource AccentBright}" CornerRadius="14"
-                                            Width="28" Height="28" Margin="0,0,10,0">
-                                        <TextBlock Text="1" Foreground="#0D1117" FontSize="14" FontWeight="Bold"
-                                                   HorizontalAlignment="Center" VerticalAlignment="Center" />
-                                    </Border>
-                                    <TextBlock Text="Source File Selection" Style="{StaticResource SectionTitle}" Margin="0" />
-                                </StackPanel>
-                                <StackPanel DockPanel.Dock="Right" Orientation="Horizontal" HorizontalAlignment="Right">
-                                    <Button Content="＋ Add QBW Files" Command="{Binding AddFilesCommand}"
-                                            Style="{StaticResource ToolbarButton}" />
-                                    <Button Content="✕ Remove" Command="{Binding RemoveSelectedCommand}"
-                                            Style="{StaticResource ToolbarButtonSecondary}" Margin="8,0,0,0" />
-                                </StackPanel>
-                            </DockPanel>
+                            <!-- Section 1 header with gradient -->
+                            <Border Background="{StaticResource SectionHeaderGradient}" CornerRadius="8"
+                                    Padding="14,10" Margin="-6,-4,-6,16">
+                                <DockPanel>
+                                    <StackPanel Orientation="Horizontal" DockPanel.Dock="Left" VerticalAlignment="Center">
+                                        <Border Background="{StaticResource AccentBright}" CornerRadius="16"
+                                                Width="32" Height="32" Margin="0,0,12,0">
+                                            <Border.Effect>
+                                                <DropShadowEffect ShadowDepth="0" BlurRadius="10" Opacity="0.45" Color="#00D4FF" />
+                                            </Border.Effect>
+                                            <TextBlock Text="1" Foreground="#0D1117" FontSize="16" FontWeight="Bold"
+                                                       HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                        </Border>
+                                        <TextBlock Text="Source File Selection" Style="{StaticResource SectionTitle}" Margin="0"
+                                                   VerticalAlignment="Center" />
+                                    </StackPanel>
+                                    <StackPanel DockPanel.Dock="Right" Orientation="Horizontal" HorizontalAlignment="Right">
+                                        <Button Content="＋ Add QBW Files" Command="{Binding AddFilesCommand}"
+                                                Style="{StaticResource ToolbarButton}" />
+                                        <Button Content="✕ Remove" Command="{Binding RemoveSelectedCommand}"
+                                                Style="{StaticResource ToolbarButtonSecondary}" Margin="8,0,0,0" />
+                                    </StackPanel>
+                                </DockPanel>
+                            </Border>
 
                             <!-- Safety notice -->
                             <Border Background="#0C1A12" CornerRadius="6" Padding="14,10" Margin="0,0,0,12"
@@ -417,18 +427,25 @@
                     ══════════════════════════════════════════════════════ -->
                     <Border Style="{StaticResource Card}">
                         <StackPanel>
-                            <!-- Section header -->
-                            <StackPanel Orientation="Horizontal" Margin="0,0,0,18">
-                                <Border Background="{StaticResource AccentBright}" CornerRadius="14"
-                                        Width="28" Height="28" Margin="0,0,10,0">
-                                    <TextBlock Text="2" Foreground="#0D1117" FontSize="14" FontWeight="Bold"
-                                               HorizontalAlignment="Center" VerticalAlignment="Center" />
-                                </Border>
-                                <TextBlock Text="Migration Configuration" Style="{StaticResource SectionTitle}" Margin="0" />
-                            </StackPanel>
+                            <!-- Section 2 header with gradient -->
+                            <Border Background="{StaticResource SectionHeaderGradient}" CornerRadius="8"
+                                    Padding="14,10" Margin="-6,-4,-6,18">
+                                <StackPanel Orientation="Horizontal">
+                                    <Border Background="{StaticResource AccentBright}" CornerRadius="16"
+                                            Width="32" Height="32" Margin="0,0,12,0">
+                                        <Border.Effect>
+                                            <DropShadowEffect ShadowDepth="0" BlurRadius="10" Opacity="0.45" Color="#00D4FF" />
+                                        </Border.Effect>
+                                        <TextBlock Text="2" Foreground="#0D1117" FontSize="16" FontWeight="Bold"
+                                                   HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                    </Border>
+                                    <TextBlock Text="Migration Configuration" Style="{StaticResource SectionTitle}" Margin="0"
+                                               VerticalAlignment="Center" />
+                                </StackPanel>
+                            </Border>
 
                             <!-- ── Destination ── -->
-                            <TextBlock Text="DESTINATION" FontSize="11" FontWeight="SemiBold"
+                            <TextBlock Text="DESTINATION" FontSize="12" FontWeight="Bold"
                                        Foreground="{StaticResource Accent}" Margin="0,0,0,8" />
                             <Grid Margin="0,0,0,6">
                                 <Grid.ColumnDefinitions>
@@ -448,7 +465,7 @@
                             <Separator Background="#2A3448" Margin="0,0,0,16" />
 
                             <!-- ── Date Range ── -->
-                            <TextBlock Text="DATE RANGE FILTER" FontSize="11" FontWeight="SemiBold"
+                            <TextBlock Text="DATE RANGE FILTER" FontSize="12" FontWeight="Bold"
                                        Foreground="{StaticResource Accent}" Margin="0,0,0,8" />
                             <Grid Margin="0,0,0,16">
                                 <Grid.ColumnDefinitions>
@@ -479,7 +496,7 @@
 
                             <!-- ── Entity Types ── -->
                             <DockPanel Margin="0,0,0,10">
-                                <TextBlock Text="ENTITY TYPES TO MIGRATE" FontSize="11" FontWeight="SemiBold"
+                                <TextBlock Text="ENTITY TYPES TO MIGRATE" FontSize="12" FontWeight="Bold"
                                            Foreground="{StaticResource Accent}" DockPanel.Dock="Left" VerticalAlignment="Center" />
                                 <StackPanel DockPanel.Dock="Right" Orientation="Horizontal" HorizontalAlignment="Right">
                                     <Button Content="Select All" Command="{Binding SelectAllEntitiesCommand}"
@@ -530,7 +547,7 @@
                             <Separator Background="#2A3448" Margin="0,10,0,16" />
 
                             <!-- ── Validation Level ── -->
-                            <TextBlock Text="VALIDATION LEVEL" FontSize="11" FontWeight="SemiBold"
+                            <TextBlock Text="VALIDATION LEVEL" FontSize="12" FontWeight="Bold"
                                        Foreground="{StaticResource Accent}" Margin="0,0,0,10" />
                             <StackPanel Orientation="Horizontal" Margin="0,0,0,16">
                                 <RadioButton Content="Quick" IsChecked="{Binding ValidationQuick}"
@@ -547,7 +564,7 @@
                             <Separator Background="#2A3448" Margin="0,0,0,16" />
 
                             <!-- ── Estimates ── -->
-                            <TextBlock Text="ESTIMATES" FontSize="11" FontWeight="SemiBold"
+                            <TextBlock Text="ESTIMATES" FontSize="12" FontWeight="Bold"
                                        Foreground="{StaticResource Accent}" Margin="0,0,0,10" />
                             <Grid Margin="0,0,0,8">
                                 <Grid.ColumnDefinitions>
@@ -557,32 +574,32 @@
                                     <ColumnDefinition Width="*" />
                                 </Grid.ColumnDefinitions>
 
-                                <Border Grid.Column="0" Background="#151B28" CornerRadius="6" Padding="12,10" Margin="0,0,6,0">
+                                <Border Grid.Column="0" Style="{StaticResource StatCard}" Margin="0,0,6,0">
                                     <StackPanel HorizontalAlignment="Center">
-                                        <TextBlock Text="{Binding SourceFileSizeText}" FontSize="16" FontWeight="Bold"
+                                        <TextBlock Text="{Binding SourceFileSizeText}" FontSize="20" FontWeight="Bold"
                                                    Foreground="{StaticResource AccentBright}" HorizontalAlignment="Center" />
-                                        <TextBlock Text="Source Size" FontSize="10" Foreground="{StaticResource TextDim}" HorizontalAlignment="Center" />
+                                        <TextBlock Text="Source Size" FontSize="11" Foreground="{StaticResource TextDim}" HorizontalAlignment="Center" />
                                     </StackPanel>
                                 </Border>
-                                <Border Grid.Column="1" Background="#151B28" CornerRadius="6" Padding="12,10" Margin="3,0">
+                                <Border Grid.Column="1" Style="{StaticResource StatCard}" Margin="3,0">
                                     <StackPanel HorizontalAlignment="Center">
-                                        <TextBlock Text="{Binding EstimatedDestSizeText}" FontSize="16" FontWeight="Bold"
+                                        <TextBlock Text="{Binding EstimatedDestSizeText}" FontSize="20" FontWeight="Bold"
                                                    Foreground="{StaticResource Warning}" HorizontalAlignment="Center" />
-                                        <TextBlock Text="Est. Output" FontSize="10" Foreground="{StaticResource TextDim}" HorizontalAlignment="Center" />
+                                        <TextBlock Text="Est. Output" FontSize="11" Foreground="{StaticResource TextDim}" HorizontalAlignment="Center" />
                                     </StackPanel>
                                 </Border>
-                                <Border Grid.Column="2" Background="#151B28" CornerRadius="6" Padding="12,10" Margin="3,0">
+                                <Border Grid.Column="2" Style="{StaticResource StatCard}" Margin="3,0">
                                     <StackPanel HorizontalAlignment="Center">
-                                        <TextBlock Text="{Binding EstimatedTimeText}" FontSize="16" FontWeight="Bold"
+                                        <TextBlock Text="{Binding EstimatedTimeText}" FontSize="20" FontWeight="Bold"
                                                    Foreground="{StaticResource Success}" HorizontalAlignment="Center" />
-                                        <TextBlock Text="Est. Time" FontSize="10" Foreground="{StaticResource TextDim}" HorizontalAlignment="Center" />
+                                        <TextBlock Text="Est. Time" FontSize="11" Foreground="{StaticResource TextDim}" HorizontalAlignment="Center" />
                                     </StackPanel>
                                 </Border>
-                                <Border Grid.Column="3" Background="#151B28" CornerRadius="6" Padding="12,10" Margin="6,0,0,0">
+                                <Border Grid.Column="3" Style="{StaticResource StatCard}" Margin="6,0,0,0">
                                     <StackPanel HorizontalAlignment="Center">
-                                        <TextBlock Text="{Binding EstimatedRecordCount}" FontSize="16" FontWeight="Bold"
+                                        <TextBlock Text="{Binding EstimatedRecordCount}" FontSize="20" FontWeight="Bold"
                                                    Foreground="{StaticResource TextPrimary}" HorizontalAlignment="Center" />
-                                        <TextBlock Text="Est. Records" FontSize="10" Foreground="{StaticResource TextDim}" HorizontalAlignment="Center" />
+                                        <TextBlock Text="Est. Records" FontSize="11" Foreground="{StaticResource TextDim}" HorizontalAlignment="Center" />
                                     </StackPanel>
                                 </Border>
                             </Grid>
@@ -595,10 +612,10 @@
                             Visibility="{Binding IsIdle, Converter={StaticResource BoolToVis}}">
                         <DockPanel>
                             <StackPanel DockPanel.Dock="Left" VerticalAlignment="Center">
-                                <TextBlock Text="Ready to migrate?" FontSize="15" FontWeight="SemiBold"
+                                <TextBlock Text="Ready to migrate?" FontSize="17" FontWeight="Bold"
                                            Foreground="{StaticResource TextPrimary}" />
                                 <TextBlock Text="A working copy of your file will be created first. Your original remains untouched."
-                                           FontSize="12" Foreground="{StaticResource TextDim}" />
+                                           FontSize="13" Foreground="{StaticResource TextDim}" />
                             </StackPanel>
                             <Button Content="▶  Start Migration" Command="{Binding StartMigrationCommand}"
                                     Style="{StaticResource SuccessButton}" DockPanel.Dock="Right"
@@ -612,10 +629,10 @@
                             Visibility="{Binding IsMigrationRunning, Converter={StaticResource BoolToVis}}">
                         <DockPanel>
                             <StackPanel DockPanel.Dock="Left" VerticalAlignment="Center">
-                                <TextBlock Text="Migration in progress..." FontSize="15" FontWeight="SemiBold"
+                                <TextBlock Text="Migration in progress..." FontSize="17" FontWeight="Bold"
                                            Foreground="{StaticResource Danger}" />
                                 <TextBlock Text="Do not close QuickBooks Desktop while migration is running."
-                                           FontSize="12" Foreground="{StaticResource TextDim}" />
+                                           FontSize="13" Foreground="{StaticResource TextDim}" />
                             </StackPanel>
                             <Button Content="■  Stop" Command="{Binding StopMigrationCommand}"
                                     Style="{StaticResource DangerButton}" DockPanel.Dock="Right"
@@ -629,74 +646,131 @@
                     <Border Style="{StaticResource Card}"
                             Visibility="{Binding ShowProgressSection, Converter={StaticResource BoolToVis}}">
                         <StackPanel>
-                            <!-- Section header -->
-                            <StackPanel Orientation="Horizontal" Margin="0,0,0,16">
-                                <Border Background="{StaticResource AccentBright}" CornerRadius="14"
-                                        Width="28" Height="28" Margin="0,0,10,0">
-                                    <TextBlock Text="3" Foreground="#0D1117" FontSize="14" FontWeight="Bold"
-                                               HorizontalAlignment="Center" VerticalAlignment="Center" />
-                                </Border>
-                                <TextBlock Text="Migration Progress" Style="{StaticResource SectionTitle}" Margin="0" />
-                            </StackPanel>
+                            <!-- ── Section 3 Header with gradient background ── -->
+                            <Border Background="{StaticResource SectionHeaderGradient}" CornerRadius="8"
+                                    Padding="16,12" Margin="-6,-4,-6,18">
+                                <DockPanel>
+                                    <StackPanel Orientation="Horizontal" DockPanel.Dock="Left" VerticalAlignment="Center">
+                                        <Border CornerRadius="16" Width="32" Height="32" Margin="0,0,12,0"
+                                                Background="{StaticResource AccentBright}">
+                                            <Border.Effect>
+                                                <DropShadowEffect ShadowDepth="0" BlurRadius="12" Opacity="0.5" Color="#00D4FF" />
+                                            </Border.Effect>
+                                            <TextBlock Text="3" Foreground="#0D1117" FontSize="16" FontWeight="Bold"
+                                                       HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                        </Border>
+                                        <TextBlock Text="Migration Progress" Style="{StaticResource SectionTitle}" Margin="0"
+                                                   VerticalAlignment="Center" />
+                                    </StackPanel>
+                                    <TextBlock Text="{Binding CurrentPhase, StringFormat='Stage: {0}'}"
+                                               DockPanel.Dock="Right" HorizontalAlignment="Right"
+                                               Foreground="{StaticResource AccentBright}" FontSize="15" FontWeight="Bold"
+                                               VerticalAlignment="Center" />
+                                </DockPanel>
+                            </Border>
 
-                            <!-- Phase Step Pipeline -->
-                            <Grid Margin="0,0,0,14">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="*" />
-                                    <ColumnDefinition Width="Auto" />
-                                    <ColumnDefinition Width="*" />
-                                    <ColumnDefinition Width="Auto" />
-                                    <ColumnDefinition Width="*" />
-                                    <ColumnDefinition Width="Auto" />
-                                    <ColumnDefinition Width="*" />
-                                </Grid.ColumnDefinitions>
-                                <Border Grid.Column="0" Style="{StaticResource StepPill}"
-                                        Background="{Binding ExportStepColor, Converter={StaticResource StrToBrush}}">
-                                    <StackPanel HorizontalAlignment="Center">
-                                        <TextBlock Text="📤" FontSize="18" HorizontalAlignment="Center" />
-                                        <TextBlock Text="Export" FontSize="11" Foreground="White" FontWeight="SemiBold" HorizontalAlignment="Center" />
-                                    </StackPanel>
-                                </Border>
-                                <TextBlock Grid.Column="1" Text="→" Foreground="{StaticResource TextMuted}" FontSize="18" VerticalAlignment="Center" Margin="10,0" />
-                                <Border Grid.Column="2" Style="{StaticResource StepPill}"
-                                        Background="{Binding TransformStepColor, Converter={StaticResource StrToBrush}}">
-                                    <StackPanel HorizontalAlignment="Center">
-                                        <TextBlock Text="🔄" FontSize="18" HorizontalAlignment="Center" />
-                                        <TextBlock Text="Transform" FontSize="11" Foreground="White" FontWeight="SemiBold" HorizontalAlignment="Center" />
-                                    </StackPanel>
-                                </Border>
-                                <TextBlock Grid.Column="3" Text="→" Foreground="{StaticResource TextMuted}" FontSize="18" VerticalAlignment="Center" Margin="10,0" />
-                                <Border Grid.Column="4" Style="{StaticResource StepPill}"
-                                        Background="{Binding ImportStepColor, Converter={StaticResource StrToBrush}}">
-                                    <StackPanel HorizontalAlignment="Center">
-                                        <TextBlock Text="📥" FontSize="18" HorizontalAlignment="Center" />
-                                        <TextBlock Text="Import" FontSize="11" Foreground="White" FontWeight="SemiBold" HorizontalAlignment="Center" />
-                                    </StackPanel>
-                                </Border>
-                                <TextBlock Grid.Column="5" Text="→" Foreground="{StaticResource TextMuted}" FontSize="18" VerticalAlignment="Center" Margin="10,0" />
-                                <Border Grid.Column="6" Style="{StaticResource StepPill}"
-                                        Background="{Binding ValidateStepColor, Converter={StaticResource StrToBrush}}">
-                                    <StackPanel HorizontalAlignment="Center">
-                                        <TextBlock Text="✓" FontSize="18" HorizontalAlignment="Center" />
-                                        <TextBlock Text="Validate" FontSize="11" Foreground="White" FontWeight="SemiBold" HorizontalAlignment="Center" />
-                                    </StackPanel>
-                                </Border>
-                            </Grid>
+                            <!-- ═══════ NORTON/McAFEE-STYLE STAGE PIPELINE ═══════ -->
+                            <Border Background="#0E1420" CornerRadius="10" Padding="20,22" Margin="0,0,0,18"
+                                    BorderBrush="#1A2438" BorderThickness="1">
+                                <Grid>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="Auto" />
+                                        <RowDefinition Height="Auto" />
+                                    </Grid.RowDefinitions>
 
-                            <!-- Progress bar -->
+                                    <!-- Pipeline: Circles + Connectors -->
+                                    <Grid Grid.Row="0" Margin="12,0,12,0">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="2*" />
+                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="2*" />
+                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="2*" />
+                                            <ColumnDefinition Width="*" />
+                                        </Grid.ColumnDefinitions>
+
+                                        <!-- Stage 1: Export -->
+                                        <Border Grid.Column="0" Width="48" Height="48" CornerRadius="24"
+                                                Background="{Binding ExportStepColor, Converter={StaticResource StrToBrush}}"
+                                                HorizontalAlignment="Center" VerticalAlignment="Center">
+                                            <Border.Effect>
+                                                <DropShadowEffect ShadowDepth="0" BlurRadius="12" Opacity="0.45" Color="#00D4FF" />
+                                            </Border.Effect>
+                                            <TextBlock Text="📤" FontSize="20" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                        </Border>
+
+                                        <!-- Connector 1→2 -->
+                                        <Border Grid.Column="1" Height="3" VerticalAlignment="Center"
+                                                CornerRadius="2"
+                                                Background="{Binding TransformStepColor, Converter={StaticResource StrToBrush}}" />
+
+                                        <!-- Stage 2: Transform -->
+                                        <Border Grid.Column="2" Width="48" Height="48" CornerRadius="24"
+                                                Background="{Binding TransformStepColor, Converter={StaticResource StrToBrush}}"
+                                                HorizontalAlignment="Center" VerticalAlignment="Center">
+                                            <TextBlock Text="🔄" FontSize="20" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                        </Border>
+
+                                        <!-- Connector 2→3 -->
+                                        <Border Grid.Column="3" Height="3" VerticalAlignment="Center"
+                                                CornerRadius="2"
+                                                Background="{Binding ImportStepColor, Converter={StaticResource StrToBrush}}" />
+
+                                        <!-- Stage 3: Import -->
+                                        <Border Grid.Column="4" Width="48" Height="48" CornerRadius="24"
+                                                Background="{Binding ImportStepColor, Converter={StaticResource StrToBrush}}"
+                                                HorizontalAlignment="Center" VerticalAlignment="Center">
+                                            <TextBlock Text="📥" FontSize="20" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                        </Border>
+
+                                        <!-- Connector 3→4 -->
+                                        <Border Grid.Column="5" Height="3" VerticalAlignment="Center"
+                                                CornerRadius="2"
+                                                Background="{Binding ValidateStepColor, Converter={StaticResource StrToBrush}}" />
+
+                                        <!-- Stage 4: Validate -->
+                                        <Border Grid.Column="6" Width="48" Height="48" CornerRadius="24"
+                                                Background="{Binding ValidateStepColor, Converter={StaticResource StrToBrush}}"
+                                                HorizontalAlignment="Center" VerticalAlignment="Center">
+                                            <TextBlock Text="✓" FontSize="22" FontWeight="Bold" Foreground="White"
+                                                       HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                        </Border>
+                                    </Grid>
+
+                                    <!-- Labels Row -->
+                                    <Grid Grid.Row="1" Margin="12,10,12,0">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="2*" />
+                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="2*" />
+                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="2*" />
+                                            <ColumnDefinition Width="*" />
+                                        </Grid.ColumnDefinitions>
+                                        <TextBlock Grid.Column="0" Text="Export" Style="{StaticResource StageLabel}" />
+                                        <TextBlock Grid.Column="2" Text="Transform" Style="{StaticResource StageLabel}" />
+                                        <TextBlock Grid.Column="4" Text="Import" Style="{StaticResource StageLabel}" />
+                                        <TextBlock Grid.Column="6" Text="Validate" Style="{StaticResource StageLabel}" />
+                                    </Grid>
+                                </Grid>
+                            </Border>
+
+                            <!-- ── Progress bar (enhanced) ── -->
                             <ProgressBar Value="{Binding OverallProgress}" Minimum="0" Maximum="100"
-                                         Style="{StaticResource ModernProgress}" Height="8" />
-                            <DockPanel Margin="0,8,0,0">
+                                         Style="{StaticResource ModernProgress}" Height="10" />
+                            <DockPanel Margin="0,10,0,0">
                                 <TextBlock Text="{Binding CurrentPhase, StringFormat='Phase: {0}'}"
-                                           Foreground="{StaticResource TextDim}" FontSize="12" DockPanel.Dock="Left" />
+                                           Foreground="{StaticResource TextDim}" FontSize="13" DockPanel.Dock="Left" />
                                 <TextBlock Text="{Binding ProgressText}" Foreground="{StaticResource AccentBright}"
-                                           FontSize="12" FontWeight="SemiBold" HorizontalAlignment="Right" DockPanel.Dock="Right" />
+                                           FontSize="14" FontWeight="Bold" HorizontalAlignment="Right" DockPanel.Dock="Right" />
                             </DockPanel>
 
-                            <Separator Background="#2A3448" Margin="0,14,0,14" />
+                            <Separator Background="#2A3448" Margin="0,16,0,16" />
 
-                            <!-- Live Stats -->
-                            <Grid Margin="0,0,0,14">
+                            <!-- ── Live Stats (enlarged) ── -->
+                            <Grid Margin="0,0,0,16">
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="*" />
                                     <ColumnDefinition Width="12" />
@@ -708,43 +782,44 @@
                                 </Grid.ColumnDefinitions>
                                 <Border Grid.Column="0" Style="{StaticResource StatCard}">
                                     <StackPanel HorizontalAlignment="Center">
-                                        <TextBlock Text="{Binding ExportedCount}" FontSize="24" FontWeight="Bold"
+                                        <TextBlock Text="{Binding ExportedCount}" FontSize="28" FontWeight="Bold"
                                                    Foreground="{StaticResource AccentBright}" HorizontalAlignment="Center" />
-                                        <TextBlock Text="Exported" Style="{StaticResource DimText}" HorizontalAlignment="Center" />
+                                        <TextBlock Text="Exported" FontSize="12" Foreground="{StaticResource TextDim}" HorizontalAlignment="Center" />
                                     </StackPanel>
                                 </Border>
                                 <Border Grid.Column="2" Style="{StaticResource StatCard}">
                                     <StackPanel HorizontalAlignment="Center">
-                                        <TextBlock Text="{Binding TransformedCount}" FontSize="24" FontWeight="Bold"
+                                        <TextBlock Text="{Binding TransformedCount}" FontSize="28" FontWeight="Bold"
                                                    Foreground="{StaticResource Warning}" HorizontalAlignment="Center" />
-                                        <TextBlock Text="Transformed" Style="{StaticResource DimText}" HorizontalAlignment="Center" />
+                                        <TextBlock Text="Transformed" FontSize="12" Foreground="{StaticResource TextDim}" HorizontalAlignment="Center" />
                                     </StackPanel>
                                 </Border>
                                 <Border Grid.Column="4" Style="{StaticResource StatCard}">
                                     <StackPanel HorizontalAlignment="Center">
-                                        <TextBlock Text="{Binding ImportedCount}" FontSize="24" FontWeight="Bold"
+                                        <TextBlock Text="{Binding ImportedCount}" FontSize="28" FontWeight="Bold"
                                                    Foreground="{StaticResource Success}" HorizontalAlignment="Center" />
-                                        <TextBlock Text="Imported" Style="{StaticResource DimText}" HorizontalAlignment="Center" />
+                                        <TextBlock Text="Imported" FontSize="12" Foreground="{StaticResource TextDim}" HorizontalAlignment="Center" />
                                     </StackPanel>
                                 </Border>
                                 <Border Grid.Column="6" Style="{StaticResource StatCard}">
                                     <StackPanel HorizontalAlignment="Center">
-                                        <TextBlock Text="{Binding FailedCount}" FontSize="24" FontWeight="Bold"
+                                        <TextBlock Text="{Binding FailedCount}" FontSize="28" FontWeight="Bold"
                                                    Foreground="{StaticResource Danger}" HorizontalAlignment="Center" />
-                                        <TextBlock Text="Failed" Style="{StaticResource DimText}" HorizontalAlignment="Center" />
+                                        <TextBlock Text="Failed" FontSize="12" Foreground="{StaticResource TextDim}" HorizontalAlignment="Center" />
                                     </StackPanel>
                                 </Border>
                             </Grid>
 
-                            <!-- Inline Activity Log -->
-                            <DockPanel Margin="0,0,0,6">
-                                <TextBlock Text="Activity Log" FontSize="12" FontWeight="SemiBold"
+                            <!-- ── Inline Activity Log ── -->
+                            <DockPanel Margin="0,0,0,8">
+                                <TextBlock Text="Activity Log" FontSize="13" FontWeight="SemiBold"
                                            Foreground="{StaticResource TextDim}" DockPanel.Dock="Left" VerticalAlignment="Center" />
                                 <Button Content="Clear" Command="{Binding ClearLogCommand}"
                                         Style="{StaticResource SmallButton}" DockPanel.Dock="Right"
                                         HorizontalAlignment="Right" VerticalAlignment="Center" />
                             </DockPanel>
-                            <Border Background="#0D1117" CornerRadius="6" Padding="0" MinHeight="180" MaxHeight="300">
+                            <Border Background="#0D1117" CornerRadius="8" Padding="0" MinHeight="180" MaxHeight="300"
+                                    BorderBrush="#1A2438" BorderThickness="1">
                                 <TextBox Text="{Binding ActivityLog, Mode=OneWay}"
                                          IsReadOnly="True" TextWrapping="Wrap"
                                          VerticalScrollBarVisibility="Auto"
@@ -759,7 +834,7 @@
 
                             <!-- Reset button (after completion) -->
                             <Button Content="🔄  Start New Migration" Command="{Binding ResetMigrationCommand}"
-                                    Style="{StaticResource PrimaryButton}" Margin="0,14,0,0"
+                                    Style="{StaticResource PrimaryButton}" Margin="0,16,0,0"
                                     HorizontalAlignment="Left"
                                     Visibility="{Binding IsIdle, Converter={StaticResource BoolToVis}}" />
                         </StackPanel>
