@@ -14,11 +14,12 @@ namespace QB_TimeWarp.Services
     /// and QB SDK 15.0 compatibility filtering (removes fields not supported in QB 2021).
     /// 
     /// CHANGELOG:
-    /// - Fix #47: Fallback account name matching — when an AccountRef FullName can't be resolved
-    ///   by exact match in the importer's _nameToListIdMap, normalize the name by stripping
-    ///   leading numbers, special characters (asterisks, hyphens), and the " · " separator.
-    ///   Applied during transformation so the FullName stored in the entity matches the target
-    ///   QB 2021 chart of accounts. Prevents transactions from defaulting to "Uncategorized Expense".
+    /// - Fix #47 (Revised): Payroll-protected account asterisk stripping. QB 2021 without payroll
+    ///   can't create accounts with *-prefix (e.g., "*Payroll Liabilities"). Strips asterisk from
+    ///   Account entity Name/FullName AND from transaction AccountRef FullNames so both match.
+    ///   Note: QBXML FullName does NOT include account numbers — the "X-XXXX · Name" format is
+    ///   QB UI display only. The original FIX #47 incorrectly stripped number prefixes; revised
+    ///   version only strips asterisks. The "Uncategorized Expense" entries were already in source data.
     /// - Fix #46: Sales Receipt tax preservation — after field-mapping transformation, restore
     ///   the tax-critical fields (ItemSalesTaxRef, CustomerSalesTaxCodeRef) from the original
     ///   source entity. These fields were being dropped because FieldMappings.json didn't map them
@@ -57,33 +58,18 @@ namespace QB_TimeWarp.Services
         private int _accountRefsNormalized;   // FIX #47: Tracks AccountRef FullNames normalized via fallback
 
         // ═══════════════════════════════════════════════════════════════════
-        // FIX #47: Explicit account name mapping table
+        // FIX #47 (Revised): Payroll-protected account asterisk stripping
         // ═══════════════════════════════════════════════════════════════════
-        // QB 2023 uses a custom numbering scheme (e.g. "2-3000 · Sales Tax Payable")
-        // while QB 2021 uses QuickBooks default numbers (e.g. "25500 · Sales Tax Payable").
-        // Asterisk (*) prefixed accounts are payroll-protected in QB — we strip the asterisk
-        // for the 2021 target. This dictionary maps source FullNames to target FullNames.
-        // If an exact match isn't found here, the fallback algorithm in NormalizeAccountRef
-        // will attempt fuzzy matching (strip leading numbers, special chars, partial match).
+        // In QBXML, FullName does NOT include account numbers — the "X-XXXX · Name"
+        // format is only the QB UI display. Account numbers are in a separate
+        // AccountNumber field. So no name remapping is needed for account numbers.
+        //
+        // The ONLY name issue is the asterisk (*) prefix on payroll-protected
+        // accounts (e.g., "*Payroll Liabilities"). QB 2021 without an active
+        // payroll subscription cannot create *-prefixed accounts. We strip the
+        // asterisk from both Account entity names AND transaction AccountRef
+        // FullNames so they match after import.
         // ═══════════════════════════════════════════════════════════════════
-        private static readonly Dictionary<string, string> AccountNameMap = new(StringComparer.OrdinalIgnoreCase)
-        {
-            // Known remappings between QB 2023 and QB 2021 chart of accounts
-            ["2-3000 · Sales Tax Payable"]          = "25500 · Sales Tax Payable",
-            ["Sales Tax Payable"]                    = "25500 · Sales Tax Payable",
-            ["3-9999 · Opening Balance Equity"]      = "30000 · Opening Balance Equity",
-            ["Opening Balance Equity"]               = "30000 · Opening Balance Equity",
-            ["6-6600 · *Payroll Expenses"]           = "66000 · Payroll Expenses",
-            ["*Payroll Expenses"]                    = "66000 · Payroll Expenses",
-            ["Payroll Expenses"]                     = "66000 · Payroll Expenses",
-            // Payroll-protected accounts: strip asterisk for QB 2021 (no payroll subscription)
-            ["2-3100 · *Payroll Liabilities"]        = "Payroll Liabilities",
-            ["*Payroll Liabilities"]                 = "Payroll Liabilities",
-            ["2-3110 · *Direct Deposit Liabilities"] = "Direct Deposit Liabilities",
-            ["*Direct Deposit Liabilities"]          = "Direct Deposit Liabilities",
-            ["6-6650 · QB Direct Dep Fees for PR"]   = "Direct Deposit Fees",
-            ["QB Direct Dep Fees for PR"]            = "Direct Deposit Fees",
-        };
 
         // Transformation report tracking
         private readonly TransformationReport _transformationReport = new();
@@ -572,9 +558,11 @@ namespace QB_TimeWarp.Services
             // so they get silently dropped. Restore them from the source entity.
             PreserveSalesReceiptTaxData(source, transformed, entityType);
 
-            // ── FIX #47: Normalize account references for QB 2021 compatibility ──
-            // Strips number prefixes and special characters so AccountRef FullNames
-            // match the QB 2021 chart of accounts, preventing Uncategorized Expense dumping.
+            // ── FIX #47 (Revised): Strip payroll-protected asterisk prefix ────
+            // QB 2021 without payroll can't create *-prefixed accounts.
+            // Step 1: Strip asterisk from Account entity Name/FullName (so they import)
+            // Step 2: Strip asterisk from transaction AccountRef FullNames (so they match)
+            StripPayrollProtectedPrefix(transformed, entityType);
             NormalizeAccountReferences(source, transformed, entityType);
 
             _transformationReport.TotalEntitiesTransformed++;
@@ -967,58 +955,103 @@ namespace QB_TimeWarp.Services
         }
 
         // ═══════════════════════════════════════════════════════════════════
-        // FIX #47: Fallback Account Name Matching
+        // FIX #47 (Revised): Payroll-protected account name normalization
         // ═══════════════════════════════════════════════════════════════════
         //
-        // PROBLEM:
-        //   The DataImporter resolves AccountRef fields by looking up the FullName
-        //   in its _nameToListIdMap (populated as Accounts are imported into QB 2021).
-        //   When QB 2023 uses a different naming convention than QB 2021, the exact
-        //   match fails and QB creates a default "Uncategorized Expense" entry.
+        // ROOT CAUSE ANALYSIS (corrected):
+        //   In QBXML, FullName does NOT include account numbers. The format
+        //   "6-6240 · Miscellaneous" is the QB UI display only. QBXML has:
+        //     Name = "Miscellaneous", AccountNumber = "6-6240"
         //
-        //   Common mismatches:
-        //     "6-6240 · Miscellaneous" (2023) vs "Miscellaneous" (2021)
-        //     "6-6400 · Utilities Gas & Electric" (2023) vs "Utilities Gas & Electric" (2021)
-        //     "*Payroll Liabilities" (2023) vs "Payroll Liabilities" (2021)
+        //   The "73 lines in Uncategorized Expense" from the original analysis
+        //   were ALREADY in the source QB 2023 data — they were NOT caused by
+        //   account name mismatches during migration.
         //
-        // IMPACT:
-        //   73 transaction lines dumped to "6-7100 · Uncategorized Expense" ($14,978 misclassified)
+        //   The REAL issue is payroll-protected accounts with asterisk (*) prefix:
+        //     "*Payroll Liabilities" — QB 2021 without payroll can't create these
+        //     "*Payroll Expenses" — same restriction
+        //
+        //   Without stripping the asterisk, AccountAdd fails in QB 2021 and
+        //   transactions referencing these accounts have no ListID to resolve to.
         //
         // FIX:
-        //   During transformation, normalize all AccountRef FullNames by:
-        //     1. Check the explicit AccountNameMap dictionary first
-        //     2. Strip the account number prefix (e.g., "6-6240 · " → "Miscellaneous")
-        //     3. Strip leading asterisks (payroll-protected accounts)
-        //     4. Log a warning when fallback normalization is applied
-        //
-        //   This normalization happens BEFORE the importer tries to resolve ListIDs,
-        //   so the FullName in the entity already matches what QB 2021 expects.
+        //   1. StripPayrollProtectedPrefix() — strips * from Account entity Name/FullName
+        //   2. NormalizeAccountReferences() — strips * from transaction AccountRef FullNames
+        //   Both use the same simple asterisk-stripping logic. No fuzzy matching needed
+        //   since all data comes from the same QB 2023 source.
         //
         // ═══════════════════════════════════════════════════════════════════
-        /// <summary>
-        /// FIX #47: Normalizes all AccountRef FullNames in an entity's fields and line items
-        /// using the explicit mapping table and fallback name-stripping algorithm.
-        /// This ensures the names match the QB 2021 chart of accounts, preventing
-        /// transactions from defaulting to "Uncategorized Expense".
-        /// </summary>
-        private void NormalizeAccountReferences(QBEntity source, QBEntity transformed, string entityType)
-        {
-            // Normalize header-level account references
-            NormalizeAccountRefsInFields(transformed.Fields, entityType, source.TxnID ?? source.Name);
 
-            // Normalize line-item-level account references
-            for (int i = 0; i < transformed.LineItems.Count; i++)
+        /// <summary>
+        /// FIX #47 (Revised): Strips the asterisk (*) prefix from Account entity
+        /// Name and FullName fields. QB 2021 without payroll subscription cannot
+        /// create accounts with *-prefixed names. This runs on Account entities
+        /// only, modifying the entity's identity fields so AccountAdd succeeds.
+        /// </summary>
+        private void StripPayrollProtectedPrefix(QBEntity entity, string entityType)
+        {
+            if (entityType != "Accounts") return;
+
+            // Strip from entity.Name
+            if (!string.IsNullOrEmpty(entity.Name) && entity.Name.StartsWith("*"))
             {
-                NormalizeAccountRefsInFields(transformed.LineItems[i], entityType, $"{source.TxnID ?? source.Name}:line{i}");
+                var original = entity.Name;
+                entity.Name = entity.Name.TrimStart('*').Trim();
+                entity.Fields["Name"] = entity.Name;
+                _accountRefsNormalized++;
+                Log.Information("  FIX #47: Stripped payroll asterisk from Account Name '{Original}' → '{Fixed}'",
+                    original, entity.Name);
+            }
+
+            // Strip from entity.FullName (handles hierarchical names like "Parent:*Child")
+            if (!string.IsNullOrEmpty(entity.FullName) && entity.FullName.Contains("*"))
+            {
+                var original = entity.FullName;
+                // Handle hierarchical FullNames: strip * from each segment
+                var segments = entity.FullName.Split(':');
+                for (int i = 0; i < segments.Length; i++)
+                {
+                    if (segments[i].StartsWith("*"))
+                        segments[i] = segments[i].TrimStart('*').Trim();
+                }
+                entity.FullName = string.Join(":", segments);
+                entity.Fields["FullName"] = entity.FullName;
+
+                if (!entity.FullName.Equals(original))
+                {
+                    Log.Information("  FIX #47: Stripped payroll asterisk from Account FullName '{Original}' → '{Fixed}'",
+                        original, entity.FullName);
+                }
             }
         }
 
         /// <summary>
-        /// FIX #47: Walks a JObject and normalizes any *Ref field that points to an Account.
+        /// FIX #47 (Revised): Strips asterisk (*) prefix from AccountRef FullNames
+        /// in transaction fields and line items. This ensures that transactions
+        /// referencing payroll-protected accounts match the de-asterisked account
+        /// names created by StripPayrollProtectedPrefix().
         /// </summary>
-        private void NormalizeAccountRefsInFields(JObject fields, string entityType, string context)
+        private void NormalizeAccountReferences(QBEntity source, QBEntity transformed, string entityType)
         {
-            // All field names that reference accounts
+            // Skip Account entities — they're handled by StripPayrollProtectedPrefix
+            if (entityType == "Accounts") return;
+
+            // Normalize header-level account references
+            StripAsterisksFromAccountRefs(transformed.Fields, entityType, source.TxnID ?? source.Name);
+
+            // Normalize line-item-level account references
+            for (int i = 0; i < transformed.LineItems.Count; i++)
+            {
+                StripAsterisksFromAccountRefs(transformed.LineItems[i], entityType, $"{source.TxnID ?? source.Name}:line{i}");
+            }
+        }
+
+        /// <summary>
+        /// FIX #47 (Revised): Walks a JObject and strips asterisk (*) prefix from
+        /// any AccountRef FullName field. Recurses into composite blocks.
+        /// </summary>
+        private void StripAsterisksFromAccountRefs(JObject fields, string entityType, string context)
+        {
             var accountRefFieldNames = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
             {
                 "AccountRef", "ARAccountRef", "APAccountRef",
@@ -1033,83 +1066,34 @@ namespace QB_TimeWarp.Services
                 {
                     if (accountRefFieldNames.Contains(prop.Name))
                     {
-                        // It's an account reference — normalize the FullName
                         var fullName = nested["FullName"]?.ToString();
-                        if (!string.IsNullOrEmpty(fullName))
+                        if (!string.IsNullOrEmpty(fullName) && fullName.Contains("*"))
                         {
-                            var normalized = NormalizeAccountName(fullName);
-                            if (normalized != null && !normalized.Equals(fullName, StringComparison.OrdinalIgnoreCase))
+                            // Strip asterisk from each segment of hierarchical name
+                            var segments = fullName.Split(':');
+                            for (int i = 0; i < segments.Length; i++)
                             {
-                                nested["FullName"] = normalized;
+                                if (segments[i].StartsWith("*"))
+                                    segments[i] = segments[i].TrimStart('*').Trim();
+                            }
+                            var stripped = string.Join(":", segments);
+
+                            if (!stripped.Equals(fullName))
+                            {
+                                nested["FullName"] = stripped;
                                 _accountRefsNormalized++;
-                                Log.Warning("  FIX #47: Normalized AccountRef '{Original}' → '{Normalized}' [{EntityType}] ({Context})",
-                                    fullName, normalized, entityType, context);
+                                Log.Warning("  FIX #47: Stripped asterisk from AccountRef '{Original}' → '{Stripped}' [{EntityType}] ({Context})",
+                                    fullName, stripped, entityType, context);
                             }
                         }
                     }
                     else
                     {
                         // Recurse into composite blocks (e.g., SalesOrPurchase)
-                        NormalizeAccountRefsInFields(nested, entityType, context);
+                        StripAsterisksFromAccountRefs(nested, entityType, context);
                     }
                 }
             }
-        }
-
-        /// <summary>
-        /// FIX #47: Attempts to normalize a QB 2023 account FullName to match the QB 2021
-        /// chart of accounts. Returns the normalized name, or null if no normalization needed.
-        /// 
-        /// Algorithm:
-        ///   1. Check explicit AccountNameMap (handles known remappings like "2-3000 · Sales Tax Payable")
-        ///   2. Strip account number prefix: "X-XXXX · Account Name" → "Account Name"
-        ///   3. Strip leading asterisk: "*Payroll Liabilities" → "Payroll Liabilities"
-        ///   4. If none of the above changed the name, return null (no normalization needed)
-        /// </summary>
-        private static string? NormalizeAccountName(string fullName)
-        {
-            if (string.IsNullOrWhiteSpace(fullName))
-                return null;
-
-            // ── Step 1: Check explicit mapping table ──
-            if (AccountNameMap.TryGetValue(fullName, out var mapped))
-                return mapped;
-
-            string original = fullName;
-            string normalized = fullName;
-
-            // ── Step 2: Strip account number prefix ──
-            // Pattern: "X-XXXX · Account Name" or "XXXXX · Account Name"
-            // The " · " (space-middot-space) separator is standard in QB FullNames
-            int separatorIdx = normalized.IndexOf(" · ", StringComparison.Ordinal);
-            if (separatorIdx >= 0)
-            {
-                string prefix = normalized[..separatorIdx].Trim();
-                string namePart = normalized[(separatorIdx + 3)..].Trim();
-
-                // Only strip if the prefix looks like an account number (contains digits or hyphens)
-                if (!string.IsNullOrEmpty(namePart) && prefix.Any(c => char.IsDigit(c) || c == '-'))
-                {
-                    normalized = namePart;
-                    // Also check the stripped name part against the explicit map
-                    if (AccountNameMap.TryGetValue(normalized, out var mappedStripped))
-                        return mappedStripped;
-                }
-            }
-
-            // ── Step 3: Strip leading asterisk (payroll-protected accounts) ──
-            if (normalized.StartsWith("*"))
-            {
-                normalized = normalized.TrimStart('*').Trim();
-                // Check if the asterisk-stripped name is in the explicit map
-                if (AccountNameMap.TryGetValue(normalized, out var mappedNoAsterisk))
-                    return mappedNoAsterisk;
-            }
-
-            // ── Step 4: Return normalized if it changed, otherwise null ──
-            return !normalized.Equals(original, StringComparison.OrdinalIgnoreCase)
-                ? normalized
-                : null;
         }
 
         /// <summary>
@@ -2344,7 +2328,7 @@ journalEntry.LineItems.Add(bankLine);
             if (_salesTaxFieldsRestored > 0)
                 Log.Information("    FIX #46 Sales tax fields restored: {Count} (Sales Receipts with tax data preserved)", _salesTaxFieldsRestored);
             if (_accountRefsNormalized > 0)
-                Log.Information("    FIX #47 AccountRefs normalized:    {Count} (fallback name matching applied)", _accountRefsNormalized);
+                Log.Information("    FIX #47 Payroll asterisks stripped: {Count} (account names + AccountRef FullNames)", _accountRefsNormalized);
 
             Log.Information("    ────────────────────────────────");
             Log.Information("    TOTAL compatibility adjustments: {Total}", totalAdjustments);

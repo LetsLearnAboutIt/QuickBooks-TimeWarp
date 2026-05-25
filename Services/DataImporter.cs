@@ -1037,84 +1037,47 @@ namespace QB_TimeWarp.Services
         }
 
         /// <summary>
-        /// FIX #47: Fallback account name matching when exact lookup in _nameToListIdMap fails.
-        /// Tries progressively looser matching strategies:
-        ///   1. Strip account-number prefix ("6-6240 · Misc" → try "Misc")
-        ///   2. Strip leading asterisk ("*Payroll Liabilities" → try "Payroll Liabilities")
-        ///   3. Partial/contains match against all account keys in map
-        /// Returns the ListID if a match is found, null otherwise.
+        /// FIX #47 (Revised): Fallback account name matching — safety net for the importer.
+        /// 
+        /// The transformer already strips asterisks from both Account entities and
+        /// transaction AccountRef FullNames, so exact matches should work. This
+        /// fallback handles edge cases where:
+        ///   1. An asterisk wasn't stripped (e.g., reference in a composite block)
+        ///   2. Case differences between source and target
+        /// 
+        /// NOTE: QBXML FullNames do NOT include account numbers (the "X-XXXX · Name"
+        /// format is QB UI display only). No number-prefix stripping is needed here.
         /// </summary>
         private string? TryFallbackAccountMatch(string fullName, string refEntityType)
         {
             if (string.IsNullOrWhiteSpace(fullName)) return null;
 
             string accountPrefix = $"{refEntityType}:";
-            
-            // Strategy 1: Strip account-number prefix (e.g., "6-6240 · Miscellaneous" → "Miscellaneous")
-            string namePart = fullName;
-            int separatorIdx = fullName.IndexOf(" · ", StringComparison.Ordinal);
-            if (separatorIdx < 0) separatorIdx = fullName.IndexOf(" - ", StringComparison.Ordinal);
-            if (separatorIdx >= 0)
-            {
-                namePart = fullName.Substring(separatorIdx + 3).Trim();
-                var strippedKey = $"{accountPrefix}{namePart}";
-                if (_nameToListIdMap.TryGetValue(strippedKey, out var listId1))
-                    return listId1;
-            }
 
-            // Strategy 2: Strip leading asterisk (e.g., "*Payroll Liabilities" → "Payroll Liabilities")
+            // Strategy 1: Strip leading asterisk (payroll-protected accounts)
+            // The transformer should have done this, but catch any that slipped through
             string noAsterisk = fullName.TrimStart('*').Trim();
             if (noAsterisk != fullName)
             {
                 var asteriskKey = $"{accountPrefix}{noAsterisk}";
-                if (_nameToListIdMap.TryGetValue(asteriskKey, out var listId2))
-                    return listId2;
-                
-                // Also try stripping prefix from the no-asterisk version
-                separatorIdx = noAsterisk.IndexOf(" · ", StringComparison.Ordinal);
-                if (separatorIdx < 0) separatorIdx = noAsterisk.IndexOf(" - ", StringComparison.Ordinal);
-                if (separatorIdx >= 0)
-                {
-                    var innerName = noAsterisk.Substring(separatorIdx + 3).Trim();
-                    var innerKey = $"{accountPrefix}{innerName}";
-                    if (_nameToListIdMap.TryGetValue(innerKey, out var listId2b))
-                        return listId2b;
-                }
+                if (_nameToListIdMap.TryGetValue(asteriskKey, out var listId))
+                    return listId;
             }
 
-            // Strategy 3: Case-insensitive partial/contains match against all account keys
-            // Try exact name-part match first (case-insensitive)
+            // Strategy 2: Case-insensitive exact match
+            // All data comes from the same QB 2023 source, so names should match
+            // except for possible case differences
             var accountKeys = _nameToListIdMap.Keys
                 .Where(k => k.StartsWith(accountPrefix, StringComparison.OrdinalIgnoreCase))
                 .ToList();
 
-            // 3a: Case-insensitive exact match on the name portion after the prefix
             foreach (var key in accountKeys)
             {
                 var keyName = key.Substring(accountPrefix.Length);
                 if (string.Equals(keyName, fullName, StringComparison.OrdinalIgnoreCase) ||
-                    string.Equals(keyName, namePart, StringComparison.OrdinalIgnoreCase) ||
                     string.Equals(keyName, noAsterisk, StringComparison.OrdinalIgnoreCase))
                 {
                     return _nameToListIdMap[key];
-                }
-            }
-
-            // 3b: Check if the target account's name part (after " · ") matches our name part
-            foreach (var key in accountKeys)
-            {
-                var keyName = key.Substring(accountPrefix.Length);
-                var keySepIdx = keyName.IndexOf(" · ", StringComparison.Ordinal);
-                if (keySepIdx >= 0)
-                {
-                    var keyNamePart = keyName.Substring(keySepIdx + 3).Trim();
-                    if (string.Equals(keyNamePart, namePart, StringComparison.OrdinalIgnoreCase) ||
-                        string.Equals(keyNamePart, noAsterisk, StringComparison.OrdinalIgnoreCase) ||
-                        string.Equals(keyNamePart, fullName, StringComparison.OrdinalIgnoreCase))
-                    {
-                        Log.Debug("  FIX #47: Partial name match: '{Source}' ≈ '{Target}'", fullName, keyName);
-                        return _nameToListIdMap[key];
-                    }
                 }
             }
 
