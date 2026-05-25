@@ -38,6 +38,11 @@
     <Resource Include="UI\Assets\lrs-icon.png" />
   </ItemGroup>
 
+  <!-- Legal documents — distributed alongside the application -->
+  <ItemGroup>
+    <Content Include="Legal\*.md" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+
   <!-- 
     QuickBooks SDK COM Reference:
     After installing the QuickBooks Desktop SDK from Intuit Developer site,
