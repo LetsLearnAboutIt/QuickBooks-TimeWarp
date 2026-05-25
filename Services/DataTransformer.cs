@@ -14,6 +14,16 @@ namespace QB_TimeWarp.Services
     /// and QB SDK 15.0 compatibility filtering (removes fields not supported in QB 2021).
     /// 
     /// CHANGELOG:
+    /// - Fix #47: Fallback account name matching — when an AccountRef FullName can't be resolved
+    ///   by exact match in the importer's _nameToListIdMap, normalize the name by stripping
+    ///   leading numbers, special characters (asterisks, hyphens), and the " · " separator.
+    ///   Applied during transformation so the FullName stored in the entity matches the target
+    ///   QB 2021 chart of accounts. Prevents transactions from defaulting to "Uncategorized Expense".
+    /// - Fix #46: Sales Receipt tax preservation — after field-mapping transformation, restore
+    ///   the tax-critical fields (ItemSalesTaxRef, CustomerSalesTaxCodeRef) from the original
+    ///   source entity. These fields were being dropped because FieldMappings.json didn't map them
+    ///   and unmappedFieldAction was "skip". Without them, QB 2021 records $0 tax → header debit
+    ///   uses pre-tax amount → "1 CASH REGISTER SALES" short by $47,424.
     /// - Fix #41: Add _lineType metadata to JournalEntry lines in ConvertCreditCardToJournalEntry()
     ///   Sets proper XML wrapper type (JournalDebitLine vs JournalCreditLine) for each line item.
     ///   Debit lines use JournalDebitLine wrapper, credit lines use JournalCreditLine wrapper.
@@ -43,6 +53,37 @@ namespace QB_TimeWarp.Services
         private int _isActiveOverrides;
         private int _nameToMemoPreserved;
         private int _employeeNotesTruncated;  // FIX #14: Tracks Notes field truncations
+        private int _salesTaxFieldsRestored;  // FIX #46: Tracks tax fields restored on SalesReceipts
+        private int _accountRefsNormalized;   // FIX #47: Tracks AccountRef FullNames normalized via fallback
+
+        // ═══════════════════════════════════════════════════════════════════
+        // FIX #47: Explicit account name mapping table
+        // ═══════════════════════════════════════════════════════════════════
+        // QB 2023 uses a custom numbering scheme (e.g. "2-3000 · Sales Tax Payable")
+        // while QB 2021 uses QuickBooks default numbers (e.g. "25500 · Sales Tax Payable").
+        // Asterisk (*) prefixed accounts are payroll-protected in QB — we strip the asterisk
+        // for the 2021 target. This dictionary maps source FullNames to target FullNames.
+        // If an exact match isn't found here, the fallback algorithm in NormalizeAccountRef
+        // will attempt fuzzy matching (strip leading numbers, special chars, partial match).
+        // ═══════════════════════════════════════════════════════════════════
+        private static readonly Dictionary<string, string> AccountNameMap = new(StringComparer.OrdinalIgnoreCase)
+        {
+            // Known remappings between QB 2023 and QB 2021 chart of accounts
+            ["2-3000 · Sales Tax Payable"]          = "25500 · Sales Tax Payable",
+            ["Sales Tax Payable"]                    = "25500 · Sales Tax Payable",
+            ["3-9999 · Opening Balance Equity"]      = "30000 · Opening Balance Equity",
+            ["Opening Balance Equity"]               = "30000 · Opening Balance Equity",
+            ["6-6600 · *Payroll Expenses"]           = "66000 · Payroll Expenses",
+            ["*Payroll Expenses"]                    = "66000 · Payroll Expenses",
+            ["Payroll Expenses"]                     = "66000 · Payroll Expenses",
+            // Payroll-protected accounts: strip asterisk for QB 2021 (no payroll subscription)
+            ["2-3100 · *Payroll Liabilities"]        = "Payroll Liabilities",
+            ["*Payroll Liabilities"]                 = "Payroll Liabilities",
+            ["2-3110 · *Direct Deposit Liabilities"] = "Direct Deposit Liabilities",
+            ["*Direct Deposit Liabilities"]          = "Direct Deposit Liabilities",
+            ["6-6650 · QB Direct Dep Fees for PR"]   = "Direct Deposit Fees",
+            ["QB Direct Dep Fees for PR"]            = "Direct Deposit Fees",
+        };
 
         // Transformation report tracking
         private readonly TransformationReport _transformationReport = new();
@@ -526,6 +567,16 @@ namespace QB_TimeWarp.Services
                 PreserveClassAssignment(source, transformed);
             }
 
+            // ── FIX #46: Restore tax-critical fields on Sales Receipts ──────
+            // The field mappings don't include ItemSalesTaxRef/CustomerSalesTaxCodeRef,
+            // so they get silently dropped. Restore them from the source entity.
+            PreserveSalesReceiptTaxData(source, transformed, entityType);
+
+            // ── FIX #47: Normalize account references for QB 2021 compatibility ──
+            // Strips number prefixes and special characters so AccountRef FullNames
+            // match the QB 2021 chart of accounts, preventing Uncategorized Expense dumping.
+            NormalizeAccountReferences(source, transformed, entityType);
+
             _transformationReport.TotalEntitiesTransformed++;
 
             return transformed;
@@ -793,6 +844,272 @@ namespace QB_TimeWarp.Services
             _nameToMemoPreserved++;
             Log.Debug("  Name→Memo: Preserved '{Name}' into Memo for {EntityType} (TxnID={TxnID})",
                 nameValue, entityType, source.TxnID ?? "N/A");
+        }
+
+        // ═══════════════════════════════════════════════════════════════════
+        // FIX #46: Preserve Sales Tax Data on Sales Receipts
+        // ═══════════════════════════════════════════════════════════════════
+        //
+        // PROBLEM:
+        //   FieldMappings.json only maps basic SalesReceipt fields (CustomerRef,
+        //   TxnDate, RefNumber, Memo, etc.) and does NOT map tax-critical fields:
+        //     - ItemSalesTaxRef (the sales tax item/rate applied to the receipt)
+        //     - CustomerSalesTaxCodeRef (the customer's tax code)
+        //   Since globalSettings.unmappedFieldAction = "skip", these fields are
+        //   silently dropped during ApplyFieldMappings(). Without ItemSalesTaxRef,
+        //   QB 2021 records the receipt with $0 sales tax → the header debit
+        //   (deposit to bank) equals only the pre-tax line total, not the
+        //   tax-inclusive TotalAmount.
+        //
+        // IMPACT:
+        //   All 30 monthly Sales Receipts lose their tax ($47,424 total).
+        //   "1 CASH REGISTER SALES" shows a NEGATIVE balance (-$40,902.88)
+        //   instead of the correct $6,521.11.
+        //
+        // FIX:
+        //   After the standard transformation, copy the tax-critical fields
+        //   from the ORIGINAL source entity back into the transformed entity.
+        //   This runs in TransformEntity() after ApplyFieldMappings() so the
+        //   importer will include them in the SalesReceiptAdd QBXML.
+        //   The fields are placed at header level per the QBXML XSD schema.
+        //
+        // ═══════════════════════════════════════════════════════════════════
+        /// <summary>
+        /// FIX #46: Restores sales-tax-critical fields to transformed Sales Receipts.
+        /// Called after ApplyFieldMappings() which may have dropped these unmapped fields.
+        /// </summary>
+        private void PreserveSalesReceiptTaxData(QBEntity source, QBEntity transformed, string entityType)
+        {
+            if (!entityType.Equals("SalesReceipts", StringComparison.OrdinalIgnoreCase))
+                return;
+
+            bool restored = false;
+
+            // ── 1. Restore ItemSalesTaxRef (tells QB which tax rate to apply) ──
+            // This is the single most important field — without it, QB calculates $0 tax.
+            var sourceTaxRef = source.Fields["ItemSalesTaxRef"];
+            if (sourceTaxRef != null && transformed.Fields["ItemSalesTaxRef"] == null)
+            {
+                transformed.Fields["ItemSalesTaxRef"] = sourceTaxRef.DeepClone();
+                restored = true;
+                Log.Debug("  FIX #46: Restored ItemSalesTaxRef '{TaxItem}' to SalesReceipt",
+                    sourceTaxRef["FullName"]?.ToString() ?? "(unknown)");
+            }
+
+            // ── 2. Restore CustomerSalesTaxCodeRef (customer tax status) ──
+            var sourceTaxCodeRef = source.Fields["CustomerSalesTaxCodeRef"];
+            if (sourceTaxCodeRef != null && transformed.Fields["CustomerSalesTaxCodeRef"] == null)
+            {
+                transformed.Fields["CustomerSalesTaxCodeRef"] = sourceTaxCodeRef.DeepClone();
+                restored = true;
+                Log.Debug("  FIX #46: Restored CustomerSalesTaxCodeRef '{TaxCode}' to SalesReceipt",
+                    sourceTaxCodeRef["FullName"]?.ToString() ?? "(unknown)");
+            }
+
+            // ── 3. Restore IsTaxIncluded flag if present ──
+            var isTaxIncluded = source.Fields["IsTaxIncluded"];
+            if (isTaxIncluded != null && transformed.Fields["IsTaxIncluded"] == null)
+            {
+                transformed.Fields["IsTaxIncluded"] = isTaxIncluded.DeepClone();
+                restored = true;
+            }
+
+            // ── 4. Preserve SalesTaxCodeRef on individual line items ──
+            // Each line item in a SalesReceipt can have a SalesTaxCodeRef that
+            // indicates whether that line is taxable ("Tax") or non-taxable ("Non").
+            // If these are missing, QB 2021 may not apply tax to the correct lines.
+            if (source.LineItems.Count == transformed.LineItems.Count)
+            {
+                for (int i = 0; i < source.LineItems.Count; i++)
+                {
+                    var srcLine = source.LineItems[i];
+                    var tgtLine = transformed.LineItems[i];
+
+                    // Restore SalesTaxCodeRef if dropped
+                    var lineTaxCode = srcLine["SalesTaxCodeRef"];
+                    if (lineTaxCode != null && tgtLine["SalesTaxCodeRef"] == null)
+                    {
+                        tgtLine["SalesTaxCodeRef"] = lineTaxCode.DeepClone();
+                    }
+
+                    // Restore Amount if it was dropped (line items MUST have Amount)
+                    var lineAmount = srcLine["Amount"];
+                    if (lineAmount != null && tgtLine["Amount"] == null)
+                    {
+                        tgtLine["Amount"] = lineAmount.DeepClone();
+                    }
+
+                    // Restore ItemRef if it was dropped (line items reference items)
+                    var lineItemRef = srcLine["ItemRef"];
+                    if (lineItemRef != null && tgtLine["ItemRef"] == null)
+                    {
+                        tgtLine["ItemRef"] = lineItemRef.DeepClone();
+                    }
+
+                    // Restore Quantity and Rate for proper tax calculation
+                    var lineQty = srcLine["Quantity"];
+                    if (lineQty != null && tgtLine["Quantity"] == null)
+                        tgtLine["Quantity"] = lineQty.DeepClone();
+
+                    var lineRate = srcLine["Rate"];
+                    if (lineRate != null && tgtLine["Rate"] == null)
+                        tgtLine["Rate"] = lineRate.DeepClone();
+                }
+            }
+
+            if (restored)
+            {
+                _salesTaxFieldsRestored++;
+                Log.Information("  FIX #46: Restored tax fields on SalesReceipt RefNumber={RefNumber}, TxnDate={TxnDate}",
+                    transformed.Fields["RefNumber"]?.ToString() ?? "?",
+                    transformed.Fields["TxnDate"]?.ToString() ?? "?");
+            }
+        }
+
+        // ═══════════════════════════════════════════════════════════════════
+        // FIX #47: Fallback Account Name Matching
+        // ═══════════════════════════════════════════════════════════════════
+        //
+        // PROBLEM:
+        //   The DataImporter resolves AccountRef fields by looking up the FullName
+        //   in its _nameToListIdMap (populated as Accounts are imported into QB 2021).
+        //   When QB 2023 uses a different naming convention than QB 2021, the exact
+        //   match fails and QB creates a default "Uncategorized Expense" entry.
+        //
+        //   Common mismatches:
+        //     "6-6240 · Miscellaneous" (2023) vs "Miscellaneous" (2021)
+        //     "6-6400 · Utilities Gas & Electric" (2023) vs "Utilities Gas & Electric" (2021)
+        //     "*Payroll Liabilities" (2023) vs "Payroll Liabilities" (2021)
+        //
+        // IMPACT:
+        //   73 transaction lines dumped to "6-7100 · Uncategorized Expense" ($14,978 misclassified)
+        //
+        // FIX:
+        //   During transformation, normalize all AccountRef FullNames by:
+        //     1. Check the explicit AccountNameMap dictionary first
+        //     2. Strip the account number prefix (e.g., "6-6240 · " → "Miscellaneous")
+        //     3. Strip leading asterisks (payroll-protected accounts)
+        //     4. Log a warning when fallback normalization is applied
+        //
+        //   This normalization happens BEFORE the importer tries to resolve ListIDs,
+        //   so the FullName in the entity already matches what QB 2021 expects.
+        //
+        // ═══════════════════════════════════════════════════════════════════
+        /// <summary>
+        /// FIX #47: Normalizes all AccountRef FullNames in an entity's fields and line items
+        /// using the explicit mapping table and fallback name-stripping algorithm.
+        /// This ensures the names match the QB 2021 chart of accounts, preventing
+        /// transactions from defaulting to "Uncategorized Expense".
+        /// </summary>
+        private void NormalizeAccountReferences(QBEntity source, QBEntity transformed, string entityType)
+        {
+            // Normalize header-level account references
+            NormalizeAccountRefsInFields(transformed.Fields, entityType, source.TxnID ?? source.Name);
+
+            // Normalize line-item-level account references
+            for (int i = 0; i < transformed.LineItems.Count; i++)
+            {
+                NormalizeAccountRefsInFields(transformed.LineItems[i], entityType, $"{source.TxnID ?? source.Name}:line{i}");
+            }
+        }
+
+        /// <summary>
+        /// FIX #47: Walks a JObject and normalizes any *Ref field that points to an Account.
+        /// </summary>
+        private void NormalizeAccountRefsInFields(JObject fields, string entityType, string context)
+        {
+            // All field names that reference accounts
+            var accountRefFieldNames = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
+            {
+                "AccountRef", "ARAccountRef", "APAccountRef",
+                "IncomeAccountRef", "COGSAccountRef", "AssetAccountRef",
+                "ExpenseAccountRef", "DepositToAccountRef", "BankAccountRef",
+                "CreditCardAccountRef", "OverrideItemAccountRef"
+            };
+
+            foreach (var prop in fields.Properties().ToList())
+            {
+                if (prop.Value is JObject nested)
+                {
+                    if (accountRefFieldNames.Contains(prop.Name))
+                    {
+                        // It's an account reference — normalize the FullName
+                        var fullName = nested["FullName"]?.ToString();
+                        if (!string.IsNullOrEmpty(fullName))
+                        {
+                            var normalized = NormalizeAccountName(fullName);
+                            if (normalized != null && !normalized.Equals(fullName, StringComparison.OrdinalIgnoreCase))
+                            {
+                                nested["FullName"] = normalized;
+                                _accountRefsNormalized++;
+                                Log.Warning("  FIX #47: Normalized AccountRef '{Original}' → '{Normalized}' [{EntityType}] ({Context})",
+                                    fullName, normalized, entityType, context);
+                            }
+                        }
+                    }
+                    else
+                    {
+                        // Recurse into composite blocks (e.g., SalesOrPurchase)
+                        NormalizeAccountRefsInFields(nested, entityType, context);
+                    }
+                }
+            }
+        }
+
+        /// <summary>
+        /// FIX #47: Attempts to normalize a QB 2023 account FullName to match the QB 2021
+        /// chart of accounts. Returns the normalized name, or null if no normalization needed.
+        /// 
+        /// Algorithm:
+        ///   1. Check explicit AccountNameMap (handles known remappings like "2-3000 · Sales Tax Payable")
+        ///   2. Strip account number prefix: "X-XXXX · Account Name" → "Account Name"
+        ///   3. Strip leading asterisk: "*Payroll Liabilities" → "Payroll Liabilities"
+        ///   4. If none of the above changed the name, return null (no normalization needed)
+        /// </summary>
+        private static string? NormalizeAccountName(string fullName)
+        {
+            if (string.IsNullOrWhiteSpace(fullName))
+                return null;
+
+            // ── Step 1: Check explicit mapping table ──
+            if (AccountNameMap.TryGetValue(fullName, out var mapped))
+                return mapped;
+
+            string original = fullName;
+            string normalized = fullName;
+
+            // ── Step 2: Strip account number prefix ──
+            // Pattern: "X-XXXX · Account Name" or "XXXXX · Account Name"
+            // The " · " (space-middot-space) separator is standard in QB FullNames
+            int separatorIdx = normalized.IndexOf(" · ", StringComparison.Ordinal);
+            if (separatorIdx >= 0)
+            {
+                string prefix = normalized[..separatorIdx].Trim();
+                string namePart = normalized[(separatorIdx + 3)..].Trim();
+
+                // Only strip if the prefix looks like an account number (contains digits or hyphens)
+                if (!string.IsNullOrEmpty(namePart) && prefix.Any(c => char.IsDigit(c) || c == '-'))
+                {
+                    normalized = namePart;
+                    // Also check the stripped name part against the explicit map
+                    if (AccountNameMap.TryGetValue(normalized, out var mappedStripped))
+                        return mappedStripped;
+                }
+            }
+
+            // ── Step 3: Strip leading asterisk (payroll-protected accounts) ──
+            if (normalized.StartsWith("*"))
+            {
+                normalized = normalized.TrimStart('*').Trim();
+                // Check if the asterisk-stripped name is in the explicit map
+                if (AccountNameMap.TryGetValue(normalized, out var mappedNoAsterisk))
+                    return mappedNoAsterisk;
+            }
+
+            // ── Step 4: Return normalized if it changed, otherwise null ──
+            return !normalized.Equals(original, StringComparison.OrdinalIgnoreCase)
+                ? normalized
+                : null;
         }
 
         /// <summary>
@@ -1998,7 +2315,7 @@ journalEntry.LineItems.Add(bankLine);
             var totalAdjustments = _sdk16FieldsRemoved + _fieldsLengthAdjusted +
                 _emptyNameFieldsFixed + _payrollFieldsSimplified + _ccBalanceSignsFixed +
                 _hierarchicalNamesParsed + _isActiveOverrides + _nameToMemoPreserved +
-                _employeeNotesTruncated;
+                _employeeNotesTruncated + _salesTaxFieldsRestored + _accountRefsNormalized;
 
             if (totalAdjustments == 0) return;
 
@@ -2024,6 +2341,10 @@ journalEntry.LineItems.Add(bankLine);
                 Log.Information("    Name→Memo preserved:               {Count} (transaction names saved to Memo)", _nameToMemoPreserved);
             if (_employeeNotesTruncated > 0)
                 Log.Information("    Fix #14 Employee Notes zeroed:     {Count} (historical data not needed)", _employeeNotesTruncated);
+            if (_salesTaxFieldsRestored > 0)
+                Log.Information("    FIX #46 Sales tax fields restored: {Count} (Sales Receipts with tax data preserved)", _salesTaxFieldsRestored);
+            if (_accountRefsNormalized > 0)
+                Log.Information("    FIX #47 AccountRefs normalized:    {Count} (fallback name matching applied)", _accountRefsNormalized);
 
             Log.Information("    ────────────────────────────────");
             Log.Information("    TOTAL compatibility adjustments: {Total}", totalAdjustments);

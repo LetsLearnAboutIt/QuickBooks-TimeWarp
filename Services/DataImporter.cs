@@ -968,20 +968,37 @@ namespace QB_TimeWarp.Services
                         else
                         {
                             // ═══════════════════════════════════════════════════════════════════
-                            // FIX #39: Log UNRESOLVED account references
+                            // FIX #47: Fallback account name matching in the importer
+                            // ═══════════════════════════════════════════════════════════════════
+                            // If exact lookup failed, try fallback matching:
+                            //   1. Try partial name match (the name part after " · " separator)
+                            //   2. Try contains match against available accounts
+                            //   3. Try case-insensitive substring matching
+                            // This catches cases the transformer's NormalizeAccountName didn't handle.
                             // ═══════════════════════════════════════════════════════════════════
                             if (prop.Name.Contains("AccountRef"))
                             {
-                                Log.Warning("  ⚠️  FIX #39: UNRESOLVED AccountRef '{Name}' (type: {Type}) - not found in _nameToListIdMap! Transaction will fail or use wrong account.",
-                                    fullName, refEntityType);
-                                
-                                // Show what accounts ARE available (for debugging)
-                                var availableAccounts = _nameToListIdMap.Keys
-                                    .Where(k => k.StartsWith("Accounts:"))
-                                    .Take(20)
-                                    .ToList();
-                                Log.Warning("     Available accounts in map (first 20): {Accounts}",
-                                    string.Join(", ", availableAccounts.Select(k => k.Replace("Accounts:", ""))));
+                                string? fallbackListId = TryFallbackAccountMatch(fullName, refEntityType);
+                                if (fallbackListId != null)
+                                {
+                                    nested["ListID"] = fallbackListId;
+                                    resolved++;
+                                    Log.Warning("  FIX #47: FALLBACK matched AccountRef '{Name}' → ListID {ListID} (type: {Type})",
+                                        fullName, fallbackListId, refEntityType);
+                                }
+                                else
+                                {
+                                    Log.Warning("  ⚠️  FIX #39/#47: UNRESOLVED AccountRef '{Name}' (type: {Type}) - not found in _nameToListIdMap even after fallback! Transaction may use wrong account.",
+                                        fullName, refEntityType);
+                                    
+                                    // Show what accounts ARE available (for debugging)
+                                    var availableAccounts = _nameToListIdMap.Keys
+                                        .Where(k => k.StartsWith("Accounts:"))
+                                        .Take(20)
+                                        .ToList();
+                                    Log.Warning("     Available accounts in map (first 20): {Accounts}",
+                                        string.Join(", ", availableAccounts.Select(k => k.Replace("Accounts:", ""))));
+                                }
                             }
                         }
                     }
@@ -1017,6 +1034,92 @@ namespace QB_TimeWarp.Services
             }
 
             return resolved;
+        }
+
+        /// <summary>
+        /// FIX #47: Fallback account name matching when exact lookup in _nameToListIdMap fails.
+        /// Tries progressively looser matching strategies:
+        ///   1. Strip account-number prefix ("6-6240 · Misc" → try "Misc")
+        ///   2. Strip leading asterisk ("*Payroll Liabilities" → try "Payroll Liabilities")
+        ///   3. Partial/contains match against all account keys in map
+        /// Returns the ListID if a match is found, null otherwise.
+        /// </summary>
+        private string? TryFallbackAccountMatch(string fullName, string refEntityType)
+        {
+            if (string.IsNullOrWhiteSpace(fullName)) return null;
+
+            string accountPrefix = $"{refEntityType}:";
+            
+            // Strategy 1: Strip account-number prefix (e.g., "6-6240 · Miscellaneous" → "Miscellaneous")
+            string namePart = fullName;
+            int separatorIdx = fullName.IndexOf(" · ", StringComparison.Ordinal);
+            if (separatorIdx < 0) separatorIdx = fullName.IndexOf(" - ", StringComparison.Ordinal);
+            if (separatorIdx >= 0)
+            {
+                namePart = fullName.Substring(separatorIdx + 3).Trim();
+                var strippedKey = $"{accountPrefix}{namePart}";
+                if (_nameToListIdMap.TryGetValue(strippedKey, out var listId1))
+                    return listId1;
+            }
+
+            // Strategy 2: Strip leading asterisk (e.g., "*Payroll Liabilities" → "Payroll Liabilities")
+            string noAsterisk = fullName.TrimStart('*').Trim();
+            if (noAsterisk != fullName)
+            {
+                var asteriskKey = $"{accountPrefix}{noAsterisk}";
+                if (_nameToListIdMap.TryGetValue(asteriskKey, out var listId2))
+                    return listId2;
+                
+                // Also try stripping prefix from the no-asterisk version
+                separatorIdx = noAsterisk.IndexOf(" · ", StringComparison.Ordinal);
+                if (separatorIdx < 0) separatorIdx = noAsterisk.IndexOf(" - ", StringComparison.Ordinal);
+                if (separatorIdx >= 0)
+                {
+                    var innerName = noAsterisk.Substring(separatorIdx + 3).Trim();
+                    var innerKey = $"{accountPrefix}{innerName}";
+                    if (_nameToListIdMap.TryGetValue(innerKey, out var listId2b))
+                        return listId2b;
+                }
+            }
+
+            // Strategy 3: Case-insensitive partial/contains match against all account keys
+            // Try exact name-part match first (case-insensitive)
+            var accountKeys = _nameToListIdMap.Keys
+                .Where(k => k.StartsWith(accountPrefix, StringComparison.OrdinalIgnoreCase))
+                .ToList();
+
+            // 3a: Case-insensitive exact match on the name portion after the prefix
+            foreach (var key in accountKeys)
+            {
+                var keyName = key.Substring(accountPrefix.Length);
+                if (string.Equals(keyName, fullName, StringComparison.OrdinalIgnoreCase) ||
+                    string.Equals(keyName, namePart, StringComparison.OrdinalIgnoreCase) ||
+                    string.Equals(keyName, noAsterisk, StringComparison.OrdinalIgnoreCase))
+                {
+                    return _nameToListIdMap[key];
+                }
+            }
+
+            // 3b: Check if the target account's name part (after " · ") matches our name part
+            foreach (var key in accountKeys)
+            {
+                var keyName = key.Substring(accountPrefix.Length);
+                var keySepIdx = keyName.IndexOf(" · ", StringComparison.Ordinal);
+                if (keySepIdx >= 0)
+                {
+                    var keyNamePart = keyName.Substring(keySepIdx + 3).Trim();
+                    if (string.Equals(keyNamePart, namePart, StringComparison.OrdinalIgnoreCase) ||
+                        string.Equals(keyNamePart, noAsterisk, StringComparison.OrdinalIgnoreCase) ||
+                        string.Equals(keyNamePart, fullName, StringComparison.OrdinalIgnoreCase))
+                    {
+                        Log.Debug("  FIX #47: Partial name match: '{Source}' ≈ '{Target}'", fullName, keyName);
+                        return _nameToListIdMap[key];
+                    }
+                }
+            }
+
+            // No match found
+            return null;
         }
 
         /// <summary>
