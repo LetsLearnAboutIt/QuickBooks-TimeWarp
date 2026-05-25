@@ -79,6 +79,7 @@ namespace QB_TimeWarp.UI.Views
         private void NavHome_Click(object sender, RoutedEventArgs e) => SwitchPage("Home");
         private void NavSource_Click(object sender, RoutedEventArgs e) => SwitchPage("Source");
         private void NavDestination_Click(object sender, RoutedEventArgs e) => SwitchPage("Destination");
+        private void NavOptions_Click(object sender, RoutedEventArgs e) => SwitchPage("Options");
         private void NavMigration_Click(object sender, RoutedEventArgs e) => SwitchPage("Migration");
         private void NavSettings_Click(object sender, RoutedEventArgs e) => SwitchPage("Settings");
         private void NavReports_Click(object sender, RoutedEventArgs e) => SwitchPage("Reports");
@@ -97,6 +98,7 @@ namespace QB_TimeWarp.UI.Views
             PageHome.Visibility = Visibility.Collapsed;
             PageSource.Visibility = Visibility.Collapsed;
             PageDestination.Visibility = Visibility.Collapsed;
+            PageOptions.Visibility = Visibility.Collapsed;
             PageMigration.Visibility = Visibility.Collapsed;
             PageSettings.Visibility = Visibility.Collapsed;
             PageReports.Visibility = Visibility.Collapsed;
@@ -106,6 +108,7 @@ namespace QB_TimeWarp.UI.Views
             NavHome.Style = (Style)FindResource("NavButton");
             NavSource.Style = (Style)FindResource("NavButton");
             NavDestination.Style = (Style)FindResource("NavButton");
+            NavOptions.Style = (Style)FindResource("NavButton");
             NavMigration.Style = (Style)FindResource("NavButton");
             NavSettings.Style = (Style)FindResource("NavButton");
             NavReports.Style = (Style)FindResource("NavButton");
@@ -128,6 +131,11 @@ namespace QB_TimeWarp.UI.Views
                     PageDestination.Visibility = Visibility.Visible;
                     NavDestination.Style = (Style)FindResource("NavButtonActive");
                     _activeNavButton = NavDestination;
+                    break;
+                case "Options":
+                    PageOptions.Visibility = Visibility.Visible;
+                    NavOptions.Style = (Style)FindResource("NavButtonActive");
+                    _activeNavButton = NavOptions;
                     break;
                 case "Migration":
                     PageMigration.Visibility = Visibility.Visible;
@@ -186,6 +194,7 @@ namespace QB_TimeWarp.UI.Views
 
         private void GoToSource_Click(object sender, RoutedEventArgs e) => SwitchPage("Source");
         private void GoToDestination_Click(object sender, RoutedEventArgs e) => SwitchPage("Destination");
+        private void GoToOptions_Click(object sender, RoutedEventArgs e) => SwitchPage("Options");
         private void GoToMigration_Click(object sender, RoutedEventArgs e) => SwitchPage("Migration");
 
         // ── Auto-scroll log boxes ────────────────────────────────────

@@ -130,7 +130,7 @@ namespace QB_TimeWarp.UI.ViewModels
         private readonly Dispatcher _dispatcher;
         private CancellationTokenSource? _cts;
 
-        private string _windowTitle = "QB-TimeWarp® — QB 2023 → QB 2021 Migration";
+        private string _windowTitle = "Company File TimeWarp® — QB 2023 → QB 2021 Migration";
         private bool _isMigrationRunning;
         private bool _isIdle = true;
         private bool _showProgressSection;
@@ -138,7 +138,7 @@ namespace QB_TimeWarp.UI.ViewModels
         // Section 2: Destination & Options
         private string _destinationFolder = System.IO.Path.Combine(
             Environment.GetFolderPath(Environment.SpecialFolder.Desktop),
-            "TimeWarp-Output");
+            "CompanyFile-TimeWarp-Output");
         private string _destinationFileName = string.Empty;
         private string _destinationPreview = string.Empty;
         private DateTime? _dateRangeFrom;
