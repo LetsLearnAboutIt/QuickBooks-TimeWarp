@@ -853,7 +853,8 @@ namespace QB_TimeWarp.UI.ViewModels
             var firstFile = Files.FirstOrDefault();
             var sourcePath = firstFile?.WorkingCopyPath ?? firstFile?.FilePath;
             string? adminPassword = null;
-            bool qbWasLaunched = false;
+            // FIX #57: qbWasLaunched is no longer used to set PreferCurrentlyOpenFile.
+            // The SDK always uses BeginSession(filePath) to open the company file.
 
             // ── Phase 0b: Test if already certified ─────────────────────
             AppendLog("🔍 Testing if app is already certified for this company file...");
@@ -892,31 +893,29 @@ namespace QB_TimeWarp.UI.ViewModels
                     AppendLog("  Proceeding with full authentication flow...");
                 }
 
-                // ── Phase 0c: Launch QuickBooks via file association ─────────
-                // FIX #53: Open the .qbw file via Windows file association —
-                // identical to double-clicking in Explorer. Windows picks the
-                // correct QB version automatically. QB opens the file and shows
-                // its native password dialog (if needed).
+                // ── Phase 0c: Ensure QuickBooks is running ──────────────────
+                // FIX #57: We just need QB to be running — the SDK's BeginSession(filePath)
+                // will open the specific company file. Process.Start on the .qbw file is
+                // only used to start the QB application, not to open the file.
                 Process? qbProcess = null;
 
                 if (!string.IsNullOrEmpty(sourcePath))
                 {
                     AppendLog("═══════════════════════════════════════════════");
-                    AppendLog("🚀 Opening company file in QuickBooks...");
-                    AppendLog($"  File: {sourcePath}");
-                    AppendLog("  (Using Windows file association — like double-clicking in Explorer)");
+                    AppendLog("🚀 Ensuring QuickBooks is running...");
+                    AppendLog($"  Company file: {sourcePath}");
+                    AppendLog("  (SDK will open the file via BeginSession)");
 
                     qbProcess = QBConnectionManager.LaunchQuickBooks(sourcePath);
 
                     if (qbProcess == null)
                     {
-                        AppendLog("⚠ Could not open the company file.");
-                        AppendLog("  Please open QuickBooks manually and load the file.");
+                        AppendLog("⚠ Could not start QuickBooks.");
+                        AppendLog("  Please open QuickBooks manually before continuing.");
                     }
                     else
                     {
-                        qbWasLaunched = true;
-                        AppendLog($"  QuickBooks launched (PID: {qbProcess.Id})");
+                        AppendLog($"  QuickBooks is running (PID: {qbProcess.Id})");
                         AppendLog("");
                         AppendLog("  Waiting for QuickBooks to initialize...");
 
@@ -936,10 +935,11 @@ namespace QB_TimeWarp.UI.ViewModels
 
                     AppendLog("");
                     AppendLog("  ┌─────────────────────────────────────────────────┐");
-                    AppendLog("  │  🔐 If password-protected, enter your admin     │");
-                    AppendLog("  │     password in the QuickBooks login dialog.     │");
+                    AppendLog("  │  🔐 QuickBooks may show a PASSWORD dialog       │");
+                    AppendLog("  │     when the SDK opens your company file.        │");
+                    AppendLog("  │     Enter your admin password when prompted.     │");
                     AppendLog("  │                                                 │");
-                    AppendLog("  │  📋 QuickBooks may show a CERTIFICATE           │");
+                    AppendLog("  │  📋 QuickBooks may also show a CERTIFICATE      │");
                     AppendLog("  │     approval dialog. Please select:             │");
                     AppendLog("  │     'Yes, always; allow access even if          │");
                     AppendLog("  │      QuickBooks is not running'                 │");
@@ -999,7 +999,7 @@ namespace QB_TimeWarp.UI.ViewModels
 
                     try
                     {
-                        await Task.Run(() => RunMigrationForFile(file, _cts.Token, adminPassword ?? "", qbWasLaunched), _cts.Token);
+                        await Task.Run(() => RunMigrationForFile(file, _cts.Token, adminPassword ?? ""), _cts.Token);
                         file.Status = "Success";
                         AppendLog($"✓ {file.FileName}: Migration completed successfully");
 
@@ -1056,7 +1056,7 @@ namespace QB_TimeWarp.UI.ViewModels
         // ══════════════════════════════════════════════════════════════════════
 
         private void RunMigrationForFile(QBWFileEntry file, CancellationToken ct,
-            string adminPassword = "", bool qbAlreadyRunning = false)
+            string adminPassword = "")
         {
             // Load configuration
             var config = LoadConfiguration();
@@ -1079,15 +1079,10 @@ namespace QB_TimeWarp.UI.ViewModels
             Dictionary<string, ExportedEntitySet> exportedData;
             using (var conn = new QBConnectionManager(config.QuickBooks.QB2023, "QB2023-Export"))
             {
-                // FIX #53: QB was launched via file association — it already has
-                // the company file open (user entered password in QB's login dialog).
-                // Tell the SDK to attach to the currently-open file instead of passing
-                // the file path again. This prevents a duplicate password prompt.
-                if (qbAlreadyRunning)
-                {
-                    conn.PreferCurrentlyOpenFile = true;
-                    AppendLog("  Using currently-open file in QuickBooks (no duplicate password prompt)");
-                }
+                // FIX #57: The SDK's BeginSession(filePath) will open the company file
+                // in QuickBooks and trigger password / certificate dialogs as needed.
+                // No need for PreferCurrentlyOpenFile — the SDK handles everything.
+                AppendLog($"  SDK will open file: {migrationPath}");
 
                 // FIX #51: Use ConnectWithCertificateWait with progress callback
                 // so the user sees what's happening while waiting for certificate approval.
