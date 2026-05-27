@@ -772,6 +772,22 @@
                                              Foreground="{StaticResource TextBody}" FontSize="13"
                                              GroupName="ValidationLevel" />
                             </StackPanel>
+
+                            <Separator Background="#1A2E50" Margin="0,16,0,16" />
+
+                            <!-- ── FIX #61: QB2021 Template Certification ── -->
+                            <TextBlock Text="QB 2021 TEMPLATE SETUP" FontSize="12" FontWeight="Bold"
+                                       Foreground="{StaticResource Accent}" Margin="0,0,0,8" />
+                            <TextBlock TextWrapping="Wrap" FontSize="12" Foreground="{StaticResource TextDim}" Margin="0,0,0,12">
+                                One-time setup: Authorize QB-TimeWarp to access the blank QB 2021 template.
+                                Open the template file in QuickBooks 2021 first, then click the button below.
+                            </TextBlock>
+                            <Button Content="🔐  Certify QB2021 Template"
+                                    Command="{Binding CertifyTemplateCommand}"
+                                    ToolTip="One-time setup: Opens a connection to certify QB-TimeWarp for the blank template in QuickBooks 2021"
+                                    Style="{StaticResource PrimaryButton}"
+                                    HorizontalAlignment="Left"
+                                    Padding="18,10" FontSize="13" />
                         </StackPanel>
                     </Border>
 

@@ -207,6 +207,7 @@ namespace QB_TimeWarp.UI.ViewModels
             SelectAllEntitiesCommand = new RelayCommand(OnSelectAllEntities);
             DeselectAllEntitiesCommand = new RelayCommand(OnDeselectAllEntities);
             ResetMigrationCommand = new RelayCommand(OnResetMigration, () => !IsMigrationRunning);
+            CertifyTemplateCommand = new RelayCommand(async () => await CertifyTemplateManuallyAsync(), () => IsIdle);
 
             // File collection change listener for estimates
             Files.CollectionChanged += (s, e) => CalculateEstimates();
@@ -214,10 +215,9 @@ namespace QB_TimeWarp.UI.ViewModels
             // FIX #56: Refresh working template from master on every app startup
             RefreshWorkingTemplate();
 
-            // FIX #59: Certify QB2021 template on startup (async, non-blocking)
-            // Fire-and-forget — runs in the background so the UI loads immediately.
-            // If certification is needed, the user will see prompts in the activity log.
-            _ = CertifyQB2021TemplateAsync();
+            // FIX #61: Check certification status on startup (no auto-launch).
+            // If not certified, show a warning. User clicks the manual button to certify.
+            _ = CheckQB2021CertificationStatusAsync();
         }
 
         /// <summary>
@@ -280,42 +280,22 @@ namespace QB_TimeWarp.UI.ViewModels
         }
 
         /// <summary>
-        /// FIX #59: Certifies the QB2021 blank template for QB-TimeWarp SDK access.
-        /// 
-        /// The QB SDK requires each application to be "certified" (authorized) for each
-        /// company file it connects to. The blank template is a company file that needs
-        /// this one-time certification so the import phase can connect without errors.
-        ///
-        /// Flow:
-        ///   1. Test if already certified (silent probe)
-        ///   2. If certified → done, skip everything
-        ///   3. If NOT certified → launch QB 2021, wait for it to start,
-        ///      attempt connection (which triggers QB's certificate dialog),
-        ///      wait for user to approve, then close the connection
-        ///   4. On success → set _qb2021TemplateCertified = true
-        ///
-        /// This runs once on app startup. After the user approves the certificate
-        /// with "Yes, always; allow access even if QuickBooks is not running",
-        /// all future startups will find it already certified (fast path).
+        /// FIX #61: Lightweight startup check — just tests if the template is already certified.
+        /// No auto-launching of QuickBooks. If not certified, shows a warning directing
+        /// the user to click the manual "Certify QB2021 Template" button.
         /// </summary>
-        private async Task CertifyQB2021TemplateAsync()
+        private async Task CheckQB2021CertificationStatusAsync()
         {
             try
             {
-                // Need a valid template file to certify
                 var templatePath = File.Exists(WorkingTemplatePath) ? WorkingTemplatePath : MasterTemplatePath;
 
                 if (!File.Exists(templatePath))
                 {
-                    AppendLog("⚠ QB2021 template certification skipped — template file not found.");
-                    Log.Warning("FIX #59: Cannot certify QB2021 template — neither working nor master template exists.");
+                    AppendLog("⚠ QB2021 template not found — certification check skipped.");
                     return;
                 }
 
-                AppendLog("");
-                AppendLog("🔍 Checking QB 2021 template certification...");
-
-                // Build a QBInstanceConfig for the template
                 var config = LoadConfiguration();
                 var templateConfig = new QBInstanceConfig
                 {
@@ -326,129 +306,154 @@ namespace QB_TimeWarp.UI.ViewModels
                     TimeoutSeconds = config.QuickBooks.QB2021.TimeoutSeconds
                 };
 
-                // Step 1: Silent certification test
                 var certStatus = await Task.Run(() =>
-                    QBConnectionManager.TestCertification(templateConfig, "QB2021-TemplateCert"));
+                    QBConnectionManager.TestCertification(templateConfig, "QB2021-CertCheck"));
 
                 if (certStatus == QBConnectionManager.CertificationStatus.Certified)
                 {
                     _qb2021TemplateCertified = true;
-                    AppendLog("✓ QB 2021 template is already certified for QB-TimeWarp");
-                    AppendLog("  Import phase will connect without prompts.");
-                    Log.Information("FIX #59: QB2021 template already certified: {Path}", templatePath);
-                    return;
-                }
-
-                // Step 2: Not certified — need user interaction
-                AppendLog("⚠ QB 2021 template is NOT yet certified for QB-TimeWarp");
-                AppendLog("");
-                AppendLog("  ┌─────────────────────────────────────────────────┐");
-                AppendLog("  │  🔐 FIRST-TIME SETUP: QB 2021 Template         │");
-                AppendLog("  │                                                 │");
-                AppendLog("  │  QuickBooks 2021 will open the blank template.  │");
-                AppendLog("  │  A CERTIFICATE dialog will appear.              │");
-                AppendLog("  │                                                 │");
-                AppendLog("  │  Please select:                                 │");
-                AppendLog("  │  ✅ 'Yes, always; allow access even if          │");
-                AppendLog("  │      QuickBooks is not running'                 │");
-                AppendLog("  │  Then click Continue / OK.                      │");
-                AppendLog("  │                                                 │");
-                AppendLog("  │  This only needs to happen ONCE.                │");
-                AppendLog("  │  No password needed — it's a blank template.    │");
-                AppendLog("  │                                                 │");
-                AppendLog("  │  ⏳ Waiting up to 3 minutes...                  │");
-                AppendLog("  └─────────────────────────────────────────────────┘");
-                AppendLog("");
-
-                Log.Information("FIX #60: QB2021 template not certified. Launching QB 2021 explicitly for certificate approval...");
-
-                // Step 3: Kill any running QuickBooks (may be QB2023 from file association)
-                // then launch QB 2021 explicitly with the template file
-                AppendLog("  🛑 Closing any running QuickBooks instances...");
-                await Task.Run(() => QBConnectionManager.KillAllQuickBooksProcesses());
-                await Task.Delay(3000); // Let QB processes fully exit
-
-                var qb2021ExePath = config.QuickBooks.QB2021.InstallPath;
-                AppendLog($"  🚀 Launching QuickBooks 2021 explicitly...");
-                AppendLog($"     Exe: {qb2021ExePath}");
-                AppendLog($"     File: {templatePath}");
-                Log.Information("FIX #60: Launching QB2021. Exe: {Exe}, File: {File}", qb2021ExePath, templatePath);
-
-                var qbProcess = await Task.Run(() =>
-                    QBConnectionManager.LaunchQuickBooksExplicit(qb2021ExePath, templatePath));
-
-                if (qbProcess != null)
-                {
-                    AppendLog($"  ✓ QuickBooks 2021 launched (PID: {qbProcess.Id})");
+                    AppendLog("✓ QB 2021 template is certified for QB-TimeWarp.");
+                    Log.Information("FIX #61: QB2021 template already certified: {Path}", templatePath);
                 }
                 else
                 {
-                    AppendLog("  ⚠ Could not start QuickBooks 2021 automatically.");
-                    AppendLog($"  Verify QB2021 is installed at: {qb2021ExePath}");
-                    AppendLog("  Please open QuickBooks 2021 manually with the blank template.");
-                }
-
-                // Step 4: Wait for QB to be ready (longer delay for QB2021 to load file)
-                AppendLog("  Waiting for QuickBooks 2021 to initialize and open template...");
-                var qbReady = await Task.Run(() => QBConnectionManager.WaitForQuickBooksReady(
-                    timeoutSeconds: 90,
-                    initialDelayMs: 8000,
-                    pollIntervalMs: 3000,
-                    onProgress: (attempt, elapsed, msg) =>
-                    {
-                        if (attempt > 0 && attempt % 3 == 0)
-                            AppendLog($"  {msg}");
-                    }));
-
-                if (!qbReady)
-                {
-                    AppendLog("  ⚠ QuickBooks did not start in time.");
-                    AppendLog("  Template certification will be attempted during migration.");
-                    Log.Warning("FIX #59: QB not ready for template certification — will retry during migration.");
-                    return;
-                }
-
-                AppendLog("  ✓ QuickBooks is ready.");
-
-                // Step 5: Attempt connection with certificate wait
-                // This will trigger QB's certificate dialog — user must approve.
-                AppendLog("  🔐 Connecting to blank template (certificate dialog should appear)...");
-
-                try
-                {
-                    using (var conn = new QBConnectionManager(templateConfig, "QB2021-TemplateCert"))
-                    {
-                        await Task.Run(() => conn.ConnectWithCertificateWait(
-                            maxWaitSeconds: 180,
-                            onProgress: (attempt, elapsed, remaining, msg) =>
-                            {
-                                if (attempt == 1 || attempt % 2 == 0)
-                                    AppendLog($"  [{elapsed}s] {msg}");
-                            }));
-
-                        // If we get here, connection succeeded — template is certified!
-                        _qb2021TemplateCertified = true;
-                        AppendLog("");
-                        AppendLog("  ✓ QB 2021 template certified successfully!");
-                        AppendLog("  You won't be asked again for this template.");
-                        AppendLog("");
-                        Log.Information("FIX #59: QB2021 template certified successfully: {Path}", templatePath);
-
-                        // Connection will be closed by the using block (Dispose → Disconnect)
-                    }
-                }
-                catch (QBConnectionException ex)
-                {
-                    AppendLog($"  ⚠ Template certification failed: {ex.Message}");
-                    AppendLog("  The certificate dialog may not have been approved in time.");
-                    AppendLog("  You can retry by restarting the app, or it will be attempted during migration.");
-                    Log.Warning(ex, "FIX #59: QB2021 template certification failed: {Message}", ex.Message);
+                    AppendLog("⚠ QB 2021 template is NOT yet certified for QB-TimeWarp.");
+                    AppendLog("  Go to Options → click '🔐 Certify QB2021 Template' to set up.");
+                    Log.Information("FIX #61: QB2021 template not certified. User must use manual button.");
                 }
             }
             catch (Exception ex)
             {
-                AppendLog($"⚠ Template certification check error: {ex.Message}");
-                Log.Error(ex, "FIX #59: Unexpected error during QB2021 template certification: {Message}", ex.Message);
+                // Non-fatal — don't block app startup
+                AppendLog($"⚠ Could not check template certification: {ex.Message}");
+                Log.Warning(ex, "FIX #61: Error checking certification status: {Message}", ex.Message);
+            }
+        }
+
+        /// <summary>
+        /// FIX #61: Manual template certification triggered by the user clicking
+        /// the "Certify QB2021 Template" button.
+        ///
+        /// Simple workflow:
+        ///   1. User opens Blank_Template.qbw in QuickBooks 2021 manually
+        ///   2. Clicks the button → this method runs
+        ///   3. A dialog confirms QB2021 has the file open
+        ///   4. App tries to connect via SDK → triggers certificate dialog in QB
+        ///   5. User approves → done!
+        ///
+        /// No auto-launching, no version detection, no process management.
+        /// The user handles opening QB2021 — the app just connects.
+        /// </summary>
+        private async Task CertifyTemplateManuallyAsync()
+        {
+            var templatePath = File.Exists(WorkingTemplatePath) ? WorkingTemplatePath : MasterTemplatePath;
+
+            if (!File.Exists(templatePath))
+            {
+                MessageBox.Show(
+                    "Blank template file not found.\n\n" +
+                    $"Expected at:\n{WorkingTemplatePath}\n\nor:\n{MasterTemplatePath}",
+                    "Template Not Found",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Warning);
+                return;
+            }
+
+            // Show instructions in the activity log
+            AppendLog("");
+            AppendLog("═══════════════════════════════════════════════════");
+            AppendLog("🔐 QB 2021 Template Certification");
+            AppendLog("");
+            AppendLog("STEP 1: Open the blank template in QuickBooks 2021:");
+            AppendLog($"        {templatePath}");
+            AppendLog("");
+            AppendLog("STEP 2: Once the file is open in QB 2021,");
+            AppendLog("        click OK in the dialog to continue.");
+            AppendLog("═══════════════════════════════════════════════════");
+
+            // Ask user to confirm QB2021 has the file open
+            var result = MessageBox.Show(
+                "Please open Blank_Template.qbw in QuickBooks 2021.\n\n" +
+                $"File location:\n{templatePath}\n\n" +
+                "IMPORTANT:\n" +
+                "• Open the file using QuickBooks 2021 (not 2023)\n" +
+                "• Wait until the company file is fully loaded\n" +
+                "• Then click OK to continue\n\n" +
+                "Click OK when the file is open in QuickBooks 2021.",
+                "QB 2021 Template Certification — Step 1",
+                MessageBoxButton.OKCancel,
+                MessageBoxImage.Information);
+
+            if (result != MessageBoxResult.OK)
+            {
+                AppendLog("✗ Certification cancelled by user.");
+                return;
+            }
+
+            AppendLog("");
+            AppendLog("🔐 Attempting SDK connection to QB 2021...");
+            AppendLog("   (A certificate dialog should appear in QuickBooks.)");
+            AppendLog("   Select: 'Yes, always; allow access even if QuickBooks is not running'");
+            AppendLog("   Then click Continue / Done.");
+            AppendLog("");
+
+            try
+            {
+                var config = LoadConfiguration();
+                var templateConfig = new QBInstanceConfig
+                {
+                    CompanyFilePath = templatePath,
+                    ApplicationName = config.QuickBooks.QB2021.ApplicationName,
+                    SDKVersion = config.QuickBooks.QB2021.SDKVersion,
+                    MaxRetries = config.QuickBooks.QB2021.MaxRetries,
+                    TimeoutSeconds = config.QuickBooks.QB2021.TimeoutSeconds
+                };
+
+                Log.Information("FIX #61: Manual certification attempt. Template: {Path}", templatePath);
+
+                // Try to connect — this triggers the certificate dialog in QB
+                using (var conn = new QBConnectionManager(templateConfig, "QB2021-ManualCert"))
+                {
+                    await Task.Run(() => conn.Connect());
+
+                    // If we get here, connection succeeded — template is certified!
+                    _qb2021TemplateCertified = true;
+                    AppendLog("✓ Certificate approved successfully!");
+                    AppendLog("✓ QB 2021 template is now certified for QB-TimeWarp.");
+                    AppendLog("  You won't be asked again. Migrations will connect without prompts.");
+                    AppendLog("");
+                    Log.Information("FIX #61: QB2021 template certified successfully via manual button: {Path}", templatePath);
+
+                    MessageBox.Show(
+                        "QB 2021 template certification complete!\n\n" +
+                        "You can now run migrations without being prompted.",
+                        "Certification Successful",
+                        MessageBoxButton.OK,
+                        MessageBoxImage.Information);
+
+                    // Connection closed by using block
+                }
+            }
+            catch (Exception ex)
+            {
+                AppendLog($"✗ Certification failed: {ex.Message}");
+                AppendLog("");
+                AppendLog("  Troubleshooting:");
+                AppendLog("  • Is the file open in QuickBooks 2021 (not 2023)?");
+                AppendLog("  • Did the certificate dialog appear? Did you approve it?");
+                AppendLog("  • Try closing QB, reopening the template in QB 2021, then try again.");
+                AppendLog("");
+                Log.Warning(ex, "FIX #61: Manual certification failed: {Message}", ex.Message);
+
+                MessageBox.Show(
+                    $"Certification failed:\n{ex.Message}\n\n" +
+                    "Make sure:\n" +
+                    "• The blank template is open in QuickBooks 2021\n" +
+                    "• You approved the certificate dialog in QB\n\n" +
+                    "You can try again by clicking the button once more.",
+                    "Certification Failed",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Warning);
             }
         }
 
@@ -683,6 +688,7 @@ namespace QB_TimeWarp.UI.ViewModels
         public ICommand SelectAllEntitiesCommand { get; }
         public ICommand DeselectAllEntitiesCommand { get; }
         public ICommand ResetMigrationCommand { get; }
+        public ICommand CertifyTemplateCommand { get; }
 
         // ── Logging helper ────────────────────────────────────────────────────
 
