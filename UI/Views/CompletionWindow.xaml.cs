@@ -24,13 +24,17 @@ namespace QB_TimeWarp.UI.Views
         private readonly List<string> _sourceFiles;
         private readonly string _downloadsFolder;
 
+        private readonly string? _outputFilePath;
+
         public CompletionWindow(
             List<string> successfulFiles,
-            int exported, int transformed, int imported, int failed)
+            int exported, int transformed, int imported, int failed,
+            string? outputFilePath = null)
         {
             InitializeComponent();
 
             _sourceFiles = successfulFiles;
+            _outputFilePath = outputFilePath;
             _downloadsFolder = Path.Combine(
                 Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), "Downloads");
 
@@ -51,18 +55,30 @@ namespace QB_TimeWarp.UI.Views
             // Build output file list
             var outputFiles = new List<OutputFileItem>();
 
-            // Converted QBW file (the target)
-            var configPath = Path.Combine(Directory.GetCurrentDirectory(), "appsettings.json");
-            string targetQBW = @"C:\QB-TimeWarp\Working\Target\Blank_Template.qbw";
-            try
+            // Converted QBW file (the output)
+            // FIX #55: Use the actual output file path passed from RunMigrationForFile,
+            // not the template location from appsettings.json. The template is the
+            // BLANK source; the output is where the migrated data was written.
+            string targetQBW;
+            if (!string.IsNullOrEmpty(_outputFilePath) && File.Exists(_outputFilePath))
             {
-                if (File.Exists(configPath))
-                {
-                    var json = Newtonsoft.Json.Linq.JObject.Parse(File.ReadAllText(configPath));
-                    targetQBW = json.SelectToken("QuickBooks.QB2021.CompanyFilePath")?.ToString() ?? targetQBW;
-                }
+                targetQBW = _outputFilePath;
             }
-            catch { }
+            else
+            {
+                // Fallback: read template path from config (for backward compatibility)
+                var configPath = Path.Combine(Directory.GetCurrentDirectory(), "appsettings.json");
+                targetQBW = @"C:\QB-TimeWarp\Working\QB21_Blank_Template\Blank_Template.qbw";
+                try
+                {
+                    if (File.Exists(configPath))
+                    {
+                        var json = Newtonsoft.Json.Linq.JObject.Parse(File.ReadAllText(configPath));
+                        targetQBW = json.SelectToken("QuickBooks.QB2021.CompanyFilePath")?.ToString() ?? targetQBW;
+                    }
+                }
+                catch { }
+            }
 
             outputFiles.Add(new OutputFileItem
             {

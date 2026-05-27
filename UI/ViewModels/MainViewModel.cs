@@ -916,6 +916,7 @@ namespace QB_TimeWarp.UI.ViewModels
             ShowProgressSection = true;
             IsMigrationRunning = true;
             _cts = new CancellationTokenSource();
+            string? lastOutputFilePath = null; // FIX #55: Track output file for CompletionWindow
 
             ResetCounters();
 
@@ -933,6 +934,14 @@ namespace QB_TimeWarp.UI.ViewModels
                         await Task.Run(() => RunMigrationForFile(file, _cts.Token, adminPassword ?? "", qbWasLaunched), _cts.Token);
                         file.Status = "Success";
                         AppendLog($"✓ {file.FileName}: Migration completed successfully");
+
+                        // FIX #55: Capture the output path for the CompletionWindow
+                        var outputPath = !string.IsNullOrEmpty(DestinationPreview)
+                            ? DestinationPreview
+                            : Path.Combine(DestinationFolder,
+                                Path.GetFileNameWithoutExtension(file.FileName) + "-QB2021.qbw");
+                        if (File.Exists(outputPath))
+                            lastOutputFilePath = outputPath;
                     }
                     catch (OperationCanceledException)
                     {
@@ -955,9 +964,11 @@ namespace QB_TimeWarp.UI.ViewModels
                     CurrentPhase = "Complete";
                     _dispatcher.Invoke(() =>
                     {
+                        // FIX #55: Pass the actual output file path to CompletionWindow
                         var completionWindow = new UI.Views.CompletionWindow(
                             Files.Where(f => f.Status == "Success").Select(f => f.FilePath).ToList(),
-                            ExportedCount, TransformedCount, ImportedCount, FailedCount
+                            ExportedCount, TransformedCount, ImportedCount, FailedCount,
+                            lastOutputFilePath
                         );
                         completionWindow.Owner = Application.Current.MainWindow;
                         completionWindow.ShowDialog();
