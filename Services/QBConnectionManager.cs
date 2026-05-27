@@ -94,73 +94,46 @@ namespace QB_TimeWarp.Services
         }
 
         // ══════════════════════════════════════════════════════════════════════
-        //  QuickBooks Launch — Process.Start the QB executable with a company file
+        //  QuickBooks Launch — Windows file association (.qbw → QuickBooks)
         // ══════════════════════════════════════════════════════════════════════
 
         /// <summary>
-        /// Known installation paths for QuickBooks Desktop (checked in order).
+        /// Launches QuickBooks by opening a .qbw company file via Windows file association.
+        /// FIX #53: Instead of searching for the QB executable in hardcoded paths,
+        /// we use UseShellExecute = true on the .qbw file itself. This is identical
+        /// to double-clicking the file in Windows Explorer — Windows automatically
+        /// picks the correct QuickBooks version based on the registered file association.
+        ///
+        /// Benefits:
+        ///   • Works with any QB version (2021, 2023, Enterprise, etc.)
+        ///   • No hardcoded installation paths to maintain
+        ///   • Handles 32-bit and 64-bit installations automatically
+        ///   • Opens the company file directly (QB shows its password dialog if needed)
         /// </summary>
-        private static readonly string[] QBInstallPaths = new[]
+        /// <param name="companyFilePath">Full path to the .QBW company file to open.</param>
+        /// <returns>The launched Process, or null if the launch failed.</returns>
+        public static Process? LaunchQuickBooks(string companyFilePath)
         {
-            @"C:\Program Files\Intuit\QuickBooks 2023\QBW32.EXE",
-            @"C:\Program Files (x86)\Intuit\QuickBooks 2023\QBW32.EXE",
-            @"C:\Program Files\Intuit\QuickBooks 2023\QBW.EXE",
-            @"C:\Program Files (x86)\Intuit\QuickBooks 2023\QBW.EXE",
-            @"C:\Program Files\Intuit\QuickBooks Enterprise Solutions 23.0\QBW32.EXE",
-            @"C:\Program Files (x86)\Intuit\QuickBooks Enterprise Solutions 23.0\QBW32.EXE",
-        };
-
-        /// <summary>
-        /// Finds the QuickBooks executable on the local machine.
-        /// Searches known installation paths in order.
-        /// </summary>
-        /// <returns>Full path to the QB executable, or null if not found.</returns>
-        public static string? FindQuickBooksExecutable()
-        {
-            foreach (var path in QBInstallPaths)
+            if (string.IsNullOrWhiteSpace(companyFilePath))
             {
-                if (File.Exists(path))
-                {
-                    Log.Information("Found QuickBooks executable: {Path}", path);
-                    return path;
-                }
-            }
-
-            Log.Warning("QuickBooks executable not found in any known location.");
-            return null;
-        }
-
-        /// <summary>
-        /// Launches QuickBooks Desktop WITHOUT opening a company file.
-        /// FIX #52: QB ignores command-line file arguments in many versions, so we
-        /// launch the application plain and let the SDK's BeginSession(filePath, ...)
-        /// open the company file programmatically. This triggers QB's native password
-        /// dialog (if the file is password-protected) and the certificate approval
-        /// dialog (if the app hasn't been authorized yet) — all from a single
-        /// BeginSession call, giving the user one unified prompt sequence.
-        /// </summary>
-        /// <returns>The launched Process, or null if QB executable was not found.</returns>
-        public static Process? LaunchQuickBooks()
-        {
-            var qbExePath = FindQuickBooksExecutable();
-            if (qbExePath == null)
-            {
-                Log.Error("Cannot launch QuickBooks — executable not found. " +
-                    "Searched: {Paths}", string.Join(", ", QBInstallPaths));
+                Log.Error("Cannot launch QuickBooks — no company file path provided.");
                 return null;
             }
 
-            Log.Information("Launching QuickBooks (no file argument — SDK will open file): {Exe}", qbExePath);
+            if (!File.Exists(companyFilePath))
+            {
+                Log.Error("Cannot launch QuickBooks — company file not found: {Path}", companyFilePath);
+                return null;
+            }
+
+            Log.Information("Opening company file via Windows file association: {Path}", companyFilePath);
 
             try
             {
                 var startInfo = new ProcessStartInfo
                 {
-                    FileName = qbExePath,
-                    // FIX #52: No Arguments — QB ignores file args in many versions.
-                    // The SDK's BeginSession() will open the file and trigger QB's
-                    // native password + certificate dialogs.
-                    UseShellExecute = true,          // Required for GUI apps
+                    FileName = companyFilePath,       // The .qbw file itself — not the executable
+                    UseShellExecute = true,           // Let Windows handle the file association
                     WindowStyle = ProcessWindowStyle.Normal
                 };
 
@@ -168,19 +141,29 @@ namespace QB_TimeWarp.Services
 
                 if (process != null)
                 {
-                    Log.Information("QuickBooks launched successfully (PID: {PID}). " +
-                        "The SDK will open the company file during BeginSession().", process.Id);
+                    Log.Information("QuickBooks launched via file association (PID: {PID}). " +
+                        "Company file: {Path}", process.Id, companyFilePath);
                 }
                 else
                 {
-                    Log.Warning("Process.Start returned null — QuickBooks may not have launched.");
+                    // Process.Start with UseShellExecute can return null when reusing
+                    // an existing process — QB may have already been running.
+                    Log.Information("Process.Start returned null — QuickBooks may already be running " +
+                        "or Windows reused an existing process. File: {Path}", companyFilePath);
                 }
 
                 return process;
             }
+            catch (System.ComponentModel.Win32Exception ex)
+            {
+                Log.Error(ex, "Windows could not open the company file. " +
+                    "No application is associated with .qbw files. " +
+                    "Ensure QuickBooks Desktop is installed. File: {Path}", companyFilePath);
+                return null;
+            }
             catch (Exception ex)
             {
-                Log.Error(ex, "Failed to launch QuickBooks: {Message}", ex.Message);
+                Log.Error(ex, "Failed to open company file via file association: {Message}", ex.Message);
                 return null;
             }
         }
@@ -480,15 +463,15 @@ namespace QB_TimeWarp.Services
         /// When true, the next Connect() call will first try BeginSession with an
         /// empty company file path (= attach to the currently-open file in QuickBooks).
         /// This avoids a duplicate password prompt when QuickBooks has already been
-        /// launched WITH a file and the user has already authenticated.
+        /// launched and has the company file open.
         ///
         /// FIX #50: The QBXML SDK does NOT accept a password parameter — security is
         /// handled entirely by the QuickBooks Desktop UI.
         ///
-        /// FIX #52: Since we now launch QB WITHOUT a file argument (QB ignores them),
-        /// this property is typically false. The SDK's BeginSession(filePath, 0) opens
-        /// the file and triggers QB's native password + certificate dialogs. Only set
-        /// this to true if QB already has a file open (e.g., user opened it manually).
+        /// FIX #53: Since we now launch QB via Windows file association (opening the
+        /// .qbw file directly), QB already has the file open and the user has already
+        /// authenticated. Set this to true so the SDK attaches to the open file via
+        /// BeginSession("", 0) instead of triggering a second password prompt.
         /// </summary>
         public bool PreferCurrentlyOpenFile { get; set; }
 
@@ -499,12 +482,12 @@ namespace QB_TimeWarp.Services
         /// The QB SDK BeginSession() does NOT accept a password parameter. When a company
         /// file is password-protected, QB shows its own login dialog.
         ///
-        /// FIX #52 — File opening strategy:
-        /// QB is launched WITHOUT a file argument (it ignores command-line file args).
-        /// BeginSession(filePath, 0) opens the company file in the running QB instance,
-        /// triggering the native password dialog and certificate approval in one step.
-        /// If PreferCurrentlyOpenFile is true, we first try BeginSession("", 0) to
-        /// attach to an already-open file; if that fails, we fall back to the file path.
+        /// FIX #53 — File opening strategy:
+        /// QB is launched via Windows file association (UseShellExecute on .qbw file),
+        /// so the company file is already open and authenticated by the time the SDK
+        /// connects. PreferCurrentlyOpenFile = true tells Connect() to first try
+        /// BeginSession("", 0) to attach to the open file, avoiding a duplicate prompt.
+        /// If that fails, it falls back to the explicit file path.
         /// </summary>
         public void Connect()
         {
