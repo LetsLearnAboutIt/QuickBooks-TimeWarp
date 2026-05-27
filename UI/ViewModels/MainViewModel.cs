@@ -1119,95 +1119,70 @@ namespace QB_TimeWarp.UI.ViewModels
             AppendLog("Phase 2/4: Transforming & importing data...");
 
             var source = !string.IsNullOrEmpty(file.WorkingCopyPath) ? file.WorkingCopyPath : file.FilePath;
+
+            // FIX #58: Compute the final output path but do NOT copy the template
+            // there yet. The SDK imports into Working\Target\Blank_Template.qbw first,
+            // and we copy to the output location AFTER import completes successfully.
             var dest = !string.IsNullOrEmpty(DestinationPreview)
                 ? DestinationPreview
                 : Path.Combine(DestinationFolder,
                     Path.GetFileNameWithoutExtension(file.FileName) + "-QB2021.qbw");
 
-            // ── Ensure output directory exists ──────────────────────────
-            var outputDir = Path.GetDirectoryName(dest);
-            if (!string.IsNullOrEmpty(outputDir) && !Directory.Exists(outputDir))
+            // ── Verify working template exists ──────────────────────────
+            // FIX #58: The SDK will import directly into the working template.
+            // RefreshWorkingTemplate() already copied master → Working\Target on startup.
+            if (!File.Exists(WorkingTemplatePath))
             {
-                AppendLog($"  Creating output directory: {outputDir}");
-                Directory.CreateDirectory(outputDir);
-                Log.Information("Created output directory: {Dir}", outputDir);
+                // Attempt to refresh from master as a recovery step
+                if (File.Exists(MasterTemplatePath))
+                {
+                    AppendLog($"  ⚠ Working template missing — refreshing from master...");
+                    var targetDir = Path.GetDirectoryName(WorkingTemplatePath)!;
+                    if (!Directory.Exists(targetDir))
+                        Directory.CreateDirectory(targetDir);
+                    File.Copy(MasterTemplatePath, WorkingTemplatePath, overwrite: true);
+                    AppendLog($"  ✓ Working template refreshed from master");
+                    Log.Information("FIX #58: Recovered working template from master: {Src} → {Dst}",
+                        MasterTemplatePath, WorkingTemplatePath);
+                }
+                else
+                {
+                    var errMsg = $"QB 2021 blank template not found at working path ({WorkingTemplatePath}) " +
+                        $"or master path ({MasterTemplatePath})";
+                    AppendLog($"  ✗ {errMsg}");
+                    Log.Error(errMsg);
+                    throw new FileNotFoundException(errMsg, WorkingTemplatePath);
+                }
             }
 
-            // ── FIX #54 + #56: Copy working template to output path ────────
-            // The QB SDK has no "Save As" — importing data goes directly into
-            // the file opened by BeginSession. To preserve the blank template
-            // for reuse, we COPY the working template to the output path.
-            //
-            // FIX #56 workflow:
-            //   Master (QB21_Blank_Template) → Working\Target (refreshed on startup)
-            //   Working\Target → Output\{name}-QB2021.qbw (this step, before SDK import)
-            //   Master is NEVER opened or modified by the SDK.
-            //
-            // Primary source: Working\Target (refreshed on startup by RefreshWorkingTemplate)
-            // Fallback: Master template (from config) — in case working copy is missing
-            string templateCopySource;
-            if (File.Exists(WorkingTemplatePath))
-            {
-                templateCopySource = WorkingTemplatePath;
-                AppendLog($"  Template source: {WorkingTemplatePath} (working copy)");
-            }
-            else if (File.Exists(MasterTemplatePath))
-            {
-                templateCopySource = MasterTemplatePath;
-                AppendLog($"  ⚠ Working copy missing — using master template directly: {MasterTemplatePath}");
-                Log.Warning("FIX #56: Working template missing at {Working}, falling back to master {Master}",
-                    WorkingTemplatePath, MasterTemplatePath);
-            }
-            else
-            {
-                var errMsg = $"QB 2021 blank template not found at working path ({WorkingTemplatePath}) " +
-                    $"or master path ({MasterTemplatePath})";
-                AppendLog($"  ✗ {errMsg}");
-                Log.Error(errMsg);
-                throw new FileNotFoundException(errMsg, WorkingTemplatePath);
-            }
+            var workingTemplateSize = new FileInfo(WorkingTemplatePath).Length;
+            AppendLog($"  Working template: {WorkingTemplatePath} ({workingTemplateSize:N0} bytes)");
 
             // Record master template size BEFORE migration for post-migration verification
             long masterSizeBeforeMigration = File.Exists(MasterTemplatePath)
                 ? new FileInfo(MasterTemplatePath).Length : -1;
 
-            try
-            {
-                AppendLog($"  Copying template → {dest}");
-                File.Copy(templateCopySource, dest, overwrite: true);
-                var sourceSize = new FileInfo(templateCopySource).Length;
-                var copySize = new FileInfo(dest).Length;
-                AppendLog($"  ✓ Template copied ({copySize:N0} bytes)");
-                Log.Information("FIX #56: Copied template {Source} → {Dest} ({Size} bytes)",
-                    templateCopySource, dest, copySize);
-
-                // Verify the copy matches the source
-                if (sourceSize != copySize)
-                {
-                    Log.Warning("Template copy size mismatch: source={Source}, copy={Copy}",
-                        sourceSize, copySize);
-                }
-            }
-            catch (IOException ex) when (ex is not FileNotFoundException)
-            {
-                var errMsg = $"Failed to copy template to output path: {ex.Message}";
-                AppendLog($"  ✗ {errMsg}");
-                Log.Error(ex, errMsg);
-                throw new InvalidOperationException(errMsg, ex);
-            }
-
-            AppendLog("Running migration engine...");
+            // ── FIX #58: Import into the working template ────────────────
+            // The SDK imports directly into Working\Target\Blank_Template.qbw.
+            // This keeps all SDK file operations in the Working directory —
+            // NOT on the Desktop. After import succeeds, we copy to the output.
+            //
+            // Workflow:
+            //   1. Export from QB2023 source                           ✓ (Phase 1)
+            //   2. Import into Working\Target\Blank_Template.qbw       ← this step
+            //   3. Copy Working\Target → Desktop\Output\Name-QB2021.qbw ← after import
+            AppendLog("  Importing into working template...");
             AppendLog($"  Source:      {source}");
-            AppendLog($"  Destination: {dest} (copy of blank template)");
+            AppendLog($"  Import into: {WorkingTemplatePath}");
             AppendLog($"  Password:    {(string.IsNullOrEmpty(adminPassword) ? "(none)" : "****")}");
 
-            // ── Call migration engine with error capture ─────────────────
-            // FIX #54: Program.Main now detects positional .qbw args and overrides
-            // the config paths, so it imports into the copy (not the original template).
+            // ── Call migration engine — imports into Working\Target ───────
+            // Program.Main detects positional .qbw args and overrides the config
+            // paths: arg[0] = source, arg[1] = QB2021 target for import.
             int exitCode;
             try
             {
-                exitCode = Program.Main(new[] { source, dest, adminPassword });
+                exitCode = Program.Main(new[] { source, WorkingTemplatePath, adminPassword });
                 AppendLog($"  Migration engine returned exit code: {exitCode}");
             }
             catch (Exception ex)
@@ -1228,32 +1203,70 @@ namespace QB_TimeWarp.UI.ViewModels
                 throw new InvalidOperationException(errMsg);
             }
 
-            // ── Verify output file was actually created ─────────────────
-            if (!File.Exists(dest))
+            // ── Verify working template now contains imported data ────────
+            if (!File.Exists(WorkingTemplatePath))
             {
-                var errMsg = $"Migration failed: Output file was not created at {dest}";
+                var errMsg = $"Migration failed: Working template no longer exists at {WorkingTemplatePath}";
                 AppendLog($"  ✗ {errMsg}");
                 Log.Error(errMsg);
                 throw new InvalidOperationException(errMsg);
             }
 
-            var outputFileInfo = new FileInfo(dest);
-            AppendLog($"  Output file size: {outputFileInfo.Length:N0} bytes");
+            var importedFileInfo = new FileInfo(WorkingTemplatePath);
+            AppendLog($"  Working template after import: {importedFileInfo.Length:N0} bytes");
 
             // A valid QB company file with migrated data should be significantly
             // larger than a blank template (~10 KB is an arbitrary minimum)
             const long MinimumOutputFileSize = 10_000;
-            if (outputFileInfo.Length < MinimumOutputFileSize)
+            if (importedFileInfo.Length < MinimumOutputFileSize)
             {
-                var errMsg = $"Migration failed: Output file is too small " +
-                    $"({outputFileInfo.Length:N0} bytes < {MinimumOutputFileSize:N0} bytes minimum). " +
+                var errMsg = $"Migration failed: Working template is too small after import " +
+                    $"({importedFileInfo.Length:N0} bytes < {MinimumOutputFileSize:N0} bytes minimum). " +
                     "No data appears to have been migrated.";
                 AppendLog($"  ✗ {errMsg}");
                 Log.Error(errMsg);
                 throw new InvalidOperationException(errMsg);
             }
 
-            AppendLog($"  ✓ Output file verified: {outputFileInfo.Length:N0} bytes");
+            AppendLog($"  ✓ Import complete ({importedFileInfo.Length:N0} bytes)");
+
+            // ── FIX #58: Copy imported file to final output location ─────
+            // NOW that import succeeded, copy the working template (which
+            // now contains all migrated data) to the user's output folder.
+            AppendLog($"  Copying to final output: {dest}");
+
+            // Ensure output directory exists
+            var outputDir = Path.GetDirectoryName(dest);
+            if (!string.IsNullOrEmpty(outputDir) && !Directory.Exists(outputDir))
+            {
+                AppendLog($"  Creating output directory: {outputDir}");
+                Directory.CreateDirectory(outputDir);
+                Log.Information("Created output directory: {Dir}", outputDir);
+            }
+
+            try
+            {
+                File.Copy(WorkingTemplatePath, dest, overwrite: true);
+                var outputSize = new FileInfo(dest).Length;
+                AppendLog($"  ✓ Output saved: {dest} ({outputSize:N0} bytes)");
+                Log.Information("FIX #58: Copied imported data to output: {Src} → {Dest} ({Size} bytes)",
+                    WorkingTemplatePath, dest, outputSize);
+
+                // Verify the copy matches
+                if (importedFileInfo.Length != outputSize)
+                {
+                    Log.Warning("FIX #58: Output copy size mismatch: working={Working}, output={Output}",
+                        importedFileInfo.Length, outputSize);
+                    AppendLog($"  ⚠ Size mismatch: working={importedFileInfo.Length:N0}, output={outputSize:N0}");
+                }
+            }
+            catch (IOException ex)
+            {
+                var errMsg = $"Failed to copy imported data to output: {ex.Message}";
+                AppendLog($"  ✗ {errMsg}");
+                Log.Error(ex, "FIX #58: {Message}", errMsg);
+                throw new InvalidOperationException(errMsg, ex);
+            }
 
             // ── FIX #56: Verify master template was NOT modified ──────────
             // Compare master template size before and after migration to ensure
