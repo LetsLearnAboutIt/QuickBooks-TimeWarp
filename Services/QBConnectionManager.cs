@@ -282,7 +282,30 @@ namespace QB_TimeWarp.Services
         }
 
         /// <summary>
+        /// When true, the next Connect() call will first try BeginSession with an
+        /// empty company file path (= attach to the currently-open file in QuickBooks).
+        /// This avoids a duplicate password prompt when QuickBooks has already been
+        /// launched and the user has already authenticated.
+        ///
+        /// FIX #50: The QBXML SDK does NOT accept a password parameter — security is
+        /// handled entirely by the QuickBooks Desktop UI. If we pass a company file path
+        /// to BeginSession and that file is password-protected, QuickBooks shows its own
+        /// login dialog — even if the file is already open. Using an empty string instead
+        /// tells the SDK to attach to whatever file QB already has open, bypassing the
+        /// redundant password prompt.
+        /// </summary>
+        public bool PreferCurrentlyOpenFile { get; set; }
+
+        /// <summary>
         /// Opens a connection to QuickBooks Desktop via the QBXML Request Processor COM object.
+        ///
+        /// FIX #50 — Password handling strategy:
+        /// The QB SDK BeginSession() does NOT accept a password parameter. When a company
+        /// file is password-protected, QB shows its own login dialog. To avoid prompting
+        /// the user twice (once when QB launches the file, once when the SDK connects),
+        /// we first try BeginSession("", 0) which attaches to the already-open file.
+        /// If that fails (QB not running or no file open), we fall back to passing the
+        /// explicit file path which triggers QB to open it (and prompt for password).
         /// </summary>
         public void Connect()
         {
@@ -291,8 +314,9 @@ namespace QB_TimeWarp.Services
                 // Re-validate path at connection time (defense in depth)
                 ValidateCompanyFilePath(_config.CompanyFilePath);
 
-                Log.Information("[{Instance}] Connecting to QuickBooks at: {FilePath}",
-                    _instanceName, _config.CompanyFilePath);
+                Log.Information("[{Instance}] Connecting to QuickBooks at: {FilePath} " +
+                    "(PreferCurrentlyOpenFile={Prefer})",
+                    _instanceName, _config.CompanyFilePath, PreferCurrentlyOpenFile);
 
                 // Create the QBXML Request Processor COM object
                 // Type: QBXMLRP2.RequestProcessor
@@ -320,15 +344,41 @@ namespace QB_TimeWarp.Services
                 );
 
                 // Begin session with company file
-                // Parameters: companyFile (empty = currently open file), fileMode
                 // FIX #44: qbFileOpenDoNotCare (0) is the "accountant override" mode —
                 // it grants access to payroll data (Paychecks, PayrollItems, etc.)
                 // even without an active payroll subscription on the target company.
-                // This is required to export the 282 paycheck records with full detail.
                 // Values: qbFileOpenDoNotCare = 0, singleUser = 1, multiUser = 2
                 const int qbFileOpenDoNotCare = 0;
+
+                // FIX #50: Try connecting to the currently-open file first to avoid
+                // a duplicate password prompt. The QB SDK does NOT support passing
+                // passwords programmatically — BeginSession("", 0) attaches to whatever
+                // file is already open in the running QB instance.
+                if (PreferCurrentlyOpenFile)
+                {
+                    try
+                    {
+                        Log.Information("[{Instance}] Trying BeginSession with currently-open file " +
+                            "(empty path) to avoid duplicate password prompt...", _instanceName);
+                        _ticket = _requestProcessor.BeginSession("", qbFileOpenDoNotCare);
+                        _isConnected = true;
+                        Log.Information("[{Instance}] Connected to currently-open file. " +
+                            "Session ticket: {Ticket}", _instanceName, _ticket);
+                        return;
+                    }
+                    catch (System.Runtime.InteropServices.COMException ex)
+                    {
+                        Log.Information("[{Instance}] Empty-path session failed ({Message}). " +
+                            "Falling back to explicit file path...", _instanceName, ex.Message);
+                        // Fall through to try with explicit path
+                    }
+                }
+
+                // Standard path: pass the company file path to BeginSession.
+                // If the file is password-protected and not already open,
+                // QuickBooks will show its login dialog.
                 _ticket = _requestProcessor.BeginSession(
-                    _config.CompanyFilePath,      // Path to .QBW file (empty = current)
+                    _config.CompanyFilePath,      // Path to .QBW file
                     qbFileOpenDoNotCare           // accountant override — allows payroll access
                 );
 
