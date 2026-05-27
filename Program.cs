@@ -75,6 +75,32 @@ namespace QB_TimeWarp
 
                 Log.Information("QB-TimeWarp starting...");
 
+                // ─── FIX #54: Detect positional arguments from GUI caller ─────────
+                // When the GUI's RunMigrationForFile calls Program.Main, it passes:
+                //   args[0] = source .qbw path (QB 2023 company file)
+                //   args[1] = destination .qbw path (output file — copy of blank template)
+                //   args[2] = admin password (optional, for migration engine reference)
+                // These are file paths (not flags), so we detect them and override config.
+                var positionalArgs = args.Where(a => !a.StartsWith("--") && !a.StartsWith("-")).ToArray();
+                if (positionalArgs.Length >= 2 &&
+                    positionalArgs[0].EndsWith(".qbw", StringComparison.OrdinalIgnoreCase) &&
+                    positionalArgs[1].EndsWith(".qbw", StringComparison.OrdinalIgnoreCase))
+                {
+                    var sourceOverride = positionalArgs[0];
+                    var destOverride = positionalArgs[1];
+
+                    Log.Information("╔══════════════════════════════════════════════════════════════╗");
+                    Log.Information("║  FIX #54: POSITIONAL ARGUMENTS DETECTED (GUI caller)        ║");
+                    Log.Information("╠══════════════════════════════════════════════════════════════╣");
+                    Log.Information("║  Source override: {Source}", sourceOverride);
+                    Log.Information("║  Dest override:   {Dest}", destOverride);
+                    Log.Information("║  Overriding config paths with GUI-supplied arguments.       ║");
+                    Log.Information("╚══════════════════════════════════════════════════════════════╝");
+
+                    _config.QuickBooks.QB2023.CompanyFilePath = sourceOverride;
+                    _config.QuickBooks.QB2021.CompanyFilePath = destOverride;
+                }
+
                 // Parse command-line arguments for mode selection
                 var mode = ParseMode(args);
                 bool forceRefresh = args.Any(a => a.Equals("--refresh", StringComparison.OrdinalIgnoreCase));

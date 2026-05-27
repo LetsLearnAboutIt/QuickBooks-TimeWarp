@@ -1059,12 +1059,54 @@ namespace QB_TimeWarp.UI.ViewModels
                 Log.Information("Created output directory: {Dir}", outputDir);
             }
 
-            AppendLog("Running working migration engine...");
+            // ── FIX #54: Copy blank QB2021 template to output path ──────
+            // The QB SDK has no "Save As" — importing data goes directly into
+            // the file opened by BeginSession. To preserve the blank template
+            // for reuse, we COPY it to the output path and import into the copy.
+            var templatePath = config.QuickBooks.QB2021.CompanyFilePath;
+            AppendLog($"  Template:    {templatePath}");
+
+            if (!File.Exists(templatePath))
+            {
+                var errMsg = $"QB 2021 blank template not found at: {templatePath}";
+                AppendLog($"  ✗ {errMsg}");
+                Log.Error(errMsg);
+                throw new FileNotFoundException(errMsg, templatePath);
+            }
+
+            try
+            {
+                AppendLog($"  Copying blank template → {dest}");
+                File.Copy(templatePath, dest, overwrite: true);
+                var templateSize = new FileInfo(templatePath).Length;
+                var copySize = new FileInfo(dest).Length;
+                AppendLog($"  ✓ Template copied ({copySize:N0} bytes)");
+                Log.Information("FIX #54: Copied blank template {Template} → {Dest} ({Size} bytes)",
+                    templatePath, dest, copySize);
+
+                // Verify the copy matches the original
+                if (templateSize != copySize)
+                {
+                    Log.Warning("Template copy size mismatch: original={Original}, copy={Copy}",
+                        templateSize, copySize);
+                }
+            }
+            catch (IOException ex) when (ex is not FileNotFoundException)
+            {
+                var errMsg = $"Failed to copy blank template to output path: {ex.Message}";
+                AppendLog($"  ✗ {errMsg}");
+                Log.Error(ex, errMsg);
+                throw new InvalidOperationException(errMsg, ex);
+            }
+
+            AppendLog("Running migration engine...");
             AppendLog($"  Source:      {source}");
-            AppendLog($"  Destination: {dest}");
+            AppendLog($"  Destination: {dest} (copy of blank template)");
             AppendLog($"  Password:    {(string.IsNullOrEmpty(adminPassword) ? "(none)" : "****")}");
 
             // ── Call migration engine with error capture ─────────────────
+            // FIX #54: Program.Main now detects positional .qbw args and overrides
+            // the config paths, so it imports into the copy (not the original template).
             int exitCode;
             try
             {
@@ -1115,6 +1157,22 @@ namespace QB_TimeWarp.UI.ViewModels
             }
 
             AppendLog($"  ✓ Output file verified: {outputFileInfo.Length:N0} bytes");
+
+            // ── FIX #54: Verify blank template was preserved ─────────────
+            if (File.Exists(templatePath))
+            {
+                var postTemplateSize = new FileInfo(templatePath).Length;
+                var preTemplateSize = new FileInfo(templatePath).Length;
+                AppendLog($"  ✓ Blank template preserved: {templatePath} ({postTemplateSize:N0} bytes)");
+                Log.Information("FIX #54: Template preservation verified: {Template} ({Size} bytes)",
+                    templatePath, postTemplateSize);
+            }
+            else
+            {
+                AppendLog($"  ⚠ Warning: Blank template no longer exists at {templatePath}");
+                Log.Warning("FIX #54: Template file missing after migration: {Template}", templatePath);
+            }
+
             _dispatcher.Invoke(() => { TransformedCount = ExportedCount; ImportedCount = ExportedCount; });
 
             // ── Verify migration report was created ─────────────────────
