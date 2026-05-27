@@ -769,87 +769,146 @@ namespace QB_TimeWarp.UI.ViewModels
                 }
             }
 
-            // ── Phase 0b: Launch QuickBooks and open the source file ─────
-            // FIX #50 — Password handling strategy:
-            // The QB SDK BeginSession() does NOT accept a password parameter.
-            // QB handles passwords through its own UI. Our workflow:
-            //   1. Launch QB with the company file → user enters password ONCE in QB
-            //   2. SDK connects using empty-string BeginSession (attaches to open file)
-            //   3. Our PasswordDialog collects the password for the migration engine only
-            // This eliminates the duplicate password prompt.
+            // ══════════════════════════════════════════════════════════════════
+            // FIX #51 — Conditional authentication with improved timing
+            //
+            // Strategy:
+            //   1. Try silent SDK connection to test if app is already certified
+            //   2. IF certified → skip password dialog & QB launch, proceed directly
+            //   3. IF NOT certified → launch QB, wait, show password dialog, full auth flow
+            //
+            // After first successful certification (user selects "Yes, always allow
+            // access even if QuickBooks is not running"), subsequent migrations skip
+            // the password dialog entirely.
+            // ══════════════════════════════════════════════════════════════════
 
             var firstFile = Files.FirstOrDefault();
             var sourcePath = firstFile?.WorkingCopyPath ?? firstFile?.FilePath;
-            Process? qbProcess = null;
+            string? adminPassword = null;
             bool qbWasLaunched = false;
 
+            // ── Phase 0b: Test if already certified ─────────────────────
+            AppendLog("🔍 Testing if app is already certified for this company file...");
+
+            var config = LoadConfiguration();
             if (!string.IsNullOrEmpty(sourcePath))
+                config.QuickBooks.QB2023.CompanyFilePath = sourcePath;
+
+            var certStatus = await Task.Run(() =>
+                QBConnectionManager.TestCertification(config.QuickBooks.QB2023, "QB2023-CertTest"));
+
+            if (certStatus == QBConnectionManager.CertificationStatus.Certified)
             {
-                AppendLog("🚀 Launching QuickBooks 2023 with the working copy...");
-                AppendLog($"  File: {sourcePath}");
-
-                qbProcess = QBConnectionManager.LaunchQuickBooks(sourcePath);
-
-                if (qbProcess == null)
+                // ── FAST PATH: Already certified — skip password dialog & QB launch ──
+                AppendLog("✓ App is already certified for this QuickBooks file!");
+                AppendLog("  Skipping password dialog — no user interaction needed.");
+                AppendLog("  The SDK will connect directly during the export phase.");
+                adminPassword = "";  // Not needed when certified
+            }
+            else
+            {
+                // ── FULL AUTH PATH: Need certificate approval ────────────────
+                if (certStatus == QBConnectionManager.CertificationStatus.NotCertified)
                 {
-                    AppendLog("⚠ Could not find QuickBooks executable. " +
-                        "Please open QuickBooks manually and load the company file, then retry.");
-                    // Don't abort — the user may have QB already running
+                    AppendLog("⚠ App is NOT yet certified for this company file.");
+                    AppendLog("  First-time setup required — launching QuickBooks...");
+                }
+                else if (certStatus == QBConnectionManager.CertificationStatus.SdkNotAvailable)
+                {
+                    AppendLog("⚠ QuickBooks SDK not detected on this machine.");
+                    AppendLog("  Proceeding with manual launch — ensure QB is installed.");
                 }
                 else
                 {
-                    qbWasLaunched = true;
-                    AppendLog($"  QuickBooks launched (PID: {qbProcess.Id})");
-
-                    AppendLog("═══════════════════════════════════════════════");
-                    AppendLog("🔐 If this company file is password-protected,");
-                    AppendLog("   please enter your admin password in QuickBooks now.");
-                    AppendLog("   (You will only need to enter it ONCE.)");
-                    AppendLog("═══════════════════════════════════════════════");
-
-                    AppendLog("  Waiting for QuickBooks to initialize...");
-
-                    // Give QB time to start, show password dialog, and load the file
-                    await Task.Run(() => QBConnectionManager.WaitForQuickBooksReady(
-                        timeoutSeconds: 90, pollIntervalMs: 3000));
-
-                    AppendLog("  QuickBooks is ready for SDK connection.");
+                    AppendLog("⚠ Could not determine certification status (may need QB running).");
+                    AppendLog("  Proceeding with full authentication flow...");
                 }
 
-                AppendLog("═══════════════════════════════════════════════");
-                AppendLog("📋 IMPORTANT: When the connection is attempted,");
-                AppendLog("   QuickBooks may show a certificate approval dialog.");
-                AppendLog("   Please APPROVE the connection request in QuickBooks.");
-                AppendLog("═══════════════════════════════════════════════");
+                // ── Phase 0c: Launch QuickBooks ────────────────────────────
+                Process? qbProcess = null;
+
+                if (!string.IsNullOrEmpty(sourcePath))
+                {
+                    AppendLog("═══════════════════════════════════════════════");
+                    AppendLog("🚀 Launching QuickBooks 2023...");
+                    AppendLog($"  File: {sourcePath}");
+
+                    qbProcess = QBConnectionManager.LaunchQuickBooks(sourcePath);
+
+                    if (qbProcess == null)
+                    {
+                        AppendLog("⚠ Could not find QuickBooks executable.");
+                        AppendLog("  Please open QuickBooks manually and load the company file.");
+                    }
+                    else
+                    {
+                        qbWasLaunched = true;
+                        AppendLog($"  QuickBooks launched (PID: {qbProcess.Id})");
+                        AppendLog("");
+                        AppendLog("  ┌─────────────────────────────────────────────┐");
+                        AppendLog("  │  🔐 If password-protected, enter your admin │");
+                        AppendLog("  │     password in the QuickBooks login dialog. │");
+                        AppendLog("  │     You only need to enter it ONCE.          │");
+                        AppendLog("  └─────────────────────────────────────────────┘");
+                        AppendLog("");
+                        AppendLog("  Waiting for QuickBooks to initialize...");
+
+                        // Wait for QB with progress reporting
+                        await Task.Run(() => QBConnectionManager.WaitForQuickBooksReady(
+                            timeoutSeconds: 90,
+                            initialDelayMs: 5000,
+                            pollIntervalMs: 3000,
+                            onProgress: (attempt, elapsed, msg) =>
+                            {
+                                if (attempt > 0 && attempt % 3 == 0) // Log every ~9 seconds
+                                    AppendLog($"  {msg}");
+                            }));
+
+                        AppendLog("  ✓ QuickBooks is ready for SDK connection.");
+                    }
+
+                    AppendLog("");
+                    AppendLog("  ┌─────────────────────────────────────────────┐");
+                    AppendLog("  │  📋 QuickBooks may show a CERTIFICATE       │");
+                    AppendLog("  │     approval dialog. Please select:         │");
+                    AppendLog("  │     'Yes, always; allow access even if      │");
+                    AppendLog("  │      QuickBooks is not running'             │");
+                    AppendLog("  │     Then click Continue / OK.               │");
+                    AppendLog("  │                                             │");
+                    AppendLog("  │  ⏳ The app will wait up to 3 minutes for   │");
+                    AppendLog("  │     you to approve the certificate.         │");
+                    AppendLog("  └─────────────────────────────────────────────┘");
+                    AppendLog("═══════════════════════════════════════════════");
+                }
+
+                // ── Phase 0d: Prompt for admin password (for migration engine) ──
+                AppendLog("🔐 Prompting for QuickBooks admin password...");
+                AppendLog("   (This password is for the migration engine — use the");
+                AppendLog("    same password you entered in QuickBooks above.)");
+
+                bool passwordDialogOk = false;
+                var promptFileName = firstFile?.FileName ?? "Company File";
+
+                passwordDialogOk = _dispatcher.Invoke(() =>
+                {
+                    var dlg = new PasswordDialog(promptFileName);
+                    dlg.Owner = Application.Current.MainWindow;
+                    var result = dlg.ShowDialog() == true;
+                    if (result)
+                        adminPassword = dlg.EnteredPassword ?? "";
+                    return result;
+                });
+
+                if (!passwordDialogOk)
+                {
+                    AppendLog("⚠ Migration cancelled — user closed the password dialog.");
+                    return;
+                }
+
+                AppendLog("  Password accepted.");
             }
 
-            // ── Phase 0c: Prompt for admin password (for migration engine) ──
-            AppendLog("🔐 Prompting for QuickBooks admin password...");
-            AppendLog("   (This password is used by the migration engine — you");
-            AppendLog("    should have already entered it in QuickBooks above.)");
-
-            string? adminPassword = null;
-            bool passwordDialogOk = false;
-
-            var promptFileName = firstFile?.FileName ?? "Company File";
-
-            passwordDialogOk = _dispatcher.Invoke(() =>
-            {
-                var dlg = new PasswordDialog(promptFileName);
-                dlg.Owner = Application.Current.MainWindow;
-                var result = dlg.ShowDialog() == true;
-                if (result)
-                    adminPassword = dlg.EnteredPassword ?? "";
-                return result;
-            });
-
-            if (!passwordDialogOk)
-            {
-                AppendLog("⚠ Migration cancelled — user closed the password dialog.");
-                return;
-            }
-
-            AppendLog("  Password accepted. Proceeding with migration...");
+            AppendLog("  Proceeding with migration...");
 
             // Show progress section
             ShowProgressSection = true;
@@ -949,12 +1008,18 @@ namespace QB_TimeWarp.UI.ViewModels
                     AppendLog("  Using currently-open file in QuickBooks (no duplicate password prompt)");
                 }
 
-                // Use ConnectWithCertificateWait to allow time for
-                // the user to approve the certificate dialog in QuickBooks
+                // FIX #51: Use ConnectWithCertificateWait with progress callback
+                // so the user sees what's happening while waiting for certificate approval.
+                // 3-minute timeout with exponential backoff (5s → 8s → 12s → ...).
                 conn.ConnectWithCertificateWait(
-                    maxWaitSeconds: 120,
-                    retryIntervalSeconds: 5);
-                AppendLog("  ✓ Connected to QuickBooks 2023 (certificate approved)");
+                    maxWaitSeconds: 180,
+                    onProgress: (attempt, elapsed, remaining, msg) =>
+                    {
+                        // Log progress every other attempt to avoid flooding
+                        if (attempt == 1 || attempt % 2 == 0)
+                            AppendLog($"  [{elapsed}s] {msg}");
+                    });
+                AppendLog("  ✓ Connected to QuickBooks 2023");
 
                 var exporter = new DataExporter(
                     conn, config.Export, config.Paths.ExportDirectory,

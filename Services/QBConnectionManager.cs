@@ -183,19 +183,39 @@ namespace QB_TimeWarp.Services
         /// <summary>
         /// Waits for QuickBooks to be ready to accept SDK connections.
         /// Polls by attempting to create the COM object until it succeeds or times out.
+        /// FIX #51: Increased initial delay and added progress callback.
         /// </summary>
-        /// <param name="timeoutSeconds">Maximum seconds to wait (default 60).</param>
+        /// <param name="timeoutSeconds">Maximum seconds to wait (default 90).</param>
+        /// <param name="initialDelayMs">Initial delay before first poll (default 5000ms — gives QB time to start).</param>
         /// <param name="pollIntervalMs">Milliseconds between polling attempts (default 3000).</param>
+        /// <param name="onProgress">Optional callback invoked each attempt with (attempt, elapsedSeconds, message).</param>
         /// <returns>True if QB appears ready; false if timed out.</returns>
-        public static bool WaitForQuickBooksReady(int timeoutSeconds = 60, int pollIntervalMs = 3000)
+        public static bool WaitForQuickBooksReady(
+            int timeoutSeconds = 90,
+            int initialDelayMs = 5000,
+            int pollIntervalMs = 3000,
+            Action<int, int, string>? onProgress = null)
         {
-            Log.Information("Waiting up to {Timeout}s for QuickBooks to be ready...", timeoutSeconds);
-            var deadline = DateTime.UtcNow.AddSeconds(timeoutSeconds);
+            Log.Information("Waiting up to {Timeout}s for QuickBooks to be ready " +
+                "(initial delay: {Delay}ms)...", timeoutSeconds, initialDelayMs);
+
+            // Initial delay — QB needs time to start its executable and load the COM server
+            if (initialDelayMs > 0)
+            {
+                onProgress?.Invoke(0, 0, $"Waiting {initialDelayMs / 1000}s for QuickBooks to start...");
+                Thread.Sleep(initialDelayMs);
+            }
+
+            var startTime = DateTime.UtcNow;
+            var deadline = startTime.AddSeconds(timeoutSeconds);
             int attempt = 0;
 
             while (DateTime.UtcNow < deadline)
             {
                 attempt++;
+                var elapsed = (int)(DateTime.UtcNow - startTime).TotalSeconds;
+                var remaining = timeoutSeconds - elapsed;
+
                 try
                 {
                     var qbType = Type.GetTypeFromProgID("QBXMLRP2.RequestProcessor");
@@ -206,7 +226,9 @@ namespace QB_TimeWarp.Services
                         {
                             // COM object created — QB SDK is available
                             System.Runtime.InteropServices.Marshal.ReleaseComObject(rp);
-                            Log.Information("QuickBooks is ready (attempt {Attempt})", attempt);
+                            Log.Information("QuickBooks is ready (attempt {Attempt}, {Elapsed}s elapsed)",
+                                attempt, elapsed);
+                            onProgress?.Invoke(attempt, elapsed, "QuickBooks is ready.");
                             return true;
                         }
                     }
@@ -216,68 +238,236 @@ namespace QB_TimeWarp.Services
                     // QB not ready yet — continue polling
                 }
 
-                Log.Debug("QB not ready yet (attempt {Attempt}), retrying in {Interval}ms...",
-                    attempt, pollIntervalMs);
+                var msg = $"Waiting for QuickBooks... ({remaining}s remaining)";
+                onProgress?.Invoke(attempt, elapsed, msg);
+                Log.Debug("QB not ready yet (attempt {Attempt}, {Elapsed}s), retrying in {Interval}ms...",
+                    attempt, elapsed, pollIntervalMs);
                 Thread.Sleep(pollIntervalMs);
             }
 
-            Log.Warning("Timed out waiting for QuickBooks after {Timeout}s ({Attempts} attempts)",
-                timeoutSeconds, attempt);
+            var totalElapsed = (int)(DateTime.UtcNow - startTime).TotalSeconds;
+            Log.Warning("Timed out waiting for QuickBooks after {Elapsed}s ({Attempts} attempts)",
+                totalElapsed, attempt);
+            onProgress?.Invoke(attempt, totalElapsed, "Timed out waiting for QuickBooks.");
             return false;
+        }
+
+        // ══════════════════════════════════════════════════════════════════════
+        //  Silent Certification Test — FIX #51
+        // ══════════════════════════════════════════════════════════════════════
+
+        /// <summary>
+        /// Result of a silent connection test.
+        /// </summary>
+        public enum CertificationStatus
+        {
+            /// <summary>App is certified — SDK connected successfully, no UI needed.</summary>
+            Certified,
+            /// <summary>App is NOT certified — certificate dialog will appear on next attempt.</summary>
+            NotCertified,
+            /// <summary>QB SDK is not installed or COM object unavailable.</summary>
+            SdkNotAvailable,
+            /// <summary>Some other error occurred (file not found, QB not running, etc.).</summary>
+            OtherError
+        }
+
+        /// <summary>
+        /// Attempts a silent SDK connection to test whether this application is already
+        /// certified (authorized) for the specified company file.
+        ///
+        /// FIX #51: If the app is already certified with "Yes, always allow access even if
+        /// QuickBooks is not running", the SDK can connect without any user interaction.
+        /// This test determines whether we need the full password dialog + QB launch flow.
+        ///
+        /// The connection is immediately closed after testing — this is a probe only.
+        /// </summary>
+        /// <param name="config">The QB instance config to test.</param>
+        /// <param name="instanceName">Name for logging.</param>
+        /// <returns>CertificationStatus indicating whether the app is certified.</returns>
+        public static CertificationStatus TestCertification(QBInstanceConfig config, string instanceName)
+        {
+            Log.Information("[{Instance}] Testing silent certification for: {Path}",
+                instanceName, config.CompanyFilePath);
+
+            dynamic? rp = null;
+            string? ticket = null;
+
+            try
+            {
+                var qbType = Type.GetTypeFromProgID("QBXMLRP2.RequestProcessor");
+                if (qbType == null)
+                {
+                    Log.Warning("[{Instance}] SDK not available — QBXMLRP2.RequestProcessor not found.",
+                        instanceName);
+                    return CertificationStatus.SdkNotAvailable;
+                }
+
+                rp = Activator.CreateInstance(qbType);
+                if (rp == null)
+                {
+                    Log.Warning("[{Instance}] Failed to create RequestProcessor instance.", instanceName);
+                    return CertificationStatus.SdkNotAvailable;
+                }
+
+                // OpenConnection2 with localQBD (1)
+                rp.OpenConnection2("", config.ApplicationName, 1);
+
+                // Try BeginSession — this is where the certificate check happens.
+                // If the app is certified, this succeeds silently.
+                // If NOT certified, QB shows the certificate dialog (which blocks / fails).
+                const int qbFileOpenDoNotCare = 0;
+                ticket = rp.BeginSession(config.CompanyFilePath, qbFileOpenDoNotCare);
+
+                Log.Information("[{Instance}] ✓ Silent connection succeeded — app IS certified. " +
+                    "Ticket: {Ticket}", instanceName, ticket);
+                return CertificationStatus.Certified;
+            }
+            catch (System.Runtime.InteropServices.COMException ex)
+            {
+                // Common error codes for certification issues:
+                // 0x80040408 — "This application has not been authorized"
+                // 0x8004041D — "This application is not allowed to log into this QuickBooks company data file automatically"
+                // 0x8004041A — "This application does not have permission to access this QuickBooks company data file"
+                var hresult = ex.HResult;
+                var hexCode = $"0x{hresult:X8}";
+
+                Log.Information("[{Instance}] Silent connection failed: {HexCode} — {Message}",
+                    instanceName, hexCode, ex.Message);
+
+                // These are the "not authorized" family of errors
+                if (hresult == unchecked((int)0x80040408) ||
+                    hresult == unchecked((int)0x8004041D) ||
+                    hresult == unchecked((int)0x8004041A) ||
+                    ex.Message.Contains("authorized", StringComparison.OrdinalIgnoreCase) ||
+                    ex.Message.Contains("permission", StringComparison.OrdinalIgnoreCase) ||
+                    ex.Message.Contains("certificate", StringComparison.OrdinalIgnoreCase))
+                {
+                    return CertificationStatus.NotCertified;
+                }
+
+                // "Could not start QuickBooks" — QB not running and auto-launch not allowed
+                if (ex.Message.Contains("Could not start QuickBooks", StringComparison.OrdinalIgnoreCase))
+                {
+                    return CertificationStatus.NotCertified;
+                }
+
+                return CertificationStatus.OtherError;
+            }
+            catch (Exception ex)
+            {
+                Log.Warning(ex, "[{Instance}] Unexpected error during certification test: {Message}",
+                    instanceName, ex.Message);
+                return CertificationStatus.OtherError;
+            }
+            finally
+            {
+                // Always clean up the probe connection
+                try
+                {
+                    if (rp != null && ticket != null)
+                        rp.EndSession(ticket);
+                }
+                catch { /* ignore cleanup errors */ }
+
+                try
+                {
+                    if (rp != null)
+                        rp.CloseConnection();
+                }
+                catch { /* ignore cleanup errors */ }
+
+                try
+                {
+                    if (rp != null)
+                        System.Runtime.InteropServices.Marshal.ReleaseComObject(rp);
+                }
+                catch { /* ignore cleanup errors */ }
+            }
         }
 
         /// <summary>
         /// Attempts to connect to QuickBooks with retries, allowing time for the user
         /// to approve the certificate/application authorization dialog in the QB UI.
+        ///
+        /// FIX #51: Uses exponential backoff (5s → 8s → 12s → ...) instead of fixed interval.
+        /// Supports a progress callback so the UI can show countdown messages.
+        /// Default timeout increased to 180s (3 minutes) for certificate approval.
         /// </summary>
-        /// <param name="maxWaitSeconds">Maximum time to wait for successful connection.</param>
-        /// <param name="retryIntervalSeconds">Seconds between retry attempts.</param>
-        public void ConnectWithCertificateWait(int maxWaitSeconds = 120, int retryIntervalSeconds = 5)
+        /// <param name="maxWaitSeconds">Maximum time to wait for successful connection (default 180).</param>
+        /// <param name="onProgress">Optional callback: (attempt, elapsedSec, remainingSec, message).</param>
+        public void ConnectWithCertificateWait(int maxWaitSeconds = 180,
+            Action<int, int, int, string>? onProgress = null)
         {
-            var deadline = DateTime.UtcNow.AddSeconds(maxWaitSeconds);
+            var startTime = DateTime.UtcNow;
+            var deadline = startTime.AddSeconds(maxWaitSeconds);
             int attempt = 0;
             Exception? lastException = null;
 
+            // Exponential backoff: 5s, 8s, 12s, 18s, 25s, then cap at 30s
+            int currentIntervalMs = 5000;
+            const int MaxIntervalMs = 30_000;
+            const double BackoffMultiplier = 1.5;
+
             Log.Information("[{Instance}] Attempting connection with certificate wait " +
-                "(up to {MaxWait}s)...", _instanceName, maxWaitSeconds);
+                "(up to {MaxWait}s, exponential backoff)...", _instanceName, maxWaitSeconds);
 
             while (DateTime.UtcNow < deadline)
             {
                 attempt++;
+                var elapsed = (int)(DateTime.UtcNow - startTime).TotalSeconds;
+                var remaining = Math.Max(0, maxWaitSeconds - elapsed);
+
+                onProgress?.Invoke(attempt, elapsed, remaining,
+                    $"Connection attempt {attempt}... ({remaining}s remaining)");
+
                 try
                 {
                     Connect();
-                    Log.Information("[{Instance}] Connected successfully on attempt {Attempt}",
-                        _instanceName, attempt);
+                    Log.Information("[{Instance}] Connected successfully on attempt {Attempt} " +
+                        "({Elapsed}s elapsed)", _instanceName, attempt, elapsed);
+                    onProgress?.Invoke(attempt, elapsed, remaining,
+                        "✓ Connected to QuickBooks successfully!");
                     return; // Success!
                 }
                 catch (QBConnectionException ex)
                 {
                     lastException = ex;
-                    Log.Debug("[{Instance}] Connection attempt {Attempt} failed: {Message}. " +
-                        "User may need to approve certificate dialog in QuickBooks.",
-                        _instanceName, attempt, ex.Message);
+                    Log.Debug("[{Instance}] Attempt {Attempt} failed ({Elapsed}s): {Message}. " +
+                        "User may need to approve certificate in QuickBooks.",
+                        _instanceName, attempt, elapsed, ex.Message);
+                    onProgress?.Invoke(attempt, elapsed, remaining,
+                        "Waiting for certificate approval in QuickBooks...");
                 }
                 catch (Exception ex)
                 {
                     lastException = ex;
-                    Log.Debug("[{Instance}] Connection attempt {Attempt} failed: {Message}",
-                        _instanceName, attempt, ex.Message);
+                    Log.Debug("[{Instance}] Attempt {Attempt} failed ({Elapsed}s): {Message}",
+                        _instanceName, attempt, elapsed, ex.Message);
                 }
 
                 // Clean up partial connection state before retrying
                 try { Disconnect(); } catch { /* ignore cleanup errors */ }
 
-                Thread.Sleep(retryIntervalSeconds * 1000);
+                // Check if we have time for another wait
+                if (DateTime.UtcNow.AddMilliseconds(currentIntervalMs) > deadline)
+                    break;
+
+                Thread.Sleep(currentIntervalMs);
+
+                // Exponential backoff
+                currentIntervalMs = Math.Min(
+                    (int)(currentIntervalMs * BackoffMultiplier),
+                    MaxIntervalMs);
             }
 
-            Log.Error("[{Instance}] Failed to connect after {Attempts} attempts over {MaxWait}s. " +
-                "Last error: {Message}", _instanceName, attempt, maxWaitSeconds,
+            var totalElapsed = (int)(DateTime.UtcNow - startTime).TotalSeconds;
+            Log.Error("[{Instance}] Failed to connect after {Attempts} attempts over {Elapsed}s. " +
+                "Last error: {Message}", _instanceName, attempt, totalElapsed,
                 lastException?.Message ?? "Unknown error");
 
             throw new QBConnectionException(
-                $"Could not connect to QuickBooks ({_instanceName}) after {attempt} attempts. " +
-                $"Ensure the certificate was approved in QuickBooks. " +
+                $"Could not connect to QuickBooks ({_instanceName}) after {attempt} attempts " +
+                $"over {totalElapsed}s. Ensure the certificate was approved in QuickBooks. " +
                 $"Last error: {lastException?.Message}", lastException);
         }
 
