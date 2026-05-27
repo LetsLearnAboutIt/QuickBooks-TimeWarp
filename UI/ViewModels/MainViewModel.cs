@@ -1,4 +1,5 @@
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.IO;
 using System.Windows;
 using System.Windows.Input;
@@ -7,6 +8,7 @@ using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using QB_TimeWarp.Models;
 using QB_TimeWarp.Services;
+using QB_TimeWarp.UI.Views;
 using Serilog;
 using Serilog.Events;
 
@@ -767,6 +769,70 @@ namespace QB_TimeWarp.UI.ViewModels
                 }
             }
 
+            // ── Phase 0b: Prompt for admin password ─────────────────────
+            AppendLog("🔐 Prompting for QuickBooks admin password...");
+
+            string? adminPassword = null;
+            bool passwordDialogOk = false;
+
+            // First source file name for the dialog prompt
+            var firstFile = Files.FirstOrDefault();
+            var promptFileName = firstFile?.FileName ?? "Company File";
+
+            passwordDialogOk = _dispatcher.Invoke(() =>
+            {
+                var dlg = new PasswordDialog(promptFileName);
+                dlg.Owner = Application.Current.MainWindow;
+                var result = dlg.ShowDialog() == true;
+                if (result)
+                    adminPassword = dlg.EnteredPassword ?? "";
+                return result;
+            });
+
+            if (!passwordDialogOk)
+            {
+                AppendLog("⚠ Migration cancelled — user closed the password dialog.");
+                return;
+            }
+
+            AppendLog("  Password accepted. Proceeding with authentication...");
+
+            // ── Phase 0c: Launch QuickBooks and open the source file ─────
+            var sourcePath = firstFile?.WorkingCopyPath ?? firstFile?.FilePath;
+            Process? qbProcess = null;
+
+            if (!string.IsNullOrEmpty(sourcePath))
+            {
+                AppendLog("🚀 Launching QuickBooks 2023 with the working copy...");
+                AppendLog($"  File: {sourcePath}");
+
+                qbProcess = QBConnectionManager.LaunchQuickBooks(sourcePath);
+
+                if (qbProcess == null)
+                {
+                    AppendLog("⚠ Could not find QuickBooks executable. " +
+                        "Please open QuickBooks manually and load the company file, then retry.");
+                    // Don't abort — the user may have QB already running
+                }
+                else
+                {
+                    AppendLog($"  QuickBooks launched (PID: {qbProcess.Id})");
+                    AppendLog("  Waiting for QuickBooks to initialize...");
+
+                    // Give QB time to start and load the company file
+                    await Task.Run(() => QBConnectionManager.WaitForQuickBooksReady(
+                        timeoutSeconds: 60, pollIntervalMs: 3000));
+
+                    AppendLog("  QuickBooks is ready for SDK connection.");
+                }
+
+                AppendLog("═══════════════════════════════════════════════");
+                AppendLog("📋 IMPORTANT: When the connection is attempted,");
+                AppendLog("   QuickBooks may show a certificate approval dialog.");
+                AppendLog("   Please APPROVE the connection request in QuickBooks.");
+                AppendLog("═══════════════════════════════════════════════");
+            }
+
             // Show progress section
             ShowProgressSection = true;
             IsMigrationRunning = true;
@@ -785,7 +851,7 @@ namespace QB_TimeWarp.UI.ViewModels
 
                     try
                     {
-                        await Task.Run(() => RunMigrationForFile(file, _cts.Token), _cts.Token);
+                        await Task.Run(() => RunMigrationForFile(file, _cts.Token, adminPassword ?? ""), _cts.Token);
                         file.Status = "Success";
                         AppendLog($"✓ {file.FileName}: Migration completed successfully");
                     }
@@ -831,7 +897,7 @@ namespace QB_TimeWarp.UI.ViewModels
         //  Migration Engine
         // ══════════════════════════════════════════════════════════════════════
 
-        private void RunMigrationForFile(QBWFileEntry file, CancellationToken ct)
+        private void RunMigrationForFile(QBWFileEntry file, CancellationToken ct, string adminPassword = "")
         {
             // Load configuration
             var config = LoadConfiguration();
@@ -846,15 +912,20 @@ namespace QB_TimeWarp.UI.ViewModels
 
             ct.ThrowIfCancellationRequested();
 
-            // ── Phase 1: Export ────────────────────────────────────────────
+            // ── Phase 1: Export (with certificate authentication) ──────────
             SetPhase("Exporting", file);
             AppendLog("Phase 1/4: Exporting data from QB 2023...");
+            AppendLog("  Attempting SDK connection (certificate approval may be required)...");
 
             Dictionary<string, ExportedEntitySet> exportedData;
             using (var conn = new QBConnectionManager(config.QuickBooks.QB2023, "QB2023-Export"))
             {
-                conn.Connect();
-                AppendLog("  Connected to QuickBooks 2023");
+                // Use ConnectWithCertificateWait to allow time for
+                // the user to approve the certificate dialog in QuickBooks
+                conn.ConnectWithCertificateWait(
+                    maxWaitSeconds: 120,
+                    retryIntervalSeconds: 5);
+                AppendLog("  ✓ Connected to QuickBooks 2023 (certificate approved)");
 
                 var exporter = new DataExporter(
                     conn, config.Export, config.Paths.ExportDirectory,
@@ -873,18 +944,18 @@ namespace QB_TimeWarp.UI.ViewModels
 
             ct.ThrowIfCancellationRequested();
 
-            // ── Phase 2: Transform ────────────────────────────────────────
+            // ── Phase 2: Transform + Import via Program.Main ──────────────
             SetPhase("Transforming", file);
-            AppendLog("Phase 2/4: Transforming data for QB 2021 compatibility...");
+            AppendLog("Phase 2/4: Transforming & importing data...");
 
-// TEMP: Skip Abacus's pipeline, call your working Program.Main logic
-AppendLog("Running working migration...");
+AppendLog("Running working migration engine...");
 var source = !string.IsNullOrEmpty(file.WorkingCopyPath) ? file.WorkingCopyPath : file.FilePath;
 var dest = !string.IsNullOrEmpty(DestinationPreview) ? DestinationPreview : Path.Combine(DestinationFolder, Path.GetFileNameWithoutExtension(file.FileName) + "-QB2021.qbw");
-var pwd = "" ?? "";
-AppendLog($"Running migration...");
-Program.Main(new[] { source, dest, pwd });
-AppendLog($"Migration finished");
+AppendLog($"  Source: {source}");
+AppendLog($"  Destination: {dest}");
+AppendLog($"  Password: {(string.IsNullOrEmpty(adminPassword) ? "(none)" : "****")}");
+Program.Main(new[] { source, dest, adminPassword });
+AppendLog($"  ✓ Migration engine finished");
 _dispatcher.Invoke(() => { TransformedCount = ExportedCount; ImportedCount = ExportedCount; });
 
             // Save report

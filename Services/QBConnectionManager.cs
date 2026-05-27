@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using System.Xml.Linq;
 using QB_TimeWarp.Models;
 using Serilog;
@@ -89,6 +90,194 @@ namespace QB_TimeWarp.Services
                 Log.Information("[{Instance}] ✓ Using working copy (originals protected): {Path}",
                     _instanceName, filePath);
             }
+        }
+
+        // ══════════════════════════════════════════════════════════════════════
+        //  QuickBooks Launch — Process.Start the QB executable with a company file
+        // ══════════════════════════════════════════════════════════════════════
+
+        /// <summary>
+        /// Known installation paths for QuickBooks Desktop (checked in order).
+        /// </summary>
+        private static readonly string[] QBInstallPaths = new[]
+        {
+            @"C:\Program Files\Intuit\QuickBooks 2023\QBW32.EXE",
+            @"C:\Program Files (x86)\Intuit\QuickBooks 2023\QBW32.EXE",
+            @"C:\Program Files\Intuit\QuickBooks 2023\QBW.EXE",
+            @"C:\Program Files (x86)\Intuit\QuickBooks 2023\QBW.EXE",
+            @"C:\Program Files\Intuit\QuickBooks Enterprise Solutions 23.0\QBW32.EXE",
+            @"C:\Program Files (x86)\Intuit\QuickBooks Enterprise Solutions 23.0\QBW32.EXE",
+        };
+
+        /// <summary>
+        /// Finds the QuickBooks executable on the local machine.
+        /// Searches known installation paths in order.
+        /// </summary>
+        /// <returns>Full path to the QB executable, or null if not found.</returns>
+        public static string? FindQuickBooksExecutable()
+        {
+            foreach (var path in QBInstallPaths)
+            {
+                if (File.Exists(path))
+                {
+                    Log.Information("Found QuickBooks executable: {Path}", path);
+                    return path;
+                }
+            }
+
+            Log.Warning("QuickBooks executable not found in any known location.");
+            return null;
+        }
+
+        /// <summary>
+        /// Launches QuickBooks Desktop and opens the specified company file.
+        /// The QB window remains visible so the user can approve the certificate dialog
+        /// when an SDK connection is attempted for the first time.
+        /// </summary>
+        /// <param name="companyFilePath">Full path to the .QBW company file to open.</param>
+        /// <returns>The launched Process, or null if QB executable was not found.</returns>
+        public static Process? LaunchQuickBooks(string companyFilePath)
+        {
+            var qbExePath = FindQuickBooksExecutable();
+            if (qbExePath == null)
+            {
+                Log.Error("Cannot launch QuickBooks — executable not found. " +
+                    "Searched: {Paths}", string.Join(", ", QBInstallPaths));
+                return null;
+            }
+
+            Log.Information("Launching QuickBooks: {Exe} with file: {File}", qbExePath, companyFilePath);
+
+            try
+            {
+                var startInfo = new ProcessStartInfo
+                {
+                    FileName = qbExePath,
+                    Arguments = $"\"{companyFilePath}\"",
+                    UseShellExecute = true,          // Required for GUI apps
+                    WindowStyle = ProcessWindowStyle.Normal
+                };
+
+                var process = Process.Start(startInfo);
+
+                if (process != null)
+                {
+                    Log.Information("QuickBooks launched successfully (PID: {PID}). " +
+                        "Waiting for application to initialize...", process.Id);
+                }
+                else
+                {
+                    Log.Warning("Process.Start returned null — QuickBooks may not have launched.");
+                }
+
+                return process;
+            }
+            catch (Exception ex)
+            {
+                Log.Error(ex, "Failed to launch QuickBooks: {Message}", ex.Message);
+                return null;
+            }
+        }
+
+        /// <summary>
+        /// Waits for QuickBooks to be ready to accept SDK connections.
+        /// Polls by attempting to create the COM object until it succeeds or times out.
+        /// </summary>
+        /// <param name="timeoutSeconds">Maximum seconds to wait (default 60).</param>
+        /// <param name="pollIntervalMs">Milliseconds between polling attempts (default 3000).</param>
+        /// <returns>True if QB appears ready; false if timed out.</returns>
+        public static bool WaitForQuickBooksReady(int timeoutSeconds = 60, int pollIntervalMs = 3000)
+        {
+            Log.Information("Waiting up to {Timeout}s for QuickBooks to be ready...", timeoutSeconds);
+            var deadline = DateTime.UtcNow.AddSeconds(timeoutSeconds);
+            int attempt = 0;
+
+            while (DateTime.UtcNow < deadline)
+            {
+                attempt++;
+                try
+                {
+                    var qbType = Type.GetTypeFromProgID("QBXMLRP2.RequestProcessor");
+                    if (qbType != null)
+                    {
+                        var rp = Activator.CreateInstance(qbType);
+                        if (rp != null)
+                        {
+                            // COM object created — QB SDK is available
+                            System.Runtime.InteropServices.Marshal.ReleaseComObject(rp);
+                            Log.Information("QuickBooks is ready (attempt {Attempt})", attempt);
+                            return true;
+                        }
+                    }
+                }
+                catch
+                {
+                    // QB not ready yet — continue polling
+                }
+
+                Log.Debug("QB not ready yet (attempt {Attempt}), retrying in {Interval}ms...",
+                    attempt, pollIntervalMs);
+                Thread.Sleep(pollIntervalMs);
+            }
+
+            Log.Warning("Timed out waiting for QuickBooks after {Timeout}s ({Attempts} attempts)",
+                timeoutSeconds, attempt);
+            return false;
+        }
+
+        /// <summary>
+        /// Attempts to connect to QuickBooks with retries, allowing time for the user
+        /// to approve the certificate/application authorization dialog in the QB UI.
+        /// </summary>
+        /// <param name="maxWaitSeconds">Maximum time to wait for successful connection.</param>
+        /// <param name="retryIntervalSeconds">Seconds between retry attempts.</param>
+        public void ConnectWithCertificateWait(int maxWaitSeconds = 120, int retryIntervalSeconds = 5)
+        {
+            var deadline = DateTime.UtcNow.AddSeconds(maxWaitSeconds);
+            int attempt = 0;
+            Exception? lastException = null;
+
+            Log.Information("[{Instance}] Attempting connection with certificate wait " +
+                "(up to {MaxWait}s)...", _instanceName, maxWaitSeconds);
+
+            while (DateTime.UtcNow < deadline)
+            {
+                attempt++;
+                try
+                {
+                    Connect();
+                    Log.Information("[{Instance}] Connected successfully on attempt {Attempt}",
+                        _instanceName, attempt);
+                    return; // Success!
+                }
+                catch (QBConnectionException ex)
+                {
+                    lastException = ex;
+                    Log.Debug("[{Instance}] Connection attempt {Attempt} failed: {Message}. " +
+                        "User may need to approve certificate dialog in QuickBooks.",
+                        _instanceName, attempt, ex.Message);
+                }
+                catch (Exception ex)
+                {
+                    lastException = ex;
+                    Log.Debug("[{Instance}] Connection attempt {Attempt} failed: {Message}",
+                        _instanceName, attempt, ex.Message);
+                }
+
+                // Clean up partial connection state before retrying
+                try { Disconnect(); } catch { /* ignore cleanup errors */ }
+
+                Thread.Sleep(retryIntervalSeconds * 1000);
+            }
+
+            Log.Error("[{Instance}] Failed to connect after {Attempts} attempts over {MaxWait}s. " +
+                "Last error: {Message}", _instanceName, attempt, maxWaitSeconds,
+                lastException?.Message ?? "Unknown error");
+
+            throw new QBConnectionException(
+                $"Could not connect to QuickBooks ({_instanceName}) after {attempt} attempts. " +
+                $"Ensure the certificate was approved in QuickBooks. " +
+                $"Last error: {lastException?.Message}", lastException);
         }
 
         /// <summary>
