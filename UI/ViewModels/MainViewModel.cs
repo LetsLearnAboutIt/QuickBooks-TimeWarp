@@ -948,21 +948,113 @@ namespace QB_TimeWarp.UI.ViewModels
             SetPhase("Transforming", file);
             AppendLog("Phase 2/4: Transforming & importing data...");
 
-AppendLog("Running working migration engine...");
-var source = !string.IsNullOrEmpty(file.WorkingCopyPath) ? file.WorkingCopyPath : file.FilePath;
-var dest = !string.IsNullOrEmpty(DestinationPreview) ? DestinationPreview : Path.Combine(DestinationFolder, Path.GetFileNameWithoutExtension(file.FileName) + "-QB2021.qbw");
-AppendLog($"  Source: {source}");
-AppendLog($"  Destination: {dest}");
-AppendLog($"  Password: {(string.IsNullOrEmpty(adminPassword) ? "(none)" : "****")}");
-Program.Main(new[] { source, dest, adminPassword });
-AppendLog($"  ✓ Migration engine finished");
-_dispatcher.Invoke(() => { TransformedCount = ExportedCount; ImportedCount = ExportedCount; });
+            var source = !string.IsNullOrEmpty(file.WorkingCopyPath) ? file.WorkingCopyPath : file.FilePath;
+            var dest = !string.IsNullOrEmpty(DestinationPreview)
+                ? DestinationPreview
+                : Path.Combine(DestinationFolder,
+                    Path.GetFileNameWithoutExtension(file.FileName) + "-QB2021.qbw");
 
-            // Save report
-            var reportPath = Path.Combine(config.Paths.ValidationReportDirectory,
+            // ── Ensure output directory exists ──────────────────────────
+            var outputDir = Path.GetDirectoryName(dest);
+            if (!string.IsNullOrEmpty(outputDir) && !Directory.Exists(outputDir))
+            {
+                AppendLog($"  Creating output directory: {outputDir}");
+                Directory.CreateDirectory(outputDir);
+                Log.Information("Created output directory: {Dir}", outputDir);
+            }
+
+            AppendLog("Running working migration engine...");
+            AppendLog($"  Source:      {source}");
+            AppendLog($"  Destination: {dest}");
+            AppendLog($"  Password:    {(string.IsNullOrEmpty(adminPassword) ? "(none)" : "****")}");
+
+            // ── Call migration engine with error capture ─────────────────
+            int exitCode;
+            try
+            {
+                exitCode = Program.Main(new[] { source, dest, adminPassword });
+                AppendLog($"  Migration engine returned exit code: {exitCode}");
+            }
+            catch (Exception ex)
+            {
+                Log.Error(ex, "Program.Main threw an exception: {Message}", ex.Message);
+                AppendLog($"  ✗ Migration engine error: {ex.Message}");
+                if (ex.InnerException != null)
+                    AppendLog($"    Inner: {ex.InnerException.Message}");
+                throw new InvalidOperationException(
+                    $"Migration engine failed: {ex.Message}", ex);
+            }
+
+            if (exitCode != 0)
+            {
+                var errMsg = $"Migration engine returned non-zero exit code: {exitCode}";
+                AppendLog($"  ✗ {errMsg}");
+                Log.Error(errMsg);
+                throw new InvalidOperationException(errMsg);
+            }
+
+            // ── Verify output file was actually created ─────────────────
+            if (!File.Exists(dest))
+            {
+                var errMsg = $"Migration failed: Output file was not created at {dest}";
+                AppendLog($"  ✗ {errMsg}");
+                Log.Error(errMsg);
+                throw new InvalidOperationException(errMsg);
+            }
+
+            var outputFileInfo = new FileInfo(dest);
+            AppendLog($"  Output file size: {outputFileInfo.Length:N0} bytes");
+
+            // A valid QB company file with migrated data should be significantly
+            // larger than a blank template (~10 KB is an arbitrary minimum)
+            const long MinimumOutputFileSize = 10_000;
+            if (outputFileInfo.Length < MinimumOutputFileSize)
+            {
+                var errMsg = $"Migration failed: Output file is too small " +
+                    $"({outputFileInfo.Length:N0} bytes < {MinimumOutputFileSize:N0} bytes minimum). " +
+                    "No data appears to have been migrated.";
+                AppendLog($"  ✗ {errMsg}");
+                Log.Error(errMsg);
+                throw new InvalidOperationException(errMsg);
+            }
+
+            AppendLog($"  ✓ Output file verified: {outputFileInfo.Length:N0} bytes");
+            _dispatcher.Invoke(() => { TransformedCount = ExportedCount; ImportedCount = ExportedCount; });
+
+            // ── Verify migration report was created ─────────────────────
+            var reportDir = config.Paths.ValidationReportDirectory;
+            Directory.CreateDirectory(reportDir);
+
+            var reportPath = Path.Combine(reportDir,
                 $"MigrationReport_{DateTime.Now:yyyyMMdd_HHmmss}.json");
-            Directory.CreateDirectory(Path.GetDirectoryName(reportPath)!);
-            AppendLog($"  Report saved: {reportPath}");
+
+            // Check if any report file was generated by the migration engine
+            var recentReports = Directory.Exists(reportDir)
+                ? Directory.GetFiles(reportDir, "MigrationReport_*.json")
+                    .OrderByDescending(f => File.GetLastWriteTimeUtc(f))
+                    .ToArray()
+                : Array.Empty<string>();
+
+            if (recentReports.Length > 0)
+            {
+                var latestReport = recentReports[0];
+                var reportAge = DateTime.UtcNow - File.GetLastWriteTimeUtc(latestReport);
+                if (reportAge.TotalMinutes < 10)
+                {
+                    AppendLog($"  ✓ Migration report: {Path.GetFileName(latestReport)}");
+                }
+                else
+                {
+                    AppendLog($"  ⚠ No recent migration report found (latest is {reportAge.TotalMinutes:F0} min old)");
+                    Log.Warning("No migration report generated in the last 10 minutes. " +
+                        "Latest report: {Report} (age: {Age})", latestReport, reportAge);
+                }
+            }
+            else
+            {
+                AppendLog("  ⚠ No migration report files found in report directory");
+                Log.Warning("No MigrationReport_*.json files found in {Dir}", reportDir);
+            }
         }
 
         // ══════════════════════════════════════════════════════════════════════
