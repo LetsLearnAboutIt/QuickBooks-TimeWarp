@@ -360,27 +360,39 @@ namespace QB_TimeWarp.UI.ViewModels
                 AppendLog("  └─────────────────────────────────────────────────┘");
                 AppendLog("");
 
-                Log.Information("FIX #59: QB2021 template not certified. Launching QB for certificate approval...");
+                Log.Information("FIX #60: QB2021 template not certified. Launching QB 2021 explicitly for certificate approval...");
 
-                // Step 3: Launch QuickBooks (just ensure it's running)
-                AppendLog("  🚀 Launching QuickBooks 2021...");
-                var qbProcess = await Task.Run(() => QBConnectionManager.LaunchQuickBooks(templatePath));
+                // Step 3: Kill any running QuickBooks (may be QB2023 from file association)
+                // then launch QB 2021 explicitly with the template file
+                AppendLog("  🛑 Closing any running QuickBooks instances...");
+                await Task.Run(() => QBConnectionManager.KillAllQuickBooksProcesses());
+                await Task.Delay(3000); // Let QB processes fully exit
+
+                var qb2021ExePath = config.QuickBooks.QB2021.InstallPath;
+                AppendLog($"  🚀 Launching QuickBooks 2021 explicitly...");
+                AppendLog($"     Exe: {qb2021ExePath}");
+                AppendLog($"     File: {templatePath}");
+                Log.Information("FIX #60: Launching QB2021. Exe: {Exe}, File: {File}", qb2021ExePath, templatePath);
+
+                var qbProcess = await Task.Run(() =>
+                    QBConnectionManager.LaunchQuickBooksExplicit(qb2021ExePath, templatePath));
 
                 if (qbProcess != null)
                 {
-                    AppendLog($"  QuickBooks running (PID: {qbProcess.Id})");
+                    AppendLog($"  ✓ QuickBooks 2021 launched (PID: {qbProcess.Id})");
                 }
                 else
                 {
-                    AppendLog("  ⚠ Could not start QuickBooks automatically.");
-                    AppendLog("  Please open QuickBooks 2021 manually, then the app will retry.");
+                    AppendLog("  ⚠ Could not start QuickBooks 2021 automatically.");
+                    AppendLog($"  Verify QB2021 is installed at: {qb2021ExePath}");
+                    AppendLog("  Please open QuickBooks 2021 manually with the blank template.");
                 }
 
-                // Step 4: Wait for QB to be ready
-                AppendLog("  Waiting for QuickBooks to initialize...");
+                // Step 4: Wait for QB to be ready (longer delay for QB2021 to load file)
+                AppendLog("  Waiting for QuickBooks 2021 to initialize and open template...");
                 var qbReady = await Task.Run(() => QBConnectionManager.WaitForQuickBooksReady(
-                    timeoutSeconds: 60,
-                    initialDelayMs: 5000,
+                    timeoutSeconds: 90,
+                    initialDelayMs: 8000,
                     pollIntervalMs: 3000,
                     onProgress: (attempt, elapsed, msg) =>
                     {

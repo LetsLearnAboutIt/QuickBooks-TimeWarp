@@ -194,6 +194,102 @@ namespace QB_TimeWarp.Services
         }
 
         /// <summary>
+        /// FIX #60: Launches a specific QuickBooks version using an explicit executable path,
+        /// passing the company file as a command-line argument.
+        ///
+        /// This is required when multiple QB versions are installed (e.g. QB 2021 + QB 2023).
+        /// Using the .qbw file association would open the newest/default version, which may
+        /// not be the one we need. By specifying the exact executable, we guarantee the
+        /// correct version opens the file.
+        ///
+        /// Unlike LaunchQuickBooks() which uses UseShellExecute on the .qbw file,
+        /// this method runs the QB executable directly with the file as an argument.
+        /// </summary>
+        /// <param name="executablePath">Full path to the QuickBooks executable (e.g. QBW32PremierAccountant.exe).</param>
+        /// <param name="companyFilePath">Full path to the .QBW company file to open.</param>
+        /// <returns>The launched Process, or null if launch failed.</returns>
+        public static Process? LaunchQuickBooksExplicit(string executablePath, string companyFilePath)
+        {
+            if (string.IsNullOrWhiteSpace(executablePath))
+            {
+                Log.Error("FIX #60: Cannot launch QuickBooks — no executable path provided.");
+                return null;
+            }
+
+            if (string.IsNullOrWhiteSpace(companyFilePath))
+            {
+                Log.Error("FIX #60: Cannot launch QuickBooks — no company file path provided.");
+                return null;
+            }
+
+            Log.Information("FIX #60: Launching QuickBooks explicitly. Exe: {Exe}, File: {File}",
+                executablePath, companyFilePath);
+
+            try
+            {
+                var startInfo = new ProcessStartInfo
+                {
+                    FileName = executablePath,
+                    Arguments = $"\"{companyFilePath}\"",
+                    UseShellExecute = false,
+                    WindowStyle = ProcessWindowStyle.Normal
+                };
+
+                var process = Process.Start(startInfo);
+
+                if (process != null)
+                {
+                    Log.Information("FIX #60: QuickBooks launched explicitly (PID: {PID}). " +
+                        "Exe: {Exe}, File: {File}", process.Id, executablePath, companyFilePath);
+                }
+                else
+                {
+                    Log.Warning("FIX #60: Process.Start returned null for explicit QB launch. " +
+                        "Exe: {Exe}", executablePath);
+                }
+
+                return process;
+            }
+            catch (System.ComponentModel.Win32Exception ex)
+            {
+                Log.Error(ex, "FIX #60: Windows could not launch QuickBooks executable. " +
+                    "Verify the path exists: {Exe}", executablePath);
+                return null;
+            }
+            catch (Exception ex)
+            {
+                Log.Error(ex, "FIX #60: Failed to launch QuickBooks explicitly: {Message}", ex.Message);
+                return null;
+            }
+        }
+
+        /// <summary>
+        /// FIX #60: Kills all running QuickBooks processes.
+        /// Used before launching a specific QB version to ensure no version conflict.
+        /// </summary>
+        public static void KillAllQuickBooksProcesses()
+        {
+            var processNames = new[] { "QBW32PremierAccountant", "QBW32", "QBW64", "qbw32" };
+            foreach (var name in processNames)
+            {
+                foreach (var proc in Process.GetProcessesByName(name))
+                {
+                    try
+                    {
+                        Log.Information("FIX #60: Killing QB process {Name} (PID: {PID})", proc.ProcessName, proc.Id);
+                        proc.Kill();
+                        proc.WaitForExit(5000);
+                    }
+                    catch (Exception ex)
+                    {
+                        Log.Warning(ex, "FIX #60: Could not kill QB process {Name} (PID: {PID}): {Message}",
+                            proc.ProcessName, proc.Id, ex.Message);
+                    }
+                }
+            }
+        }
+
+        /// <summary>
         /// Waits for QuickBooks to be ready to accept SDK connections.
         /// Polls by attempting to create the COM object until it succeeds or times out.
         /// FIX #51: Increased initial delay and added progress callback.

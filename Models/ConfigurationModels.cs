@@ -117,6 +117,12 @@ namespace QB_TimeWarp.Models
 
     public class QBInstanceConfig
     {
+        /// <summary>
+        /// FIX #60: Explicit path to the QuickBooks executable.
+        /// Required for QB2021 to avoid launching QB2023 via file association.
+        /// Example: "C:\Program Files (x86)\Intuit\QuickBooks 2021\QBW32PremierAccountant.exe"
+        /// </summary>
+        public string InstallPath { get; set; } = string.Empty;
         public string CompanyFilePath { get; set; } = string.Empty;
         public string ApplicationName { get; set; } = "QB-TimeWarp";
         public string SDKVersion { get; set; } = string.Empty;
