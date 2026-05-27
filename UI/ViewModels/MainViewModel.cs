@@ -177,6 +177,12 @@ namespace QB_TimeWarp.UI.ViewModels
         // Working directory constants
         private const string WorkingSourceDir = @"C:\QB-TimeWarp\Working\Source";
 
+        // FIX #56: Template workflow paths
+        // Master template — the original blank QB 2021 file, NEVER directly modified by SDK
+        private const string MasterTemplatePath = @"C:\QB-TimeWarp\Working\QB21_Blank_Template\Blank_Template.qbw";
+        // Working copy — refreshed from master on each startup, used as copy source for migrations
+        private const string WorkingTemplatePath = @"C:\QB-TimeWarp\Working\Target\Blank_Template.qbw";
+
         // ── Constructor ───────────────────────────────────────────────────────
         public MainViewModel()
         {
@@ -201,6 +207,68 @@ namespace QB_TimeWarp.UI.ViewModels
 
             // File collection change listener for estimates
             Files.CollectionChanged += (s, e) => CalculateEstimates();
+
+            // FIX #56: Refresh working template from master on every app startup
+            RefreshWorkingTemplate();
+        }
+
+        /// <summary>
+        /// FIX #56: Copies the master QB 2021 blank template to the Working\Target directory.
+        /// Called on every app startup to ensure the working copy is a clean, unmodified
+        /// version of the blank template — ready for the next migration.
+        /// 
+        /// Workflow:  Master (QB21_Blank_Template)  →  Working\Target\Blank_Template.qbw
+        ///            ↑ never modified                 ↑ fresh copy each startup
+        /// </summary>
+        private void RefreshWorkingTemplate()
+        {
+            try
+            {
+                if (!File.Exists(MasterTemplatePath))
+                {
+                    Log.Warning("FIX #56: Master template not found at {Path} — " +
+                        "working template refresh skipped. Migration will still work " +
+                        "if the template is placed there before running.",
+                        MasterTemplatePath);
+                    AppendLog($"⚠ Master template not found: {MasterTemplatePath}");
+                    AppendLog("  Place Blank_Template.qbw in the QB21_Blank_Template folder before migrating.");
+                    return;
+                }
+
+                // Ensure the Working\Target directory exists
+                var targetDir = Path.GetDirectoryName(WorkingTemplatePath)!;
+                if (!Directory.Exists(targetDir))
+                {
+                    Directory.CreateDirectory(targetDir);
+                    Log.Information("FIX #56: Created working target directory: {Dir}", targetDir);
+                }
+
+                // Copy master → working (overwrite any leftover from previous migration)
+                File.Copy(MasterTemplatePath, WorkingTemplatePath, overwrite: true);
+
+                var masterSize = new FileInfo(MasterTemplatePath).Length;
+                var workingSize = new FileInfo(WorkingTemplatePath).Length;
+
+                if (masterSize != workingSize)
+                {
+                    Log.Warning("FIX #56: Working template size mismatch after copy — " +
+                        "master={MasterSize}, working={WorkingSize}",
+                        masterSize, workingSize);
+                    AppendLog($"⚠ Template copy size mismatch: master={masterSize:N0}, working={workingSize:N0}");
+                }
+                else
+                {
+                    Log.Information("FIX #56: Refreshed working template from master ({Size} bytes): {Src} → {Dst}",
+                        workingSize, MasterTemplatePath, WorkingTemplatePath);
+                    AppendLog($"✓ Working template refreshed from master ({workingSize:N0} bytes)");
+                }
+            }
+            catch (Exception ex)
+            {
+                Log.Error(ex, "FIX #56: Failed to refresh working template: {Message}", ex.Message);
+                AppendLog($"⚠ Could not refresh working template: {ex.Message}");
+                AppendLog("  Migration may still work if Working\\Target\\Blank_Template.qbw exists.");
+            }
         }
 
         // ── Properties: Section 1 — Source File ────────────────────────────
@@ -1070,41 +1138,64 @@ namespace QB_TimeWarp.UI.ViewModels
                 Log.Information("Created output directory: {Dir}", outputDir);
             }
 
-            // ── FIX #54: Copy blank QB2021 template to output path ──────
+            // ── FIX #54 + #56: Copy working template to output path ────────
             // The QB SDK has no "Save As" — importing data goes directly into
             // the file opened by BeginSession. To preserve the blank template
-            // for reuse, we COPY it to the output path and import into the copy.
-            var templatePath = config.QuickBooks.QB2021.CompanyFilePath;
-            AppendLog($"  Template:    {templatePath}");
-
-            if (!File.Exists(templatePath))
+            // for reuse, we COPY the working template to the output path.
+            //
+            // FIX #56 workflow:
+            //   Master (QB21_Blank_Template) → Working\Target (refreshed on startup)
+            //   Working\Target → Output\{name}-QB2021.qbw (this step, before SDK import)
+            //   Master is NEVER opened or modified by the SDK.
+            //
+            // Primary source: Working\Target (refreshed on startup by RefreshWorkingTemplate)
+            // Fallback: Master template (from config) — in case working copy is missing
+            string templateCopySource;
+            if (File.Exists(WorkingTemplatePath))
             {
-                var errMsg = $"QB 2021 blank template not found at: {templatePath}";
+                templateCopySource = WorkingTemplatePath;
+                AppendLog($"  Template source: {WorkingTemplatePath} (working copy)");
+            }
+            else if (File.Exists(MasterTemplatePath))
+            {
+                templateCopySource = MasterTemplatePath;
+                AppendLog($"  ⚠ Working copy missing — using master template directly: {MasterTemplatePath}");
+                Log.Warning("FIX #56: Working template missing at {Working}, falling back to master {Master}",
+                    WorkingTemplatePath, MasterTemplatePath);
+            }
+            else
+            {
+                var errMsg = $"QB 2021 blank template not found at working path ({WorkingTemplatePath}) " +
+                    $"or master path ({MasterTemplatePath})";
                 AppendLog($"  ✗ {errMsg}");
                 Log.Error(errMsg);
-                throw new FileNotFoundException(errMsg, templatePath);
+                throw new FileNotFoundException(errMsg, WorkingTemplatePath);
             }
+
+            // Record master template size BEFORE migration for post-migration verification
+            long masterSizeBeforeMigration = File.Exists(MasterTemplatePath)
+                ? new FileInfo(MasterTemplatePath).Length : -1;
 
             try
             {
-                AppendLog($"  Copying blank template → {dest}");
-                File.Copy(templatePath, dest, overwrite: true);
-                var templateSize = new FileInfo(templatePath).Length;
+                AppendLog($"  Copying template → {dest}");
+                File.Copy(templateCopySource, dest, overwrite: true);
+                var sourceSize = new FileInfo(templateCopySource).Length;
                 var copySize = new FileInfo(dest).Length;
                 AppendLog($"  ✓ Template copied ({copySize:N0} bytes)");
-                Log.Information("FIX #54: Copied blank template {Template} → {Dest} ({Size} bytes)",
-                    templatePath, dest, copySize);
+                Log.Information("FIX #56: Copied template {Source} → {Dest} ({Size} bytes)",
+                    templateCopySource, dest, copySize);
 
-                // Verify the copy matches the original
-                if (templateSize != copySize)
+                // Verify the copy matches the source
+                if (sourceSize != copySize)
                 {
-                    Log.Warning("Template copy size mismatch: original={Original}, copy={Copy}",
-                        templateSize, copySize);
+                    Log.Warning("Template copy size mismatch: source={Source}, copy={Copy}",
+                        sourceSize, copySize);
                 }
             }
             catch (IOException ex) when (ex is not FileNotFoundException)
             {
-                var errMsg = $"Failed to copy blank template to output path: {ex.Message}";
+                var errMsg = $"Failed to copy template to output path: {ex.Message}";
                 AppendLog($"  ✗ {errMsg}");
                 Log.Error(ex, errMsg);
                 throw new InvalidOperationException(errMsg, ex);
@@ -1169,19 +1260,34 @@ namespace QB_TimeWarp.UI.ViewModels
 
             AppendLog($"  ✓ Output file verified: {outputFileInfo.Length:N0} bytes");
 
-            // ── FIX #54: Verify blank template was preserved ─────────────
-            if (File.Exists(templatePath))
+            // ── FIX #56: Verify master template was NOT modified ──────────
+            // Compare master template size before and after migration to ensure
+            // the SDK never touched the master file.
+            if (File.Exists(MasterTemplatePath))
             {
-                var postTemplateSize = new FileInfo(templatePath).Length;
-                var preTemplateSize = new FileInfo(templatePath).Length;
-                AppendLog($"  ✓ Blank template preserved: {templatePath} ({postTemplateSize:N0} bytes)");
-                Log.Information("FIX #54: Template preservation verified: {Template} ({Size} bytes)",
-                    templatePath, postTemplateSize);
+                var masterSizeAfterMigration = new FileInfo(MasterTemplatePath).Length;
+                if (masterSizeBeforeMigration > 0 && masterSizeBeforeMigration == masterSizeAfterMigration)
+                {
+                    AppendLog($"  ✓ Master template preserved: {MasterTemplatePath} ({masterSizeAfterMigration:N0} bytes)");
+                    Log.Information("FIX #56: Master template verified unchanged: {Template} ({Size} bytes)",
+                        MasterTemplatePath, masterSizeAfterMigration);
+                }
+                else if (masterSizeBeforeMigration > 0 && masterSizeBeforeMigration != masterSizeAfterMigration)
+                {
+                    AppendLog($"  ⚠ WARNING: Master template size changed! Before={masterSizeBeforeMigration:N0}, After={masterSizeAfterMigration:N0}");
+                    Log.Error("FIX #56: MASTER TEMPLATE MODIFIED during migration! " +
+                        "Before={Before}, After={After}, Path={Path}",
+                        masterSizeBeforeMigration, masterSizeAfterMigration, MasterTemplatePath);
+                }
+                else
+                {
+                    AppendLog($"  ✓ Master template exists: {MasterTemplatePath} ({masterSizeAfterMigration:N0} bytes)");
+                }
             }
             else
             {
-                AppendLog($"  ⚠ Warning: Blank template no longer exists at {templatePath}");
-                Log.Warning("FIX #54: Template file missing after migration: {Template}", templatePath);
+                AppendLog($"  ⚠ Warning: Master template no longer exists at {MasterTemplatePath}");
+                Log.Warning("FIX #56: Master template missing after migration: {Template}", MasterTemplatePath);
             }
 
             _dispatcher.Invoke(() => { TransformedCount = ExportedCount; ImportedCount = ExportedCount; });
