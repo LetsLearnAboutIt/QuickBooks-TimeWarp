@@ -1363,6 +1363,55 @@ namespace QB_TimeWarp.UI.ViewModels
             AppendLog($"  Import into: {WorkingTemplatePath}");
             AppendLog($"  Password:    {(string.IsNullOrEmpty(adminPassword) ? "(none)" : "****")}");
 
+            // ── FIX #62: Explicitly prepare QB 2021 for import ────────────
+            // Kill any running QB (likely QB2023 from the export phase),
+            // then launch QB 2021 explicitly with the blank template.
+            // This prevents the SDK from connecting to QB 2023 by mistake.
+            AppendLog("");
+            AppendLog("  ═══ Preparing QuickBooks 2021 for import ═══");
+            var qb2021InstallPath = config.QuickBooks.QB2021.InstallPath;
+            if (!string.IsNullOrWhiteSpace(qb2021InstallPath))
+            {
+                AppendLog("  🛑 Closing all QuickBooks instances...");
+                Log.Information("[GUI Import] FIX #62: Killing all QB processes before import...");
+                QBConnectionManager.KillAllQuickBooksProcesses();
+                System.Threading.Thread.Sleep(5000); // Let file locks release
+
+                AppendLog($"  🚀 Launching QuickBooks 2021...");
+                AppendLog($"     Exe:  {qb2021InstallPath}");
+                AppendLog($"     File: {WorkingTemplatePath}");
+                Log.Information("[GUI Import] FIX #62: Launching QB 2021. Exe: {Exe}, File: {File}",
+                    qb2021InstallPath, WorkingTemplatePath);
+
+                var qb2021Proc = QBConnectionManager.LaunchQuickBooksExplicit(
+                    qb2021InstallPath, WorkingTemplatePath);
+
+                if (qb2021Proc != null)
+                {
+                    AppendLog($"  ✓ QB 2021 launched (PID: {qb2021Proc.Id})");
+                    AppendLog("  Waiting for QB 2021 to initialize (10s)...");
+                    Log.Information("[GUI Import] FIX #62: QB 2021 launched (PID: {PID}). Waiting...", qb2021Proc.Id);
+                    QBConnectionManager.WaitForQuickBooksReady(
+                        timeoutSeconds: 90,
+                        initialDelayMs: 10000,
+                        pollIntervalMs: 3000);
+                    AppendLog("  ✓ QB 2021 ready for SDK connections.");
+                }
+                else
+                {
+                    AppendLog($"  ⚠ Could not launch QB 2021 automatically.");
+                    AppendLog($"  Verify path: {qb2021InstallPath}");
+                    Log.Warning("[GUI Import] FIX #62: LaunchQuickBooksExplicit returned null for: {Exe}", qb2021InstallPath);
+                }
+            }
+            else
+            {
+                AppendLog("  ⚠ QB2021 InstallPath not configured — migration engine will handle launch.");
+                Log.Warning("[GUI Import] FIX #62: QB2021 InstallPath is empty — skipping explicit launch.");
+            }
+            AppendLog("  ═══════════════════════════════════════════");
+            AppendLog("");
+
             // ── Call migration engine — imports into Working\Target ───────
             // Program.Main detects positional .qbw args and overrides the config
             // paths: arg[0] = source, arg[1] = QB2021 target for import.

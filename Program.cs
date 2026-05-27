@@ -473,45 +473,80 @@ namespace QB_TimeWarp
             Log.Information("║  Closing QB 2023 → Will open QB 2021 for import             ║");
             Log.Information("╚══════════════════════════════════════════════════════════════╝");
 
-            KillQuickBooksProcesses("Switching from QB 2023 export to QB 2021 import");
-            Log.Information("  QuickBooks processes cleared. Proceeding with import...");
+            // FIX #62: Explicitly launch QB 2021 for import phase
+            // This is critical when both QB 2021 and QB 2023 are installed.
+            // Without this, the SDK's BeginSession may connect to QB 2023 (the default).
+            Log.Information("");
+            Log.Information("[Import Phase] ══════════════════════════════════════════════");
+            Log.Information("[Import Phase] Preparing QuickBooks 2021 for data import...");
+            Log.Information("[Import Phase] ══════════════════════════════════════════════");
 
-            // FIX #60: Launch QB 2021 explicitly using its own executable path
-            // so the SDK's BeginSession connects to QB 2021, not the default QB 2023.
+            // Step A: Kill ALL QuickBooks processes (QB 2023 from export, any stale QB)
+            Log.Information("[Import Phase] Closing all QuickBooks instances...");
+            KillQuickBooksProcesses("Switching from QB 2023 export to QB 2021 import");
+            QBConnectionManager.KillAllQuickBooksProcesses(); // Belt-and-suspenders
+            Log.Information("[Import Phase] ✓ All QuickBooks processes closed.");
+
+            // Step B: Wait for processes to fully exit (file locks, COM cleanup)
+            Log.Information("[Import Phase] Waiting 5 seconds for processes to fully exit...");
+            System.Threading.Thread.Sleep(5000);
+
+            // Step C: Launch QB 2021 explicitly with the blank template
             var qb2021ExePath = _config.QuickBooks.QB2021.InstallPath;
             var qb2021FilePath = _config.QuickBooks.QB2021.CompanyFilePath;
+
+            Log.Information("[Import Phase] Launching QuickBooks 2021...");
+            Log.Information("[Import Phase]   QB2021 Exe:  {Exe}", qb2021ExePath);
+            Log.Information("[Import Phase]   Template:    {File}", qb2021FilePath);
+
             if (!string.IsNullOrWhiteSpace(qb2021ExePath))
             {
-                Log.Information("FIX #60: Launching QB 2021 explicitly for import. Exe: {Exe}, File: {File}",
-                    qb2021ExePath, qb2021FilePath);
                 var qb2021Process = QBConnectionManager.LaunchQuickBooksExplicit(qb2021ExePath, qb2021FilePath);
                 if (qb2021Process != null)
                 {
-                    Log.Information("FIX #60: QB 2021 launched (PID: {PID}). Waiting for initialization...",
-                        qb2021Process.Id);
-                    QBConnectionManager.WaitForQuickBooksReady(
+                    Log.Information("[Import Phase] ✓ QB 2021 launched (PID: {PID})", qb2021Process.Id);
+                    Log.Information("[Import Phase] Waiting for QB 2021 to initialize and open template...");
+                    var ready = QBConnectionManager.WaitForQuickBooksReady(
                         timeoutSeconds: 90,
-                        initialDelayMs: 8000,
+                        initialDelayMs: 10000,
                         pollIntervalMs: 3000);
+                    if (ready)
+                    {
+                        Log.Information("[Import Phase] ✓ QB 2021 is ready for SDK connections.");
+                    }
+                    else
+                    {
+                        Log.Warning("[Import Phase] ⚠ QB 2021 did not respond in time — proceeding anyway.");
+                    }
                 }
                 else
                 {
-                    Log.Warning("FIX #60: Could not launch QB 2021 explicitly — SDK will attempt to start it.");
+                    Log.Warning("[Import Phase] ⚠ Could not launch QB 2021. Verify install path: {Exe}", qb2021ExePath);
+                    Log.Warning("[Import Phase] SDK will attempt to connect — may fail if wrong QB version responds.");
                 }
             }
             else
             {
-                Log.Warning("FIX #60: QB2021 InstallPath not configured — SDK will use default QB launch.");
+                Log.Warning("[Import Phase] ⚠ QB2021 InstallPath not configured in appsettings.json.");
+                Log.Warning("[Import Phase] SDK will use default QB launch — this may open QB 2023 instead!");
             }
+
+            Log.Information("[Import Phase] ══════════════════════════════════════════════");
 
             // ─── Step 4: Import Data into QB 2021 ──────────────────────
             ConsoleBanner.ShowStep(4, totalSteps, "Import Data into QB 2021");
             MigrationReport report;
 
+            Log.Information("[Import Phase] Connecting SDK to QB 2021 (BeginSession)...");
+            Log.Information("[Import Phase]   Company file: {Path}", _config.QuickBooks.QB2021.CompanyFilePath);
+            Log.Information("[Import Phase]   App name:     {App}", _config.QuickBooks.QB2021.ApplicationName);
+            Log.Information("[Import Phase]   SDK version:  {Ver}", _config.QuickBooks.QB2021.SDKVersion);
+
             using (var qb2021Conn = new QBConnectionManager(
                 _config.QuickBooks.QB2021, "QB2021-Import"))
             {
                 qb2021Conn.Connect();
+                Log.Information("[Import Phase] ✓ Connected to QuickBooks 2021 successfully.");
                 ConsoleBanner.ShowSuccess("Connected to QuickBooks 2021");
 
                 var importer = new DataImporter(
@@ -727,25 +762,41 @@ namespace QB_TimeWarp
 
             ConsoleBanner.ShowStep(2, 2, "Import Data into QB 2021");
 
-            // FIX #60: Launch QB 2021 explicitly for import-only mode
+            // FIX #62: Explicitly launch QB 2021 for import-only mode
             var qb2021ExePathImport = _config.QuickBooks.QB2021.InstallPath;
+            Log.Information("[Import Phase] ══════════════════════════════════════════════");
+            Log.Information("[Import Phase] Preparing QB 2021 for import-only mode...");
+
             if (!string.IsNullOrWhiteSpace(qb2021ExePathImport))
             {
+                Log.Information("[Import Phase] Closing all QuickBooks instances...");
                 QBConnectionManager.KillAllQuickBooksProcesses();
-                System.Threading.Thread.Sleep(3000);
-                Log.Information("FIX #60: Launching QB 2021 for import-only. Exe: {Exe}", qb2021ExePathImport);
+                System.Threading.Thread.Sleep(5000);
+                Log.Information("[Import Phase] Launching QB 2021: {Exe}", qb2021ExePathImport);
+                Log.Information("[Import Phase]   Template: {File}", _config.QuickBooks.QB2021.CompanyFilePath);
                 var proc = QBConnectionManager.LaunchQuickBooksExplicit(
                     qb2021ExePathImport, _config.QuickBooks.QB2021.CompanyFilePath);
                 if (proc != null)
                 {
+                    Log.Information("[Import Phase] ✓ QB 2021 launched (PID: {PID}). Waiting for initialization...", proc.Id);
                     QBConnectionManager.WaitForQuickBooksReady(
-                        timeoutSeconds: 90, initialDelayMs: 8000, pollIntervalMs: 3000);
+                        timeoutSeconds: 90, initialDelayMs: 10000, pollIntervalMs: 3000);
+                }
+                else
+                {
+                    Log.Warning("[Import Phase] ⚠ Could not launch QB 2021: {Exe}", qb2021ExePathImport);
                 }
             }
+            else
+            {
+                Log.Warning("[Import Phase] ⚠ QB2021 InstallPath not configured — using default QB launch.");
+            }
 
+            Log.Information("[Import Phase] Connecting SDK to QB 2021...");
             using var qb2021Conn = new QBConnectionManager(
                 _config.QuickBooks.QB2021, "QB2021-Import");
             qb2021Conn.Connect();
+            Log.Information("[Import Phase] ✓ Connected to QuickBooks 2021.");
 
             var importer = new DataImporter(
                 qb2021Conn, _config.Import, _config.QuickBooks.QB2021.SDKVersion);
