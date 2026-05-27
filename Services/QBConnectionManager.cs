@@ -131,13 +131,16 @@ namespace QB_TimeWarp.Services
         }
 
         /// <summary>
-        /// Launches QuickBooks Desktop and opens the specified company file.
-        /// The QB window remains visible so the user can approve the certificate dialog
-        /// when an SDK connection is attempted for the first time.
+        /// Launches QuickBooks Desktop WITHOUT opening a company file.
+        /// FIX #52: QB ignores command-line file arguments in many versions, so we
+        /// launch the application plain and let the SDK's BeginSession(filePath, ...)
+        /// open the company file programmatically. This triggers QB's native password
+        /// dialog (if the file is password-protected) and the certificate approval
+        /// dialog (if the app hasn't been authorized yet) — all from a single
+        /// BeginSession call, giving the user one unified prompt sequence.
         /// </summary>
-        /// <param name="companyFilePath">Full path to the .QBW company file to open.</param>
         /// <returns>The launched Process, or null if QB executable was not found.</returns>
-        public static Process? LaunchQuickBooks(string companyFilePath)
+        public static Process? LaunchQuickBooks()
         {
             var qbExePath = FindQuickBooksExecutable();
             if (qbExePath == null)
@@ -147,14 +150,16 @@ namespace QB_TimeWarp.Services
                 return null;
             }
 
-            Log.Information("Launching QuickBooks: {Exe} with file: {File}", qbExePath, companyFilePath);
+            Log.Information("Launching QuickBooks (no file argument — SDK will open file): {Exe}", qbExePath);
 
             try
             {
                 var startInfo = new ProcessStartInfo
                 {
                     FileName = qbExePath,
-                    Arguments = $"\"{companyFilePath}\"",
+                    // FIX #52: No Arguments — QB ignores file args in many versions.
+                    // The SDK's BeginSession() will open the file and trigger QB's
+                    // native password + certificate dialogs.
                     UseShellExecute = true,          // Required for GUI apps
                     WindowStyle = ProcessWindowStyle.Normal
                 };
@@ -164,7 +169,7 @@ namespace QB_TimeWarp.Services
                 if (process != null)
                 {
                     Log.Information("QuickBooks launched successfully (PID: {PID}). " +
-                        "Waiting for application to initialize...", process.Id);
+                        "The SDK will open the company file during BeginSession().", process.Id);
                 }
                 else
                 {
@@ -475,14 +480,15 @@ namespace QB_TimeWarp.Services
         /// When true, the next Connect() call will first try BeginSession with an
         /// empty company file path (= attach to the currently-open file in QuickBooks).
         /// This avoids a duplicate password prompt when QuickBooks has already been
-        /// launched and the user has already authenticated.
+        /// launched WITH a file and the user has already authenticated.
         ///
         /// FIX #50: The QBXML SDK does NOT accept a password parameter — security is
-        /// handled entirely by the QuickBooks Desktop UI. If we pass a company file path
-        /// to BeginSession and that file is password-protected, QuickBooks shows its own
-        /// login dialog — even if the file is already open. Using an empty string instead
-        /// tells the SDK to attach to whatever file QB already has open, bypassing the
-        /// redundant password prompt.
+        /// handled entirely by the QuickBooks Desktop UI.
+        ///
+        /// FIX #52: Since we now launch QB WITHOUT a file argument (QB ignores them),
+        /// this property is typically false. The SDK's BeginSession(filePath, 0) opens
+        /// the file and triggers QB's native password + certificate dialogs. Only set
+        /// this to true if QB already has a file open (e.g., user opened it manually).
         /// </summary>
         public bool PreferCurrentlyOpenFile { get; set; }
 
@@ -491,11 +497,14 @@ namespace QB_TimeWarp.Services
         ///
         /// FIX #50 — Password handling strategy:
         /// The QB SDK BeginSession() does NOT accept a password parameter. When a company
-        /// file is password-protected, QB shows its own login dialog. To avoid prompting
-        /// the user twice (once when QB launches the file, once when the SDK connects),
-        /// we first try BeginSession("", 0) which attaches to the already-open file.
-        /// If that fails (QB not running or no file open), we fall back to passing the
-        /// explicit file path which triggers QB to open it (and prompt for password).
+        /// file is password-protected, QB shows its own login dialog.
+        ///
+        /// FIX #52 — File opening strategy:
+        /// QB is launched WITHOUT a file argument (it ignores command-line file args).
+        /// BeginSession(filePath, 0) opens the company file in the running QB instance,
+        /// triggering the native password dialog and certificate approval in one step.
+        /// If PreferCurrentlyOpenFile is true, we first try BeginSession("", 0) to
+        /// attach to an already-open file; if that fails, we fall back to the file path.
         /// </summary>
         public void Connect()
         {

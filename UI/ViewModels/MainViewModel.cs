@@ -824,67 +824,70 @@ namespace QB_TimeWarp.UI.ViewModels
                     AppendLog("  Proceeding with full authentication flow...");
                 }
 
-                // ── Phase 0c: Launch QuickBooks ────────────────────────────
+                // ── Phase 0c: Launch QuickBooks (no file — SDK opens it) ────
+                // FIX #52: QB ignores command-line file arguments. We launch QB
+                // plain and let BeginSession(filePath) open the file, which
+                // triggers QB's native password + certificate dialogs in one step.
                 Process? qbProcess = null;
 
-                if (!string.IsNullOrEmpty(sourcePath))
+                AppendLog("═══════════════════════════════════════════════");
+                AppendLog("🚀 Launching QuickBooks 2023...");
+                AppendLog("  (No file argument — the SDK will open the file)");
+
+                qbProcess = QBConnectionManager.LaunchQuickBooks();
+
+                if (qbProcess == null)
                 {
-                    AppendLog("═══════════════════════════════════════════════");
-                    AppendLog("🚀 Launching QuickBooks 2023...");
-                    AppendLog($"  File: {sourcePath}");
-
-                    qbProcess = QBConnectionManager.LaunchQuickBooks(sourcePath);
-
-                    if (qbProcess == null)
-                    {
-                        AppendLog("⚠ Could not find QuickBooks executable.");
-                        AppendLog("  Please open QuickBooks manually and load the company file.");
-                    }
-                    else
-                    {
-                        qbWasLaunched = true;
-                        AppendLog($"  QuickBooks launched (PID: {qbProcess.Id})");
-                        AppendLog("");
-                        AppendLog("  ┌─────────────────────────────────────────────┐");
-                        AppendLog("  │  🔐 If password-protected, enter your admin │");
-                        AppendLog("  │     password in the QuickBooks login dialog. │");
-                        AppendLog("  │     You only need to enter it ONCE.          │");
-                        AppendLog("  └─────────────────────────────────────────────┘");
-                        AppendLog("");
-                        AppendLog("  Waiting for QuickBooks to initialize...");
-
-                        // Wait for QB with progress reporting
-                        await Task.Run(() => QBConnectionManager.WaitForQuickBooksReady(
-                            timeoutSeconds: 90,
-                            initialDelayMs: 5000,
-                            pollIntervalMs: 3000,
-                            onProgress: (attempt, elapsed, msg) =>
-                            {
-                                if (attempt > 0 && attempt % 3 == 0) // Log every ~9 seconds
-                                    AppendLog($"  {msg}");
-                            }));
-
-                        AppendLog("  ✓ QuickBooks is ready for SDK connection.");
-                    }
-
+                    AppendLog("⚠ Could not find QuickBooks executable.");
+                    AppendLog("  Please open QuickBooks manually (leave it on the");
+                    AppendLog("  'No Company Open' screen — the SDK will open the file).");
+                }
+                else
+                {
+                    qbWasLaunched = true;
+                    AppendLog($"  QuickBooks launched (PID: {qbProcess.Id})");
                     AppendLog("");
-                    AppendLog("  ┌─────────────────────────────────────────────┐");
-                    AppendLog("  │  📋 QuickBooks may show a CERTIFICATE       │");
-                    AppendLog("  │     approval dialog. Please select:         │");
-                    AppendLog("  │     'Yes, always; allow access even if      │");
-                    AppendLog("  │      QuickBooks is not running'             │");
-                    AppendLog("  │     Then click Continue / OK.               │");
-                    AppendLog("  │                                             │");
-                    AppendLog("  │  ⏳ The app will wait up to 3 minutes for   │");
-                    AppendLog("  │     you to approve the certificate.         │");
-                    AppendLog("  └─────────────────────────────────────────────┘");
-                    AppendLog("═══════════════════════════════════════════════");
+                    AppendLog("  Waiting for QuickBooks to initialize...");
+
+                    // Wait for QB with progress reporting
+                    await Task.Run(() => QBConnectionManager.WaitForQuickBooksReady(
+                        timeoutSeconds: 90,
+                        initialDelayMs: 5000,
+                        pollIntervalMs: 3000,
+                        onProgress: (attempt, elapsed, msg) =>
+                        {
+                            if (attempt > 0 && attempt % 3 == 0) // Log every ~9 seconds
+                                AppendLog($"  {msg}");
+                        }));
+
+                    AppendLog("  ✓ QuickBooks is ready for SDK connection.");
                 }
 
+                AppendLog("");
+                AppendLog("  ┌─────────────────────────────────────────────────┐");
+                AppendLog("  │  FIX #52: The SDK will now open the company     │");
+                AppendLog("  │  file. QuickBooks will prompt you for:          │");
+                AppendLog("  │                                                 │");
+                AppendLog("  │  🔐 PASSWORD — Enter your admin password        │");
+                AppendLog("  │     in QuickBooks' native login dialog.         │");
+                AppendLog("  │                                                 │");
+                AppendLog("  │  📋 CERTIFICATE — When prompted, select:        │");
+                AppendLog("  │     'Yes, always; allow access even if          │");
+                AppendLog("  │      QuickBooks is not running'                 │");
+                AppendLog("  │     Then click Continue / OK.                   │");
+                AppendLog("  │                                                 │");
+                AppendLog("  │  ⏳ The app will wait up to 3 minutes for       │");
+                AppendLog("  │     you to complete these prompts.              │");
+                AppendLog("  └─────────────────────────────────────────────────┘");
+                AppendLog("═══════════════════════════════════════════════");
+
                 // ── Phase 0d: Prompt for admin password (for migration engine) ──
+                // FIX #52: The password collected here is passed to the migration
+                // engine for reference. The ACTUAL QB authentication happens via
+                // QB's native dialog when BeginSession opens the file.
                 AppendLog("🔐 Prompting for QuickBooks admin password...");
-                AppendLog("   (This password is for the migration engine — use the");
-                AppendLog("    same password you entered in QuickBooks above.)");
+                AppendLog("   (Enter the same password you'll use in the");
+                AppendLog("    QuickBooks login dialog that appears shortly.)");
 
                 bool passwordDialogOk = false;
                 var promptFileName = firstFile?.FileName ?? "Company File";
@@ -998,14 +1001,14 @@ namespace QB_TimeWarp.UI.ViewModels
             Dictionary<string, ExportedEntitySet> exportedData;
             using (var conn = new QBConnectionManager(config.QuickBooks.QB2023, "QB2023-Export"))
             {
-                // FIX #50: If QB was already launched with the file (user entered password
-                // in QB's own login dialog), tell the SDK to attach to the currently-open
-                // file instead of passing the file path again. This prevents a duplicate
-                // password prompt — the QB SDK does NOT accept passwords programmatically.
+                // FIX #52: QB was launched WITHOUT a file argument. The SDK's
+                // BeginSession(filePath, 0) will open the file in QB, triggering
+                // QB's native password dialog (if needed) and certificate approval.
+                // We do NOT set PreferCurrentlyOpenFile because no file is open yet.
                 if (qbAlreadyRunning)
                 {
-                    conn.PreferCurrentlyOpenFile = true;
-                    AppendLog("  Using currently-open file in QuickBooks (no duplicate password prompt)");
+                    AppendLog("  QB is running — SDK will open the company file via BeginSession.");
+                    AppendLog("  Watch for QB's password dialog and certificate approval prompt.");
                 }
 
                 // FIX #51: Use ConnectWithCertificateWait with progress callback
