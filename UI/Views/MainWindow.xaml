@@ -81,7 +81,7 @@
                            Width="22" Height="22" Stretch="Uniform"
                            RenderOptions.BitmapScalingMode="HighQuality"
                            Margin="0,0,8,0" />
-                    <TextBlock Text="Company File TimeWarp" FontSize="13" FontWeight="SemiBold"
+                    <TextBlock Text="QuickBooks TimeWarp®" FontSize="13" FontWeight="SemiBold"
                                Foreground="{StaticResource TextBody}" VerticalAlignment="Center" />
                 </StackPanel>
 
