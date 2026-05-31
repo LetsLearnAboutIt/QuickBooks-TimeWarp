@@ -28,7 +28,13 @@ ExportedData/
 Schemas/
 Validation/
 Logs/
+
+## Local-only SDK interop DLL placeholder
+# The lib/ folder is ignored so QuickBooks SDK-generated interop DLLs can be used locally without committing them.
 lib/
+## Extracted installer payloads (MSM/CAB extraction output)
+# Keep extracted merge-module contents out of source control to remain license-compliant.
+Installer/Extracted/
 
 ## IDE
 .idea/

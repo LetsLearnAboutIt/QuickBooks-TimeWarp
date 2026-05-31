@@ -41,9 +41,12 @@ namespace QB_TimeWarp.UI
                 var eulaWindow = new EulaWindow();
                 eulaWindow.ShowDialog();
 
+
+
                 if (eulaWindow.Accepted)
                 {
                     SaveEulaAcceptance();
+
                 }
                 else
                 {
@@ -115,5 +118,7 @@ namespace QB_TimeWarp.UI
                 // Non-fatal — if we can't save, user will see EULA again next time
             }
         }
+
+
     }
 }
